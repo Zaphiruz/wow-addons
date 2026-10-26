@@ -1,0 +1,6 @@
+# Built zips; rebuild with: python mods/classic/tools/package.py <Addon>
+dist/
+.release/
+__pycache__/
+*.pyc
+.env

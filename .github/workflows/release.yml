@@ -1,0 +1,61 @@
+# Releases one addon when a tag like "Hawker/v0.1.0" is pushed:
+#   1. checks the tag matches the .toc version and the changelog covers it
+#   2. runs that addon's tests
+#   3. builds dist/<Addon>-<version>.zip
+#   4. uploads it to CurseForge (needs the CF_API_TOKEN repository secret
+#      and "## X-Curse-Project-ID:" in the addon's .toc)
+#   5. creates a GitHub release with the zip attached
+name: Release
+
+on:
+  push:
+    tags: ["*/v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    env:
+      TOOLS: mods/classic/tools
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install lupa
+
+      - name: Read tag
+        id: tag
+        env:
+          TAG: ${{ github.ref_name }}
+        run: |
+          read -r addon version < <(python "$TOOLS/release.py" tag "$TAG")
+          echo "addon=$addon" >> "$GITHUB_OUTPUT"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+
+      - name: Check version and changelog
+        run: python "$TOOLS/release.py" check "${{ steps.tag.outputs.addon }}" "${{ steps.tag.outputs.version }}"
+
+      - name: Test
+        run: python "$TOOLS/run_tests.py" "${{ steps.tag.outputs.addon }}"
+
+      - name: Package
+        run: python "$TOOLS/package.py" "${{ steps.tag.outputs.addon }}"
+
+      - name: Upload to CurseForge
+        env:
+          CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
+        run: python "$TOOLS/release.py" upload "${{ steps.tag.outputs.addon }}"
+
+      - name: GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.ref_name }}
+          ADDON: ${{ steps.tag.outputs.addon }}
+          VERSION: ${{ steps.tag.outputs.version }}
+        run: |
+          python "$TOOLS/release.py" notes "$ADDON" > notes.md
+          gh release create "$TAG" "mods/classic/dist/$ADDON-$VERSION.zip" \
+            --title "$ADDON $VERSION" --notes-file notes.md

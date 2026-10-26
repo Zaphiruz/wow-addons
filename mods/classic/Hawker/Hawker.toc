@@ -1,0 +1,6 @@
+## Interface: 11509
+## Title: Hawker
+## Notes: Keep a list of advert lines and say a random one with /hawk.
+## Version: 0.1.0
+## SavedVariables: HawkerDB
+Hawker.lua
