@@ -1,5 +1,14 @@
 # Downcast changelog
 
+## 0.2.0 (2026-10-31)
+
+- New window: `/downcast edit` lists your spells with their icons, `/click` lines and top ranks.
+- Add a spell by dragging it from your spellbook into the window, or pick it from the "Add spell..." menu.
+- Remove a spell with the X on its row, and rename a button with Rename.
+- Select a `/click` line in the window and copy it with Ctrl+C.
+- The window can be opened in combat, but changes are locked until combat ends.
+- New command: `/downcast rename <ButtonName> <NewName>`.
+
 ## 0.1.0 (2026-10-25)
 
 First release.

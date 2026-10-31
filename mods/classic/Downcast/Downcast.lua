@@ -28,6 +28,9 @@ local PRIEST_DEFAULTS = {
 local db                 -- DowncastCharDB once loaded
 local buttons = {}       -- frame name -> secure button
 local status = {}        -- entry -> text for /downcast
+local label = {}         -- entry -> short state for the window ("Rank 5", "not learned")
+local iconOf = {}        -- entry -> spell icon texture
+local refreshEditor = function() end  -- replaced once the window exists
 local worldReady = false
 local syncQueued = false
 local pendingCombat = false
@@ -162,9 +165,12 @@ local function syncEntry(e)
   if not index then
     disable(b)
     status[e] = "not in your spellbook"
+    label[e], iconOf[e] = "not learned", nil
     return
   end
   e.spell = name
+  iconOf[e] = GetSpellTexture and GetSpellTexture(spellID)
+  label[e] = "not ready"
 
   local slot = e.slot
   if not (slot and slotHolds(slot, name)) then
@@ -196,6 +202,7 @@ local function syncEntry(e)
   b:SetAttribute("type", "action")
   b:SetAttribute("action", slot)
   status[e] = rank > 0 and format("ready, top rank %d", rank) or "ready"
+  label[e] = rank > 0 and format("Rank %d", rank) or "ready"
 end
 
 local queueSync
@@ -214,6 +221,7 @@ local function sync()
   end
   pendingCombat = false
   for _, e in ipairs(db.spells) do syncEntry(e) end
+  refreshEditor()
 end
 
 queueSync = function(delay)
@@ -239,10 +247,12 @@ end
 local function help()
   say("commands:")
   print("  /downcast  - list your buttons and the /click line for each")
+  print("  /downcast edit  - open the Downcast window")
   print("  /downcast spells  - list spells in your spellbook worth adding")
   print("  /downcast add <spell name>  - add a spell, e.g. /downcast add Abolish Disease")
   print("  /downcast add <spell name> as <ButtonName>  - pick a shorter button name")
   print("  /downcast remove <ButtonName>  - remove a button")
+  print("  /downcast rename <ButtonName> <NewName>  - rename a button")
   print("  /downcast debug  - print what each click does, for troubleshooting")
 end
 
@@ -258,8 +268,15 @@ local function list()
   if pendingCombat then say("changes will apply when combat ends.") end
 end
 
+local function entryForSpell(name)
+  for _, e in ipairs(db.spells) do
+    if e.spell:lower() == name:lower() then return e end
+  end
+end
+
 -- Spells worth a button: castable on others, with more than one rank.
-local function spells()
+-- Returns a sorted list of { name = , rank = }.
+local function candidates()
   local best, names = {}, {}
   for tab = 1, GetNumSpellTabs() do
     local _, _, offset, numSpells = GetSpellTabInfo(tab)
@@ -275,47 +292,51 @@ local function spells()
     end
   end
   table.sort(names)
-
-  local shown = 0
+  local list = {}
   for _, name in ipairs(names) do
-    if best[name] >= 2 then
-      if shown == 0 then say("spells you can cast on others that have more than one rank:") end
-      shown = shown + 1
-      local added
-      for _, e in ipairs(db.spells) do
-        if e.spell:lower() == name:lower() then added = e end
-      end
-      print(format("  %s (rank %d)%s", name, best[name],
-        added and (", added as " .. buttonName(added)) or ""))
-    end
+    if best[name] >= 2 then list[#list + 1] = { name = name, rank = best[name] } end
   end
-  if shown == 0 then
+  return list
+end
+
+local function spells()
+  local list = candidates()
+  for i, c in ipairs(list) do
+    if i == 1 then say("spells you can cast on others that have more than one rank:") end
+    local added = entryForSpell(c.name)
+    print(format("  %s (rank %d)%s", c.name, c.rank,
+      added and (", added as " .. buttonName(added)) or ""))
+  end
+  if #list == 0 then
     say("no spells in your spellbook that you cast on others have more than one rank yet.")
   else
     say("add one with /downcast add <spell name>")
   end
 end
 
+local function validKey(key)
+  if key:match("^%a%w*$") and #key <= MAX_KEY_LEN then return true end
+  say("button names must start with a letter, use only letters and numbers, and be at most %d long.", MAX_KEY_LEN)
+  return false
+end
+
+-- Each of these returns true when it changed something.
 local function add(args)
   local spell, key = args:match("^(.-)%s+[Aa][Ss]%s+(%S+)$")
   spell = strtrim(spell or args)
   if spell == "" then
     say("usage: /downcast add <spell name> [as <ButtonName>]")
-    return
+    return false
   end
   key = key or (spell:gsub("[^%w]", ""))
-  if not key:match("^%a%w*$") or #key > MAX_KEY_LEN then
-    say("button names must start with a letter, use only letters and numbers, and be at most %d long.", MAX_KEY_LEN)
-    return
-  end
-  if InCombatLockdown() then say("can't add spells in combat.") return end
-  if GetCursorInfo() then say("drop what's on your cursor first.") return end
-  if findEntry(key) then say("you already have a button called %s.", "Downcast" .. key) return end
-  for _, e in ipairs(db.spells) do
-    if e.spell:lower() == spell:lower() then
-      say("%s is already covered by %s.", e.spell, buttonName(e))
-      return
-    end
+  if not validKey(key) then return false end
+  if InCombatLockdown() then say("can't add spells in combat.") return false end
+  if GetCursorInfo() then say("drop what's on your cursor first.") return false end
+  if findEntry(key) then say("you already have a button called %s.", "Downcast" .. key) return false end
+  local existing = entryForSpell(spell)
+  if existing then
+    say("%s is already covered by %s.", existing.spell, buttonName(existing))
+    return false
   end
 
   local index, name = topRank(spell)
@@ -326,13 +347,12 @@ local function add(args)
   if not index then
     say("%s isn't in your spellbook. Check the spelling. It will start working once you learn it.", spell)
   end
+  return true
 end
 
-local function remove(args)
-  local e, i = findEntry(args)
-  if not e then say("no button called %s. Type /downcast to see your buttons.", strtrim(args)) return end
-  if InCombatLockdown() then say("can't remove spells in combat.") return end
-  if GetCursorInfo() then say("drop what's on your cursor first.") return end
+local function removeEntry(e)
+  if InCombatLockdown() then say("can't remove spells in combat.") return false end
+  if GetCursorInfo() then say("drop what's on your cursor first.") return false end
   if e.slot and slotHolds(e.slot, e.spell) then
     ClearCursor()
     PickupAction(e.slot)
@@ -340,9 +360,284 @@ local function remove(args)
   end
   local b = buttons[buttonName(e)]
   if b then disable(b) end
-  tremove(db.spells, i)
-  status[e] = nil
+  for i, other in ipairs(db.spells) do
+    if other == e then tremove(db.spells, i) break end
+  end
+  status[e], label[e], iconOf[e] = nil, nil, nil
   say("removed %s. Macros that click it will do nothing now.", buttonName(e))
+  return true
+end
+
+local function remove(args)
+  local e = findEntry(args)
+  if not e then say("no button called %s. Type /downcast to see your buttons.", strtrim(args)) return false end
+  return removeEntry(e)
+end
+
+local function rename(e, newKey)
+  newKey = strtrim(newKey or "")
+  local bare = newKey:match("^[Dd]owncast(%w+)$")
+  if bare then newKey = bare end
+  if not validKey(newKey) then return false end
+  if InCombatLockdown() then say("can't rename buttons in combat.") return false end
+  local other = findEntry(newKey)
+  if other and other ~= e then say("you already have a button called %s.", "Downcast" .. newKey) return false end
+  if newKey == e.key then return true end
+  local old = buttons[buttonName(e)]
+  if old then disable(old) end
+  e.key = newKey
+  syncEntry(e)
+  say("renamed. Use this line in your macros now: /click %s", buttonName(e))
+  return true
+end
+
+local function renameCommand(args)
+  local old, new = strtrim(args or ""):match("^(%S+)%s+(%S+)$")
+  if not old then say("usage: /downcast rename <ButtonName> <NewName>") return false end
+  local e = findEntry(old)
+  if not e then say("no button called %s. Type /downcast to see your buttons.", old) return false end
+  return rename(e, new)
+end
+
+---------------------------------------------------------------------------
+-- Window (/downcast edit)
+---------------------------------------------------------------------------
+
+local editor
+local ROW_HEIGHT = 28
+local QUESTION_ICON = "Interface\\Icons\\INV_Misc_QuestionMark"
+
+StaticPopupDialogs = StaticPopupDialogs or {}
+
+local function popupBox(dialog)
+  return dialog.GetEditBox and dialog:GetEditBox() or dialog.editBox
+end
+
+StaticPopupDialogs.DOWNCAST_RENAME = {
+  text = "New button name for %s\n(letters and numbers only):",
+  button1 = ACCEPT or "Accept",
+  button2 = CANCEL or "Cancel",
+  hasEditBox = true,
+  maxLetters = MAX_KEY_LEN,
+  OnShow = function(self, e)
+    local box = popupBox(self)
+    box:SetText(e.key)
+    box:HighlightText()
+    box:SetFocus()
+  end,
+  OnAccept = function(self, e)
+    if rename(e, popupBox(self):GetText()) then
+      refreshEditor()
+      return false
+    end
+    return true -- keep it open so the name can be fixed
+  end,
+  EditBoxOnEnterPressed = function(box) StaticPopup_OnClick(box:GetParent(), 1) end,
+  EditBoxOnEscapePressed = function(box) box:GetParent():Hide() end,
+  timeout = 0,
+  whileDead = true,
+  hideOnEscape = true,
+  preferredIndex = 3,
+}
+
+local function receiveDrag()
+  local kind, index, book, spellID = GetCursorInfo()
+  if kind ~= "spell" then return end
+  if InCombatLockdown() then say("can't add spells in combat.") return end
+  local name = (spellID and GetSpellInfo(spellID)) or (index and GetSpellBookItemName(index, book or BOOK))
+  ClearCursor()
+  if name and add(name) then refreshEditor() end
+end
+
+local function createRow(i)
+  local row = CreateFrame("Frame", nil, editor.content)
+  row:SetSize(500, ROW_HEIGHT)
+  row:SetPoint("TOPLEFT", 0, -(i - 1) * ROW_HEIGHT)
+
+  row.icon = row:CreateTexture(nil, "ARTWORK")
+  row.icon:SetSize(22, 22)
+  row.icon:SetPoint("LEFT", 2, 0)
+
+  row.name = row:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+  row.name:SetPoint("LEFT", row.icon, "RIGHT", 6, 0)
+  row.name:SetWidth(128)
+  row.name:SetJustifyH("LEFT")
+
+  -- Read-only text box so the /click line can be selected and copied.
+  row.copy = CreateFrame("EditBox", nil, row, "InputBoxTemplate")
+  row.copy:SetSize(172, 20)
+  row.copy:SetPoint("LEFT", row.name, "RIGHT", 10, 0)
+  row.copy:SetAutoFocus(false)
+  row.copy:SetScript("OnTextChanged", function(self, userInput)
+    if userInput then
+      self:SetText(self.value or "")
+      self:HighlightText()
+    end
+  end)
+  row.copy:SetScript("OnEditFocusGained", function(self) self:HighlightText() end)
+  row.copy:SetScript("OnEscapePressed", function(self) self:ClearFocus() end)
+  row.copy:SetScript("OnEnterPressed", function(self) self:ClearFocus() end)
+
+  row.rank = row:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+  row.rank:SetPoint("LEFT", row.copy, "RIGHT", 8, 0)
+  row.rank:SetWidth(66)
+  row.rank:SetJustifyH("LEFT")
+
+  row.remove = CreateFrame("Button", nil, row, "UIPanelButtonTemplate")
+  row.remove:SetSize(24, 20)
+  row.remove:SetPoint("RIGHT", 0, 0)
+  row.remove:SetText("X")
+  row.remove:SetScript("OnClick", function(self)
+    local e = self:GetParent().entry
+    if e and removeEntry(e) then refreshEditor() end
+  end)
+
+  row.rename = CreateFrame("Button", nil, row, "UIPanelButtonTemplate")
+  row.rename:SetSize(64, 20)
+  row.rename:SetPoint("RIGHT", row.remove, "LEFT", -4, 0)
+  row.rename:SetText("Rename")
+  row.rename:SetScript("OnClick", function(self)
+    local e = self:GetParent().entry
+    if e then StaticPopup_Show("DOWNCAST_RENAME", buttonName(e), nil, e) end
+  end)
+  return row
+end
+
+local function menuItem(i)
+  local item = CreateFrame("Button", nil, editor.menu)
+  item:SetSize(220, 18)
+  item:SetPoint("TOPLEFT", 8, -8 - (i - 1) * 18)
+  item:SetNormalFontObject("GameFontHighlightLeft")
+  item:SetHighlightTexture("Interface\\QuestFrame\\UI-QuestTitleHighlight", "ADD")
+  item:SetScript("OnClick", function(self)
+    editor.menu:Hide()
+    if add(self.spell) then refreshEditor() end
+  end)
+  return item
+end
+
+local function toggleMenu()
+  local menu = editor.menu
+  if menu:IsShown() then menu:Hide() return end
+  local list = {}
+  for _, c in ipairs(candidates()) do
+    if not entryForSpell(c.name) then list[#list + 1] = c end
+  end
+  for i, c in ipairs(list) do
+    menu.items[i] = menu.items[i] or menuItem(i)
+    menu.items[i]:SetText(format("%s (rank %d)", c.name, c.rank))
+    menu.items[i].spell = c.name
+    menu.items[i]:Show()
+  end
+  for i = #list + 1, #menu.items do menu.items[i]:Hide() end
+  menu.empty:SetShown(#list == 0)
+  menu:SetSize(236, math.max(#list, 1) * 18 + 16)
+  menu:Show()
+end
+
+local function createEditor()
+  editor = CreateFrame("Frame", "DowncastEditor", UIParent, "BasicFrameTemplateWithInset")
+  editor:SetSize(560, 340)
+  editor:SetPoint("CENTER")
+  editor:SetFrameStrata("DIALOG")
+  editor:SetClampedToScreen(true)
+  editor:SetMovable(true)
+  editor:EnableMouse(true)
+  editor:RegisterForDrag("LeftButton")
+  editor:SetScript("OnDragStart", editor.StartMoving)
+  editor:SetScript("OnDragStop", editor.StopMovingOrSizing)
+  editor:SetScript("OnReceiveDrag", receiveDrag)
+  editor:SetScript("OnMouseUp", receiveDrag)
+  editor.TitleText:SetText("Downcast")
+  tinsert(UISpecialFrames, "DowncastEditor")
+
+  local scroll = CreateFrame("ScrollFrame", "DowncastEditorScroll", editor, "UIPanelScrollFrameTemplate")
+  scroll:SetPoint("TOPLEFT", 12, -32)
+  scroll:SetPoint("BOTTOMRIGHT", -32, 44)
+  -- The scroll area takes the mouse, so it needs the drop handler too.
+  scroll:SetScript("OnReceiveDrag", receiveDrag)
+  scroll:SetScript("OnMouseUp", receiveDrag)
+  editor.content = CreateFrame("Frame", nil, scroll)
+  editor.content:SetSize(500, 1)
+  scroll:SetScrollChild(editor.content)
+  editor.rows = {}
+
+  editor.addButton = CreateFrame("Button", "DowncastEditorAdd", editor, "UIPanelButtonTemplate")
+  editor.addButton:SetSize(120, 22)
+  editor.addButton:SetPoint("BOTTOMLEFT", 12, 12)
+  editor.addButton:SetText("Add spell...")
+  editor.addButton:SetScript("OnClick", toggleMenu)
+
+  editor.note = editor:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+  editor.note:SetPoint("LEFT", editor.addButton, "RIGHT", 10, 0)
+  editor.note:SetJustifyH("LEFT")
+
+  local menu = CreateFrame("Frame", "DowncastEditorMenu", editor, "BackdropTemplate")
+  menu:SetPoint("BOTTOMLEFT", editor.addButton, "TOPLEFT", 0, 2)
+  menu:SetFrameStrata("FULLSCREEN_DIALOG")
+  if menu.SetBackdrop then
+    menu:SetBackdrop({
+      bgFile = "Interface\\Tooltips\\UI-Tooltip-Background",
+      edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
+      tile = true, tileSize = 16, edgeSize = 16,
+      insets = { left = 4, right = 4, top = 4, bottom = 4 },
+    })
+    menu:SetBackdropColor(0, 0, 0, 0.95)
+  end
+  menu.items = {}
+  menu.empty = menu:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
+  menu.empty:SetPoint("TOPLEFT", 10, -10)
+  menu.empty:SetText("Nothing new to add. Spells need more than one rank.")
+  menu:Hide()
+  editor.menu = menu
+
+  editor:SetScript("OnShow", function() refreshEditor() end)
+  editor:SetScript("OnHide", function() menu:Hide() end)
+  editor:Hide()
+end
+
+refreshEditor = function()
+  if not (editor and editor:IsShown()) then return end
+  local locked = InCombatLockdown()
+  for i, e in ipairs(db.spells) do
+    local row = editor.rows[i] or createRow(i)
+    editor.rows[i] = row
+    row.entry = e
+    row.icon:SetTexture(iconOf[e] or QUESTION_ICON)
+    row.name:SetText(e.spell)
+    row.copy.value = "/click " .. buttonName(e)
+    row.copy:SetText(row.copy.value)
+    row.copy:SetCursorPosition(0)
+    local text = label[e] or "not ready"
+    row.rank:SetText(text)
+    if text:match("^Rank") or text == "ready" then
+      row.rank:SetTextColor(0.4, 1, 0.4)
+    else
+      row.rank:SetTextColor(0.6, 0.6, 0.6)
+    end
+    row.rename:SetEnabled(not locked)
+    row.remove:SetEnabled(not locked)
+    row:Show()
+  end
+  for i = #db.spells + 1, #editor.rows do
+    editor.rows[i].entry = nil
+    editor.rows[i]:Hide()
+  end
+  editor.content:SetHeight(math.max(1, #db.spells * ROW_HEIGHT))
+  editor.addButton:SetEnabled(not locked)
+  if locked then
+    editor.menu:Hide()
+    editor.note:SetText("Changes are locked during combat.")
+  elseif #db.spells == 0 then
+    editor.note:SetText("No spells yet. Drag one from your spellbook here.")
+  else
+    editor.note:SetText("Drag a spell from your spellbook here to add it.")
+  end
+end
+
+local function toggleEditor()
+  if not editor then createEditor() end
+  editor:SetShown(not editor:IsShown())
 end
 
 SLASH_DOWNCAST1 = "/downcast"
@@ -360,8 +655,10 @@ SlashCmdList.DOWNCAST = function(msg)
     say("debug %s.%s", debugOn and "on" or "off", debugOn
       and format(" Cast-on-key-press setting is %s. Each click will print a line.", tostring(GetCVarBool("ActionButtonUseKeyDown")))
       or "")
-  elseif cmd == "add" then add(rest)
-  elseif cmd == "remove" then remove(rest)
+  elseif cmd == "edit" then toggleEditor()
+  elseif cmd == "add" then if add(rest) then refreshEditor() end
+  elseif cmd == "remove" then if remove(rest) then refreshEditor() end
+  elseif cmd == "rename" then if renameCommand(rest) then refreshEditor() end
   else help() end
 end
 
@@ -374,7 +671,7 @@ local events = CreateFrame("Frame")
 -- guarded: the game throws on event names it doesn't have, and one bad name
 -- must never stop the rest of the addon from loading.
 for _, event in ipairs({ "ADDON_LOADED", "PLAYER_ENTERING_WORLD", "SPELLS_CHANGED",
-                         "ACTIONBAR_SLOT_CHANGED", "PLAYER_REGEN_ENABLED" }) do
+                         "ACTIONBAR_SLOT_CHANGED", "PLAYER_REGEN_ENABLED", "PLAYER_REGEN_DISABLED" }) do
   if not pcall(events.RegisterEvent, events, event) then
     say("this game version has no %s event. Please report it.", event)
   end
@@ -402,6 +699,9 @@ events:SetScript("OnEvent", function(_, event, arg1)
     queueSync()
   elseif event == "PLAYER_REGEN_ENABLED" then
     if pendingCombat then queueSync() end
+    refreshEditor()
+  elseif event == "PLAYER_REGEN_DISABLED" then
+    refreshEditor()
   elseif event == "ACTIONBAR_SLOT_CHANGED" then
     if ownsSlot(arg1) then queueSync() end
   else

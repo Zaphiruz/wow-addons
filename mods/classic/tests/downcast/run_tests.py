@@ -158,6 +158,133 @@ SCENARIOS = {
   local out = cmd("")
   ok(out:find("didn't finish loading"), "says it failed: " .. out)
 ''',
+"edit window lists spells and toggles": r'''
+  priestBook(); login(nil)
+  cmd("edit")
+  local e = DowncastEditor
+  ok(e and e:IsShown(), "window shown")
+  local found = false
+  for _, n in ipairs(UISpecialFrames) do if n == "DowncastEditor" then found = true end end
+  ok(found, "Escape closes it")
+  local r1 = e.rows[1]
+  ok(r1:IsShown() and r1.name:GetText() == "Renew", "row 1 name: " .. tostring(r1.name:GetText()))
+  ok(r1.copy:GetText() == "/click DowncastRenew", "copy line: " .. r1.copy:GetText())
+  ok(r1.rank:GetText() == "Rank 5", "rank: " .. r1.rank:GetText())
+  ok(r1.icon.tex == "icon-105", "icon: " .. tostring(r1.icon.tex))
+  local r4 = e.rows[4]
+  ok(r4.name:GetText() == "Divine Spirit" and r4.rank:GetText() == "not learned", "spirit row: " .. r4.rank:GetText())
+  ok(r4.icon.tex == "Interface\\Icons\\INV_Misc_QuestionMark", "unknown icon")
+  ok(e.rows[6] == nil or not e.rows[6]:IsShown(), "only 5 rows")
+  cmd("edit")
+  ok(not e:IsShown(), "second /downcast edit closes it")
+''',
+"copy box can't be edited": r'''
+  priestBook(); login(nil); cmd("edit")
+  local copy = DowncastEditor.rows[1].copy
+  copy:Type("/click something else")
+  ok(copy:GetText() == "/click DowncastRenew", copy:GetText())
+''',
+"remove from the window": r'''
+  priestBook(); login(nil); cmd("edit")
+  local e = DowncastEditor
+  local slot = entry("Fort").slot
+  e.rows[2].remove:Click()
+  ok(entry("Fort") == nil and M.actions[slot] == nil, "Fort removed and slot cleared")
+  ok(e.rows[2].name:GetText() == "Power Word: Shield", "rows refreshed: " .. e.rows[2].name:GetText())
+  ok(not e.rows[5]:IsShown(), "one fewer row")
+''',
+"add from the spellbook menu": r'''
+  priestBook()
+  M.learn("Heal", 1, 801); M.learn("Heal", 2, 802)
+  login(nil); cmd("edit")
+  local e = DowncastEditor
+  e.addButton:Click()
+  ok(e.menu:IsShown(), "menu open")
+  local names = {}
+  for _, item in ipairs(e.menu.items) do if item:IsShown() then names[#names+1] = item:GetText() end end
+  ok(#names == 1 and names[1] == "Heal (rank 2)", "only spells not yet added: " .. table.concat(names, ", "))
+  e.menu.items[1]:Click()
+  ok(entry("Heal") and M.actions[entry("Heal").slot].id == 802, "Heal added at top rank")
+  ok(not e.menu:IsShown(), "menu closes")
+  ok(e.rows[6]:IsShown() and e.rows[6].copy:GetText() == "/click DowncastHeal", "new row")
+''',
+"menu says when there's nothing to add": r'''
+  priestBook(); login(nil); cmd("edit")
+  local e = DowncastEditor
+  e.addButton:Click()
+  ok(e.menu.empty:IsShown(), "empty note shown")
+  for _, item in ipairs(e.menu.items) do ok(not item:IsShown(), "no items") end
+''',
+"drag a spell into the window": r'''
+  priestBook(); login(nil); cmd("edit")
+  local e = DowncastEditor
+  local index; for i, s in ipairs(M.book) do if s.name == "Inner Fire" then index = i end end
+  M.cursor = { kind = "spell", index = index, book = "spell", id = 400 }
+  e.scripts.OnReceiveDrag(e)
+  ok(entry("InnerFire") ~= nil, "Inner Fire added")
+  ok(M.cursor == nil, "cursor cleared")
+  M.cursor = { kind = "item", id = 77 }
+  e.scripts.OnReceiveDrag(e)
+  ok(M.cursor and M.cursor.id == 77, "items are ignored and left on the cursor")
+  M.cursor = { kind = "spell", index = 1, book = "spell", id = 801 }
+  M.learn("Heal", 1, 801)
+  DowncastEditorScroll.scripts.OnReceiveDrag(DowncastEditorScroll)
+  ok(entry("Heal") ~= nil, "dropping on the list area works too")
+''',
+"rename from the window": r'''
+  priestBook(); login(nil); cmd("edit")
+  local e = DowncastEditor
+  e.rows[1].rename:Click()
+  local popup = M.popup
+  ok(popup and popup.which == "DOWNCAST_RENAME", "popup shown")
+  ok(popup.editBox:GetText() == "Renew", "popup starts with current name")
+  popup.editBox:SetText("R")
+  StaticPopup_OnClick(popup, 1)
+  ok(entry("R") and entry("Renew") == nil, "renamed")
+  ok(DowncastR.attrs.type == "action" and DowncastR.attrs.action == 119, "new button ready on the same slot")
+  ok(DowncastRenew.attrs.type == nil, "old button switched off")
+  ok(e.rows[1].copy:GetText() == "/click DowncastR", "row updated")
+  e.rows[2].rename:Click()
+  M.popup.editBox:SetText("R")
+  M.out = {}; StaticPopup_OnClick(M.popup, 1)
+  ok(entry("Fort") and table.concat(M.out):find("already have a button called DowncastR"), "duplicate refused")
+  e.rows[2].rename:Click()
+  M.popup.editBox:SetText("9x")
+  M.out = {}; StaticPopup_OnClick(M.popup, 1)
+  ok(entry("Fort") and table.concat(M.out):find("must start with a letter"), "bad name refused")
+''',
+"rename by command": r'''
+  priestBook(); login(nil)
+  local out = cmd("rename Fort F")
+  ok(entry("F") and out:find("/click DowncastF"), out)
+  out = cmd("rename Nope X"); ok(out:find("no button called Nope"), out)
+  out = cmd("rename F"); ok(out:find("usage"), out)
+''',
+"combat locks the window": r'''
+  priestBook(); login(nil); cmd("edit")
+  local e = DowncastEditor
+  M.inCombat = true; M.fire("PLAYER_REGEN_DISABLED")
+  ok(not e.addButton:IsEnabled() and not e.rows[1].remove:IsEnabled() and not e.rows[1].rename:IsEnabled(), "controls disabled")
+  ok(e.note:GetText():find("combat"), "note: " .. e.note:GetText())
+  M.cursor = { kind = "spell", index = 1, book = "spell", id = 101 }
+  e.scripts.OnReceiveDrag(e)
+  ok(M.cursor ~= nil and #DowncastCharDB.spells == 5, "drag ignored in combat")
+  M.cursor = nil
+  M.inCombat = false; M.fire("PLAYER_REGEN_ENABLED"); M.runTimers()
+  ok(e.addButton:IsEnabled() and e.rows[1].remove:IsEnabled(), "controls back")
+''',
+"window can open during combat": r'''
+  priestBook(); login(nil)
+  M.inCombat = true; M.fire("PLAYER_REGEN_DISABLED")
+  cmd("edit")
+  ok(DowncastEditor:IsShown() and not DowncastEditor.addButton:IsEnabled(), "open but locked")
+''',
+"window follows a newly learned rank": r'''
+  priestBook(); login(nil); cmd("edit")
+  M.learn("Renew", 6, 106); M.fire("SPELLS_CHANGED"); M.runTimers()
+  local r1 = DowncastEditor.rows[1]
+  ok(r1.rank:GetText() == "Rank 6" and r1.icon.tex == "icon-106", r1.rank:GetText())
+''',
 "non-priest gets no defaults": r'''
   M.class = "MAGE"; login(nil)
   ok(#DowncastCharDB.spells == 0, "empty")

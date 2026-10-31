@@ -18,8 +18,49 @@ local function protectedCheck(f, what)
   if M.inCombat and f.secure then error("BLOCKED in combat: " .. what .. " on " .. tostring(f.name)) end
 end
 
+-- Plain UI widgets: the methods tests look at are real, anything else is a no-op.
+local noop = function() end
+local widgetMT = { __index = function() return noop end }
+function M.widget(kind, name, parent)
+  local w = setmetatable({ kind = kind, name = name, parent = parent, scripts = {}, shown = true,
+                           enabled = true, text = "" }, widgetMT)
+  function w:SetScript(s, fn) self.scripts[s] = fn end
+  function w:GetScript(s) return self.scripts[s] end
+  function w:HookScript(s, fn) self.hooks = self.hooks or {}; self.hooks[s] = fn end
+  function w:SetText(t) self.text = t == nil and "" or tostring(t) end
+  function w:GetText() return self.text end
+  function w:Show() self.shown = true; if self.scripts.OnShow then self.scripts.OnShow(self) end end
+  function w:Hide() self.shown = false; if self.scripts.OnHide then self.scripts.OnHide(self) end end
+  function w:SetShown(v) if v then self:Show() else self:Hide() end end
+  function w:IsShown() return self.shown end
+  function w:Enable() self.enabled = true end
+  function w:Disable() self.enabled = false end
+  function w:SetEnabled(v) self.enabled = not not v end
+  function w:IsEnabled() return self.enabled end
+  function w:GetName() return self.name end
+  function w:GetParent() return self.parent end
+  function w:SetTexture(t) self.tex = t end
+  function w:CreateFontString(n) return M.widget("FontString", n, self) end
+  function w:CreateTexture(n) return M.widget("Texture", n, self) end
+  function w:Click(button) if self.enabled and self.scripts.OnClick then self.scripts.OnClick(self, button or "LeftButton") end end
+  -- Type into an edit box as the player would.
+  function w:Type(t) self.text = t; if self.scripts.OnTextChanged then self.scripts.OnTextChanged(self, true) end end
+  return w
+end
+
 function CreateFrame(kind, name, parent, template)
-  local f = { name = name, attrs = {}, scripts = {}, secure = template ~= nil }
+  local secure = template ~= nil and template:find("Secure") ~= nil
+  local eventFrame = kind == "Frame" and template == nil and parent == nil
+  if not secure and not eventFrame then
+    local w = M.widget(kind, name, parent)
+    if template and template:find("BasicFrameTemplate") then
+      w.TitleText = M.widget("FontString", nil, w)
+      w.CloseButton = M.widget("Button", nil, w)
+    end
+    if name then _G[name] = w end
+    return w
+  end
+  local f = { name = name, attrs = {}, scripts = {}, secure = secure }
   function f:SetAttribute(k, v) protectedCheck(self, "SetAttribute " .. k); self.attrs[k] = v end
   function f:GetAttribute(k) return self.attrs[k] end
   function f:RegisterEvent(e)
@@ -31,7 +72,7 @@ function CreateFrame(kind, name, parent, template)
   function f:GetName() return self.name end
   function f:HookScript(s, fn) self.hooks = self.hooks or {}; self.hooks[s] = fn end
   function f:RegisterForClicks(...) protectedCheck(self, "RegisterForClicks"); self.clicks = {...} end
-  if template and M.inCombat then error("BLOCKED: creating secure frame in combat") end
+  if secure and M.inCombat then error("BLOCKED: creating secure frame in combat") end
   if name then _G[name] = f end
   table.insert(M.frames, f)
   return f
@@ -75,9 +116,34 @@ function IsPassiveSpell(i) local s = M.book[i]; return s ~= nil and M.passive[s.
 -- Action slots and cursor
 function HasAction(slot) return M.actions[slot] ~= nil end
 function GetActionInfo(slot) local a = M.actions[slot]; if a then return a.kind, a.id end end
-function GetCursorInfo() if M.cursor then return M.cursor.kind, M.cursor.id end end
+-- Like the game: a spell on the cursor reports "spell", spellbook index, book type, spell ID.
+function GetCursorInfo()
+  local c = M.cursor
+  if not c then return nil end
+  if c.kind == "spell" then return "spell", c.index, c.book, c.id end
+  return c.kind, c.id
+end
 function ClearCursor() M.cursor = nil end
-function PickupSpellBookItem(i) if M.inCombat then error("BLOCKED PickupSpellBookItem in combat") end M.cursor = { kind = "spell", id = M.book[i].id } end
+function PickupSpellBookItem(i) if M.inCombat then error("BLOCKED PickupSpellBookItem in combat") end M.cursor = { kind = "spell", index = i, book = "spell", id = M.book[i].id } end
+function GetSpellTexture(id) return "icon-" .. tostring(id) end
+UISpecialFrames = {}
+StaticPopupDialogs = {}
+function StaticPopup_Show(which, a1, a2, data)
+  local d = M.widget("Frame", "StaticPopup1", nil)
+  d.which, d.data = which, data
+  d.editBox = M.widget("EditBox", nil, d)
+  function d:GetEditBox() return self.editBox end
+  local info = StaticPopupDialogs[which]
+  if info.OnShow then info.OnShow(d, data) end
+  M.popup = d
+  return d
+end
+function StaticPopup_OnClick(d, index)
+  local info = StaticPopupDialogs[d.which]
+  if index == 1 and info.OnAccept then
+    if not info.OnAccept(d, d.data, d.data2) then d:Hide() end
+  end
+end
 function PlaceAction(slot)
   if M.inCombat then error("BLOCKED PlaceAction in combat") end
   M.placeCount = M.placeCount + 1

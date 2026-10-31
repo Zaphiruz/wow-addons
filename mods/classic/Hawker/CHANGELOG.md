@@ -1,5 +1,16 @@
 # Hawker changelog
 
+## 0.2.0 (2026-10-31)
+
+- Presets: keep several named lists of lines, such as "enchants" and "portals". Your existing lines become a preset called "default".
+- One preset is active. Plain `/hawk` and `add`, `list`, `remove` and `clear` use it. Each character remembers its own active preset.
+- Name a preset to use it once: `/hawk portals`. Combine it with a channel in either order: `/hawk 2 portals`.
+- `/hawk use <preset>` switches the active preset, and `/hawk presets` lists them.
+- New window: `/hawk edit` shows a preset's lines as a notepad, one line per advert. Save, Revert, and pick, create, rename, delete or activate presets from the top bar.
+- The window asks before throwing away unsaved changes, and keeps them if you close it.
+- `/hawk help` lists every command. An unknown word now says so instead of showing help.
+- From scripts, `Hawk(channel, preset)` takes an optional preset name.
+
 ## 0.1.0 (2026-10-25)
 
 First release.

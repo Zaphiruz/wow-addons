@@ -4,3 +4,6 @@ dist/
 __pycache__/
 *.pyc
 .env
+
+# Brainstorm mockups
+.superpowers/
