@@ -1,5 +1,9 @@
 # Hawker changelog
 
+## 0.2.1 (2026-10-31)
+
+- Fixed an error when accepting the game's own confirmation popups, such as using a bind-on-use item like a mount. Hawker was blamed for the blocked action.
+
 ## 0.2.0 (2026-10-31)
 
 - Presets: keep several named lists of lines, such as "enchants" and "portals". Your existing lines become a preset called "default".

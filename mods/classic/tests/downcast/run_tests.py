@@ -3,6 +3,7 @@ from lupa import lua51
 
 HERE = pathlib.Path(__file__).parent
 MOCK = (HERE / "wowmock.lua").read_text(encoding="utf-8")
+GUARD = (HERE.parent / "guard_globals.lua").read_text(encoding="utf-8")
 ADDON = pathlib.Path(sys.argv[1]).read_text(encoding="utf-8")
 
 PRELUDE = r'''
@@ -314,6 +315,7 @@ failed = 0
 for name, body in SCENARIOS.items():
     L = lua51.LuaRuntime(unpack_returned_tuples=True)
     L.execute(MOCK)
+    L.execute(GUARD)
     L.globals().ADDON_SRC = ADDON
     L.execute(PRELUDE)
     # The secure snippet runs SetAttribute in combat legitimately (restricted env).

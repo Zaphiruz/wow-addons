@@ -1,5 +1,9 @@
 # Downcast changelog
 
+## 0.2.1 (2026-10-31)
+
+- Fixed an error when accepting the game's own confirmation popups, such as using a bind-on-use item like a mount. Downcast was blamed for the blocked action.
+
 ## 0.2.0 (2026-10-31)
 
 - New window: `/downcast edit` lists your spells with their icons, `/click` lines and top ranks.

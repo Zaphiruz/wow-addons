@@ -3,6 +3,8 @@ import sys
 from lupa import lua51
 
 ADDON = open(sys.argv[1], encoding="utf-8").read()
+import pathlib
+GUARD = (pathlib.Path(__file__).parent.parent / "guard_globals.lua").read_text(encoding="utf-8")
 
 MOCK = r'''
 out, said, events = {}, {}, {}
@@ -360,6 +362,7 @@ for name, body in SCENARIOS.items():
     L.globals().ADDON_SRC = ADDON
     try:
         L.execute(MOCK)
+        L.execute(GUARD)
         L.execute(body)
         print("PASS", name)
     except Exception as e:

@@ -250,7 +250,6 @@ local editor
 local editing   -- id of the preset shown in the window
 local dirty = false
 
-StaticPopupDialogs = StaticPopupDialogs or {}
 
 local function popupBox(dialog)
   return dialog.GetEditBox and dialog:GetEditBox() or dialog.editBox

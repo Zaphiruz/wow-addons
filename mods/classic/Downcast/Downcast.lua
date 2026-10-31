@@ -407,7 +407,6 @@ local editor
 local ROW_HEIGHT = 28
 local QUESTION_ICON = "Interface\\Icons\\INV_Misc_QuestionMark"
 
-StaticPopupDialogs = StaticPopupDialogs or {}
 
 local function popupBox(dialog)
   return dialog.GetEditBox and dialog:GetEditBox() or dialog.editBox

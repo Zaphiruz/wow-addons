@@ -1,7 +1,7 @@
 ## Interface: 11509
 ## Title: Downcast
 ## Notes: Lets your macros cast the best rank of a buff or heal-over-time that can land on a low-level player.
-## Version: 0.2.0
+## Version: 0.2.1
 ## X-Curse-Project-ID: 1766583
 ## SavedVariablesPerCharacter: DowncastCharDB
 Downcast.lua
