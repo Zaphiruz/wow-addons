@@ -1,5 +1,5 @@
 name: Idea or request
-description: Suggest a new feature or a change to Downcast or Hawker.
+description: Suggest a new feature or a change to one of the addons.
 labels: [enhancement]
 body:
   - type: dropdown
@@ -9,6 +9,7 @@ body:
       options:
         - Downcast
         - Hawker
+        - Hopscotch
     validations:
       required: true
   - type: textarea

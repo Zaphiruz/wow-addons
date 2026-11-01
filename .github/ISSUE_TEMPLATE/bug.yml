@@ -1,5 +1,5 @@
 name: Bug report
-description: Something in Downcast or Hawker isn't working, or shows an error.
+description: Something in one of the addons isn't working, or shows an error.
 labels: [bug]
 body:
   - type: dropdown
@@ -9,6 +9,7 @@ body:
       options:
         - Downcast
         - Hawker
+        - Hopscotch
     validations:
       required: true
   - type: input
