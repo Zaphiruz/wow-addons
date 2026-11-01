@@ -141,7 +141,10 @@ function Hawk(channel, preset)
     i = i % n + 1
   end
   lastIndex[p.id] = i
-  SendChatMessage(p.lines[i], chatType, nil, target)
+  -- Forever (and modern clients) only have C_ChatInfo.SendChatMessage;
+  -- Classic Era has the global.
+  local send = (C_ChatInfo and C_ChatInfo.SendChatMessage) or SendChatMessage
+  send(p.lines[i], chatType, nil, target)
 end
 
 ---------------------------------------------------------------------------

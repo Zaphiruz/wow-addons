@@ -1,5 +1,9 @@
 # Hawker changelog
 
+## 0.3.0 (2026-11-01)
+
+- Works on World of Warcraft: Forever as well as Classic Era. The same download covers both.
+
 ## 0.2.1 (2026-10-31)
 
 - Fixed an error when accepting the game's own confirmation popups, such as using a bind-on-use item like a mount. Hawker was blamed for the blocked action.

@@ -1,7 +1,7 @@
-## Interface: 11509
+## Interface: 11509, 16001
 ## Title: Hopscotch
 ## Notes: Counts every hop off the ground, for each character and your whole account.
-## Version: 0.3.0
+## Version: 0.3.1
 ## X-Curse-Project-ID: 1778769
 ## SavedVariables: HopscotchDB
 Hopscotch.lua

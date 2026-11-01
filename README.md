@@ -5,8 +5,8 @@ World of Warcraft addons, released to CurseForge from this repository.
 | Addon | Game | What it does |
 |---|---|---|
 | [Downcast](mods/classic/Downcast) | Classic Era | Lets macros cast the best rank of a buff or HoT that can land on a low-level player |
-| [Hawker](mods/classic/Hawker) | Classic Era | Keeps a list of advert lines and says a random one with `/hawk` |
-| [Hopscotch](mods/classic/Hopscotch) | Classic Era | Counts every hop off the ground, for each character and the whole account |
+| [Hawker](mods/classic/Hawker) | Classic Era, Forever | Keeps a list of advert lines and says a random one with `/hawk` |
+| [Hopscotch](mods/classic/Hopscotch) | Classic Era, Forever | Counts every hop off the ground, for each character and the whole account |
 
 ## Layout
 

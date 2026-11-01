@@ -130,6 +130,14 @@ SCENARIOS = {
   cmd("")
   ok(said[1] == "SAY: struggling to kill your foes? free bracer enchants to help you out", tostring(said[1]))
 ''',
+"on Forever, chat goes through C_ChatInfo.SendChatMessage": r'''
+  local classic = SendChatMessage
+  SendChatMessage = nil   -- Forever has no global SendChatMessage
+  C_ChatInfo = { SendChatMessage = function(msg, chan, lang, target) classic(msg, chan, lang, target) end }
+  load(nil); cmd("add hello forever")
+  cmd("guild")
+  ok(said[1] == "GUILD: hello forever", tostring(said[1]))
+''',
 "Hawk() works from /run": r'''
   load(nil); cmd("add hello there")
   Hawk()

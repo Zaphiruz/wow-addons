@@ -1,7 +1,7 @@
-## Interface: 11509
+## Interface: 11509, 16001
 ## Title: Hawker
 ## Notes: Keep lists of advert lines and say a random one with /hawk.
-## Version: 0.2.1
+## Version: 0.3.0
 ## X-Curse-Project-ID: 1766563
 ## SavedVariables: HawkerDB
 ## SavedVariablesPerCharacter: HawkerCharDB

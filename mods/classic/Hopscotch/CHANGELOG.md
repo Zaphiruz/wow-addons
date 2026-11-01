@@ -1,5 +1,9 @@
 # Hopscotch changelog
 
+## 0.3.1 (2026-11-01)
+
+- Works on World of Warcraft: Forever as well as Classic Era. The same download covers both.
+
 ## 0.3.0 (2026-11-01)
 
 - Perfect hops: a fresh press that leaves the ground right as you land (within one frame at 60 FPS, measured in time so high frame rates aren't punished). Holding the jump key doesn't count, since the game re-jumps for you, but it doesn't break a streak either.

@@ -18,6 +18,23 @@ and release commands for people; this file is how we work on it.
   https://github.com/Gethe/wow-ui-source before relying on an event, function
   or template. Names differ from retail, and a wrong one can break loading.
 
+### Forever
+
+- World of Warcraft: Forever is a separate client at
+  `D:\Battle.net\Games\World of Warcraft\_forever_`, version 1.60.1,
+  `## Interface: 16001`. Its UI is built on modern retail code (12.1), so check
+  APIs against the `forever` branch of wow-ui-source, not `classic_era`.
+- Hawker and Hopscotch support both games from one folder:
+  `## Interface: 11509, 16001`. Downcast is Classic Era only.
+- Both are junction-linked into `_forever_\Interface\AddOns` as well.
+- Differences that matter so far: chat is `C_ChatInfo.SendChatMessage` (no
+  global `SendChatMessage`), and addon chat started from a macro is blocked
+  during instance encounters. Prefer the modern name and fall back to the
+  Classic one: `(C_ChatInfo and C_ChatInfo.SendChatMessage) or SendChatMessage`.
+- Forever adds "secret values": some API results can't be read by addons in
+  restricted moments. Check a function's documentation for `Secret*` flags
+  before using its results.
+
 ## How we build a change
 
 1. **Agree on it first.** Ask what the player wants to see or do, then describe
