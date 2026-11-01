@@ -1,0 +1,30 @@
+name: Issue labels
+
+# Adds the Downcast or Hawker label to issues opened from the issue forms,
+# based on the "Addon" answer.
+on:
+  issues:
+    types: [opened, edited]
+
+permissions:
+  issues: write
+
+jobs:
+  label:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/github-script@v7
+        with:
+          script: |
+            const addons = ["Downcast", "Hawker"];
+            const match = (context.payload.issue.body || "").match(/^### Addon\s*\r?\n\s*\r?\n\s*(\S+)/m);
+            const picked = match && addons.find(a => a === match[1]);
+            if (!picked) return;
+            const current = context.payload.issue.labels.map(l => l.name);
+            const stale = addons.filter(a => a !== picked && current.includes(a));
+            for (const name of stale) {
+              await github.rest.issues.removeLabel({ ...context.repo, issue_number: context.issue.number, name });
+            }
+            if (!current.includes(picked)) {
+              await github.rest.issues.addLabels({ ...context.repo, issue_number: context.issue.number, labels: [picked] });
+            }

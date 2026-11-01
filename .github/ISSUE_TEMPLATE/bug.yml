@@ -1,0 +1,49 @@
+name: Bug report
+description: Something in Downcast or Hawker isn't working, or shows an error.
+labels: [bug]
+body:
+  - type: dropdown
+    id: addon
+    attributes:
+      label: Addon
+      options:
+        - Downcast
+        - Hawker
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Addon version
+      description: Shown in the CurseForge app, or on the AddOns list at character select.
+      placeholder: "0.2.1"
+    validations:
+      required: true
+  - type: input
+    id: game
+    attributes:
+      label: Game version
+      description: Shown at the bottom left of the login screen.
+      placeholder: "Classic Era 1.15.9"
+  - type: textarea
+    id: error
+    attributes:
+      label: Error text
+      description: If you saw an error, paste it here. BugSack (with !BugGrabber) lets you copy the whole thing.
+      render: text
+  - type: textarea
+    id: steps
+    attributes:
+      label: What happened?
+      description: What you did, what you expected, and what happened instead. A macro you used helps too.
+      placeholder: |
+        1. Targeted a level 10 player
+        2. Pressed my Renew macro (/click DowncastRenew)
+        3. Got "Target is too low level"
+    validations:
+      required: true
+  - type: textarea
+    id: addons
+    attributes:
+      label: Other addons
+      description: Optional. Other addons you run, in case one of them is involved.

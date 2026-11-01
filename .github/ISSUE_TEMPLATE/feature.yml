@@ -1,0 +1,20 @@
+name: Idea or request
+description: Suggest a new feature or a change to Downcast or Hawker.
+labels: [enhancement]
+body:
+  - type: dropdown
+    id: addon
+    attributes:
+      label: Addon
+      options:
+        - Downcast
+        - Hawker
+    validations:
+      required: true
+  - type: textarea
+    id: idea
+    attributes:
+      label: Your idea
+      description: What you'd like it to do, and the moment in game where you wanted it.
+    validations:
+      required: true
