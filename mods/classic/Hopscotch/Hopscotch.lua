@@ -330,7 +330,8 @@ local function onAddonMessage(prefix, text, channel, sender)
   if not kind then return end
   dbg("heard %s from %s on %s", text, sender, tostring(channel))
   if kind == "S" or kind == "SQ" then
-    local charJumps, total = rest:match("^(%d+):(%d+)$")
+    -- Newer versions may add fields after these two; ignore them.
+    local charJumps, total = rest:match("^(%d+):(%d+)")
     charJumps, total = tonumber(charJumps), tonumber(total)
     if charJumps and total and charJumps <= total and total <= MAX_JUMPS then
       remember(key, shortName(sender), charJumps, total, channel)

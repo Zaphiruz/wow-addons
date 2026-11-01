@@ -490,6 +490,12 @@ SCENARIOS = {
   local n = 0 for _ in pairs(HopscotchDB.players) do n = n + 1 end
   ok(n == 0, "stored " .. n)
 ''',
+"extra fields from newer versions are ignored, not rejected": r'''
+  login(nil)
+  hear("Newer-Whitemane", "1:S:5:10:99:something", "GUILD")
+  local p = HopscotchDB.players["Newer-Whitemane"]
+  ok(p and p.charJumps == 5 and p.total == 10, "stored")
+''',
 "our own messages are ignored": r'''
   login(nil); advance(15); sent = {}
   hear("Zaphiruz-Whitemane", "1:SQ:0:0", "GUILD")
