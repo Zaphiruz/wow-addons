@@ -1,5 +1,15 @@
 # Hopscotch changelog
 
+## 0.3.0 (2026-11-01)
+
+- Perfect hops: a fresh press that leaves the ground right as you land (within one frame at 60 FPS, measured in time so high frame rates aren't punished). Holding the jump key doesn't count, since the game re-jumps for you, but it doesn't break a streak either.
+- Streaks of 3 or more perfect hops in a row pop up above the counter as "Perfect x4!", growing with each hop and fading when the streak ends.
+- Beating your best streak shows "New best!" and plays a chime, once per streak.
+- The My characters tab shows each character's best streak, and your perfect hops and best streak on this character.
+- The Places tab shows the best streak in each zone.
+- Your best streak is shared with other players and shown on the Players tab. Older versions still read the rest of your numbers.
+- `/hop debug` prints how many milliseconds after landing each hop left the ground.
+
 ## 0.2.0 (2026-11-01)
 
 - Compare jumps with other players who run Hopscotch. The window has a new Players tab ranking everyone you've heard from by account total, with you highlighted.

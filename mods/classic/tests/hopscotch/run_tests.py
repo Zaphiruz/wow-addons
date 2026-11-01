@@ -147,6 +147,36 @@ GameTooltip.lines = {}
 function GameTooltip:SetText(t) self.lines = { t } end
 function GameTooltip:AddLine(t) table.insert(self.lines, t) end
 function tooltip() return table.concat(GameTooltip.lines, "\n") end
+sounds = {}
+SOUNDKIT = { IG_QUEST_LIST_COMPLETE = 878 }
+function PlaySound(id) table.insert(sounds, id) end
+
+-- Hop chains at frame level. Each starts in the air with the jump key up.
+-- First hop from standing, ending in the air with the key released.
+function takeOff(frame)
+  frame = frame or 0.016
+  JumpOrAscendStart(); tick(frame)
+  player.falling = true; tick(frame)
+  AscendStop(); tick(0.3)
+end
+-- Land, stay on the ground for `gap` seconds, then press jump fresh and take off.
+function chainHop(gap, frame)
+  frame = frame or 0.016
+  player.falling = false; tick(frame)          -- the landing frame
+  -- take-off is seen (k + 1) frames after landing, so wait k frames on the ground
+  for i = 1, math.max(0, math.floor(gap / frame + 0.5) - 1) do tick(frame) end
+  JumpOrAscendStart(); player.falling = true; tick(frame)
+  AscendStop(); tick(0.3)
+end
+function perfect(n, frame) for i = 1, n do chainHop(frame or 0.016, frame) end end
+-- Jump held down from the air through landing: the game re-jumps by itself.
+function heldHop()
+  JumpOrAscendStart(); tick(0.016)
+  player.falling = false; tick(0.016)
+  player.falling = true; tick(0.016)
+  AscendStop(); tick(0.3)
+end
+function popupText() return HopscotchPopup and HopscotchPopup:IsShown() and HopscotchPopup.text:GetText() or nil end
 function CreateFrame(kind, name, parent, template)
   local w = widget(kind, name, parent)
   if template and template:find("BasicFrameTemplate") then
@@ -405,7 +435,7 @@ SCENARIOS = {
   ok(#sent == 0, "nothing straight away")
   advance(15)
   local g = sentTo("GUILD")
-  ok(#g == 1 and g[1] == "1:SQ:40:42", "guild got " .. table.concat(g, ","))
+  ok(#g == 1 and g[1] == "1:SQ:40:42:0", "guild got " .. table.concat(g, ","))
 ''',
 "not in a guild or group: sends nothing": r'''
   guild = false
@@ -415,7 +445,7 @@ SCENARIOS = {
 "login while grouped tells the group too": r'''
   group = { "Mirelle" }
   login(nil); advance(15)
-  ok(#sentTo("PARTY") == 1 and sentTo("PARTY")[1] == "1:SQ:0:0", "party")
+  ok(#sentTo("PARTY") == 1 and sentTo("PARTY")[1] == "1:SQ:0:0:0", "party")
 ''',
 "joining a group or raid tells it, once": r'''
   login(nil); advance(15); sent = {}
@@ -431,7 +461,7 @@ SCENARIOS = {
   advance(15); sent = {}
   hear("Grimbolt-Whitemane", "1:SQ:9102:21540", "GUILD")
   local w = sentTo("WHISPER", "Grimbolt-Whitemane")
-  ok(#w == 1 and w[1] == "1:S:7:7", "whispered back: " .. table.concat(w, ","))
+  ok(#w == 1 and w[1] == "1:S:7:7:0", "whispered back: " .. table.concat(w, ","))
   ok(#sentTo("GUILD") == 0, "guild not flooded")
   hear("Grimbolt-Whitemane", "1:Q", "WHISPER")
   ok(#sentTo("WHISPER") == 1, "no second answer straight away")
@@ -508,7 +538,7 @@ SCENARIOS = {
   hop(); hop()
   advance(61)
   local g = sentTo("GUILD")
-  ok(#g == 1 and g[1] == "1:S:2:2", "update: " .. table.concat(g, ","))
+  ok(#g == 1 and g[1] == "1:S:2:2:0", "update: " .. table.concat(g, ","))
 ''',
 "sharing off: send nothing, answer nothing, still listen": r'''
   login(nil); playersTab()
@@ -729,6 +759,93 @@ SCENARIOS = {
   local r = shownRows(win().runRows)[1]
   local rate = tonumber(r.info:GetText():match("(%d+)/h"))
   ok(r.info:GetText():find("50 jumps, 30 min") and rate and rate >= 98 and rate <= 100, r.info:GetText())
+''',
+
+# ---- perfect hops and streaks ----
+"a hop on the first frame after landing is perfect": r'''
+  login(nil)
+  takeOff()
+  ok(mine().perfectHops == nil or mine().perfectHops == 0, "the first hop from standing isn't perfect")
+  perfect(2)
+  ok(mine().perfectHops == 2 and mine().bestStreak == 2, "perfect " .. tostring(mine().perfectHops))
+  ok(popupText() == nil, "no pop-up below 3")
+''',
+"a streak of 3 or more pops up and grows": r'''
+  login(nil); takeOff()
+  perfect(3)
+  ok(popupText() == "Perfect x3!", tostring(popupText()))
+  perfect(1)
+  ok(popupText() == "Perfect x4!", tostring(popupText()))
+''',
+"a slow or close hop ends the streak and the pop-up fades": r'''
+  login(nil); takeOff()
+  perfect(4)
+  chainHop(0.03)                       -- close, not perfect
+  ok(mine().perfectHops == 4, "close isn't perfect")
+  advance(2)
+  ok(popupText() == nil, "faded")
+  perfect(2)
+  chainHop(0.4)
+  perfect(1)
+  ok(mine().bestStreak == 4, "best kept: " .. mine().bestStreak)
+''',
+"held-key hops neither count nor break a streak": r'''
+  login(nil); takeOff()
+  perfect(2)
+  heldHop(); heldHop()
+  ok(mine().perfectHops == 2, "held hops aren't perfect")
+  -- the held hop left us in the air with the key up; carry on
+  perfect(2)
+  ok(popupText() == "Perfect x4!", "streak carried through: " .. tostring(popupText()))
+''',
+"perfect is measured in time, so high frame rates aren't punished": r'''
+  login(nil); takeOff(0.007)
+  chainHop(0.014, 0.007)               -- two frames at 144 FPS, still within one 60 FPS frame
+  ok(mine().perfectHops == 1, "144 fps two frames")
+  chainHop(0.035, 0.007)
+  ok(mine().perfectHops == 1, "35 ms isn't perfect")
+''',
+"a new best is announced once per streak, with a sound": r'''
+  login({ chars = { ["Zaphiruz-Whitemane"] = { name = "Zaphiruz", realm = "Whitemane", class = "PRIEST",
+                                               jumps = 0, bestStreak = 3 } } })
+  takeOff(); perfect(3)
+  ok(not HopscotchPopup.sub:IsShown() and #sounds == 0, "matching the best isn't new")
+  perfect(1)
+  ok(HopscotchPopup.sub:IsShown() and HopscotchPopup.sub:GetText() == "New best!", "new best shown")
+  ok(#sounds == 1 and sounds[1] == 878, "one sound")
+  perfect(2)
+  ok(#sounds == 1 and mine().bestStreak == 6, "no repeat sound, best follows")
+''',
+"best streak per zone": r'''
+  login(nil); takeOff(); perfect(3); chainHop(0.5)
+  goTo("Stormwind City"); perfect(5); chainHop(0.5)
+  ok(mine().zoneBest["Elwynn Forest"] == 3 and mine().zoneBest["Stormwind City"] == 5, "zone bests")
+  placesTab()
+  local z = shownRows(win().zoneRows)
+  local found
+  for _, r in ipairs(z) do if r.name:GetText():find("Stormwind City") and r.name:GetText():find("best streak 5") then found = true end end
+  ok(found, "places shows the zone's best streak")
+''',
+"my characters tab shows best streaks and perfect hops": r'''
+  login({ chars = { ["Bankalt-Whitemane"] = { name = "Bankalt", realm = "Whitemane", class = "MAGE", jumps = 9, bestStreak = 12 } } })
+  takeOff(); perfect(3); chainHop(0.5)
+  cmd("")
+  local rows = shownRows()
+  local byName = {}
+  for _, r in ipairs(rows) do byName[r.name:GetText():match("^(%a+)")] = r end
+  ok(byName.Bankalt.best:GetText() == "best 12", "alt best " .. byName.Bankalt.best:GetText())
+  ok(byName.Zaphiruz.best:GetText() == "best 3", "my best")
+  ok(win().perfect:GetText():find("Perfect hops: 3") and win().perfect:GetText():find("best streak 3"), win().perfect:GetText())
+''',
+"best streak is shared and shown for other players": r'''
+  login({ chars = { ["Zaphiruz-Whitemane"] = { name = "Zaphiruz", realm = "Whitemane", class = "PRIEST", jumps = 7, bestStreak = 4 } } })
+  advance(15)
+  ok(sentTo("GUILD")[1] == "1:SQ:7:7:4", "sent " .. tostring(sentTo("GUILD")[1]))
+  hear("Grimbolt-Whitemane", "1:S:10:20:9", "GUILD")
+  hear("Oldie-Whitemane", "1:S:5:5", "GUILD")
+  ok(HopscotchDB.players["Grimbolt-Whitemane"].best == 9 and not HopscotchDB.players["Oldie-Whitemane"].best, "stored")
+  playersTab()
+  ok(playerRows()[1].name:GetText():find("best streak 9"), playerRows()[1].name:GetText())
 ''',
 
 # ---- commands ----

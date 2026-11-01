@@ -198,6 +198,80 @@ local function countJump()
   refreshWindow()
 end
 
+---------------------------------------------------------------------------
+-- Perfect hops and streaks
+--
+-- A perfect hop is a fresh press that leaves the ground within PERFECT_GAP of
+-- landing: one frame at 60 FPS, measured in time so higher frame rates aren't
+-- punished. Holding the key makes the game re-jump on the landing frame by
+-- itself, so held hops neither count as perfect nor break a streak.
+---------------------------------------------------------------------------
+local PERFECT_GAP = 0.020
+local SHOW_STREAK = 3     -- streaks this long or longer get the pop-up
+local POPUP_FADE = 1.5    -- seconds the pop-up stays after a streak ends
+
+local landedAt
+local streak, streakStartBest, bestSounded = 0, 0, false
+local popup, popupToken = nil, 0
+
+local function hidePopupSoon()
+  popupToken = popupToken + 1
+  local token = popupToken
+  C_Timer.After(POPUP_FADE, function()
+    if token == popupToken and popup then popup:Hide() end
+  end)
+end
+
+local function showStreak()
+  if not popup or streak < SHOW_STREAK then return end
+  popupToken = popupToken + 1  -- cancels a pending fade
+  local newBest = streak > streakStartBest
+  popup.text:SetText(format("Perfect x%d!", streak))
+  popup.sub:SetText("New best!")
+  popup.sub:SetShown(newBest)
+  popup:Show()
+  if newBest and not bestSounded then
+    bestSounded = true
+    if PlaySound and SOUNDKIT and SOUNDKIT.IG_QUEST_LIST_COMPLETE then
+      pcall(PlaySound, SOUNDKIT.IG_QUEST_LIST_COMPLETE)
+    end
+  end
+end
+
+local function endStreak()
+  if streak >= SHOW_STREAK then hidePopupSoon() end
+  streak = 0
+end
+
+local function perfectHop()
+  if streak == 0 then streakStartBest, bestSounded = me.bestStreak or 0, false end
+  streak = streak + 1
+  me.perfectHops = (me.perfectHops or 0) + 1
+  if streak > (me.bestStreak or 0) then me.bestStreak = streak end
+  if zone and zone ~= "" and streak > (me.zoneBest[zone] or 0) then me.zoneBest[zone] = streak end
+  showStreak()
+end
+
+-- Judge a counted hop that left the ground at time t.
+local function judgeHop(t)
+  if not landedAt then
+    endStreak()
+    return
+  end
+  if held and pressedAt < landedAt then
+    dbg("held hop: streak unchanged")
+    return
+  end
+  local gap = t - landedAt
+  if gap <= PERFECT_GAP then
+    perfectHop()
+    dbg("perfect hop, %d ms after landing (streak %d)", gap * 1000, streak)
+  else
+    dbg("hop %d ms after landing", gap * 1000)
+    endStreak()
+  end
+end
+
 local function canCount()
   return not IsSwimming() and not UnitIsDeadOrGhost("player") and not UnitOnTaxi("player")
 end
@@ -216,9 +290,12 @@ local function onUpdate(_, elapsed)
     if (held or recent) and canCount() then
       countJump()
       dbg("hop %d", me.jumps)
+      judgeHop(GetTime())
     else
       dbg("left the ground without a jump")
     end
+  elseif falling and not nowFalling then
+    landedAt = GetTime()
   end
   if nowFalling then
     groundedFor = 0
@@ -233,8 +310,8 @@ end
 -- Sharing with other players
 --
 -- Hidden addon messages, prefix "Hopscotch", each starting with protocol "1":
---   1:S:<characterJumps>:<accountTotal>    my numbers
---   1:SQ:<characterJumps>:<accountTotal>   my numbers, and please send yours
+--   1:S:<characterJumps>:<accountTotal>[:<bestStreak>]    my numbers
+--   1:SQ:<characterJumps>:<accountTotal>[:<bestStreak>]   my numbers, and please send yours
 --   1:Q                                    please send yours
 -- Answers to a request go back by whisper, so the guild isn't flooded.
 -- Only the character you're on and the account total are shared, never alt names.
@@ -278,7 +355,7 @@ local function announce(channel, ask, force)
   if not force and lastSent[channel] and now - lastSent[channel] < ANNOUNCE_GAP then return end
   lastSent[channel] = now
   sentTotal = accountTotal()
-  send(format("1:%s:%d:%d", ask and "SQ" or "S", me.jumps, sentTotal), channel)
+  send(format("1:%s:%d:%d:%d", ask and "SQ" or "S", me.jumps, sentTotal, me.bestStreak or 0), channel)
 end
 
 local function sendUpdates()
@@ -294,7 +371,7 @@ local function reply(sender)
   local now = GetTime()
   if lastReply[sender] and now - lastReply[sender] < REPLY_GAP then return end
   lastReply[sender] = now
-  send(format("1:S:%d:%d", me.jumps, accountTotal()), "WHISPER", sender)
+  send(format("1:S:%d:%d:%d", me.jumps, accountTotal(), me.bestStreak or 0), "WHISPER", sender)
 end
 
 local function shortName(sender)
@@ -307,10 +384,11 @@ local function fullName(sender)
   return sender .. "-" .. GetRealmName()
 end
 
-local function remember(key, name, charJumps, total, channel)
+local function remember(key, name, charJumps, total, channel, best)
   local p = db.players[key] or {}
   local source = SOURCES[channel] or "whisper"
   p.name, p.charJumps, p.total, p.seen = name, charJumps, total, time()
+  p.best = best
   p[source], p.source = p.seen, source
   db.players[key] = p
 
@@ -330,11 +408,13 @@ local function onAddonMessage(prefix, text, channel, sender)
   if not kind then return end
   dbg("heard %s from %s on %s", text, sender, tostring(channel))
   if kind == "S" or kind == "SQ" then
-    -- Newer versions may add fields after these two; ignore them.
-    local charJumps, total = rest:match("^(%d+):(%d+)")
-    charJumps, total = tonumber(charJumps), tonumber(total)
+    -- Fields: character jumps, account total, then (0.3.0+) best streak.
+    -- Newer versions may add more after these; ignore them.
+    local charJumps, total, best = rest:match("^(%d+):(%d+):?(%d*)")
+    charJumps, total, best = tonumber(charJumps), tonumber(total), tonumber(best)
     if charJumps and total and charJumps <= total and total <= MAX_JUMPS then
-      remember(key, shortName(sender), charJumps, total, channel)
+      if best and best > charJumps then best = nil end
+      remember(key, shortName(sender), charJumps, total, channel, best)
     end
   end
   if kind == "Q" or kind == "SQ" then reply(sender) end
@@ -464,6 +544,19 @@ local function buildCounter()
   placeCounter()
   updateCounter()
   counter:SetShown(not db.counter.hidden)
+
+  popup = CreateFrame("Frame", "HopscotchPopup", UIParent)
+  popup:SetSize(220, 44)
+  popup:SetPoint("BOTTOM", counter, "TOP", 0, 4)
+  popup:SetFrameStrata("HIGH")
+  popup:EnableMouse(false)
+  popup.text = popup:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
+  popup.text:SetPoint("TOP", 0, -4)
+  popup.text:SetTextColor(1, 0.82, 0)
+  popup.sub = popup:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+  popup.sub:SetPoint("TOP", popup.text, "BOTTOM", 0, -2)
+  popup.sub:SetTextColor(0.4, 1, 0.4)
+  popup:Hide()
 end
 
 ---------------------------------------------------------------------------
@@ -553,6 +646,10 @@ local function makeRow(parent, i)
   row.rate = row:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
   row.rate:SetPoint("RIGHT", row.remove, "LEFT", -72, 0)
   row.rate:SetJustifyH("RIGHT")
+
+  row.best = row:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
+  row.best:SetPoint("RIGHT", row.remove, "LEFT", -128, 0)
+  row.best:SetJustifyH("RIGHT")
   return row
 end
 
@@ -630,9 +727,11 @@ local function buildMineView()
   view:SetPoint("BOTTOMRIGHT", 0, 0)
   window.mineView = view
 
-  window.content = scrollList(view, "HopscotchWindowScroll", 0, 126)
+  window.content = scrollList(view, "HopscotchWindowScroll", 0, 146)
   window.session = view:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
   window.session:SetPoint("BOTTOMLEFT", 16, 108)
+  window.perfect = view:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+  window.perfect:SetPoint("BOTTOMLEFT", 16, 126)
   window.rows = {}
 
   local totalLabel = view:CreateFontString(nil, "OVERLAY", "GameFontNormal")
@@ -776,6 +875,7 @@ local function refreshMine()
     if color then row.name:SetTextColor(color.r, color.g, color.b) else row.name:SetTextColor(1, 1, 1) end
     row.jumps:SetText(commas(e.jumps))
     row.rate:SetText(rateText(e.timedJumps, e.seconds))
+    row.best:SetText((e.bestStreak or 0) > 0 and format("best %d", e.bestStreak) or "")
     row.remove:SetShown(e ~= me)
     row:Show()
   end
@@ -793,17 +893,21 @@ local function refreshMine()
   end
   window.totalRate:SetText(rateText(timedJumps, seconds))
   window.session:SetText(sessionText())
+  window.perfect:SetText(format("Perfect hops: %s, best streak %d", commas(me.perfectHops or 0), me.bestStreak or 0))
 end
 
 local function zoneList()
-  local totals, seconds = {}, {}
+  local totals, seconds, bests = {}, {}, {}
   local chars = window.placesScope == "account" and db.chars or { me }
   for _, e in pairs(chars) do
     for z, n in pairs(e.zones or {}) do totals[z] = (totals[z] or 0) + n end
     for z, t in pairs(e.zoneSeconds or {}) do seconds[z] = (seconds[z] or 0) + t end
+    for z, b in pairs(e.zoneBest or {}) do bests[z] = math.max(bests[z] or 0, b) end
   end
   local list = {}
-  for z, n in pairs(totals) do list[#list + 1] = { zone = z, jumps = n, seconds = seconds[z] } end
+  for z, n in pairs(totals) do
+    list[#list + 1] = { zone = z, jumps = n, seconds = seconds[z], best = bests[z] }
+  end
   table.sort(list, function(a, b)
     if a.jumps ~= b.jumps then return a.jumps > b.jumps end
     return a.zone < b.zone
@@ -826,6 +930,7 @@ local function refreshPlaces()
   fillRows(window.zoneRows, window.zoneContent, zoneList(), function(row, item)
     local label = item.zone
     if db.dungeons[item.zone] then label = label .. "  |cff808080dungeon|r" end
+    if item.best then label = label .. format("  |cff808080best streak %d|r", item.best) end
     row.name:SetText(label)
     row.right:SetText(commas(item.jumps))
     row.rate:SetText(rateText(item.jumps, item.seconds))
@@ -863,8 +968,9 @@ local function playerList()
       or (filter == "guild" and p.guild ~= nil)
       or (filter == "group" and inMyGroup(p.name))
     if keep then
-      list[#list + 1] = { name = p.name, charJumps = p.charJumps, total = p.total,
-                          note = (p.source or "whisper") .. ", " .. ago(now - (p.seen or now)) }
+      local note = (p.source or "whisper") .. ", " .. ago(now - (p.seen or now))
+      if p.best and p.best > 0 then note = note .. format(", best streak %d", p.best) end
+      list[#list + 1] = { name = p.name, charJumps = p.charJumps, total = p.total, note = note }
     end
   end
   list[#list + 1] = { name = me.name, charJumps = me.jumps, total = accountTotal(), you = true }
@@ -995,6 +1101,7 @@ events:SetScript("OnEvent", function(self, event, arg1, ...)
     me.jumps = me.jumps or 0
     me.zones = me.zones or {}
     me.zoneSeconds = me.zoneSeconds or {}
+    me.zoneBest = me.zoneBest or {}
     db.chars[key] = me
     sessionStart, lastTick = GetTime(), GetTime()
 
