@@ -35,6 +35,20 @@ jobs:
           echo "addon=$addon" >> "$GITHUB_OUTPUT"
           echo "version=$version" >> "$GITHUB_OUTPUT"
 
+      # A GitHub release that already exists means this version was released by
+      # hand (for example a first upload made while creating the CurseForge
+      # project). Uploading again would make a duplicate, so stop after testing.
+      - name: Released by hand already?
+        id: manual
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.ref_name }}
+        run: |
+          if gh release view "$TAG" > /dev/null 2>&1; then
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+            echo "::notice::A GitHub release for $TAG already exists, so it was released by hand. Skipping the upload."
+          fi
+
       - name: Check version and changelog
         run: python "$TOOLS/release.py" check "${{ steps.tag.outputs.addon }}" "${{ steps.tag.outputs.version }}"
 
@@ -45,11 +59,13 @@ jobs:
         run: python "$TOOLS/package.py" "${{ steps.tag.outputs.addon }}"
 
       - name: Upload to CurseForge
+        if: steps.manual.outputs.skip != 'true'
         env:
           CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
         run: python "$TOOLS/release.py" upload "${{ steps.tag.outputs.addon }}"
 
       - name: GitHub release
+        if: steps.manual.outputs.skip != 'true'
         env:
           GH_TOKEN: ${{ github.token }}
           TAG: ${{ github.ref_name }}

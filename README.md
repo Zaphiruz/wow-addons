@@ -6,6 +6,7 @@ World of Warcraft addons, released to CurseForge from this repository.
 |---|---|---|
 | [Downcast](mods/classic/Downcast) | Classic Era | Lets macros cast the best rank of a buff or HoT that can land on a low-level player |
 | [Hawker](mods/classic/Hawker) | Classic Era | Keeps a list of advert lines and says a random one with `/hawk` |
+| [Hopscotch](mods/classic/Hopscotch) | Classic Era | Counts every hop off the ground, for each character and the whole account |
 
 ## Layout
 
@@ -60,6 +61,14 @@ python mods/classic/tools/release.py upload Hawker --dry-run
 
 1. Create the project on CurseForge and upload the first file by hand.
 2. Copy the project ID from the project page into the `.toc`: `## X-Curse-Project-ID: 123456`.
+3. Optionally make a GitHub release for that first version, so it doesn't upload again:
+
+   ```bash
+   python mods/classic/tools/release.py notes Hopscotch > notes.md
+   gh release create Hopscotch/v0.1.0 mods/classic/dist/Hopscotch-0.1.0.zip --target main --title "Hopscotch 0.1.0" --notes-file notes.md
+   ```
+
+   The release workflow still runs the checks and tests for that tag, but skips the upload because the GitHub release already exists.
 
 ### One-time setup for the repository
 
