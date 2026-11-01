@@ -1,5 +1,20 @@
 # Hopscotch changelog
 
+## 0.2.0 (2026-11-01)
+
+- Compare jumps with other players who run Hopscotch. The window has a new Players tab ranking everyone you've heard from by account total, with you highlighted.
+- Your guild and group hear your numbers when you log in or join a group, and get updates about once a minute while you hop. Only the character you're on and your account total are shared, never your alts' names.
+- Filter the Players tab by All, Guild or Group. Each player shows where you heard from them and how long ago.
+- `/hop compare <name>` asks one player for their jumps and prints the answer in chat.
+- Turn off "Share my jumps" on the Players tab to stop sending your numbers. You still see what others share.
+- Players you haven't heard from in 30 days drop off the list.
+- Jumps are counted per zone too. The new Places tab ranks zones by jumps, for this character or your whole account. Dungeons and raids count as zones.
+- Dungeon runs: entering a dungeon or raid starts a run, and leaving ends it. Coming back within 15 minutes, after a corpse run or a repair trip, continues the same run. When a run ends, chat tells you how many jumps it took and how long.
+- The Places tab lists your last 20 runs, with the fewest and most jumps for each dungeon.
+- The counter has a second line showing your jumps where you are now, or the current run inside a dungeon. Set it on the My characters tab: since login, this visit, or off.
+- Zones and runs stay private. Other players only see your character and account totals.
+- Jumps per hour: for this session in the counter's tooltip and on the My characters tab, for each character and the account, for each zone, and for each dungeon run. Hopscotch keeps its own time online for this, starting now, so jumps from before don't skew the numbers. Rates appear once there's at least 5 minutes behind them.
+
 ## 0.1.0 (2026-11-01)
 
 First release.

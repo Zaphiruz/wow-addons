@@ -29,14 +29,171 @@ local HELD_TIMEOUT = 0.6    -- on the ground this long means the key isn't held 
 
 local held, pressedAt, falling, groundedFor = false, -math.huge, false, 0
 
+---------------------------------------------------------------------------
+-- Zones and dungeon runs
+--
+-- Every jump also counts toward the zone it happened in (dungeons are zones).
+-- A run starts on entering a dungeon or raid and ends on leaving, but coming
+-- back to the same one within RUN_GRACE (a corpse run, a repair trip)
+-- continues it. The run in progress is saved on the character, so a reload
+-- inside a dungeon doesn't lose it.
+---------------------------------------------------------------------------
+local RUN_GRACE = 15 * 60
+local ZONE_CHECK_EVERY = 30
+local KEEP_RUNS = 20
+local RUN_TYPES = { party = true, raid = true }
+
+local zone              -- the zone we're in now
+local sessionZones = {} -- jumps per zone since login
+local visitJumps = 0    -- jumps since entering this zone
+
+---------------------------------------------------------------------------
+-- Jumps per hour
+--
+-- Hopscotch keeps its own time online per character and per zone. A rate
+-- only uses jumps counted while that time was kept (timedJumps), so jumps
+-- from before tracking began don't inflate it. Rates hide until there's
+-- enough time behind them to mean something.
+---------------------------------------------------------------------------
+local MIN_RATE_SECONDS = 5 * 60
+local MAX_TICK = 120   -- never credit more than this between two ticks
+local sessionStart, sessionJumps, lastTick = nil, 0, nil
+
+local function perHour(jumps, seconds, minSeconds)
+  if not jumps or not seconds or seconds < (minSeconds or MIN_RATE_SECONDS) then return nil end
+  return math.floor(jumps * 3600 / seconds + 0.5)
+end
+
+local function rateText(jumps, seconds, minSeconds)
+  local r = perHour(jumps, seconds, minSeconds)
+  return r and (commas(r) .. "/h") or ""
+end
+
+local function sessionText()
+  local text = format("This session: %s jumps", commas(sessionJumps))
+  local r = sessionStart and perHour(sessionJumps, GetTime() - sessionStart)
+  if r then text = text .. format(", %s per hour", commas(r)) end
+  return text
+end
+
+-- Credit the time since the last tick to this character and zone.
+local function addTime()
+  local now = GetTime()
+  if lastTick and me then
+    local dt = math.min(now - lastTick, MAX_TICK)
+    if dt > 0 then
+      me.seconds = (me.seconds or 0) + dt
+      if zone and zone ~= "" then me.zoneSeconds[zone] = (me.zoneSeconds[zone] or 0) + dt end
+    end
+  end
+  lastTick = now
+end
+
+local function currentDungeon()
+  local inside, kind = IsInInstance()
+  if inside and RUN_TYPES[kind] then return GetRealZoneText() end
+end
+
+local function finishRun()
+  local run = me.run
+  if not run then return end
+  me.run = nil
+  local ended = run.lastInside or run.started
+  local seconds = math.max(0, ended - run.started)
+  table.insert(db.runs, 1, { dungeon = run.dungeon, char = me.name, ended = ended,
+                             jumps = run.jumps, seconds = seconds })
+  while #db.runs > KEEP_RUNS do table.remove(db.runs) end
+  local d = db.dungeons[run.dungeon] or { runs = 0 }
+  d.runs = (d.runs or 0) + 1
+  d.fewest = math.min(d.fewest or run.jumps, run.jumps)
+  d.most = math.max(d.most or run.jumps, run.jumps)
+  db.dungeons[run.dungeon] = d
+  say("%s run: %s jumps in %d min.", run.dungeon, commas(run.jumps), math.floor(seconds / 60 + 0.5))
+end
+
+-- Start, continue or finish the dungeon run to match where we are.
+local function checkRun()
+  local now, dungeon = time(), currentDungeon()
+  local run = me.run
+  if run then
+    local expired = now - (run.lastInside or run.started) > RUN_GRACE
+    if (dungeon and dungeon ~= run.dungeon) or expired then finishRun() end
+  end
+  if dungeon then
+    me.run = me.run or { dungeon = dungeon, started = now, jumps = 0 }
+    me.run.lastInside = now
+  end
+end
+
+local function inRun()
+  return me.run and zone == me.run.dungeon and currentDungeon() == me.run.dungeon
+end
+
+local function locationText()
+  local mode = db.counter.location or "login"
+  if mode == "off" or not zone or zone == "" then return nil end
+  if inRun() then return format("%s run  %s", zone, commas(me.run.jumps)) end
+  local n = mode == "visit" and visitJumps or (sessionZones[zone] or 0)
+  return format("%s  %s", zone, commas(n))
+end
+
 local function updateCounter()
   if not counter then return end
   counter.text:SetText("|cffffd200Jumps|r  " .. commas(me.jumps))
-  counter:SetWidth(counter.text:GetStringWidth() + 24)
+  local where = locationText()
+  local width = counter.text:GetStringWidth()
+  if where then
+    counter.where:SetText(where)
+    counter.where:Show()
+    width = math.max(width, counter.where:GetStringWidth())
+    counter.text:ClearAllPoints()
+    counter.text:SetPoint("TOP", 0, -6)
+    counter:SetHeight(40)
+  else
+    counter.where:Hide()
+    counter.text:ClearAllPoints()
+    counter.text:SetPoint("CENTER")
+    counter:SetHeight(24)
+  end
+  counter:SetWidth(width + 24)
+end
+
+local function onZoneChanged()
+  local newZone = GetRealZoneText()
+  if not newZone or newZone == "" then return end
+  -- We were inside the run's dungeon until just now.
+  if me.run and zone == me.run.dungeon then me.run.lastInside = time() end
+  addTime()  -- the time so far belongs to the zone we're leaving
+  if newZone ~= zone then
+    zone = newZone
+    visitJumps = 0
+  end
+  checkRun()
+  updateCounter()
+  refreshWindow()
+end
+
+local function zoneLoop()
+  addTime()
+  checkRun()
+  updateCounter()
+  refreshWindow()
+  C_Timer.After(ZONE_CHECK_EVERY, zoneLoop)
 end
 
 local function countJump()
   me.jumps = me.jumps + 1
+  me.timedJumps = (me.timedJumps or 0) + 1
+  sessionJumps = sessionJumps + 1
+  if zone and zone ~= "" then
+    me.zones[zone] = (me.zones[zone] or 0) + 1
+    sessionZones[zone] = (sessionZones[zone] or 0) + 1
+  end
+  visitJumps = visitJumps + 1
+  if inRun() then
+    me.run.jumps = me.run.jumps + 1
+    me.run.lastInside = time()
+  end
   updateCounter()
   refreshWindow()
 end
@@ -70,6 +227,165 @@ local function onUpdate(_, elapsed)
     if held and groundedFor > HELD_TIMEOUT then held = false end
   end
   falling = nowFalling
+end
+
+---------------------------------------------------------------------------
+-- Sharing with other players
+--
+-- Hidden addon messages, prefix "Hopscotch", each starting with protocol "1":
+--   1:S:<characterJumps>:<accountTotal>    my numbers
+--   1:SQ:<characterJumps>:<accountTotal>   my numbers, and please send yours
+--   1:Q                                    please send yours
+-- Answers to a request go back by whisper, so the guild isn't flooded.
+-- Only the character you're on and the account total are shared, never alt names.
+---------------------------------------------------------------------------
+local PREFIX = "Hopscotch"
+local ANNOUNCE_GAP = 10           -- seconds between announcements on one channel
+local UPDATE_EVERY = 60           -- seconds between sending changed numbers
+local REPLY_GAP = 10              -- seconds between answers to the same player
+local COMPARE_WAIT = 5            -- seconds to wait for a /hop compare answer
+local FORGET_AFTER = 30 * 86400   -- drop players not heard from in this long
+local MAX_JUMPS = 1000000000
+
+local SOURCES = { GUILD = "guild", PARTY = "group", RAID = "group", INSTANCE_CHAT = "group", WHISPER = "whisper" }
+
+local myKey
+local lastSent, lastReply, comparing = {}, {}, {}
+local sentTotal, groupSize = nil, 0
+
+local function accountTotal()
+  local total = 0
+  for _, e in pairs(db.chars) do total = total + e.jumps end
+  return total
+end
+
+local function sharing() return db.share ~= false end
+
+local function send(text, channel, target)
+  if not (C_ChatInfo and C_ChatInfo.SendAddonMessage) then return end
+  C_ChatInfo.SendAddonMessage(PREFIX, text, channel, target)
+  dbg("sent %s to %s%s", text, channel, target and (" " .. target) or "")
+end
+
+local function groupChannel()
+  if IsInRaid() then return "RAID" elseif IsInGroup() then return "PARTY" end
+end
+
+-- Tell a channel my numbers, and with ask, ask for theirs.
+local function announce(channel, ask, force)
+  if not channel or not sharing() then return end
+  local now = GetTime()
+  if not force and lastSent[channel] and now - lastSent[channel] < ANNOUNCE_GAP then return end
+  lastSent[channel] = now
+  sentTotal = accountTotal()
+  send(format("1:%s:%d:%d", ask and "SQ" or "S", me.jumps, sentTotal), channel)
+end
+
+local function sendUpdates()
+  if sharing() and accountTotal() ~= sentTotal then
+    if IsInGuild() then announce("GUILD", false, true) end
+    announce(groupChannel(), false, true)
+  end
+  C_Timer.After(UPDATE_EVERY, sendUpdates)
+end
+
+local function reply(sender)
+  if not sharing() then return end
+  local now = GetTime()
+  if lastReply[sender] and now - lastReply[sender] < REPLY_GAP then return end
+  lastReply[sender] = now
+  send(format("1:S:%d:%d", me.jumps, accountTotal()), "WHISPER", sender)
+end
+
+local function shortName(sender)
+  if Ambiguate then return Ambiguate(sender, "none") end
+  return (sender:gsub("%-.*$", ""))
+end
+
+local function fullName(sender)
+  if sender:find("-", 1, true) then return sender end
+  return sender .. "-" .. GetRealmName()
+end
+
+local function remember(key, name, charJumps, total, channel)
+  local p = db.players[key] or {}
+  local source = SOURCES[channel] or "whisper"
+  p.name, p.charJumps, p.total, p.seen = name, charJumps, total, time()
+  p[source], p.source = p.seen, source
+  db.players[key] = p
+
+  local asked = comparing[name:lower()]
+  if asked then
+    comparing[name:lower()] = nil
+    say("%s: %s on this character, %s on the account.", name, commas(charJumps), commas(total))
+  end
+  refreshWindow()
+end
+
+local function onAddonMessage(prefix, text, channel, sender)
+  if prefix ~= PREFIX or type(text) ~= "string" or type(sender) ~= "string" then return end
+  local key = fullName(sender)
+  if key == myKey then return end
+  local kind, rest = text:match("^1:(%u+):?(.*)$")
+  if not kind then return end
+  dbg("heard %s from %s on %s", text, sender, tostring(channel))
+  if kind == "S" or kind == "SQ" then
+    local charJumps, total = rest:match("^(%d+):(%d+)$")
+    charJumps, total = tonumber(charJumps), tonumber(total)
+    if charJumps and total and charJumps <= total and total <= MAX_JUMPS then
+      remember(key, shortName(sender), charJumps, total, channel)
+    end
+  end
+  if kind == "Q" or kind == "SQ" then reply(sender) end
+end
+
+local function onGroupChanged()
+  local size = GetNumGroupMembers()
+  if size > groupSize and size > 1 then announce(groupChannel(), true) end
+  groupSize = size
+  refreshWindow()
+end
+
+local function startSharing()
+  if IsInGuild() then announce("GUILD", true) end
+  groupSize = GetNumGroupMembers()
+  if groupSize > 1 then announce(groupChannel(), true) end
+  C_Timer.After(UPDATE_EVERY, sendUpdates)
+end
+
+local function compare(name)
+  name = strtrim(name or "")
+  if name == "" then
+    say("type a name: /hop compare <name>")
+    return
+  end
+  local key = shortName(name):lower()
+  comparing[key] = true
+  send("1:Q", "WHISPER", name)
+  C_Timer.After(COMPARE_WAIT, function()
+    if comparing[key] then
+      comparing[key] = nil
+      say("no answer from %s. They may be offline, or not running Hopscotch.", name)
+    end
+  end)
+end
+
+local function forgetOldPlayers()
+  local cutoff = time() - FORGET_AFTER
+  for key, p in pairs(db.players) do
+    if type(p) ~= "table" or (p.seen or 0) < cutoff then db.players[key] = nil end
+  end
+end
+
+local function ago(seconds)
+  if seconds < 300 then return "just now" end
+  if seconds < 3600 then return format("%d min ago", seconds / 60) end
+  if seconds < 86400 then
+    local h = math.floor(seconds / 3600)
+    return h == 1 and "1 hour ago" or format("%d hours ago", h)
+  end
+  local d = math.floor(seconds / 86400)
+  return d == 1 and "1 day ago" or format("%d days ago", d)
 end
 
 ---------------------------------------------------------------------------
@@ -122,6 +438,9 @@ local function buildCounter()
   end
   counter.text = counter:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
   counter.text:SetPoint("CENTER")
+  counter.where = counter:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+  counter.where:SetPoint("BOTTOM", 0, 7)
+  counter.where:SetTextColor(0.75, 0.75, 0.75)
 
   counter:SetScript("OnDragStart", function(self)
     if not db.counter.locked then self:StartMoving() end
@@ -135,6 +454,7 @@ local function buildCounter()
     GameTooltip:SetOwner(self, "ANCHOR_BOTTOM")
     GameTooltip:SetText("Hopscotch")
     GameTooltip:AddLine("Click to see every character's jumps.", 1, 1, 1)
+    GameTooltip:AddLine(sessionText(), 1, 0.82, 0)
     if not db.counter.locked then GameTooltip:AddLine("Drag to move.", 1, 1, 1) end
     GameTooltip:Show()
   end)
@@ -168,6 +488,34 @@ StaticPopupDialogs.HOPSCOTCH_REMOVE = {
 
 local function displayName(e) return e.name .. " - " .. e.realm end
 
+local LOCATION_LABELS = { login = "Since login", visit = "This visit", off = "Off" }
+local NEXT_LOCATION = { login = "visit", visit = "off", off = "login" }
+
+local function cycleLocation()
+  local nextMode = NEXT_LOCATION[db.counter.location or "login"]
+  db.counter.location = nextMode ~= "login" and nextMode or nil
+  updateCounter()
+  refreshWindow()
+end
+
+-- A row with text on the left (name) and on the right (right).
+local function makeTextRow(parent, i)
+  local row = CreateFrame("Frame", nil, parent)
+  row:SetHeight(ROW_HEIGHT)
+  row:SetPoint("TOPLEFT", 0, -(i - 1) * ROW_HEIGHT)
+  row:SetPoint("RIGHT", parent, "RIGHT", 0, 0)
+  row.name = row:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+  row.name:SetPoint("LEFT", 4, 0)
+  row.name:SetJustifyH("LEFT")
+  row.right = row:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+  row.right:SetPoint("RIGHT", -4, 0)
+  row.right:SetJustifyH("RIGHT")
+  row.rate = row:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
+  row.rate:SetPoint("RIGHT", -70, 0)
+  row.rate:SetJustifyH("RIGHT")
+  return row
+end
+
 local function sortedChars()
   local list = {}
   for key, e in pairs(db.chars) do list[#list + 1] = { key = key, entry = e } end
@@ -200,13 +548,46 @@ local function makeRow(parent, i)
   row.jumps = row:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
   row.jumps:SetPoint("RIGHT", row.remove, "LEFT", -8, 0)
   row.jumps:SetJustifyH("RIGHT")
+
+  row.rate = row:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
+  row.rate:SetPoint("RIGHT", row.remove, "LEFT", -72, 0)
+  row.rate:SetJustifyH("RIGHT")
   return row
 end
 
-local function checkbox(name, label, anchorTo, x, onClick)
-  local box = CreateFrame("CheckButton", name, window, "UICheckButtonTemplate")
+local function makePlayerRow(parent, i)
+  local row = CreateFrame("Frame", nil, parent)
+  row:SetHeight(ROW_HEIGHT)
+  row:SetPoint("TOPLEFT", 0, -(i - 1) * ROW_HEIGHT)
+  row:SetPoint("RIGHT", parent, "RIGHT", 0, 0)
+
+  row.bg = row:CreateTexture(nil, "BACKGROUND")
+  row.bg:SetAllPoints()
+  row.bg:SetColorTexture(0.25, 0.5, 1, 0.15)
+
+  row.rank = row:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
+  row.rank:SetPoint("LEFT", 2, 0)
+  row.rank:SetWidth(20)
+  row.rank:SetJustifyH("RIGHT")
+
+  row.name = row:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+  row.name:SetPoint("LEFT", 28, 0)
+  row.name:SetJustifyH("LEFT")
+
+  row.total = row:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+  row.total:SetPoint("RIGHT", -4, 0)
+  row.total:SetJustifyH("RIGHT")
+
+  row.charJumps = row:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+  row.charJumps:SetPoint("RIGHT", -76, 0)
+  row.charJumps:SetJustifyH("RIGHT")
+  return row
+end
+
+local function checkbox(parent, name, label, x, onClick)
+  local box = CreateFrame("CheckButton", name, parent, "UICheckButtonTemplate")
   box:SetSize(24, 24)
-  box:SetPoint("BOTTOMLEFT", anchorTo, "BOTTOMLEFT", x, 10)
+  box:SetPoint("BOTTOMLEFT", parent, "BOTTOMLEFT", x, 10)
   local text = box:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
   text:SetPoint("LEFT", box, "RIGHT", 2, 1)
   text:SetText(label)
@@ -214,9 +595,142 @@ local function checkbox(name, label, anchorTo, x, onClick)
   return box
 end
 
+local function smallButton(parent, name, label, width, onClick)
+  local b = CreateFrame("Button", name, parent, "UIPanelButtonTemplate")
+  b:SetSize(width, 22)
+  b:SetText(label)
+  b:SetScript("OnClick", onClick)
+  return b
+end
+
+local function scrollList(parent, name, top, bottom)
+  local scroll = CreateFrame("ScrollFrame", name, parent, "UIPanelScrollFrameTemplate")
+  scroll:SetPoint("TOPLEFT", 12, top)
+  scroll:SetPoint("BOTTOMRIGHT", -32, bottom)
+  local content = CreateFrame("Frame", nil, scroll)
+  content:SetSize(330, 1)
+  scroll:SetScrollChild(content)
+  return content
+end
+
+local function setShare(on)
+  if on then
+    db.share = nil
+    sentTotal = nil  -- send our numbers with the next update
+  else
+    db.share = false
+  end
+  refreshWindow()
+end
+
+local function buildMineView()
+  local view = CreateFrame("Frame", nil, window)
+  view:SetPoint("TOPLEFT", 0, -58)
+  view:SetPoint("BOTTOMRIGHT", 0, 0)
+  window.mineView = view
+
+  window.content = scrollList(view, "HopscotchWindowScroll", 0, 126)
+  window.session = view:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+  window.session:SetPoint("BOTTOMLEFT", 16, 108)
+  window.rows = {}
+
+  local totalLabel = view:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+  totalLabel:SetPoint("BOTTOMLEFT", 16, 48)
+  totalLabel:SetText("Account total")
+  window.total = view:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+  window.total:SetPoint("BOTTOMRIGHT", -40, 48)
+  window.totalRate = view:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
+  window.totalRate:SetPoint("BOTTOMRIGHT", -110, 49)
+
+  window.lockBox = checkbox(view, "HopscotchWindowLock", "Lock counter", 12, setLocked)
+  window.showBox = checkbox(view, "HopscotchWindowShow", "Show counter", 170, setCounterShown)
+
+  local locLabel = view:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+  locLabel:SetPoint("BOTTOMLEFT", 16, 82)
+  locLabel:SetText("Location line on the counter:")
+  window.locationButton = smallButton(view, "HopscotchWindowLocation", "", 110, cycleLocation)
+  window.locationButton:SetPoint("BOTTOMRIGHT", -36, 76)
+end
+
+local function buildPlacesView()
+  local view = CreateFrame("Frame", nil, window)
+  view:SetPoint("TOPLEFT", 0, -58)
+  view:SetPoint("BOTTOMRIGHT", 0, 0)
+  window.placesView = view
+
+  window.placesScope = "char"
+  window.scopeButtons = {
+    char = smallButton(view, "HopscotchWindowScopeChar", "This character", 110, function()
+      window.placesScope = "char"
+      refreshWindow()
+    end),
+    account = smallButton(view, "HopscotchWindowScopeAccount", "Account", 110, function()
+      window.placesScope = "account"
+      refreshWindow()
+    end),
+  }
+  window.scopeButtons.char:SetPoint("TOPLEFT", 12, 0)
+  window.scopeButtons.account:SetPoint("LEFT", window.scopeButtons.char, "RIGHT", 4, 0)
+
+  window.zoneContent = scrollList(view, "HopscotchWindowZonesScroll", -30, 200)
+  window.zoneRows = {}
+
+  local runsLabel = view:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+  runsLabel:SetPoint("BOTTOMLEFT", 16, 180)
+  runsLabel:SetText("Recent dungeon runs")
+  window.runContent = scrollList(view, "HopscotchWindowRunsScroll", -(382 - 172), 12)
+  window.runRows = {}
+  window.noRuns = view:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
+  window.noRuns:SetPoint("TOPLEFT", window.runContent, "TOPLEFT", 4, -4)
+  window.noRuns:SetText("No dungeon runs yet. Runs start when you enter a dungeon or raid.")
+end
+
+local function buildPlayersView()
+  local view = CreateFrame("Frame", nil, window)
+  view:SetPoint("TOPLEFT", 0, -58)
+  view:SetPoint("BOTTOMRIGHT", 0, 0)
+  window.playersView = view
+
+  window.filter = "all"
+  window.filters = {}
+  local x = 12
+  for _, f in ipairs({ { "all", "All" }, { "guild", "Guild" }, { "group", "Group" } }) do
+    local key = f[1]
+    local b = smallButton(view, "HopscotchWindowFilter" .. f[2], f[2], 64, function()
+      window.filter = key
+      refreshWindow()
+    end)
+    b:SetPoint("TOPLEFT", x, 0)
+    window.filters[key] = b
+    x = x + 68
+  end
+
+  local function header(text, point, xOff)
+    local h = view:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
+    h:SetPoint(point, view, "TOP" .. point, xOff, -30)
+    h:SetText(text)
+  end
+  header("Player", "LEFT", 40)
+  header("Character", "RIGHT", -112)
+  header("Account", "RIGHT", -40)
+
+  window.playerContent = scrollList(view, "HopscotchWindowPlayersScroll", -46, 44)
+  window.playerRows = {}
+
+  window.shareBox = checkbox(view, "HopscotchWindowShare", "Share my jumps", 12, setShare)
+  local hint = view:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
+  hint:SetPoint("BOTTOMRIGHT", -16, 16)
+  hint:SetText("/hop compare <name>")
+end
+
+local function showView(name)
+  window.view = name
+  refreshWindow()
+end
+
 local function buildWindow()
   window = CreateFrame("Frame", "HopscotchWindow", UIParent, "BasicFrameTemplateWithInset")
-  window:SetSize(320, 360)
+  window:SetSize(400, 440)
   window:SetPoint("CENTER")
   window:SetFrameStrata("DIALOG")
   window:SetClampedToScreen(true)
@@ -228,30 +742,25 @@ local function buildWindow()
   window.TitleText:SetText("Hopscotch")
   tinsert(UISpecialFrames, "HopscotchWindow")
 
-  local scroll = CreateFrame("ScrollFrame", "HopscotchWindowScroll", window, "UIPanelScrollFrameTemplate")
-  scroll:SetPoint("TOPLEFT", 12, -32)
-  scroll:SetPoint("BOTTOMRIGHT", -32, 76)
-  local content = CreateFrame("Frame", nil, scroll)
-  content:SetSize(270, 1)
-  scroll:SetScrollChild(content)
-  window.content = content
-  window.rows = {}
+  window.tabs = {
+    mine = smallButton(window, "HopscotchWindowTabMine", "My characters", 120, function() showView("mine") end),
+    players = smallButton(window, "HopscotchWindowTabPlayers", "Players", 110, function() showView("players") end),
+    places = smallButton(window, "HopscotchWindowTabPlaces", "Places", 110, function() showView("places") end),
+  }
+  window.tabs.mine:SetPoint("TOPLEFT", 12, -28)
+  window.tabs.players:SetPoint("LEFT", window.tabs.mine, "RIGHT", 4, 0)
+  window.tabs.places:SetPoint("LEFT", window.tabs.players, "RIGHT", 4, 0)
 
-  local totalLabel = window:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-  totalLabel:SetPoint("BOTTOMLEFT", 16, 48)
-  totalLabel:SetText("Account total")
-  window.total = window:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-  window.total:SetPoint("BOTTOMRIGHT", -40, 48)
-
-  window.lockBox = checkbox("HopscotchWindowLock", "Lock counter", window, 12, setLocked)
-  window.showBox = checkbox("HopscotchWindowShow", "Show counter", window, 150, setCounterShown)
+  buildMineView()
+  buildPlayersView()
+  buildPlacesView()
+  window.view = "mine"
 
   window:SetScript("OnShow", function() refreshWindow() end)
   window:Hide()
 end
 
-refreshWindow = function()
-  if not (window and window:IsShown()) then return end
+local function refreshMine()
   local list, total = sortedChars(), 0
   for i, item in ipairs(list) do
     local e = item.entry
@@ -265,6 +774,7 @@ refreshWindow = function()
     local color = RAID_CLASS_COLORS and RAID_CLASS_COLORS[e.class or ""]
     if color then row.name:SetTextColor(color.r, color.g, color.b) else row.name:SetTextColor(1, 1, 1) end
     row.jumps:SetText(commas(e.jumps))
+    row.rate:SetText(rateText(e.timedJumps, e.seconds))
     row.remove:SetShown(e ~= me)
     row:Show()
   end
@@ -273,6 +783,133 @@ refreshWindow = function()
   window.total:SetText(commas(total))
   window.lockBox:SetChecked(db.counter.locked and true or false)
   window.showBox:SetChecked(not db.counter.hidden)
+  window.locationButton:SetText(LOCATION_LABELS[db.counter.location or "login"])
+  local timedJumps, seconds = 0, 0
+  for _, e in pairs(db.chars) do
+    if e.seconds then
+      timedJumps, seconds = timedJumps + (e.timedJumps or 0), seconds + e.seconds
+    end
+  end
+  window.totalRate:SetText(rateText(timedJumps, seconds))
+  window.session:SetText(sessionText())
+end
+
+local function zoneList()
+  local totals, seconds = {}, {}
+  local chars = window.placesScope == "account" and db.chars or { me }
+  for _, e in pairs(chars) do
+    for z, n in pairs(e.zones or {}) do totals[z] = (totals[z] or 0) + n end
+    for z, t in pairs(e.zoneSeconds or {}) do seconds[z] = (seconds[z] or 0) + t end
+  end
+  local list = {}
+  for z, n in pairs(totals) do list[#list + 1] = { zone = z, jumps = n, seconds = seconds[z] } end
+  table.sort(list, function(a, b)
+    if a.jumps ~= b.jumps then return a.jumps > b.jumps end
+    return a.zone < b.zone
+  end)
+  return list
+end
+
+local function fillRows(rows, content, items, fill)
+  for i, item in ipairs(items) do
+    local row = rows[i] or makeTextRow(content, i)
+    rows[i] = row
+    fill(row, item)
+    row:Show()
+  end
+  for i = #items + 1, #rows do rows[i]:Hide() end
+  content:SetHeight(math.max(1, #items * ROW_HEIGHT))
+end
+
+local function refreshPlaces()
+  fillRows(window.zoneRows, window.zoneContent, zoneList(), function(row, item)
+    local label = item.zone
+    if db.dungeons[item.zone] then label = label .. "  |cff808080dungeon|r" end
+    row.name:SetText(label)
+    row.right:SetText(commas(item.jumps))
+    row.rate:SetText(rateText(item.jumps, item.seconds))
+    row.jumps = row.right
+  end)
+
+  local now = time()
+  fillRows(window.runRows, window.runContent, db.runs, function(row, run)
+    local d = db.dungeons[run.dungeon]
+    local record = d and format("  (fewest %s, most %s)", commas(d.fewest), commas(d.most)) or ""
+    row.name:SetText(format("%s  |cff808080%s, %s%s|r", run.dungeon, run.char or "?", ago(now - (run.ended or now)), record))
+    local info = format("%s jumps, %d min", commas(run.jumps), math.floor((run.seconds or 0) / 60 + 0.5))
+    local r = perHour(run.jumps, run.seconds, 60)
+    if r then info = info .. format(", %s/h", commas(r)) end
+    row.right:SetText(info)
+    row.rate:SetText("")
+    row.info = row.right
+  end)
+  window.noRuns:SetShown(#db.runs == 0)
+
+  window.scopeButtons.char:SetEnabled(window.placesScope ~= "char")
+  window.scopeButtons.account:SetEnabled(window.placesScope ~= "account")
+end
+
+local function inMyGroup(name)
+  local inParty = UnitInParty and UnitInParty(name)
+  local inRaid = UnitInRaid and UnitInRaid(name)
+  return (inParty or inRaid) and true or false
+end
+
+local function playerList()
+  local list, filter, now = {}, window.filter, time()
+  for _, p in pairs(db.players) do
+    local keep = filter == "all"
+      or (filter == "guild" and p.guild ~= nil)
+      or (filter == "group" and inMyGroup(p.name))
+    if keep then
+      list[#list + 1] = { name = p.name, charJumps = p.charJumps, total = p.total,
+                          note = (p.source or "whisper") .. ", " .. ago(now - (p.seen or now)) }
+    end
+  end
+  list[#list + 1] = { name = me.name, charJumps = me.jumps, total = accountTotal(), you = true }
+  table.sort(list, function(a, b)
+    if a.total ~= b.total then return a.total > b.total end
+    return a.name < b.name
+  end)
+  return list
+end
+
+local function refreshPlayers()
+  local list = playerList()
+  for i, item in ipairs(list) do
+    local row = window.playerRows[i] or makePlayerRow(window.playerContent, i)
+    window.playerRows[i] = row
+    row.rank:SetText(i)
+    if item.you then
+      row.name:SetText(item.name .. " |cff66ccff(you)|r")
+    else
+      row.name:SetText(item.name .. "  |cff808080" .. item.note .. "|r")
+    end
+    row.bg:SetShown(item.you or false)
+    row.charJumps:SetText(commas(item.charJumps))
+    row.total:SetText(commas(item.total))
+    row:Show()
+  end
+  for i = #list + 1, #window.playerRows do window.playerRows[i]:Hide() end
+  window.playerContent:SetHeight(math.max(1, #list * ROW_HEIGHT))
+  for key, b in pairs(window.filters) do b:SetEnabled(key ~= window.filter) end
+  window.shareBox:SetChecked(sharing())
+end
+
+refreshWindow = function()
+  if not (window and window:IsShown()) then return end
+  local view = window.view
+  window.mineView:SetShown(view == "mine")
+  window.playersView:SetShown(view == "players")
+  window.placesView:SetShown(view == "places")
+  for name, tab in pairs(window.tabs) do tab:SetEnabled(name ~= view) end
+  if view == "players" then
+    refreshPlayers()
+  elseif view == "places" then
+    refreshPlaces()
+  else
+    refreshMine()
+  end
 end
 
 toggleWindow = function()
@@ -287,7 +924,8 @@ local HELP = {
   "/hop  -  open or close the window with every character's jumps",
   "/hop show  /  /hop hide  -  show or hide the on-screen counter",
   "/hop lock  /  /hop unlock  -  stop or allow dragging the counter",
-  "/hop debug  -  print each jump press, to check what counts",
+  "/hop compare <name>  -  ask another Hopscotch player for their jumps",
+  "/hop debug  -  print each jump press and shared message, to check what counts",
 }
 
 SLASH_HOPSCOTCH1 = "/hop"
@@ -297,8 +935,11 @@ SlashCmdList.HOPSCOTCH = function(msg)
     say("didn't finish loading. Try /reload, and check for errors.")
     return
   end
-  local word = strtrim(msg or ""):lower()
-  if word == "" then
+  local word, rest = strtrim(msg or ""):match("^(%S*)%s*(.-)$")
+  word = word:lower()
+  if word == "compare" then
+    compare(rest)
+  elseif word == "" then
     toggleWindow()
   elseif word == "show" or word == "hide" then
     setCounterShown(word == "show")
@@ -318,23 +959,48 @@ end
 ---------------------------------------------------------------------------
 -- Startup
 ---------------------------------------------------------------------------
+local SHARE_DELAY = 10  -- seconds after login before telling guild and group
+
 local events = CreateFrame("Frame")
-events:RegisterEvent("ADDON_LOADED")
-events:RegisterEvent("PLAYER_LOGIN")
-events:SetScript("OnEvent", function(self, event, arg1)
-  if event == "ADDON_LOADED" and arg1 == ADDON then
+for _, e in ipairs({ "ADDON_LOADED", "PLAYER_LOGIN", "CHAT_MSG_ADDON", "GROUP_ROSTER_UPDATE",
+                     "ZONE_CHANGED_NEW_AREA", "PLAYER_ENTERING_WORLD", "PLAYER_LOGOUT" }) do
+  pcall(events.RegisterEvent, events, e)
+end
+events:SetScript("OnEvent", function(self, event, arg1, ...)
+  if event == "CHAT_MSG_ADDON" then
+    if db and me then onAddonMessage(arg1, ...) end
+  elseif event == "GROUP_ROSTER_UPDATE" then
+    if db and me then onGroupChanged() end
+  elseif event == "PLAYER_LOGOUT" then
+    if db and me then addTime() end
+  elseif event == "ZONE_CHANGED_NEW_AREA" or event == "PLAYER_ENTERING_WORLD" then
+    if db and me then onZoneChanged() end
+  elseif event == "ADDON_LOADED" and arg1 == ADDON then
     HopscotchDB = HopscotchDB or {}
     db = HopscotchDB
     db.chars = db.chars or {}
     db.counter = db.counter or {}
+    db.players = db.players or {}
+    db.runs = db.runs or {}
+    db.dungeons = db.dungeons or {}
+    forgetOldPlayers()
   elseif event == "PLAYER_LOGIN" then
     local name, realm = UnitName("player"), GetRealmName()
     local key = charKey(name, realm)
+    myKey = key
     me = db.chars[key] or { jumps = 0 }
     me.name, me.realm = name, realm
     me.class = select(2, UnitClass("player"))
     me.jumps = me.jumps or 0
+    me.zones = me.zones or {}
+    me.zoneSeconds = me.zoneSeconds or {}
     db.chars[key] = me
+    sessionStart, lastTick = GetTime(), GetTime()
+
+    -- Where we are, and whether a saved dungeon run continues or is over.
+    zone = GetRealZoneText()
+    checkRun()
+    C_Timer.After(ZONE_CHECK_EVERY, zoneLoop)
 
     buildCounter()
     local hooked = pcall(hooksecurefunc, "JumpOrAscendStart", onPress)
@@ -343,6 +1009,11 @@ events:SetScript("OnEvent", function(self, event, arg1)
       self:SetScript("OnUpdate", onUpdate)
     else
       say("can't see jumps in this game version, so nothing will be counted.")
+    end
+
+    if C_ChatInfo and C_ChatInfo.RegisterAddonMessagePrefix then
+      C_ChatInfo.RegisterAddonMessagePrefix(PREFIX)
+      C_Timer.After(SHARE_DELAY, startSharing)
     end
   end
 end)
