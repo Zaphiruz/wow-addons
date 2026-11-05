@@ -176,6 +176,24 @@ function heldHop()
   player.falling = true; tick(0.016)
   AscendStop(); tick(0.3)
 end
+-- Flat-ground jumps at 144 FPS that last AIR seconds, as timed in game.
+FRAME, AIR = 1 / 144, 0.826
+function frames(n) for i = 1, n do tick(FRAME) end end
+function tickUntil(t) while now < t - FRAME / 2 do tick(FRAME) end end
+-- Leave the ground with a fresh press; returns the take-off time.
+function flatTakeOff()
+  JumpOrAscendStart(); tick(FRAME)
+  player.falling = true; tick(FRAME)
+  AscendStop()
+  return now
+end
+-- Keep falling, then land on the frame at `at`.
+function landAt(at) tickUntil(at - FRAME); player.falling = false; tick(FRAME) end
+-- A whole flat hop from the ground, then a moment standing.
+function flatHop() local t = flatTakeOff(); landAt(t + AIR); frames(30) end
+-- Tap jump on the frame the player lands at `at`: the game lands and jumps
+-- again inside that frame, so IsFalling() never reads false. Returns the press time.
+function rejumpAt(at) tickUntil(at); JumpOrAscendStart(); local p = now; tick(FRAME); AscendStop(); return p end
 function popupText() return HopscotchPopup and HopscotchPopup:IsShown() and HopscotchPopup.text:GetText() or nil end
 function CreateFrame(kind, name, parent, template)
   local w = widget(kind, name, parent)
@@ -255,6 +273,89 @@ SCENARIOS = {
   ok(HopscotchCounter.text:GetText():find("1$"), "counter updates: " .. HopscotchCounter.text:GetText())
   hop(); hop()
   ok(mine().jumps == 3, "got " .. mine().jumps)
+''',
+"debug shows time in the air for landings and presses": r'''
+  login(nil)
+  cmd("debug")
+  out = {}
+  takeOff()                                    -- in the air, 300 ms after take-off
+  JumpOrAscendStart(); tick(0.5); AscendStop() -- a press in the air, 300 ms in
+  player.falling = false; tick(0.016)          -- lands 816 ms after take-off
+  local log = table.concat(out, "\n")
+  ok(log:find("jump pressed %(in the air, 300 ms after take%-off%)"), log)
+  ok(log:find("landed after 816 ms in the air"), log)
+  out = {}
+  JumpOrAscendStart(); tick(0.016)
+  ok(table.concat(out, "\n"):find("jump pressed %(on the ground%)"), table.concat(out, "\n"))
+  cmd("debug")
+  out = {}
+  player.falling = true; tick(0.016); player.falling = false; tick(0.016)
+  ok(#out == 0, "quiet with debug off: " .. table.concat(out, "\n"))
+''',
+"a jump pressed on the landing frame still counts, as a perfect hop": r'''
+  login(nil)
+  flatHop(); flatHop(); flatHop()   -- learns how long a jump lasts
+  ok(mine().jumps == 3, "got " .. mine().jumps)
+  local t = flatTakeOff()
+  local p = rejumpAt(t + AIR)
+  ok(mine().jumps == 4, "counted when the hidden landing is confirmed, not before")
+  landAt(p + AIR)
+  ok(mine().jumps == 5, "got " .. mine().jumps)
+  ok(mine().perfectHops == 1, "perfect: " .. tostring(mine().perfectHops))
+''',
+"several landing-frame re-jumps in a row all count and make a streak": r'''
+  login(nil)
+  flatHop(); flatHop(); flatHop()
+  local at = flatTakeOff() + AIR
+  for i = 1, 3 do at = rejumpAt(at) + AIR end
+  landAt(at)
+  ok(mine().jumps == 7, "got " .. mine().jumps)
+  ok(mine().perfectHops == 3, "perfect: " .. tostring(mine().perfectHops))
+  ok(popupText() == "Perfect x3!", tostring(popupText()))
+  ok(mine().bestStreak == 3, "best " .. tostring(mine().bestStreak))
+''',
+"holding jump through a hidden landing counts, without changing the streak": r'''
+  login(nil)
+  flatHop(); flatHop(); flatHop()
+  JumpOrAscendStart(); tick(FRAME)
+  player.falling = true; tick(FRAME)
+  local t = now
+  landAt(t + 2 * AIR)               -- key held the whole time
+  AscendStop(); tick(FRAME)
+  ok(mine().jumps == 5, "got " .. mine().jumps)
+  ok((mine().perfectHops or 0) == 0, "held hops aren't perfect")
+''',
+"a long fall is not mistaken for a hidden hop": r'''
+  login(nil)
+  flatHop(); flatHop(); flatHop()
+  -- pressed where a flat jump would land, but the ground dropped away
+  local t = flatTakeOff()
+  rejumpAt(t + AIR)
+  landAt(t + AIR + 0.4)
+  ok(mine().jumps == 4, "downhill: got " .. mine().jumps)
+  frames(30)
+  -- a tap early in the air, then a fall exactly two jumps long
+  t = flatTakeOff()
+  rejumpAt(t + 0.3)
+  landAt(t + 2 * AIR)
+  ok(mine().jumps == 5, "early tap: got " .. mine().jumps)
+  ok((mine().perfectHops or 0) == 0, "no perfect hops")
+''',
+"nothing is guessed before it knows how long a jump lasts": r'''
+  login(nil)
+  local t = flatTakeOff()
+  local p = rejumpAt(t + AIR)
+  landAt(p + AIR)
+  ok(mine().jumps == 1, "got " .. mine().jumps)
+''',
+"at a low frame rate, one frame on the ground is still perfect": r'''
+  login(nil)
+  local f = 1 / 30
+  takeOff(f)
+  perfect(3, f)
+  ok(mine().perfectHops == 3, "perfect: " .. tostring(mine().perfectHops))
+  chainHop(2 * f, f)                -- two frames on the ground is a miss
+  ok(mine().perfectHops == 3, "two frames: " .. tostring(mine().perfectHops))
 ''',
 "pressing again in the air does not count": r'''
   login(nil)

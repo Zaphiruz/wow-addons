@@ -202,15 +202,17 @@ end
 -- Perfect hops and streaks
 --
 -- A perfect hop is a fresh press that leaves the ground within PERFECT_GAP of
--- landing: one frame at 60 FPS, measured in time so higher frame rates aren't
--- punished. Holding the key makes the game re-jump on the landing frame by
--- itself, so held hops neither count as perfect nor break a streak.
+-- landing (one frame at 60 FPS, measured in time so higher frame rates aren't
+-- punished), or after a single frame on the ground, so low frame rates can
+-- still get one. Holding the key makes the game re-jump on the landing frame
+-- by itself, so held hops neither count as perfect nor break a streak.
 ---------------------------------------------------------------------------
 local PERFECT_GAP = 0.020
 local SHOW_STREAK = 3     -- streaks this long or longer get the pop-up
 local POPUP_FADE = 1.5    -- seconds the pop-up stays after a streak ends
 
 local landedAt
+local groundFrames = 0    -- frames seen on the ground since the last landing
 local streak, streakStartBest, bestSounded = 0, 0, false
 local popup, popupToken = nil, 0
 
@@ -263,7 +265,7 @@ local function judgeHop(t)
     return
   end
   local gap = t - landedAt
-  if gap <= PERFECT_GAP then
+  if gap <= PERFECT_GAP or groundFrames <= 1 then
     perfectHop()
     dbg("perfect hop, %d ms after landing (streak %d)", gap * 1000, streak)
   else
@@ -276,18 +278,110 @@ local function canCount()
   return not IsSwimming() and not UnitIsDeadOrGhost("player") and not UnitOnTaxi("player")
 end
 
-local function onPress()
-  held, pressedAt, groundedFor = true, GetTime(), 0
-  dbg("jump pressed (in the air: %s)", tostring(falling))
+local function ms(seconds) return math.floor(seconds * 1000 + 0.5) end
+
+---------------------------------------------------------------------------
+-- Hidden landings
+--
+-- A press on the exact landing frame makes the game land and jump again
+-- inside that frame, so IsFalling() never reads false and no landing or
+-- take-off is seen. Jumps on flat ground all last about the same time, so a
+-- landing that comes one jump after the time a jump should have landed, with
+-- the jump key down at that moment, was really two hops. They're counted
+-- when that later landing confirms them.
+---------------------------------------------------------------------------
+local AIR_SAMPLES = 9        -- recent jump airtimes kept
+local AIR_MIN_SAMPLES = 3    -- airtimes needed before hidden landings are looked for
+local AIR_MIN, AIR_MAX = 0.4, 1.5  -- airtimes outside this aren't flat-ground jumps
+local AIR_SLACK = 0.05       -- how far a hidden landing may be from where it's expected
+local MAX_HIDDEN = 8         -- hidden landings in one stretch in the air
+
+local takeOffAt              -- when the player last left the ground
+local airCounted = false     -- that take-off was a counted hop
+local airtimes = {}
+local keyLog = {}            -- jump key presses since take-off: { down = t, up = t }
+
+local function jumpAirtime()
+  if #airtimes < AIR_MIN_SAMPLES then return end
+  local sorted = {}
+  for i, a in ipairs(airtimes) do sorted[i] = a end
+  table.sort(sorted)
+  return sorted[math.floor((#sorted + 1) / 2)]
 end
 
-local function onRelease() held = false end
+local function learnAirtime(a)
+  if a < AIR_MIN or a > AIR_MAX then return end
+  tinsert(airtimes, a)
+  if #airtimes > AIR_SAMPLES then tremove(airtimes, 1) end
+end
+
+-- The press that had the jump key down around time t, if any.
+local function keyDownAround(t)
+  for i = #keyLog, 1, -1 do
+    local k = keyLog[i]
+    if k.down <= t + AIR_SLACK and (not k.up or k.up >= t - AIR_SLACK) then return k end
+  end
+end
+
+-- For a landing seen at time t, the hidden landings before it: a list of
+-- { at = time, fresh = pressed right then rather than held }, or nil.
+local function findHidden(t)
+  local air = jumpAirtime()
+  if not (air and airCounted and takeOffAt) then return end
+  local found, from = {}, takeOffAt
+  for _ = 1, MAX_HIDDEN + 1 do
+    local left = t - from
+    if math.abs(left - air) <= AIR_SLACK then
+      return #found > 0 and found or nil
+    end
+    if left < air then return end
+    local due = from + air
+    local k = keyDownAround(due)
+    if not k then return end
+    local fresh = k.down >= due - AIR_SLACK
+    local at = fresh and k.down or due
+    found[#found + 1] = { at = at, fresh = fresh }
+    from = at
+  end
+end
+
+local function countHidden(found)
+  for _, h in ipairs(found) do
+    countJump()
+    if h.fresh then
+      perfectHop()
+      dbg("hop %d, pressed on the landing frame %d ms after take-off: perfect (streak %d)",
+          me.jumps, ms(h.at - takeOffAt), streak)
+    else
+      dbg("hop %d, held through a landing frame: streak unchanged", me.jumps)
+    end
+  end
+end
+
+local function onPress()
+  held, pressedAt, groundedFor = true, GetTime(), 0
+  if falling and takeOffAt then
+    tinsert(keyLog, { down = pressedAt })
+    dbg("jump pressed (in the air, %d ms after take-off)", ms(pressedAt - takeOffAt))
+  else
+    dbg("jump pressed (on the ground)")
+  end
+end
+
+local function onRelease()
+  held = false
+  local k = keyLog[#keyLog]
+  if k and not k.up then k.up = GetTime() end
+end
 
 local function onUpdate(_, elapsed)
   local nowFalling = IsFalling() and true or false
   if nowFalling and not falling then
+    takeOffAt = GetTime()
+    keyLog = held and { { down = pressedAt } } or {}
     local recent = GetTime() - pressedAt <= TAKEOFF_WINDOW
-    if (held or recent) and canCount() then
+    airCounted = (held or recent) and canCount()
+    if airCounted then
       countJump()
       dbg("hop %d", me.jumps)
       judgeHop(GetTime())
@@ -295,12 +389,20 @@ local function onUpdate(_, elapsed)
       dbg("left the ground without a jump")
     end
   elseif falling and not nowFalling then
-    landedAt = GetTime()
+    local t = GetTime()
+    if takeOffAt then dbg("landed after %d ms in the air", ms(t - takeOffAt)) end
+    local found = findHidden(t)
+    if found then
+      if canCount() then countHidden(found) end
+    elseif airCounted and takeOffAt then
+      learnAirtime(t - takeOffAt)
+    end
+    landedAt, airCounted = t, false
   end
   if nowFalling then
-    groundedFor = 0
+    groundedFor, groundFrames = 0, 0
   else
-    groundedFor = groundedFor + elapsed
+    groundedFor, groundFrames = groundedFor + elapsed, groundFrames + 1
     if held and groundedFor > HELD_TIMEOUT then held = false end
   end
   falling = nowFalling
