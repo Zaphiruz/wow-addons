@@ -1,5 +1,11 @@
 # Hopscotch changelog
 
+## 0.3.2 (2026-11-07)
+
+- A hop pressed on the exact frame you land is now counted, and counts as a perfect hop. The game lands and jumps again in that one frame, so these hops used to go missing. It's counted when you land again, once Hopscotch has timed a few of your normal jumps.
+- At low frame rates (below 50 FPS) a hop after a single frame on the ground now counts as perfect. Before, no hop could be perfect there.
+- `/hop debug` shows how long each hop was in the air, and how long after take-off you pressed jump.
+
 ## 0.3.1 (2026-11-01)
 
 - Works on World of Warcraft: Forever as well as Classic Era. The same download covers both.
