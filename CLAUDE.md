@@ -1,6 +1,6 @@
 # WoW addons
 
-World of Warcraft Classic Era addons (Downcast, Hawker, Hopscotch), released to
+World of Warcraft Classic Era addons (Bushel, Downcast, Hawker, Hopscotch), released to
 CurseForge and GitHub from this one repository. The README covers the layout
 and release commands for people; this file is how we work on it.
 
@@ -24,9 +24,9 @@ and release commands for people; this file is how we work on it.
   `D:\Battle.net\Games\World of Warcraft\_forever_`, version 1.60.1,
   `## Interface: 16001`. Its UI is built on modern retail code (12.1), so check
   APIs against the `forever` branch of wow-ui-source, not `classic_era`.
-- Hawker and Hopscotch support both games from one folder:
+- Bushel, Hawker and Hopscotch support both games from one folder:
   `## Interface: 11509, 16001`. Downcast is Classic Era only.
-- Both are junction-linked into `_forever_\Interface\AddOns` as well.
+- All three are junction-linked into `_forever_\Interface\AddOns` as well.
 - Differences that matter so far: chat is `C_ChatInfo.SendChatMessage` (no
   global `SendChatMessage`), and addon chat started from a macro is blocked
   during instance encounters. Prefer the modern name and fall back to the

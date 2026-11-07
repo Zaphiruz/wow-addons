@@ -1,0 +1,7 @@
+## Interface: 11509, 16001
+## Title: Bushel
+## Notes: Counts the herbs you gather, ore you mine and creatures you skin, by type, and shows the counts in tooltips.
+## Version: 0.1.0
+## X-Curse-Project-ID: 1789935
+## SavedVariables: BushelDB
+Bushel.lua
