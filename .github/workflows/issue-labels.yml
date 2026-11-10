@@ -1,6 +1,6 @@
 name: Issue labels
 
-# Adds the addon's label (Bushel, Downcast, Hawker or Hopscotch) to issues opened from the issue forms,
+# Adds the addon's label (Bushel, Downcast, Hawker, Hopscotch or Huzzah) to issues opened from the issue forms,
 # based on the "Addon" answer.
 on:
   issues:
@@ -16,7 +16,7 @@ jobs:
       - uses: actions/github-script@v7
         with:
           script: |
-            const addons = ["Bushel", "Downcast", "Hawker", "Hopscotch"];
+            const addons = ["Bushel", "Downcast", "Hawker", "Hopscotch", "Huzzah"];
             const match = (context.payload.issue.body || "").match(/^### Addon\s*\r?\n\s*\r?\n\s*(\S+)/m);
             const picked = match && addons.find(a => a === match[1]);
             if (!picked) return;

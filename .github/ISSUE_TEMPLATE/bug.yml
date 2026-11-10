@@ -11,6 +11,7 @@ body:
         - Downcast
         - Hawker
         - Hopscotch
+        - Huzzah
     validations:
       required: true
   - type: input

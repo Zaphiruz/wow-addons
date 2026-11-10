@@ -8,6 +8,7 @@ World of Warcraft addons, released to CurseForge from this repository.
 | [Downcast](mods/classic/Downcast) | Classic Era | Lets macros cast the best rank of a buff or HoT that can land on a low-level player |
 | [Hawker](mods/classic/Hawker) | Classic Era, Forever | Keeps a list of advert lines and says a random one with `/hawk` |
 | [Hopscotch](mods/classic/Hopscotch) | Classic Era, Forever | Counts every hop off the ground, for each character and the whole account |
+| [Huzzah](mods/classic/Huzzah) | Classic Era, Forever | Emotes and sends a message when your group, guild, a stranger nearby or you level up |
 
 ## Layout
 
