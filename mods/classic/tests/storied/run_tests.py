@@ -93,6 +93,43 @@ function soulstone(by) playerAuras = { { name = "Soulstone Resurrection", spellI
 function die() playerAuras = {}; units.player.dead = true; fire("UNIT_AURA", "player"); fire("PLAYER_DEAD") end
 function alive() units.player.dead = false; fire("PLAYER_ALIVE") end
 
+-- Your level, and asking the server for /played.
+units.player.level = 39
+function UnitLevel(u) local x = units[u]; return x and x.level end
+function UnitExists(u) return units[u] ~= nil end
+function UnitCanAttack(a, b) local x = units[b]; return x ~= nil and x.hostile == true end
+function UnitIsFeignDeath(u) local x = units[u]; return x ~= nil and x.feign == true end
+playedRequests = 0
+function RequestTimePlayed() playedRequests = playedRequests + 1 end
+function played(total, thisLevel) fire("TIME_PLAYED_MSG", total, thisLevel) end
+function ding(level) units.player.level = level; fire("PLAYER_LEVEL_UP", level, 10, 10, 1, 0, 1, 1, 1, 1, 1) end
+
+-- Chat windows, which show the /played reply when they're registered for it.
+NUM_CHAT_WINDOWS = 2
+local function chatFrame(registered)
+  local f = { registered = registered }
+  function f:IsEventRegistered(e) return self.registered[e] == true end
+  function f:RegisterEvent(e) self.registered[e] = true end
+  function f:UnregisterEvent(e) self.registered[e] = nil end
+  return f
+end
+ChatFrame1 = chatFrame({ TIME_PLAYED_MSG = true, CHAT_MSG_SYSTEM = true })
+ChatFrame2 = chatFrame({})
+
+-- The combat log (Classic Era only): something hits you.
+cleu = {}
+C_CombatLog = { GetCurrentEventInfo = function() return unpack(cleu, 1, 20) end }
+function hit(source, spell)
+  local sub = spell and "SPELL_DAMAGE" or "SWING_DAMAGE"
+  cleu = { 1, sub, false, creature(1), source, 0, 0, "Player-1-0001", "Zaphiruz", 0, 0 }
+  if spell then cleu[12], cleu[13], cleu[14], cleu[15] = 1, spell, 1, 120 else cleu[12] = 120 end
+  fire("COMBAT_LOG_EVENT_UNFILTERED")
+end
+function env(kind)
+  cleu = { 1, "ENVIRONMENTAL_DAMAGE", false, "", nil, 0, 0, "Player-1-0001", "Zaphiruz", 0, 0, kind, 500 }
+  fire("COMBAT_LOG_EVENT_UNFILTERED")
+end
+
 -- Chat.
 whispers, lockdown = {}, false
 C_ChatInfo = {
@@ -251,6 +288,9 @@ function widget(kind, name, parent, template)
     if self.scripts.OnTextChanged then self.scripts.OnTextChanged(self, true) end
   end
   function w:Show() self.shown = true; if self.scripts.OnShow then self.scripts.OnShow(self) end end
+  function w:Hide() self.shown = false; if self.scripts.OnHide then self.scripts.OnHide(self) end end
+  function w:IsShown() return self.shown end
+  function w:GetStringHeight() return 0 end
   function w:CreateFontString(n) return widget("FontString", n, self) end
   function w:Click(button)
     if self.kind == "CheckButton" then self.checked = not self.checked end
@@ -288,7 +328,7 @@ Enum = { TooltipDataType = { Item = 0, Unit = 2 } }
 postCalls = {}
 TooltipDataProcessor = { AddTooltipPostCall = function(kind, fn)
   postCalls[kind] = postCalls[kind] or {}; table.insert(postCalls[kind], fn) end }
-local function plain(s) return (tostring(s):gsub("|c%x%x%x%x%x%x%x%x", ""):gsub("|r", "")) end
+function plain(s) return (tostring(s):gsub("|c%x%x%x%x%x%x%x%x", ""):gsub("|r", "")) end
 -- Hover an item: the client fills the tooltip and runs the item hooks.
 function hover(l)
   GameTooltip:ClearLines()
@@ -335,6 +375,9 @@ function cmd(s) out = {}; SlashCmdList.STORIED(s); return table.concat(out, "\n"
 function ok(c, m) if not c then error("FAIL: " .. tostring(m), 2) end end
 function panel() return categories[1].frame end
 function kill(attacker) fire("PARTY_KILL", attacker or "Player-1-0001", creature(299)) end
+-- The story window's text, without colours.
+function story() return plain(StoriedStory.list:GetText()) end
+function summary() return plain(StoriedStory.summary:GetText()) end
 '''
 
 SCENARIOS = {
@@ -345,8 +388,8 @@ SCENARIOS = {
   ok(StoriedDB.grouped and StoriedDB.help and StoriedDB.thanks == false, "people on, thanks off")
   ok(type(StoriedCharDB.items) == "table" and type(StoriedCharDB.people) == "table", "histories")
   ok(categories[1] and categories[1].name == "Storied", "settings page")
-  cmd("")
-  ok(opened == 88, "/storied opens the settings")
+  cmd("settings")
+  ok(opened == 88, "/storied settings opens the settings")
 ''',
 "each switch is saved, and older saves get new switches": r'''
   login({ kills = false }, { items = { [12784] = { kills = 5 } } })
@@ -729,6 +772,138 @@ SCENARIOS = {
   ok(panel().thanksRes.maxLetters and panel().thanksRes.maxLetters <= 200, "long messages are refused")
 ''',
 
+# ---- your story ----
+"your story starts at the level you were when Storied was installed": r'''
+  login(nil, nil)
+  local s = StoriedCharDB.story
+  ok(#s == 1 and s[1].kind == "start" and s[1].level == 39, "start entry")
+  login(StoriedDB, StoriedCharDB)
+  ok(#StoriedCharDB.story == 1, "started again after a reload")
+  cmd("")
+  ok(StoriedStory.shown, "/storied opens the story")
+  ok(story() == "Storied started keeping your story at level 39\n11 Nov 2026, Elwynn Forest", story())
+  ok(summary() == "Level 39", summary())
+  cmd("")
+  ok(not StoriedStory.shown, "/storied again closes it")
+  local escapes = false
+  for _, n in ipairs(UISpecialFrames) do if n == "StoriedStory" then escapes = true end end
+  ok(escapes, "Escape closes the window")
+''',
+"a level-up records the date, zone and played time": r'''
+  login(nil, nil)
+  advance(5)
+  ok(playedRequests == 1, "asks for /played once at login: " .. playedRequests)
+  played(300000, 1000)
+  zoneName = "Stranglethorn Vale"
+  ding(40)
+  ok(playedRequests == 2, "asks again on a level-up")
+  played(360060, 60)                 -- a minute after the ding
+  days(1)
+  instance = "Zul'Gurub"
+  ding(41)
+  played(393120, 0)
+  instance = nil
+  cmd("")
+  local t = story()
+  ok(t == "Level 41 in Zul'Gurub\n12 Nov 2026, 4d 13h played, 9h 12m since 40\n"
+       .. "Level 40 in Stranglethorn Vale\n11 Nov 2026, 4d 4h played\n"
+       .. "Storied started keeping your story at level 39\n11 Nov 2026, Elwynn Forest", t)
+  ok(summary() == "Level 41, 4d 13h played", summary())
+''',
+"asking for played time doesn't print it in chat": r'''
+  login(nil, nil)
+  advance(5)
+  ok(not ChatFrame1:IsEventRegistered("TIME_PLAYED_MSG"), "chat would show the reply")
+  ok(ChatFrame1:IsEventRegistered("CHAT_MSG_SYSTEM"), "other chat left alone")
+  played(300000, 1000)
+  advance(1)
+  ok(ChatFrame1:IsEventRegistered("TIME_PLAYED_MSG"), "chat gets /played back after the reply")
+  ok(not ChatFrame2:IsEventRegistered("TIME_PLAYED_MSG"), "registered a window that never had it")
+  ding(40)
+  ok(not ChatFrame1:IsEventRegistered("TIME_PLAYED_MSG"), "hidden for the level-up request")
+  advance(30)                        -- no reply came
+  ok(ChatFrame1:IsEventRegistered("TIME_PLAYED_MSG"), "chat gets /played back even without a reply")
+''',
+"a level whose played reply comes after a reload still gets it": r'''
+  login(nil, nil)
+  ding(40)
+  login(StoriedDB, StoriedCharDB)
+  advance(5)
+  played(360100, 100)
+  ok(StoriedCharDB.story[2].played == 360000, tostring(StoriedCharDB.story[2].played))
+''',
+"a death names what killed you, where and at what level": r'''
+  login(nil, nil)
+  zoneName, groupSize = "Stranglethorn Vale", 3
+  units.player.level = 41
+  hit("Bloodscalp Headhunter", "Throw")
+  die()
+  alive()
+  groupSize = 0
+  hit("Hogger")
+  die()
+  alive()
+  env("Falling")
+  die()
+  cmd("")
+  local t = story()
+  ok(t:find("^Died to falling\n11 Nov 2026, level 41, Stranglethorn Vale\n"
+          .. "Died to Hogger\n11 Nov 2026, level 41, Stranglethorn Vale\n"
+          .. "Died to Bloodscalp Headhunter %(Throw%)\n11 Nov 2026, level 41, Stranglethorn Vale, in a group of 3\n"), t)
+  ok(summary() == "Level 41, 3 deaths", summary())
+''',
+"an old hit isn't blamed for a death, and feigning death isn't one": r'''
+  login(nil, nil)
+  hit("Hogger")
+  advance(30)
+  die()
+  ok(StoriedCharDB.story[2].by == nil, "blamed an old hit")
+  alive()
+  units.player.feign = true
+  die()
+  ok(#StoriedCharDB.story == 2, "counted feign death")
+''',
+"without a combat log, a death names your hostile target": r'''
+  C_CombatLog = nil
+  login(nil, nil)
+  units.target = { name = "Bloodscalp Headhunter", guid = creature(597), hostile = true }
+  die()
+  alive()
+  units.target = { name = "Bob", guid = "Player-1-Bob", isPlayer = true }
+  die()
+  cmd("")
+  ok(story():find("^Died\n11 Nov 2026, level 39, Elwynn Forest\nDied while fighting Bloodscalp Headhunter\n"), story())
+''',
+"the window shows only levels or only deaths, and opens the settings": r'''
+  login(nil, nil)
+  ding(40)
+  hit("Hogger"); die()
+  cmd("")
+  StoriedStory.filters.death:Click()
+  ok(story() == "Died to Hogger\n11 Nov 2026, level 40, Elwynn Forest", story())
+  StoriedStory.filters.level:Click()
+  ok(story() == "Level 40 in Elwynn Forest\n11 Nov 2026\n"
+       .. "Storied started keeping your story at level 39\n11 Nov 2026, Elwynn Forest", story())
+  StoriedStory.filters.all:Click()
+  ok(select(2, story():gsub("\n", "")) == 5, story())
+  ok(summary() == "Level 40, 1 death", summary())
+  StoriedStory.settings:Click()
+  ok(opened == 88, "settings button")
+  hit("Hogger"); die()
+  ok(summary() == "Level 40, 2 deaths", "an open window updates: " .. summary())
+''',
+"with levels and deaths switched off, nothing is recorded": r'''
+  login({ levels = false, deaths = false }, nil)
+  advance(5)
+  ok(playedRequests == 0, "asked for /played while off")
+  ding(40)
+  hit("Hogger"); die()
+  ok(#StoriedCharDB.story == 1, "recorded while off")
+  ok(ChatFrame1:IsEventRegistered("TIME_PLAYED_MSG"), "chat left alone")
+  panel():Show()
+  ok(panel().checks.levels and panel().checks.deaths, "settings rows")
+''',
+
 # ---- Forever ----
 "hidden (secret) values are skipped without errors": r'''
   login(nil, nil)
@@ -746,6 +921,14 @@ SCENARIOS = {
   fire("RESURRECT_REQUEST", SECRET); AcceptResurrect()
   summoner = SECRET; fire("CONFIRM_SUMMON"); C_SummonInfo.ConfirmSummon()
   ok(next(StoriedCharDB.items) == nil and next(StoriedCharDB.people) == nil, "recorded something hidden")
+  fire("PLAYER_LEVEL_UP", SECRET)
+  played(SECRET, SECRET)
+  cleu = { SECRET, SECRET, SECRET, SECRET, SECRET, SECRET, SECRET, SECRET }
+  fire("COMBAT_LOG_EVENT_UNFILTERED")
+  units.target = { name = SECRET, hostile = true }
+  die()
+  ok(#StoriedCharDB.story == 2 and StoriedCharDB.story[2].kind == "death" and StoriedCharDB.story[2].by == nil,
+     "a hidden death is recorded without a name")
   kill()
   ok(hover(link(12784)) == "1 kill", "still works after")
 ''',

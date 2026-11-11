@@ -3,7 +3,8 @@
 -- reads it gets blocked (for example the bind-on-use confirmation popup).
 -- Reading these tables and adding keys to them is fine; replacing them is not.
 local owned = {}
-for _, name in ipairs({ "StaticPopupDialogs", "UISpecialFrames", "SlashCmdList", "UIParent", "GameTooltip" }) do
+for _, name in ipairs({ "StaticPopupDialogs", "UISpecialFrames", "SlashCmdList", "UIParent", "GameTooltip",
+                         "ChatFrame1", "ChatFrame2" }) do
   owned[name] = rawget(_G, name)
   rawset(_G, name, nil)
 end

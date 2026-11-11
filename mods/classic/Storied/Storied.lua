@@ -1,7 +1,8 @@
--- Storied: remembers the history of your gear and the people you play with.
--- Who enchanted an item, where it came from and how many kills each weapon
--- has; who you've grouped with and who resurrected or summoned you. Shown
--- in tooltips. The game keeps none of this, so it's recorded as it happens.
+-- Storied: remembers the history of your gear, the people you play with and
+-- your own story. Who enchanted an item, where it came from and how many
+-- kills each weapon has; who you've grouped with and who resurrected or
+-- summoned you, shown in tooltips; and a window of your level-ups and
+-- deaths. The game keeps none of this, so it's recorded as it happens.
 local ADDON = ...
 
 local db              -- StoriedDB: settings, shared by the account
@@ -39,6 +40,8 @@ local OPTIONS = {
   { key = "help", label = "Help", note = "Who resurrected, summoned or soulstoned you" },
   { key = "thanks", label = "Say thanks", default = false,
     note = "Whisper them when you accept a resurrect or summon. {name} is their name." },
+  { key = "levels", label = "Level-ups", note = "The date, zone and played time of each level you reach" },
+  { key = "deaths", label = "Deaths", note = "What killed you, where, and at what level" },
   { key = "tooltips", label = "Show on tooltips", note = "Turn off to keep recording without the extra lines" },
 }
 local TEXTS = { thanksRes = "Thanks for the res, {name}!", thanksSummon = "Thanks for the summon, {name}!" }
@@ -58,6 +61,7 @@ local function loadSaved()
   if type(char.openers) ~= "table" then char.openers = {} end  -- lockbox ID -> who picked it
   if type(char.people) ~= "table" then char.people = {} end    -- "Name-Realm" -> your history with them
   if type(char.group) ~= "table" then char.group = {} end      -- who's in your group now, kept over a reload
+  if type(char.story) ~= "table" then char.story = {} end      -- your level-ups and deaths, oldest first
 end
 
 ---------------------------------------------------------------------------
@@ -573,6 +577,198 @@ local function usedSelfRes()
 end
 
 ---------------------------------------------------------------------------
+-- Your story: level-ups and deaths
+--
+-- Played time comes from asking the server for /played. The chat windows
+-- would print the reply, so they're told to skip it until it arrives.
+---------------------------------------------------------------------------
+local PLAYED_WAIT = 10   -- seconds before chat gets /played back if no reply comes
+local LOGIN_DELAY = 3    -- seconds after login before asking
+local HIT_FOR = 10       -- seconds a hit stays the likely cause of a death
+
+local getCombatLog = (C_CombatLog and C_CombatLog.GetCurrentEventInfo) or CombatLogGetCurrentEventInfo
+local myGUID
+local hiddenFrom = {}    -- chat windows skipping the /played reply
+local sessionPlayed      -- { total, at }: the last /played reply and when it came
+local lastHit            -- { by, with, env, at }: the last damage you took
+local refreshStory = function() end  -- redraws the window once it exists
+
+local function showPlayedInChat()
+  for _, f in ipairs(hiddenFrom) do pcall(f.RegisterEvent, f, "TIME_PLAYED_MSG") end
+  hiddenFrom = {}
+end
+
+local function askPlayed()
+  if not RequestTimePlayed then return end
+  for i = 1, (NUM_CHAT_WINDOWS or 10) do
+    local f = _G["ChatFrame" .. i]
+    if f and f.IsEventRegistered and f:IsEventRegistered("TIME_PLAYED_MSG") then
+      f:UnregisterEvent("TIME_PLAYED_MSG")
+      hiddenFrom[#hiddenFrom + 1] = f
+    end
+  end
+  RequestTimePlayed()
+  C_Timer.After(PLAYED_WAIT, showPlayedInChat)
+end
+
+local function add(entry)
+  char.story[#char.story + 1] = entry
+  refreshStory()
+end
+
+local function onPlayed(total, thisLevel)
+  -- Chat gets the event back once this reply has gone past it.
+  C_Timer.After(0, showPlayedInChat)
+  total, thisLevel = number(total), number(thisLevel)
+  if not total then return end
+  sessionPlayed = { total = total, at = GetTime() }
+  -- The newest level-up learns its played time, even from a reply after a
+  -- reload: the time spent in this level is taken off.
+  local level = number(UnitLevel("player"))
+  for i = #char.story, 1, -1 do
+    local e = char.story[i]
+    if e.kind == "level" then
+      if not e.played and e.level == level then e.played = total - (thisLevel or 0) end
+      break
+    end
+  end
+  dbg("played: %d seconds", total)
+  refreshStory()
+end
+
+local function onLevel(level)
+  level = number(level)
+  if not (db.levels and level) then return end
+  local where = place()
+  dbg("level %d in %s", level, where or "?")
+  add({ kind = "level", level = level, at = time(), place = where })
+  askPlayed()
+end
+
+local function onCombatLog()
+  local _, sub, _, _, source, _, _, dest, _, _, _, a12, a13 = getCombatLog()
+  sub = text(sub)
+  if not sub or not myGUID or text(dest) ~= myGUID then return end
+  if sub == "ENVIRONMENTAL_DAMAGE" then
+    lastHit = { env = text(a12), at = GetTime() }
+  elseif sub == "SWING_DAMAGE" then
+    lastHit = { by = text(source), at = GetTime() }
+  elseif sub:find("_DAMAGE$") then
+    lastHit = { by = text(source), with = text(a13), at = GetTime() }
+  end
+end
+
+-- The name of your target if it's something you could attack, or nil.
+local function hostileTarget()
+  local ok, hostile = pcall(function() return UnitExists("target") and UnitCanAttack("player", "target") and true end)
+  if ok and hostile then return text(UnitName("target")) end
+end
+
+local function feigning()
+  local ok, yes = pcall(function() return UnitIsFeignDeath ~= nil and UnitIsFeignDeath("player") == true end)
+  return ok and yes
+end
+
+local function onDeath()
+  if not db.deaths or feigning() then return end
+  local e = { kind = "death", level = number(UnitLevel("player")), at = time(), place = place() }
+  local n = number(GetNumGroupMembers and GetNumGroupMembers())
+  if n and n > 1 then e.group = n end
+  local h = lastHit
+  lastHit = nil
+  if h and GetTime() - h.at < HIT_FOR then
+    e.by, e.with, e.env = h.by, h.with, h.env
+  else
+    e.fighting = hostileTarget()  -- no combat log (Forever), or nothing hit you lately
+  end
+  dbg("died to %s", e.by or e.env or e.fighting or "?")
+  add(e)
+end
+
+-- "4d 13h", "9h 12m", "25m"
+local function span(s)
+  s = math.floor(s)
+  if s >= 86400 then return format("%dd %dh", math.floor(s / 86400), math.floor(s % 86400 / 3600)) end
+  if s >= 3600 then return format("%dh %dm", math.floor(s / 3600), math.floor(s % 3600 / 60)) end
+  return format("%dm", math.floor(s / 60))
+end
+
+local function playedNow()
+  if sessionPlayed then return sessionPlayed.total + (GetTime() - sessionPlayed.at) end
+end
+
+local function join(parts) return table.concat(parts, ", ") end
+
+-- The two lines for one entry: what happened, then when and where.
+local function storyLines(e, playedAt)
+  if e.kind == "start" then
+    return format("Storied started keeping your story at level %s", e.level or "?"),
+           join({ day(e.at), e.place })
+  elseif e.kind == "level" then
+    local detail = { day(e.at) }
+    if e.played then
+      detail[#detail + 1] = span(e.played) .. " played"
+      local before = playedAt[e.level - 1]
+      if before and e.played > before then
+        detail[#detail + 1] = format("%s since %d", span(e.played - before), e.level - 1)
+      end
+    end
+    return format("Level %d", e.level) .. (e.place and (" in " .. e.place) or ""), join(detail)
+  else
+    local what
+    if e.env then
+      what = "Died to " .. e.env:lower()
+    elseif e.by then
+      what = "Died to " .. e.by .. (e.with and (" (" .. e.with .. ")") or "")
+    elseif e.fighting then
+      what = "Died while fighting " .. e.fighting
+    else
+      what = "Died"
+    end
+    local detail = { day(e.at) }
+    if e.level then detail[#detail + 1] = "level " .. e.level end
+    detail[#detail + 1] = e.place
+    if e.group then detail[#detail + 1] = "in a group of " .. e.group end
+    return what, join(detail)
+  end
+end
+
+local COLORS = { start = "|cffc9a66b", level = "|cff66dd66", death = "|cffff6666" }
+local DETAIL = "|cff9d9d9d"
+
+-- The window's text for one filter: "all", "level" or "death".
+local function storyText(filter)
+  local playedAt = {}
+  for _, e in ipairs(char.story) do
+    if e.kind == "level" and e.played then playedAt[e.level] = e.played end
+  end
+  local out = {}
+  for i = #char.story, 1, -1 do
+    local e = char.story[i]
+    local kind = e.kind == "start" and "level" or e.kind
+    if filter == "all" or filter == kind then
+      local what, detail = storyLines(e, playedAt)
+      out[#out + 1] = (COLORS[e.kind] or "") .. what .. "|r"
+      out[#out + 1] = DETAIL .. detail .. "|r"
+    end
+  end
+  if #out == 0 then return DETAIL .. "Nothing yet.|r" end
+  return table.concat(out, "\n")
+end
+
+local function storySummary()
+  local deaths = 0
+  for _, e in ipairs(char.story) do
+    if e.kind == "death" then deaths = deaths + 1 end
+  end
+  local parts = { format("Level %s", number(UnitLevel("player")) or "?") }
+  if deaths > 0 then parts[#parts + 1] = format("%d death%s", deaths, deaths == 1 and "" or "s") end
+  local p = playedNow()
+  if p then parts[#parts + 1] = span(p) .. " played" end
+  return join(parts)
+end
+
+---------------------------------------------------------------------------
 -- Tooltips
 ---------------------------------------------------------------------------
 local GOLD = "|cffffd100"
@@ -738,12 +934,96 @@ local function buildPanel()
   end
 end
 
+local function openSettings()
+  if category then
+    pcall(Settings.OpenToCategory, category:GetID())
+  else
+    say("the settings window isn't available here.")
+  end
+end
+
+---------------------------------------------------------------------------
+-- The story window (/storied)
+---------------------------------------------------------------------------
+local FILTERS = { { "all", "All" }, { "level", "Levels" }, { "death", "Deaths" } }
+local story, filter = nil, "all"
+
+local function drawStory()
+  story.summary:SetText(storySummary())
+  story.list:SetText(storyText(filter))
+  story.child:SetHeight(math.max(10, (story.list:GetStringHeight() or 0) + 10))
+  for key, button in pairs(story.filters) do button:SetEnabled(key ~= filter) end
+end
+
+local function buildStory()
+  story = CreateFrame("Frame", "StoriedStory", UIParent, "BasicFrameTemplateWithInset")
+  story:Hide()
+  story:SetSize(380, 440)
+  story:SetPoint("CENTER")
+  story:SetFrameStrata("HIGH")
+  story:SetClampedToScreen(true)
+  story:SetMovable(true)
+  story:EnableMouse(true)
+  story:RegisterForDrag("LeftButton")
+  story:SetScript("OnDragStart", story.StartMoving)
+  story:SetScript("OnDragStop", story.StopMovingOrSizing)
+  if type(story.TitleText) == "table" then
+    story.TitleText:SetText(format("Storied: %s's story", text(UnitName("player")) or "your"))
+  end
+  tinsert(UISpecialFrames, "StoriedStory")  -- Escape closes it
+
+  story.summary = story:CreateFontString(nil, "ARTWORK", "GameFontHighlight")
+  story.summary:SetPoint("TOPLEFT", 14, -32)
+
+  story.filters = {}
+  local x = 12
+  for _, f in ipairs(FILTERS) do
+    local b = CreateFrame("Button", nil, story, "UIPanelButtonTemplate")
+    b:SetSize(70, 22)
+    b:SetPoint("TOPLEFT", x, -52)
+    b:SetText(f[2])
+    b:SetScript("OnClick", function()
+      filter = f[1]
+      drawStory()
+    end)
+    story.filters[f[1]] = b
+    x = x + 74
+  end
+  story.settings = CreateFrame("Button", nil, story, "UIPanelButtonTemplate")
+  story.settings:SetSize(80, 22)
+  story.settings:SetPoint("TOPRIGHT", -12, -52)
+  story.settings:SetText("Settings")
+  story.settings:SetScript("OnClick", openSettings)
+
+  local scroll = CreateFrame("ScrollFrame", "StoriedStoryScroll", story, "UIPanelScrollFrameTemplate")
+  scroll:SetPoint("TOPLEFT", 14, -84)
+  scroll:SetPoint("BOTTOMRIGHT", -32, 10)
+  story.child = CreateFrame("Frame", nil, scroll)
+  story.child:SetSize(330, 10)
+  scroll:SetScrollChild(story.child)
+  story.list = story.child:CreateFontString(nil, "ARTWORK", "GameFontHighlight")
+  story.list:SetPoint("TOPLEFT")
+  story.list:SetWidth(330)
+  story.list:SetJustifyH("LEFT")
+  story.list:SetJustifyV("TOP")
+  story.list:SetSpacing(3)
+
+  story:SetScript("OnShow", drawStory)
+  refreshStory = function() if story:IsShown() then drawStory() end end
+end
+
+local function toggleStory()
+  if not story then buildStory() end
+  if story:IsShown() then story:Hide() else story:Show() end
+end
+
 ---------------------------------------------------------------------------
 -- Commands
 ---------------------------------------------------------------------------
 local HELP = {
-  "/storied  -  open the settings",
-  "/storied debug  -  print each trade, origin, kill and helping hand as it's recorded",
+  "/storied  -  open your story: your level-ups and deaths",
+  "/storied settings  -  choose what's recorded",
+  "/storied debug  -  print each trade, origin, kill, helping hand, level and death as it's recorded",
   "Hover over an item, or a player you've grouped with, to see their history in the tooltip.",
 }
 
@@ -755,11 +1035,9 @@ SlashCmdList.STORIED = function(msg)
   end
   local word = strtrim(msg or ""):match("^(%S*)"):lower()
   if word == "" then
-    if category then
-      pcall(Settings.OpenToCategory, category:GetID())
-    else
-      say("the settings window isn't available here.")
-    end
+    toggleStory()
+  elseif word == "settings" then
+    openSettings()
   elseif word == "debug" then
     debugging = not debugging
     say("debug %s.", debugging and "on" or "off")
@@ -818,7 +1096,12 @@ local HANDLERS = {
     offered("summon", C_SummonInfo and C_SummonInfo.GetSummonConfirmSummoner())
   end,
   UNIT_AURA = function(unit) if unit == "player" then readAuras() end end,
+  PLAYER_LEVEL_UP = onLevel,
+  TIME_PLAYED_MSG = onPlayed,
+  PLAYER_DEAD = onDeath,
 }
+-- Classic Era only: Forever doesn't let addons read the combat log.
+if getCombatLog then HANDLERS.COMBAT_LOG_EVENT_UNFILTERED = onCombatLog end
 
 local events = CreateFrame("Frame")
 pcall(events.RegisterEvent, events, "ADDON_LOADED")
@@ -831,10 +1114,15 @@ events:SetScript("OnEvent", function(_, event, ...)
   elseif event == "PLAYER_LOGIN" then
     if not db then return end
     myRealm = text(GetNormalizedRealmName and GetNormalizedRealmName()) or (GetRealmName():gsub("%s", ""))
+    myGUID = text(UnitGUID("player"))
     buildPatterns()
     buildPanel()
     hookTooltips()
     hookFunctions()
+    if #char.story == 0 then
+      char.story[1] = { kind = "start", level = number(UnitLevel("player")), at = time(), place = place() }
+    end
+    if db.levels then C_Timer.After(LOGIN_DELAY, askPlayed) end
   elseif db and char and lootPatterns then
     -- Unit checks can return hidden values on Forever, which error when
     -- tested, so each handler runs under pcall: a hidden value is skipped.
