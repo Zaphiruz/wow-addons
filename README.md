@@ -9,6 +9,7 @@ World of Warcraft addons, released to CurseForge from this repository.
 | [Hawker](mods/classic/Hawker) | Classic Era, Forever | Keeps a list of advert lines and says a random one with `/hawk` |
 | [Hopscotch](mods/classic/Hopscotch) | Classic Era, Forever | Counts every hop off the ground, for each character and the whole account |
 | [Huzzah](mods/classic/Huzzah) | Classic Era, Forever | Emotes and sends a message when your group, guild, a stranger nearby or you level up |
+| [Storied](mods/classic/Storied) | Classic Era, Forever | Remembers who enchanted your gear, where it came from and each weapon's kills, shown in tooltips |
 
 ## Layout
 

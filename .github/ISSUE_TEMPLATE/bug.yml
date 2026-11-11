@@ -12,6 +12,7 @@ body:
         - Hawker
         - Hopscotch
         - Huzzah
+        - Storied
     validations:
       required: true
   - type: input
