@@ -29,12 +29,22 @@ local HEADING = { group = "Group", guild = "Guild", stranger = "Strangers", self
 local ROW_LABEL = { group = "Group member", guild = "Guildmate", stranger = "Stranger", self = "You" }
 local SENT_TO = { group = "Party / raid", guild = "Guild", stranger = "Whisper", self = "Guild" }
 
--- Emotes to pick from, in order. "" is no emote.
+-- Emotes to pick from, in order: token, label, and the custom emote line
+-- used when the player isn't your target. "" is no emote.
 local EMOTES = {
-  { "", "None" }, { "APPLAUD", "Applaud" }, { "BOW", "Bow" }, { "CHEER", "Cheer" },
-  { "CLAP", "Clap" }, { "CONGRATULATE", "Congratulate" }, { "DANCE", "Dance" },
-  { "FLEX", "Flex" }, { "GRIN", "Grin" }, { "HUG", "Hug" }, { "ROAR", "Roar" },
-  { "SALUTE", "Salute" }, { "WAVE", "Wave" },
+  { "", "None" },
+  { "APPLAUD", "Applaud", "applauds %s." },
+  { "BOW", "Bow", "bows to %s." },
+  { "CHEER", "Cheer", "cheers for %s!" },
+  { "CLAP", "Clap", "claps for %s." },
+  { "CONGRATULATE", "Congratulate", "congratulates %s!" },
+  { "DANCE", "Dance", "dances for %s!" },
+  { "FLEX", "Flex", "flexes at %s." },
+  { "GRIN", "Grin", "grins at %s." },
+  { "HUG", "Hug", "hugs %s." },
+  { "ROAR", "Roar", "roars for %s!" },
+  { "SALUTE", "Salute", "salutes %s." },
+  { "WAVE", "Wave", "waves at %s." },
 }
 
 local function loadSettings()
@@ -61,6 +71,14 @@ local MAX_CHAT = 255               -- the game's limit for one chat line
 local myRealm
 local reacted = {}                 -- "Name-Realm:level" -> true
 
+-- "Name-Realm" for the player under unit, or nil.
+local function fullName(unit)
+  local name, realm = UnitName(unit)
+  if isSecret(name) or isSecret(realm) or type(name) ~= "string" or name == "" then return end
+  if type(realm) ~= "string" or realm == "" then realm = myRealm end
+  return name .. "-" .. realm
+end
+
 local function fill(message, name, level)
   local text = message:gsub("{name}", function() return name end)
   text = text:gsub("{level}", function() return tostring(level) end)
@@ -81,15 +99,48 @@ local function chatLocked()
   return C_ChatInfo ~= nil and C_ChatInfo.InChatMessagingLockdown ~= nil and C_ChatInfo.InChatMessagingLockdown()
 end
 
+local function sendChat(text, channel, to)
+  local send = (C_ChatInfo and C_ChatInfo.SendChatMessage) or SendChatMessage
+  return send ~= nil and (pcall(send, text, channel, nil, to))
+end
+
+-- The custom emote line for token, naming the player: "cheers for Bob!".
+local function emoteLine(token, name)
+  for _, e in ipairs(EMOTES) do
+    if e[1] == token and e[3] then return format(e[3], name) end
+  end
+  return format("%ss at %s.", token:lower(), name)
+end
+
+-- Is full the player you have targeted?
+local function isTarget(full)
+  local ok, name = pcall(fullName, "target")
+  return ok and name == full
+end
+
+-- The game aims an emote only at your current target; a name given with it
+-- is ignored. So the player who dinged gets the real emote if they're your
+-- target, and otherwise a custom emote line naming them. If that line can't
+-- be sent, a plain emote at least plays.
+local function emoteAt(kind, token, full, short)
+  local emote = (C_ChatInfo and C_ChatInfo.PerformEmote) or DoEmote
+  if kind ~= "self" and not isTarget(full) then
+    local line = emoteLine(token, short)
+    if not chatLocked() and sendChat(line, "EMOTE") then
+      dbg("custom emote: %s", line)
+      return
+    end
+    dbg("couldn't send the custom emote, a plain one instead")
+  end
+  if emote then pcall(emote, token) end
+end
+
 local function perform(kind, full, level)
   local cfg = db[kind]
   if not cfg.on then return end
   local short, target = Ambiguate(full, "short"), Ambiguate(full, "none")
 
-  if cfg.emote ~= "" then
-    local emote = (C_ChatInfo and C_ChatInfo.PerformEmote) or DoEmote
-    if emote then pcall(emote, cfg.emote, kind ~= "self" and target or nil) end
-  end
+  if cfg.emote ~= "" then emoteAt(kind, cfg.emote, full, short) end
 
   local text = fill(cfg.message, short, level)
   if strtrim(text) == "" then return end
@@ -103,8 +154,7 @@ local function perform(kind, full, level)
     dbg("chat is locked right now, message for %s not sent", short)
     return
   end
-  local send = (C_ChatInfo and C_ChatInfo.SendChatMessage) or SendChatMessage
-  pcall(send, text, channel, nil, to)
+  sendChat(text, channel, to)
 end
 
 local function react(kind, full, level)
@@ -130,13 +180,6 @@ end
 local ROSTER_EVERY = 30  -- seconds between guild list refreshes
 
 local levels = {}        -- "Name-Realm" -> last level seen
-
-local function fullName(unit)
-  local name, realm = UnitName(unit)
-  if isSecret(name) or isSecret(realm) or type(name) ~= "string" or name == "" then return end
-  if type(realm) ~= "string" or realm == "" then realm = myRealm end
-  return name .. "-" .. realm
-end
 
 -- Name and level of another player under unit, or nil.
 local function playerAt(unit)
@@ -285,7 +328,7 @@ local function buildPanel()
 
   local note = panel:CreateFontString(nil, "ARTWORK", "GameFontDisableSmall")
   note:SetPoint("TOPLEFT", 16, -96 - #KINDS * 34 - 8)
-  note:SetText("Right-click an emote to go back. Guildmates who aren't nearby are noticed when the guild list refreshes, so that reaction can come a minute or so late.")
+  note:SetText("Right-click an emote to go back. The game only aims emotes at your target, so anyone else gets a custom emote line naming them, such as \"cheers for Bob!\". Guildmates who aren't nearby are noticed when the guild list refreshes, so that reaction can come a minute or so late.")
 
   panel:SetScript("OnShow", refreshPanel)
 
@@ -309,7 +352,12 @@ local function describe(kind, name, level)
   if not cfg.on then return HEADING[kind] .. ": off" end
   local parts = {}
   if cfg.emote ~= "" then
-    parts[#parts + 1] = "/" .. cfg.emote:lower() .. (kind ~= "self" and (" " .. name) or "")
+    if kind == "self" then
+      parts[#parts + 1] = "/" .. cfg.emote:lower()
+    else
+      parts[#parts + 1] = format("/%s if %s is your target, otherwise the emote \"%s %s\"",
+        cfg.emote:lower(), name, UnitName("player"), emoteLine(cfg.emote, name))
+    end
   end
   local text = fill(cfg.message, name, level)
   if strtrim(text) ~= "" then parts[#parts + 1] = "to " .. SENT_TO[kind]:lower() .. ": " .. text end

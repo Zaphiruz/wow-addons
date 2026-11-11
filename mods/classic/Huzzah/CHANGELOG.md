@@ -1,5 +1,9 @@
 # Huzzah changelog
 
+## 0.1.1 (2026-11-10)
+
+- Emotes now name the person who leveled up, such as "Yourname cheers for Bob!". The game only aims emotes at your target, so if they're your target you do the real emote, and otherwise Huzzah sends an emote line with their name in it.
+
 ## 0.1.0 (2026-11-10)
 
 - Cheers someone on when they level up: an emote aimed at them and a message, a moment after the ding.

@@ -99,6 +99,10 @@ confirmations (`ConfirmBindOnUse`) and Logout in Downcast and Hawker 0.2.0.
   unless `useOnKeyDown` is set to match `down` in a WrapScript pre-snippet.
 - The restricted environment has no `UnitLevel` or `UnitIsUnit`, and macro
   conditionals have no level check.
+- Emotes aim only at your current target. A name after the emote (`/cheer Bob`,
+  or the target name given to `C_ChatInfo.PerformEmote`) is ignored: it gives
+  a plain "You cheer." Addons can't change the target, so Huzzah sends a custom
+  emote line naming the player instead.
 - The jump key calls `JumpOrAscendStart` on press and `AscendStop` on release;
   `hooksecurefunc` on both is safe. A real hop is `IsFalling()` turning true
   just after a press.

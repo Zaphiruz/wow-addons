@@ -74,11 +74,17 @@ end
 C_GuildInfo = { GuildRoster = function() rosterRequests = rosterRequests + 1 end }
 
 -- Chat and emotes.
-said, emotes = {}, {}
+said, emotes, emoteLines = {}, {}, {}  -- messages, real emotes, custom emote lines
 lockdown = false
+emoteBlocked = false
 C_ChatInfo = {
   SendChatMessage = function(msg, chatType, lang, target)
     assert(#msg <= 255, "message too long")
+    if chatType == "EMOTE" then
+      if emoteBlocked then error("blocked") end
+      table.insert(emoteLines, msg)
+      return
+    end
     table.insert(said, chatType .. (target and (":" .. target) or "") .. ": " .. msg)
   end,
   PerformEmote = function(token, target) table.insert(emotes, token .. (target and (" " .. target) or "")); return false end,
@@ -179,7 +185,7 @@ SCENARIOS = {
   ding("party1", 20)
   ok(#said == 0 and #emotes == 0, "waits first")
   advance(3)
-  ok(list(emotes) == "CHEER Bob", list(emotes))
+  ok(list(emoteLines) == "cheers for Bob!" and #emotes == 0, list(emoteLines) .. " / " .. list(emotes))
   ok(list(said) == "PARTY: Gz Bob, 20!", list(said))
 ''',
 "in a raid the message goes to raid chat": r'''
@@ -226,7 +232,7 @@ SCENARIOS = {
   roster[1].level = 11
   fire("GUILD_ROSTER_UPDATE")
   advance(3)
-  ok(list(emotes) == "CONGRATULATE Ann", list(emotes))
+  ok(list(emoteLines) == "congratulates Ann!", list(emoteLines))
   ok(list(said) == "GUILD: Grats on 11, Ann!", list(said))
 ''',
 "the guild list is asked for regularly": r'''
@@ -245,7 +251,7 @@ SCENARIOS = {
   fire("GUILD_ROSTER_UPDATE")
   advance(3)
   ok(list(said) == "GUILD: Grats on 31, Cid!", list(said))
-  ok(list(emotes) == "CONGRATULATE Cid-Mograine", list(emotes))
+  ok(list(emoteLines) == "congratulates Cid!", list(emoteLines))
 ''',
 "a guildmate in your group gets only the group reaction": r'''
   login(nil)
@@ -280,7 +286,7 @@ SCENARIOS = {
   fire("NAME_PLATE_UNIT_ADDED", "nameplate3")
   ding("nameplate3", 31)
   advance(3)
-  ok(#said == 0 and #emotes == 0, "reacted while off")
+  ok(#said == 0 and #emotes == 0 and #emoteLines == 0, "reacted while off")
 ''',
 "a stranger nearby gets an emote and a whisper": r'''
   login(nil); allOn()
@@ -288,7 +294,7 @@ SCENARIOS = {
   fire("NAME_PLATE_UNIT_ADDED", "nameplate3")
   ding("nameplate3", 31)
   advance(3)
-  ok(list(emotes) == "APPLAUD Dee", list(emotes))
+  ok(list(emoteLines) == "applauds Dee.", list(emoteLines))
   ok(list(said) == "WHISPER:Dee: Gz on 31!", list(said))
 ''',
 "a stranger from another realm is whispered by full name": r'''
@@ -336,6 +342,48 @@ SCENARIOS = {
   ok(#said == 1, list(said))
 ''',
 
+"the person you're targeting gets the real emote, aimed at them": r'''
+  login(nil)
+  see("party1", { name = "Bob", level = 19, group = true })
+  units.target = units.party1
+  fire("GROUP_ROSTER_UPDATE")
+  ding("party1", 20); advance(3)
+  ok(list(emotes) == "CHEER", "a plain emote aims at the target: " .. list(emotes))
+  ok(#emoteLines == 0, list(emoteLines))
+''',
+"someone else targeted: the custom line still names the one who dinged": r'''
+  login(nil)
+  see("party1", { name = "Bob", level = 19, group = true })
+  see("target", { name = "Ann", level = 40 })
+  fire("GROUP_ROSTER_UPDATE")
+  ding("party1", 20); advance(3)
+  ok(#emotes == 0 and list(emoteLines) == "cheers for Bob!", list(emotes) .. " / " .. list(emoteLines))
+''',
+"if a custom line can't be sent, a plain emote instead": r'''
+  login(nil)
+  emoteBlocked = true
+  see("party1", { name = "Bob", level = 19, group = true })
+  fire("GROUP_ROSTER_UPDATE")
+  ding("party1", 20); advance(3)
+  ok(list(emotes) == "CHEER" and #emoteLines == 0, list(emotes))
+  emoteBlocked, lockdown = false, true
+  ding("party1", 21); advance(3)
+  ok(list(emotes) == "CHEER | CHEER" and #emoteLines == 0, "locked chat: " .. list(emotes))
+''',
+"every emote has its own wording": r'''
+  login(nil)
+  see("party1", { name = "Bob", level = 19, group = true })
+  fire("GROUP_ROSTER_UPDATE")
+  for i, e in ipairs({ "APPLAUD", "BOW", "CLAP", "DANCE", "FLEX", "GRIN", "HUG", "ROAR", "SALUTE", "WAVE", "LAUGH" }) do
+    HuzzahDB.group.emote = e
+    ding("party1", 20 + i); advance(3)
+  end
+  ok(#emoteLines == 11, "got " .. #emoteLines)
+  for _, l in ipairs(emoteLines) do ok(l:find("Bob"), l) end
+  ok(emoteLines[2] == "bows to Bob." and emoteLines[10] == "waves at Bob.", list(emoteLines))
+  ok(emoteLines[11] == "laughs at Bob.", "an emote without its own wording: " .. emoteLines[11])
+''',
+
 # ---- what gets sent ----
 "an empty emote or message is skipped": r'''
   login(nil)
@@ -343,10 +391,10 @@ SCENARIOS = {
   see("party1", { name = "Bob", level = 19, group = true })
   fire("GROUP_ROSTER_UPDATE")
   ding("party1", 20); advance(3)
-  ok(#emotes == 0 and #said == 1, "no emote")
+  ok(#emotes == 0 and #emoteLines == 0 and #said == 1, "no emote")
   HuzzahDB.group.emote, HuzzahDB.group.message = "CHEER", "  "
   ding("party1", 21); advance(3)
-  ok(#emotes == 1 and #said == 1, "no message")
+  ok(#emoteLines == 1 and #said == 1, "no message")
 ''',
 "switched off: nothing at all": r'''
   login(nil)
@@ -354,7 +402,7 @@ SCENARIOS = {
   see("party1", { name = "Bob", level = 19, group = true })
   fire("GROUP_ROSTER_UPDATE")
   ding("party1", 20); advance(3)
-  ok(#said == 0 and #emotes == 0, "reacted while off")
+  ok(#said == 0 and #emotes == 0 and #emoteLines == 0, "reacted while off")
 ''',
 "names with odd characters are put in safely": r'''
   login(nil)
@@ -371,7 +419,7 @@ SCENARIOS = {
   fire("GROUP_ROSTER_UPDATE")
   ding("party1", 20); advance(3)
   ok(#said == 0, "sent a long message")
-  ok(#emotes == 1, "the emote still happens")
+  ok(#emoteLines == 1, "the emote still happens")
 ''',
 "while chat is locked the message is skipped": r'''
   login(nil)
@@ -400,7 +448,7 @@ SCENARIOS = {
   see("party1", { name = "Bob", level = 19, group = true })
   fire("GROUP_ROSTER_UPDATE")
   ding("party1", 20); advance(3)
-  ok(list(said) == "PARTY: Gz Bob, 20!" and list(emotes) == "CHEER Bob", list(said) .. " / " .. list(emotes))
+  ok(list(said) == "EMOTE: cheers for Bob! | PARTY: Gz Bob, 20!", list(said))
 ''',
 "hidden (secret) names and levels are skipped without errors": r'''
   login(nil); allOn()
@@ -411,7 +459,7 @@ SCENARIOS = {
   units.nameplate1.level, units.nameplate1.name = 31, SECRET
   fire("UNIT_LEVEL", "nameplate1")
   advance(3)
-  ok(#said == 0 and #emotes == 0, "reacted to a hidden ding")
+  ok(#said == 0 and #emotes == 0 and #emoteLines == 0, "reacted to a hidden ding")
 ''',
 
 # ---- settings panel ----
