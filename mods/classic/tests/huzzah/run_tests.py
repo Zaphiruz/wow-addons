@@ -77,10 +77,17 @@ C_GuildInfo = { GuildRoster = function() rosterRequests = rosterRequests + 1 end
 said, emotes, emoteLines = {}, {}, {}  -- messages, real emotes, custom emote lines
 lockdown = false
 emoteBlocked = false
+-- Which game: 11509 is Classic Era, 16001 is Forever.
+tocVersion = 11509
+function GetBuildInfo() return "1.15.9", "60000", "Nov 1 2026", tocVersion end
+-- Forever blocks emote lines sent without a key press: the call does nothing
+-- and raises no error (BugSack shows ADDON_ACTION_BLOCKED).
+blocked = {}
 C_ChatInfo = {
   SendChatMessage = function(msg, chatType, lang, target)
     assert(#msg <= 255, "message too long")
     if chatType == "EMOTE" then
+      if tocVersion >= 16000 then table.insert(blocked, msg); return end
       if emoteBlocked then error("blocked") end
       table.insert(emoteLines, msg)
       return
@@ -466,6 +473,24 @@ SCENARIOS = {
   fire("GROUP_ROSTER_UPDATE")
   ding("party1", 20); advance(3)
   ok(list(said) == "EMOTE: cheers for Bob! | PARTY: Gz Bob, 20!", list(said))
+''',
+"on Forever, a plain emote instead of the emote line, which the game blocks": r'''
+  tocVersion = 16001
+  login(nil)
+  cmd("debug")
+  see("party1", { name = "Bob", level = 19, group = true })
+  fire("GROUP_ROSTER_UPDATE")
+  out = {}
+  ding("party1", 20); advance(3)
+  ok(#blocked == 0, "tried a blocked emote line: " .. list(blocked))
+  ok(list(emotes) == "CHEER" and #emoteLines == 0, list(emotes))
+  ok(list(said) == "PARTY: Gz Bob, 20!", "the message still names them: " .. list(said))
+  ok(table.concat(out, "\n"):find("plain emote"), "debug says which emote: " .. table.concat(out, "\n"))
+  units.target = units.party1
+  ding("party1", 21); advance(3)
+  ok(list(emotes) == "CHEER | CHEER" and #blocked == 0, "at the target: " .. list(emotes))
+  local o = cmd("test")
+  ok(o:find("/cheer") and not o:find("cheers for"), o)
 ''',
 "hidden (secret) names and levels are skipped without errors": r'''
   login(nil); allOn()

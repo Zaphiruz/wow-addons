@@ -118,13 +118,20 @@ local function isTarget(full)
   return ok and name == full
 end
 
+-- Forever blocks emote lines that aren't sent from a key press, and ours come
+-- from a timer. A blocked call does nothing and raises no error, so it can't
+-- be caught: on Forever the line isn't tried at all.
+local emoteLinesBlocked = (select(4, GetBuildInfo()) or 0) >= 16000
+
 -- The game aims an emote only at your current target; a name given with it
 -- is ignored. So the player who dinged gets the real emote if they're your
 -- target, and otherwise a custom emote line naming them. If that line can't
 -- be sent, a plain emote at least plays.
 local function emoteAt(kind, token, full, short)
   local emote = (C_ChatInfo and C_ChatInfo.PerformEmote) or DoEmote
-  if kind ~= "self" and not isTarget(full) then
+  if emoteLinesBlocked then
+    dbg("plain emote /%s (Forever blocks emote lines)", token:lower())
+  elseif kind ~= "self" and not isTarget(full) then
     local line = emoteLine(token, short)
     if not chatLocked() and sendChat(line, "EMOTE") then
       dbg("custom emote: %s", line)
@@ -359,6 +366,8 @@ local function describe(kind, name, level)
   if cfg.emote ~= "" then
     if kind == "self" then
       parts[#parts + 1] = "/" .. cfg.emote:lower()
+    elseif emoteLinesBlocked then
+      parts[#parts + 1] = format("/%s (aimed at %s if they're your target)", cfg.emote:lower(), name)
     else
       parts[#parts + 1] = format("/%s if %s is your target, otherwise the emote \"%s %s\"",
         cfg.emote:lower(), name, UnitName("player"), emoteLine(cfg.emote, name))
