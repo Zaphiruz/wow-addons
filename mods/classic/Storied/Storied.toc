@@ -1,7 +1,7 @@
 ## Interface: 11509, 16001
 ## Title: Storied
 ## Notes: Remembers the history of your gear and the people you play with: who enchanted it, where it came from, weapon kills, who you grouped with and who resurrected you, shown in tooltips. Type /storied for your level-ups and deaths.
-## Version: 0.2.0
+## Version: 0.3.0
 ## X-Curse-Project-ID: 1798878
 ## SavedVariables: StoriedDB
 ## SavedVariablesPerCharacter: StoriedCharDB

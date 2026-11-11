@@ -1,5 +1,13 @@
 # Storied changelog
 
+## 0.3.0 (2026-11-11)
+
+- Type `/storied` to open your story: a window listing your level-ups and deaths, newest first, with filters for each. `/storied settings` opens the settings.
+- Level-ups record where you dinged, your total time played, and how long the level took. Storied asks for /played quietly, so it doesn't fill your chat.
+- Deaths record what killed you (and with which spell), where, at what level, and how big your group was. On World of Warcraft: Forever it names the enemy you were fighting.
+- Your story starts the first time you log in with this version; earlier levels and deaths can't be recovered.
+- New switches for "Level-ups" and "Deaths" in Options > AddOns > Storied.
+
 ## 0.2.0 (2026-11-11)
 
 - Players you've grouped with now have a history on their tooltip: where you first and last grouped, and how many times, such as "First grouped: Scholomance, 3 Oct 2026".
