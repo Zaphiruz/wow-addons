@@ -1,5 +1,13 @@
 # Storied changelog
 
+## 0.2.0 (2026-11-11)
+
+- Players you've grouped with now have a history on their tooltip: where you first and last grouped, and how many times, such as "First grouped: Scholomance, 3 Oct 2026".
+- A group counts once when someone joins it, at the dungeon it goes into. A different dungeon with the same group is a new time; running back in after a wipe isn't.
+- Their tooltip also says when they resurrected, summoned or soulstoned you, once you accepted it. A soulstone can only be credited when its caster was in your group.
+- Optional thank-you whisper when you accept a resurrect or summon. It's off until you switch on "Say thanks" in the settings, where both messages can be edited.
+- New switches for "Grouped with" and "Help" in Options > AddOns > Storied.
+
 ## 0.1.0 (2026-11-11)
 
 - Remembers the history of your gear and shows it in item tooltips. It records from the day you install it; nothing earlier can be recovered.

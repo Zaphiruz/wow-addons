@@ -1,7 +1,7 @@
 ## Interface: 11509, 16001
 ## Title: Storied
-## Notes: Remembers the history of your gear: who enchanted it, where it came from, and each weapon's kills, shown in item tooltips.
-## Version: 0.1.0
+## Notes: Remembers the history of your gear and the people you play with: who enchanted it, where it came from, weapon kills, who you grouped with and who resurrected you. Shown in tooltips.
+## Version: 0.2.0
 ## X-Curse-Project-ID: 1798878
 ## SavedVariables: StoriedDB
 ## SavedVariablesPerCharacter: StoriedCharDB

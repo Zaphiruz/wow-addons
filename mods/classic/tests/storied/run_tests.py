@@ -24,22 +24,84 @@ date = os.date
 timers = {}
 C_Timer = { After = function(d, fn) table.insert(timers, { at = now + d, fn = fn }) end }
 function advance(seconds)
-  now = now + seconds
-  clock = clock + seconds
+  local stop = now + seconds
+  while true do
+    local nextIdx
+    for i, t in ipairs(timers) do
+      if t.at <= stop and (not nextIdx or t.at < timers[nextIdx].at) then nextIdx = i end
+    end
+    if not nextIdx then break end
+    local t = table.remove(timers, nextIdx)
+    if t.at > now then clock = clock + (t.at - now); now = t.at end
+    t.fn()
+  end
+  clock = clock + (stop - now)
+  now = stop
 end
 function days(n) clock = clock + n * 86400 end
 
 -- Units.
 units = {
-  player = { name = "Zaphiruz", guid = "Player-1-0001" },
+  player = { name = "Zaphiruz", guid = "Player-1-0001", isPlayer = true },
 }
-function UnitName(u) local x = units[u]; if x then return x.name end end
+function UnitName(u) local x = units[u]; if x then return x.name, x.realm end end
 function UnitGUID(u) local x = units[u]; if x then return x.guid end end
+function UnitIsPlayer(u) local x = units[u]; return x ~= nil and x.isPlayer == true end
+function UnitIsUnit(a, b) return units[a] ~= nil and units[a] == units[b] end
+function UnitIsDeadOrGhost(u) local x = units[u]; return x ~= nil and x.dead == true end
 function GetRealmName() return "Whitemane" end
+function GetNormalizedRealmName() return "Whitemane" end
+function Ambiguate(full, how)
+  local name, realm = full:match("^(.-)%-(.+)$")
+  if name and (how == "short" or realm == "Whitemane") then return name end
+  return full
+end
 function GetRealZoneText() return zoneName end
 zoneName = "Elwynn Forest"
 groupSize = 0
 function GetNumGroupMembers() return groupSize end
+
+-- Groups: join(...) puts players in your party (or raid), leave() empties it.
+raid = false
+instance = nil   -- the dungeon or raid you're in, or nil outside
+function IsInRaid() return raid end
+function IsInInstance() return instance ~= nil, instance and "party" or "none" end
+function GetInstanceInfo() return instance or zoneName end
+function join(...)
+  local prefix = raid and "raid" or "party"
+  for i = 1, 40 do units["party" .. i], units["raid" .. i] = nil, nil end
+  local list = { ... }
+  for i, p in ipairs(list) do
+    local name, realm = p:match("^(.-)%-(.+)$")
+    units[prefix .. i] = { name = name or p, realm = realm, guid = "Player-1-" .. p, isPlayer = true }
+  end
+  if raid then units["raid" .. (#list + 1)] = units.player end
+  groupSize = #list > 0 and (#list + 1) or 0
+  fire("GROUP_ROSTER_UPDATE")
+end
+function leave() join() end
+function enter(place) instance = place; zoneName = place or "Elwynn Forest"; fire("PLAYER_ENTERING_WORLD") end
+
+-- Resurrects, summons and soulstones.
+function AcceptResurrect() end
+C_SummonInfo = { GetSummonConfirmSummoner = function() return summoner end, ConfirmSummon = function() end }
+C_DeathInfo = { UseSelfResurrectOption = function(kind, id) end }
+playerAuras = {}
+C_UnitAuras = { GetAuraDataByIndex = function(unit, i, filter) if unit == "player" then return playerAuras[i] end end }
+function soulstone(by) playerAuras = { { name = "Soulstone Resurrection", spellId = 20765, sourceUnit = by } }
+                       fire("UNIT_AURA", "player") end
+function die() playerAuras = {}; units.player.dead = true; fire("UNIT_AURA", "player"); fire("PLAYER_DEAD") end
+function alive() units.player.dead = false; fire("PLAYER_ALIVE") end
+
+-- Chat.
+whispers, lockdown = {}, false
+C_ChatInfo = {
+  SendChatMessage = function(msg, chatType, lang, target)
+    assert(#msg <= 255, "message too long")
+    table.insert(whispers, chatType .. ":" .. tostring(target) .. ": " .. msg)
+  end,
+  InChatMessagingLockdown = function() return lockdown end,
+}
 
 -- Items, as the client describes them.
 ITEMS = {
@@ -181,6 +243,13 @@ function widget(kind, name, parent, template)
   function w:GetText() return self.text end
   function w:SetChecked(v) self.checked = not not v end
   function w:GetChecked() return self.checked end
+  function w:SetMaxLetters(n) self.maxLetters = n end
+  -- The player types into an edit box.
+  function w:Type(t)
+    if self.maxLetters and #t > self.maxLetters then t = t:sub(1, self.maxLetters) end
+    self.text = t
+    if self.scripts.OnTextChanged then self.scripts.OnTextChanged(self, true) end
+  end
   function w:Show() self.shown = true; if self.scripts.OnShow then self.scripts.OnShow(self) end end
   function w:CreateFontString(n) return widget("FontString", n, self) end
   function w:Click(button)
@@ -214,6 +283,7 @@ GameTooltip.lines, GameTooltip.item = {}, false
 function GameTooltip:AddLine(t) table.insert(self.lines, t) end
 function GameTooltip:ClearLines() self.lines = {}; self.item = false; self:RunHooks("OnTooltipCleared") end
 function GameTooltip:GetItem() if self.item then return ITEMS[idOf(self.item)].name, self.item end end
+function GameTooltip:GetUnit() if self.unit then return UnitName(self.unit), self.unit end end
 Enum = { TooltipDataType = { Item = 0, Unit = 2 } }
 postCalls = {}
 TooltipDataProcessor = { AddTooltipPostCall = function(kind, fn)
@@ -232,6 +302,23 @@ function hover(l)
   GameTooltip:Show()
   local t = {}
   for i = 2, #GameTooltip.lines do t[#t+1] = plain(GameTooltip.lines[i]) end
+  return table.concat(t, "\n")
+end
+-- Hover a player: their name and level line, then the unit hooks.
+function hoverUnit(u)
+  GameTooltip:ClearLines()
+  GameTooltip.unit = u
+  GameTooltip:AddLine(tostring(UnitName(u)))
+  GameTooltip:AddLine("Level 60 Human Priest (Player)")
+  if TooltipDataProcessor then
+    for _, fn in ipairs(postCalls[Enum.TooltipDataType.Unit] or {}) do fn(GameTooltip, { type = 2 }) end
+  else
+    GameTooltip:RunHooks("OnTooltipSetUnit")
+  end
+  GameTooltip:Show()
+  GameTooltip.unit = nil
+  local t = {}
+  for i = 3, #GameTooltip.lines do t[#t+1] = plain(GameTooltip.lines[i]) end
   return table.concat(t, "\n")
 end
 
@@ -255,7 +342,8 @@ SCENARIOS = {
 "first login turns everything on and adds a settings page": r'''
   login(nil, nil)
   ok(StoriedDB.enchants and StoriedDB.origin and StoriedDB.kills and StoriedDB.tooltips, "all on")
-  ok(type(StoriedCharDB.items) == "table", "item history")
+  ok(StoriedDB.grouped and StoriedDB.help and StoriedDB.thanks == false, "people on, thanks off")
+  ok(type(StoriedCharDB.items) == "table" and type(StoriedCharDB.people) == "table", "histories")
   ok(categories[1] and categories[1].name == "Storied", "settings page")
   cmd("")
   ok(opened == 88, "/storied opens the settings")
@@ -479,10 +567,166 @@ SCENARIOS = {
   ok(hover(link(12784)) == "1 kill", hover(link(12784)))
   GameTooltip:RunHooks("OnTooltipSetItem")   -- some items set twice
   ok(#GameTooltip.lines == 2, "added twice")
+  join("Bob")
+  ok(hoverUnit("party1") == "Grouped once: Elwynn Forest, 11 Nov 2026", hoverUnit("party1"))
+''',
+"with tooltips off, players get no lines either": r'''
+  login({ tooltips = false }, nil)
+  join("Bob")
+  ok(hoverUnit("party1") == "", hoverUnit("party1"))
 ''',
 "items with no history get no lines": r'''
   login(nil, nil)
   ok(hover(link(6125)) == "", hover(link(6125)))
+''',
+
+# ---- grouped with ----
+"grouping with someone once": r'''
+  login(nil, nil)
+  join("Bob")
+  ok(hoverUnit("party1") == "Grouped once: Elwynn Forest, 11 Nov 2026", hoverUnit("party1"))
+''',
+"first and last time grouped, and how many times": r'''
+  login(nil, nil)
+  join("Bob")                     -- formed in the open world...
+  enter("Scholomance")            -- ...the dungeon is where it happened
+  enter("Scholomance")            -- running back in after a wipe isn't a new time
+  enter(nil); leave()
+  days(3)
+  join("Bob"); enter("Stratholme")
+  enter("Blackrock Spire")        -- a different dungeon with the same group is
+  enter(nil)
+  local t = hoverUnit("party1")
+  ok(t == "First grouped: Scholomance, 11 Nov 2026\nLast: Blackrock Spire, 14 Nov 2026 (3 times)", t)
+''',
+"someone joining a group you're already in counts once": r'''
+  login(nil, nil)
+  join("Bob")
+  join("Bob", "Ann")
+  join("Bob", "Ann", "Cid")
+  ok(StoriedCharDB.people["Bob-Whitemane"].times == 1, "Bob counted again when others joined")
+  ok(StoriedCharDB.people["Cid-Whitemane"].times == 1, "Cid")
+''',
+"a /reload while grouped doesn't count again": r'''
+  login(nil, nil)
+  join("Bob")
+  login(StoriedDB, StoriedCharDB)
+  join("Bob")
+  ok(StoriedCharDB.people["Bob-Whitemane"].times == 1, "counted again after a reload")
+''',
+"raids count, and you're not in your own history": r'''
+  login(nil, nil)
+  raid = true
+  join("Bob", "Ann-Mograine")
+  ok(StoriedCharDB.people["Bob-Whitemane"] and StoriedCharDB.people["Ann-Mograine"], "both recorded")
+  ok(StoriedCharDB.people["Zaphiruz-Whitemane"] == nil, "recorded yourself")
+  units.target = units.player
+  ok(hoverUnit("target") == "", "lines on your own tooltip")
+''',
+"strangers and monsters get no lines": r'''
+  login(nil, nil)
+  units.target = { name = "Dee", guid = "Player-1-Dee", isPlayer = true }
+  ok(hoverUnit("target") == "", hoverUnit("target"))
+  units.target = { name = "Hogger", guid = creature(448) }
+  ok(hoverUnit("target") == "", hoverUnit("target"))
+''',
+"with grouped-with switched off, nothing is recorded": r'''
+  login({ grouped = false }, nil)
+  join("Bob")
+  ok(StoriedCharDB.people["Bob-Whitemane"] == nil, "recorded while off")
+''',
+
+# ---- help ----
+"an accepted resurrect is remembered": r'''
+  login(nil, nil)
+  join("Bob")
+  fire("RESURRECT_REQUEST", "Bob")
+  AcceptResurrect()
+  ok(hoverUnit("party1") == "Grouped once: Elwynn Forest, 11 Nov 2026\nResurrected you once, 11 Nov", hoverUnit("party1"))
+  days(2)
+  fire("RESURRECT_REQUEST", "Bob")
+  AcceptResurrect()
+  ok(StoriedCharDB.people["Bob-Whitemane"].res.n == 2, "second res")
+  ok(hoverUnit("party1"):find("Resurrected you 2 times, last 13 Nov"), hoverUnit("party1"))
+''',
+"a declined resurrect isn't": r'''
+  login(nil, nil)
+  fire("RESURRECT_REQUEST", "Bob")
+  advance(70)
+  AcceptResurrect()   -- a much later accept belongs to someone else's offer
+  ok(StoriedCharDB.people["Bob-Whitemane"] == nil, "counted a declined res")
+''',
+"a summon you accept is remembered": r'''
+  login(nil, nil)
+  summoner = "Dee-Mograine"
+  fire("CONFIRM_SUMMON")
+  C_SummonInfo.ConfirmSummon()
+  ok(StoriedCharDB.people["Dee-Mograine"].summon.n == 1, "summon")
+  units.target = { name = "Dee", realm = "Mograine", guid = "Player-1-Dee", isPlayer = true }
+  ok(hoverUnit("target") == "Summoned you once, 11 Nov", hoverUnit("target"))
+''',
+"a soulstone is credited to whoever cast it": r'''
+  login(nil, nil)
+  join("Dee")
+  soulstone("party1")
+  die()
+  C_DeathInfo.UseSelfResurrectOption(1, 20765)
+  ok(hoverUnit("party1"):find("Soulstoned you once, 11 Nov"), hoverUnit("party1"))
+''',
+"a soulstone that ran out, or from someone unknown, isn't credited": r'''
+  login(nil, nil)
+  join("Dee")
+  soulstone("party1")
+  playerAuras = {}; fire("UNIT_AURA", "player")   -- it wore off while alive
+  die()
+  C_DeathInfo.UseSelfResurrectOption(1, 20765)
+  alive()
+  soulstone(nil)                                  -- cast by someone out of the group
+  die()
+  C_DeathInfo.UseSelfResurrectOption(1, 20765)
+  ok(StoriedCharDB.people["Dee-Whitemane"].soulstone == nil, "credited a soulstone")
+''',
+"with help switched off, nothing is recorded": r'''
+  login({ help = false }, nil)
+  fire("RESURRECT_REQUEST", "Bob"); AcceptResurrect()
+  ok(StoriedCharDB.people["Bob-Whitemane"] == nil, "recorded while off")
+''',
+
+# ---- say thanks ----
+"thanks are off until you turn them on": r'''
+  login(nil, nil)
+  fire("RESURRECT_REQUEST", "Bob"); AcceptResurrect()
+  advance(5)
+  ok(#whispers == 0, "whispered while off")
+  StoriedDB.thanks = true
+  fire("RESURRECT_REQUEST", "Bob-Mograine"); AcceptResurrect()
+  ok(#whispers == 0, "waits a moment")
+  advance(5)
+  ok(whispers[1] == "WHISPER:Bob-Mograine: Thanks for the res, Bob!", tostring(whispers[1]))
+  summoner = "Dee"
+  fire("CONFIRM_SUMMON"); C_SummonInfo.ConfirmSummon()
+  advance(5)
+  ok(whispers[2] == "WHISPER:Dee: Thanks for the summon, Dee!", tostring(whispers[2]))
+''',
+"thanks are skipped when empty or while chat is locked": r'''
+  login({ thanks = true, thanksRes = "  " }, nil)
+  fire("RESURRECT_REQUEST", "Bob"); AcceptResurrect()
+  advance(5)
+  ok(#whispers == 0, "sent an empty thanks")
+  lockdown = true
+  summoner = "Dee"
+  fire("CONFIRM_SUMMON"); C_SummonInfo.ConfirmSummon()
+  advance(5)
+  ok(#whispers == 0, "whispered while chat was locked")
+''',
+"the thanks messages are edited in settings": r'''
+  login(nil, nil)
+  panel():Show()
+  ok(panel().thanksRes:GetText() == "Thanks for the res, {name}!", panel().thanksRes:GetText())
+  panel().thanksRes:Type("Ty {name} <3")
+  panel().checks.thanks:Click()
+  ok(StoriedDB.thanksRes == "Ty {name} <3" and StoriedDB.thanks == true, "saved")
+  ok(panel().thanksRes.maxLetters and panel().thanksRes.maxLetters <= 200, "long messages are refused")
 ''',
 
 # ---- Forever ----
@@ -494,9 +738,14 @@ SCENARIOS = {
   units.NPC = { name = SECRET }
   fire("TRADE_SHOW"); tradeMine[7] = link(12784); tradeEnchant = "Crusader"
   fire("TRADE_PLAYER_ITEM_CHANGED", 7); fire("TRADE_CLOSED"); fire("UI_INFO_MESSAGE", 226, ERR_TRADE_COMPLETE)
-  units.target = { name = SECRET, guid = SECRET }
+  units.target = { name = SECRET, guid = SECRET, isPlayer = true }
   fire("PLAYER_TARGET_CHANGED")
-  ok(next(StoriedCharDB.items) == nil, "recorded something hidden")
+  ok(hoverUnit("target") == "", "a hidden player's tooltip")
+  units.party1 = { name = SECRET, isPlayer = true }; groupSize = 2
+  fire("GROUP_ROSTER_UPDATE")
+  fire("RESURRECT_REQUEST", SECRET); AcceptResurrect()
+  summoner = SECRET; fire("CONFIRM_SUMMON"); C_SummonInfo.ConfirmSummon()
+  ok(next(StoriedCharDB.items) == nil and next(StoriedCharDB.people) == nil, "recorded something hidden")
   kill()
   ok(hover(link(12784)) == "1 kill", "still works after")
 ''',

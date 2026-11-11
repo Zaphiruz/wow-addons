@@ -1,6 +1,7 @@
--- Storied: remembers the history of your gear. Who enchanted it, where it
--- came from and how many kills each weapon has, shown in item tooltips.
--- The game keeps none of this, so it's recorded as it happens.
+-- Storied: remembers the history of your gear and the people you play with.
+-- Who enchanted an item, where it came from and how many kills each weapon
+-- has; who you've grouped with and who resurrected or summoned you. Shown
+-- in tooltips. The game keeps none of this, so it's recorded as it happens.
 local ADDON = ...
 
 local db              -- StoriedDB: settings, shared by the account
@@ -24,6 +25,7 @@ local function commas(n)
 end
 
 local function day(t) return (date("%d %b %Y", t):gsub("^0", "")) end
+local function shortDay(t) return (date("%d %b", t):gsub("^0", "")) end
 
 ---------------------------------------------------------------------------
 -- Settings and saved history
@@ -33,19 +35,29 @@ local OPTIONS = {
   { key = "origin", label = "Where it came from",
     note = "Drops, chests, lockboxes, quests, vendors, trades and mail, for green and better gear" },
   { key = "kills", label = "Weapon kills", note = "Your killing blows, counted on the weapon you had equipped" },
+  { key = "grouped", label = "Grouped with", note = "Where you first and last grouped with each player" },
+  { key = "help", label = "Help", note = "Who resurrected, summoned or soulstoned you" },
+  { key = "thanks", label = "Say thanks", default = false,
+    note = "Whisper them when you accept a resurrect or summon. {name} is their name." },
   { key = "tooltips", label = "Show on tooltips", note = "Turn off to keep recording without the extra lines" },
 }
+local TEXTS = { thanksRes = "Thanks for the res, {name}!", thanksSummon = "Thanks for the summon, {name}!" }
 
 local function loadSaved()
   if type(StoriedDB) ~= "table" then StoriedDB = {} end
   db = StoriedDB
   for _, o in ipairs(OPTIONS) do
-    if db[o.key] == nil then db[o.key] = true end
+    if db[o.key] == nil then db[o.key] = o.default ~= false end
+  end
+  for k, v in pairs(TEXTS) do
+    if type(db[k]) ~= "string" then db[k] = v end
   end
   if type(StoriedCharDB) ~= "table" then StoriedCharDB = {} end
   char = StoriedCharDB
   if type(char.items) ~= "table" then char.items = {} end      -- item ID -> its history
   if type(char.openers) ~= "table" then char.openers = {} end  -- lockbox ID -> who picked it
+  if type(char.people) ~= "table" then char.people = {} end    -- "Name-Realm" -> your history with them
+  if type(char.group) ~= "table" then char.group = {} end      -- who's in your group now, kept over a reload
 end
 
 ---------------------------------------------------------------------------
@@ -370,6 +382,197 @@ local function onKill(attacker)
 end
 
 ---------------------------------------------------------------------------
+-- People: who you've grouped with
+--
+-- Each time someone joins your group counts once. Where it happened is the
+-- zone you were in, or the dungeon the group goes into next. Going into a
+-- different dungeon with the same group counts as a new time; running back
+-- into the same one after a wipe doesn't.
+---------------------------------------------------------------------------
+local myRealm
+
+-- "Name-Realm" for a name that may lack its realm.
+local function withRealm(name)
+  name = text(name)
+  if name and not name:find("-", 1, true) and myRealm then name = name .. "-" .. myRealm end
+  return name
+end
+
+-- "Name-Realm" for the player under unit, or nil.
+local function fullName(unit)
+  local name, realm = UnitName(unit)
+  name = text(name)
+  if not name then return end
+  return name .. "-" .. (text(realm) or myRealm)
+end
+
+local function person(full)
+  local p = char.people[full]
+  if not p then
+    p = {}
+    char.people[full] = p
+  end
+  return p
+end
+
+-- Where you are: the dungeon's name inside one, otherwise the zone.
+local function place()
+  if IsInInstance and IsInInstance() then
+    return text((GetInstanceInfo())) or zone(), true
+  end
+  return zone(), false
+end
+
+local function newTime(full, where)
+  local p = person(full)
+  p.times = (p.times or 0) + 1
+  local at = time()
+  p.first = p.first or { place = where, at = at }
+  p.last = { place = where, at = at }
+end
+
+local function groupUnits()
+  local list = {}
+  if IsInRaid() then
+    for i = 1, 40 do list[#list + 1] = "raid" .. i end
+  else
+    for i = 1, 4 do list[#list + 1] = "party" .. i end
+  end
+  return list
+end
+
+local function onRoster()
+  if not db.grouped then
+    char.group = {}
+    return
+  end
+  local where, inside = place()
+  local now = {}
+  for _, unit in ipairs(groupUnits()) do
+    if UnitIsPlayer(unit) and not UnitIsUnit(unit, "player") then
+      local full = fullName(unit)
+      if full then
+        local dungeon = char.group[full]
+        if dungeon == nil then
+          newTime(full, where)
+          dungeon = inside and where or false
+        end
+        now[full] = dungeon
+      end
+    end
+  end
+  char.group = now
+end
+
+local function onZone()
+  local where, inside = place()
+  if not (inside and where) then return end
+  for full, dungeon in pairs(char.group) do
+    local p = char.people[full]
+    if p and p.last and dungeon ~= where then
+      if dungeon then
+        newTime(full, where)  -- a different dungeon with the same group
+      else
+        p.last.place = where  -- the group formed outside; this is where it went
+        if p.times == 1 then p.first.place = where end
+      end
+      char.group[full] = where
+    end
+  end
+end
+
+---------------------------------------------------------------------------
+-- People: who helped you
+--
+-- A resurrect or summon offer names who it's from. It counts once you
+-- accept it. A soulstone is credited to whoever cast the buff on you, which
+-- the game only says while they're in your group.
+---------------------------------------------------------------------------
+local OFFER_WAIT = { res = 60, summon = 120 }  -- seconds an offer stays open
+local THANKS = { res = "thanksRes", summon = "thanksSummon" }
+local THANKS_DELAY = 2   -- seconds after accepting before the whisper
+local MAX_CHAT = 255     -- the game's limit for one chat line
+local SOULSTONE = { [20707] = true, [20762] = true, [20763] = true, [20764] = true, [20765] = true,
+                    [27239] = true }
+local HELP_WORDS = { { "res", "Resurrected" }, { "summon", "Summoned" }, { "soulstone", "Soulstoned" } }
+
+local offers = {}  -- "res" / "summon" -> { name, at }
+local stoneBy      -- "Name-Realm" of who cast your soulstone, when known
+
+local function chatLocked()
+  return C_ChatInfo ~= nil and C_ChatInfo.InChatMessagingLockdown ~= nil and C_ChatInfo.InChatMessagingLockdown()
+end
+
+local function thank(kind, name)
+  local key = THANKS[kind]
+  if not (db.thanks and key) then return end
+  local short = (Ambiguate and Ambiguate(name, "short")) or name
+  local msg = db[key]:gsub("{name}", function() return short end)
+  if strtrim(msg) == "" or #msg > MAX_CHAT then return end
+  C_Timer.After(THANKS_DELAY, function()
+    if chatLocked() then
+      dbg("chat is locked right now, no thanks sent to %s", short)
+      return
+    end
+    local send = (C_ChatInfo and C_ChatInfo.SendChatMessage) or SendChatMessage
+    if send then pcall(send, msg, "WHISPER", nil, name) end
+  end)
+end
+
+local function helped(kind, name)
+  local full = withRealm(name)
+  if not full then return end
+  if db.help then
+    local p = person(full)
+    local h = p[kind] or { n = 0 }
+    h.n, h.at = h.n + 1, time()
+    p[kind] = h
+    dbg("%s: %s (%d)", kind, full, h.n)
+  end
+  thank(kind, name)
+end
+
+local function offered(kind, name)
+  offers[kind] = { name = text(name), at = GetTime() }
+end
+
+local function accepted(kind)
+  local o = offers[kind]
+  offers[kind] = nil
+  if o and o.name and GetTime() - o.at < OFFER_WAIT[kind] then helped(kind, o.name) end
+end
+
+local function auraAt(i)
+  if C_UnitAuras and C_UnitAuras.GetAuraDataByIndex then
+    return C_UnitAuras.GetAuraDataByIndex("player", i, "HELPFUL")
+  end
+  if UnitAura then
+    local name, _, _, _, _, _, source, _, _, spellId = UnitAura("player", i, "HELPFUL")
+    if name then return { name = name, sourceUnit = source, spellId = spellId } end
+  end
+end
+
+local function readAuras()
+  -- The buff goes when you die, but its caster is still who to thank.
+  if UnitIsDeadOrGhost("player") then return end
+  stoneBy = nil
+  for i = 1, 40 do
+    local a = auraAt(i)
+    if not a then break end
+    if SOULSTONE[number(a.spellId) or 0] then
+      local unit = text(a.sourceUnit)
+      stoneBy = unit and fullName(unit) or nil
+    end
+  end
+end
+
+local function usedSelfRes()
+  local by = stoneBy
+  stoneBy = nil
+  if by then helped("soulstone", by) end
+end
+
+---------------------------------------------------------------------------
 -- Tooltips
 ---------------------------------------------------------------------------
 local GOLD = "|cffffd100"
@@ -400,41 +603,84 @@ local function linesFor(id, link)
   return lines
 end
 
-local doneFor = setmetatable({}, { __mode = "k" })  -- tooltip -> item already added
+local function personLines(full)
+  local p = char.people[full]
+  local lines = {}
+  if not p then return lines end
+  local function at(stamp) return (stamp.place and (stamp.place .. ", ") or "") .. day(stamp.at) end
+  if p.times and p.first and p.last then
+    if p.times == 1 then
+      lines[#lines + 1] = "Grouped once: " .. at(p.first)
+    else
+      lines[#lines + 1] = "First grouped: " .. at(p.first)
+      lines[#lines + 1] = format("Last: %s (%d times)", at(p.last), p.times)
+    end
+  end
+  for _, w in ipairs(HELP_WORDS) do
+    local h = p[w[1]]
+    if h and h.n and h.n > 0 then
+      if h.n == 1 then
+        lines[#lines + 1] = format("%s you once, %s", w[2], shortDay(h.at))
+      else
+        lines[#lines + 1] = format("%s you %d times, last %s", w[2], h.n, shortDay(h.at))
+      end
+    end
+  end
+  return lines
+end
 
-local function addLines(tip, id, once)
-  if not (db and char and db.tooltips) or not number(id) then return end
-  local link = tip.GetItem and select(2, tip:GetItem())
-  link = text(link)
+local doneFor = setmetatable({}, { __mode = "k" })  -- tooltip -> what was already added
+
+local function addTo(tip, key, lines, once)
   if once then
-    local key = link or id
     if doneFor[tip] == key then return end
     doneFor[tip] = key
   end
-  for _, line in ipairs(linesFor(id, link)) do tip:AddLine(GOLD .. line .. "|r") end
+  for _, line in ipairs(lines) do tip:AddLine(GOLD .. line .. "|r") end
+end
+
+local function addItemLines(tip, id, once)
+  if not (db and char and db.tooltips) or not number(id) then return end
+  local link = text(tip.GetItem and select(2, tip:GetItem()))
+  addTo(tip, link or id, linesFor(id, link), once)
+end
+
+local function addUnitLines(tip, once)
+  if not (db and char and db.tooltips and tip.GetUnit) then return end
+  local _, unit = tip:GetUnit()
+  unit = text(unit)
+  if not unit or not UnitIsPlayer(unit) or UnitIsUnit(unit, "player") then return end
+  local full = fullName(unit)
+  if full then addTo(tip, "unit:" .. full, personLines(full), once) end
 end
 
 local function hookTooltips()
-  local item = Enum and Enum.TooltipDataType and Enum.TooltipDataType.Item
-  if TooltipDataProcessor and TooltipDataProcessor.AddTooltipPostCall and item then
-    TooltipDataProcessor.AddTooltipPostCall(item, function(tip, data)
-      pcall(addLines, tip, data and data.id)
+  local types = Enum and Enum.TooltipDataType
+  if TooltipDataProcessor and TooltipDataProcessor.AddTooltipPostCall and types and types.Item then
+    TooltipDataProcessor.AddTooltipPostCall(types.Item, function(tip, data)
+      pcall(addItemLines, tip, data and data.id)
     end)
+    if types.Unit then
+      TooltipDataProcessor.AddTooltipPostCall(types.Unit, function(tip) pcall(addUnitLines, tip) end)
+    end
     return
   end
   for _, tip in ipairs({ GameTooltip, ItemRefTooltip }) do
     if tip then
       tip:HookScript("OnTooltipSetItem", function(self)
-        pcall(function() addLines(self, itemID(select(2, self:GetItem())), true) end)
+        pcall(function() addItemLines(self, itemID(select(2, self:GetItem())), true) end)
       end)
       tip:HookScript("OnTooltipCleared", function(self) doneFor[self] = nil end)
     end
   end
+  GameTooltip:HookScript("OnTooltipSetUnit", function(self) pcall(addUnitLines, self, true) end)
 end
 
 ---------------------------------------------------------------------------
 -- Settings panel (Options > AddOns > Storied)
 ---------------------------------------------------------------------------
+local MAX_MESSAGE = 200  -- letters, leaving room for a long name
+
 local function buildPanel()
   panel = CreateFrame("Frame", "StoriedPanel")
   panel.checks = {}
@@ -446,8 +692,22 @@ local function buildPanel()
   intro:SetPoint("TOPLEFT", title, "BOTTOMLEFT", 0, -8)
   intro:SetText("Starts recording from the day you install it. Nothing earlier can be recovered.")
 
-  for i, o in ipairs(OPTIONS) do
-    local y = -70 - (i - 1) * 44
+  local function textBox(key, y)
+    local box = CreateFrame("EditBox", nil, panel, "InputBoxTemplate")
+    box:SetPoint("TOPLEFT", 54, y)
+    box:SetSize(300, 22)
+    box:SetAutoFocus(false)
+    box:SetMaxLetters(MAX_MESSAGE)
+    box:SetScript("OnTextChanged", function(self, userInput)
+      if userInput then db[key] = self:GetText() end
+    end)
+    box:SetScript("OnEnterPressed", function(self) self:ClearFocus() end)
+    box:SetScript("OnEscapePressed", function(self) self:ClearFocus() end)
+    return box
+  end
+
+  local y = -70
+  for _, o in ipairs(OPTIONS) do
     local check = CreateFrame("CheckButton", nil, panel, "UICheckButtonTemplate")
     check:SetPoint("TOPLEFT", 16, y)
     check:SetScript("OnClick", function(self) db[o.key] = self:GetChecked() and true or false end)
@@ -458,10 +718,18 @@ local function buildPanel()
     note:SetPoint("TOPLEFT", 48, y - 22)
     note:SetText(o.note)
     panel.checks[o.key] = check
+    y = y - 44
+    if o.key == "thanks" then
+      panel.thanksRes = textBox("thanksRes", y + 4)
+      panel.thanksSummon = textBox("thanksSummon", y - 22)
+      y = y - 56
+    end
   end
 
   panel:SetScript("OnShow", function()
     for _, o in ipairs(OPTIONS) do panel.checks[o.key]:SetChecked(db[o.key]) end
+    panel.thanksRes:SetText(db.thanksRes)
+    panel.thanksSummon:SetText(db.thanksSummon)
   end)
 
   if Settings and Settings.RegisterCanvasLayoutCategory then
@@ -475,8 +743,8 @@ end
 ---------------------------------------------------------------------------
 local HELP = {
   "/storied  -  open the settings",
-  "/storied debug  -  print each trade, origin and kill as it's recorded",
-  "Hover over an item to see its history in the tooltip.",
+  "/storied debug  -  print each trade, origin, kill and helping hand as it's recorded",
+  "Hover over an item, or a player you've grouped with, to see their history in the tooltip.",
 }
 
 SLASH_STORIED1 = "/storied"
@@ -514,6 +782,9 @@ local function hookFunctions()
   if not (C_Container and C_Container.UseContainerItem) then hook(_G, "UseContainerItem", safe(onUseItem)) end
   hook(_G, "TakeInboxItem", safe(fromMail))
   hook(_G, "AutoLootMailItem", safe(function(index) fromMail(index) end))
+  hook(_G, "AcceptResurrect", safe(function() accepted("res") end))
+  hook(C_SummonInfo, "ConfirmSummon", safe(function() accepted("summon") end))
+  hook(C_DeathInfo, "UseSelfResurrectOption", safe(usedSelfRes))
 end
 
 local HANDLERS = {
@@ -539,6 +810,14 @@ local HANDLERS = {
   QUEST_FINISHED = function() if open.quest then open.quest.closed = GetTime() end end,
   MERCHANT_SHOW = function() open.vendor = { name = text(UnitName("npc")) } end,
   MERCHANT_CLOSED = function() if open.vendor then open.vendor.closed = GetTime() end end,
+  GROUP_ROSTER_UPDATE = onRoster,
+  PLAYER_ENTERING_WORLD = onZone,
+  ZONE_CHANGED_NEW_AREA = onZone,
+  RESURRECT_REQUEST = function(inviter) offered("res", inviter) end,
+  CONFIRM_SUMMON = function()
+    offered("summon", C_SummonInfo and C_SummonInfo.GetSummonConfirmSummoner())
+  end,
+  UNIT_AURA = function(unit) if unit == "player" then readAuras() end end,
 }
 
 local events = CreateFrame("Frame")
@@ -551,6 +830,7 @@ events:SetScript("OnEvent", function(_, event, ...)
     if ... == ADDON then loadSaved() end
   elseif event == "PLAYER_LOGIN" then
     if not db then return end
+    myRealm = text(GetNormalizedRealmName and GetNormalizedRealmName()) or (GetRealmName():gsub("%s", ""))
     buildPatterns()
     buildPanel()
     hookTooltips()
