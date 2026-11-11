@@ -1,5 +1,9 @@
 # Huzzah changelog
 
+## 0.1.2 (2026-11-11)
+
+- Fixed congratulating yourself in guild chat on your own level-up, as if you were a guildmate. Your own ding now only uses the "You" setting.
+
 ## 0.1.1 (2026-11-10)
 
 - Emotes now name the person who leveled up, such as "Yourname cheers for Bob!". The game only aims emotes at your target, so if they're your target you do the real emote, and otherwise Huzzah sends an emote line with their name in it.

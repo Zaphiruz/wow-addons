@@ -223,6 +223,23 @@ SCENARIOS = {
 ''',
 
 # ---- guild ----
+"your own name on the guild list isn't cheered as a guildmate": r'''
+  login(nil)
+  HuzzahDB.self.on = true
+  roster = { { name = "Zaphiruz-Whitemane", level = 19, online = true } }
+  fire("GUILD_ROSTER_UPDATE")
+  -- The guild list can show the new level before or after PLAYER_LEVEL_UP.
+  roster[1].level = 20
+  fire("GUILD_ROSTER_UPDATE")
+  fire("PLAYER_LEVEL_UP", 20)
+  units.player.level = 21
+  fire("PLAYER_LEVEL_UP", 21)
+  roster[1].level = 21
+  fire("GUILD_ROSTER_UPDATE")
+  advance(3)
+  ok(list(said) == "GUILD: Ding 20! | GUILD: Ding 21!", list(said))
+  ok(#emoteLines == 0, "cheered yourself: " .. list(emoteLines))
+''',
 "a guildmate's ding is found when the guild list refreshes": r'''
   login(nil)
   roster = { { name = "Ann-Whitemane", level = 10, online = true } }

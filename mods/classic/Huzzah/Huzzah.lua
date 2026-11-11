@@ -217,10 +217,15 @@ end
 
 local function scanGuild()
   if not IsInGuild() then return end
+  local me = fullName("player")  -- you're on the list too; your own ding is "self"
   for i = 1, GetNumGuildMembers() do
     local name, _, _, level, _, _, _, _, online = GetGuildRosterInfo(i)
     if type(name) == "string" and not isSecret(name) and type(level) == "number" and not isSecret(level) then
       if not name:find("-", 1, true) then name = name .. "-" .. myRealm end
+    else
+      name = nil
+    end
+    if name and name ~= me then
       local old = levels[name]
       levels[name] = level
       if old and level > old and online then react("guild", name, level) end
