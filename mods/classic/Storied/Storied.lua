@@ -280,11 +280,19 @@ local function onLootMessage(msg)
   end
 end
 
+local lastUsed  -- { name, spell, at }: the last item with a spell you used from your bags
+
 local function onUseItem(bag, slot)
   local get = (C_Container and C_Container.GetContainerItemLink) or GetContainerItemLink
   local link = get and text(get(bag, slot))
   local id = itemID(link)
   if not id or isGear(id) then return end
+  -- Armor kits and Arcanums cast a spell on the gear you pick next.
+  local itemSpell = (C_Item and C_Item.GetItemSpell) or GetItemSpell
+  if itemSpell then
+    local ok, _, spell = pcall(itemSpell, id)
+    if ok and number(spell) then lastUsed = { name = link:match("%[(.-)%]"), spell = spell, at = GetTime() } end
+  end
   local _, class = info(id)
   if class == CONSUMABLE then return end
   lastBox = { id = id, name = link:match("%[(.-)%]") or "a box", at = GetTime() }
@@ -357,6 +365,95 @@ local function finishTrade()
 end
 
 ---------------------------------------------------------------------------
+-- Enchants you put on your own gear
+--
+-- Enchanting, and items like armor kits, change the enchant in the item's
+-- link. The enchants on your gear (worn and in your bags) are kept from one
+-- look to the next. A new one on gear you already had, around a cast of
+-- yours, is yours: named after the enchant, or the item you used.
+---------------------------------------------------------------------------
+local USE_WAIT = 60      -- seconds from using an item to picking the gear it goes on
+local GEAR_SLOTS = 19
+local gear               -- item ID -> { name, enchants = { [enchant ID] = true } }
+local lastCast           -- { name, at }: your last successful cast
+local waiting = {}       -- new enchants seen before their cast succeeded
+local tradeClosed        -- when the trade window last closed
+
+local function spellName(id)
+  local f = (C_Spell and C_Spell.GetSpellName) or GetSpellInfo
+  if f then
+    local ok, name = pcall(f, id)
+    if ok then return text(name) end
+  end
+end
+
+local function lookAtGear()
+  local found = {}
+  local function add(l)
+    l = text(l)
+    local id = itemID(l)
+    if id and isGear(id) then
+      local g = found[id] or { name = l:match("%[(.-)%]") or tostring(id), enchants = {} }
+      g.enchants[enchantOf(l)] = true
+      found[id] = g
+    end
+  end
+  for slot = 1, GEAR_SLOTS do add(GetInventoryItemLink("player", slot)) end
+  local get = (C_Container and C_Container.GetContainerItemLink) or GetContainerItemLink
+  local size = (C_Container and C_Container.GetContainerNumSlots) or GetContainerNumSlots
+  if get and size then
+    for bag = 0, NUM_BAG_SLOTS or 4 do
+      for slot = 1, number(size(bag)) or 0 do add(get(bag, slot)) end
+    end
+  end
+  return found
+end
+
+local function credit(new, name)
+  if not db.enchants then return end
+  history(new.id).enchant = { name = name, mine = true, at = time(), id = new.enchant }
+  dbg("you enchanted %s: %s", new.name, name)
+end
+
+local function onGearChanged()
+  local before = gear
+  gear = lookAtGear()
+  if not before then return end
+  for id, g in pairs(gear) do
+    for enchant in pairs(g.enchants) do
+      if enchant > 0 and before[id] and not before[id].enchants[enchant] then
+        local new = { id = id, enchant = enchant, name = g.name, at = GetTime() }
+        if trade or (tradeClosed and GetTime() - tradeClosed <= RECENT) then
+          dbg("%s got its enchant in a trade", g.name)
+        elseif lastCast and GetTime() - lastCast.at <= RECENT then
+          credit(new, lastCast.name)
+        else
+          dbg("%s got a new enchant, not from a cast of yours (yet)", g.name)
+          waiting[#waiting + 1] = new
+        end
+      end
+    end
+  end
+end
+
+local function onOwnCast(spellID)
+  local name
+  if lastUsed and lastUsed.spell == spellID and GetTime() - lastUsed.at <= USE_WAIT then
+    name, lastUsed = lastUsed.name, nil
+  else
+    name = spellName(spellID)
+    name = name and enchantName(name)  -- "Enchant Cloak - Lesser Agility" -> "Lesser Agility"
+  end
+  if not name then return end
+  lastCast = { name = name, at = GetTime() }
+  -- The gear can change just before the game says the cast succeeded.
+  for _, new in ipairs(waiting) do
+    if GetTime() - new.at <= RECENT and lastSent and lastSent.at <= new.at then credit(new, name) end
+  end
+  waiting = {}
+end
+
+---------------------------------------------------------------------------
 -- Weapon kills
 --
 -- PARTY_KILL names who got each killing blow. A kill just after one of your
@@ -370,7 +467,9 @@ local RANGED = { [75] = true, [5019] = true, [3018] = true, [2480] = true, [7918
 local lastRanged
 
 local function onCast(unit, _, spellID)
-  if unit == "player" and number(spellID) and RANGED[spellID] then lastRanged = GetTime() end
+  if unit ~= "player" or not number(spellID) then return end
+  if RANGED[spellID] then lastRanged = GetTime() end
+  onOwnCast(spellID)
 end
 
 local function onKill(attacker)
@@ -785,7 +884,7 @@ local function linesFor(id, link)
     local now = link and enchantOf(link)
     if now and not ench.id and now > 0 then ench.id = now end
     if not now or now == ench.id then
-      lines[#lines + 1] = format("%s by %s, %s", ench.name, ench.by, day(ench.at))
+      lines[#lines + 1] = format("%s by %s, %s", ench.name, ench.mine and "you" or ench.by, day(ench.at))
     end
   end
   if e.origin then
@@ -1070,7 +1169,13 @@ local HANDLERS = {
   TRADE_PLAYER_ITEM_CHANGED = readTrade,
   TRADE_TARGET_ITEM_CHANGED = readTrade,
   TRADE_ACCEPT_UPDATE = readTrade,
-  TRADE_CLOSED = function() if trade then trade.closed = GetTime() end end,
+  TRADE_CLOSED = function()
+    tradeClosed = GetTime()
+    if trade then trade.closed = GetTime() end
+  end,
+  BAG_UPDATE_DELAYED = onGearChanged,
+  UNIT_INVENTORY_CHANGED = function(unit) if unit == "player" then onGearChanged() end end,
+  PLAYER_EQUIPMENT_CHANGED = onGearChanged,
   UI_INFO_MESSAGE = function(_, msg)
     if trade and ERR_TRADE_COMPLETE and text(msg) == ERR_TRADE_COMPLETE then finishTrade() end
   end,
@@ -1119,6 +1224,7 @@ events:SetScript("OnEvent", function(_, event, ...)
     buildPanel()
     hookTooltips()
     hookFunctions()
+    pcall(onGearChanged)  -- the first look at your gear's enchants
     if #char.story == 0 then
       char.story[1] = { kind = "start", level = number(UnitLevel("player")), at = time(), place = place() }
     end

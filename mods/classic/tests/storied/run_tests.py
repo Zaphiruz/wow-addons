@@ -151,7 +151,9 @@ ITEMS = {
   [2504]  = { name = "Worn Shortbow",       quality = 1, loc = "INVTYPE_RANGED",   class = 2 },
   [858]   = { name = "Lesser Healing Potion", quality = 1, loc = "",               class = 0 },
   [6125]  = { name = "Brawler's Harness",   quality = 2, loc = "INVTYPE_CHEST",    class = 4 },
+  [15564] = { name = "Rugged Armor Kit",    quality = 1, loc = "",                 class = 0, spell = 19057 },
 }
+
 local function idOf(item)
   if type(item) == "number" then return item end
   return tonumber(tostring(item):match("item:(%d+)"))
@@ -165,6 +167,7 @@ C_Item = {
     if i then return id, "Type", "Sub", i.loc, 134400, i.class, 0 end
   end,
   GetItemQualityByID = function(item) local i = ITEMS[idOf(item)]; return i and i.quality end,
+  GetItemSpell = function(item) local i = ITEMS[idOf(item)]; if i and i.spell then return SPELLS[i.spell], i.spell end end,
 }
 
 -- Hooks on the game's own functions.
@@ -178,14 +181,31 @@ end
 
 -- Bags: what's in each bag slot, and using one.
 bags = {}
+NUM_BAG_SLOTS = 4
 C_Container = {
+  GetContainerNumSlots = function(bag) return 16 end,
   GetContainerItemLink = function(bag, slot) return bags[bag .. ":" .. slot] end,
   UseContainerItem = function(bag, slot) end,
 }
 
--- Equipped weapons.
-equipped = {}
+-- Equipped gear: item ID in each slot, and its enchant.
+equipped, wornEnchant = {}, {}
 function GetInventoryItemID(unit, slot) if unit == "player" then return equipped[slot] end end
+function GetInventoryItemLink(unit, slot)
+  if unit == "player" and equipped[slot] then return link(equipped[slot], wornEnchant[slot]) end
+end
+
+-- An enchant lands on an item in your bags, or on one you wear.
+function enchantBag(where, enchant)
+  bags[where] = link(idOf(bags[where]), enchant)
+  fire("BAG_UPDATE", tonumber(where:match("^(%d+)")))
+  fire("BAG_UPDATE_DELAYED")
+end
+function enchantWorn(slot, enchant)
+  wornEnchant[slot] = enchant
+  fire("UNIT_INVENTORY_CHANGED", "player")
+  fire("PLAYER_EQUIPMENT_CHANGED", slot, false)
+end
 
 -- Trade window.
 TRADE_ENCHANT_SLOT = 7
@@ -244,7 +264,9 @@ function cast(spellID, target)
   fire("UNIT_SPELLCAST_SENT", "player", target or "", "Cast-1", spellID)
   fire("UNIT_SPELLCAST_SUCCEEDED", "player", "Cast-1", spellID)
 end
-SPELLS = { [75] = "Auto Shot", [5019] = "Shoot", [3365] = "Opening", [585] = "Smite", [133] = "Fireball" }
+SPELLS = { [75] = "Auto Shot", [5019] = "Shoot", [3365] = "Opening", [585] = "Smite", [133] = "Fireball",
+           [13882] = "Enchant Cloak - Lesser Agility", [20030] = "Enchant 2H Weapon - Superior Impact",
+           [19057] = "Rugged Armor Kit", [458] = "Brown Horse" }
 function GetSpellInfo(id) return SPELLS[id] end
 
 -- Quests and vendors.
@@ -427,6 +449,74 @@ SCENARIOS = {
   login({ enchants = false }, nil)
   trade("Bob", { mine = link(12784), enchant = "Crusader" })
   ok(hover(link(12784, 1900)) == "", "recorded while off")
+  bags["0:1"] = link(14136); fire("BAG_UPDATE_DELAYED")
+  cast(13882); enchantBag("0:1", 849)
+  ok(hover(link(14136, 849)) == "", "recorded your own while off")
+''',
+"an enchant you put on your own gear is remembered as yours": r'''
+  bags["0:1"] = link(14136)
+  equipped[16] = 12784
+  login(nil, nil)
+  cast(13882); enchantBag("0:1", 849)
+  local t = hover(link(14136, 849))
+  ok(t == "Lesser Agility by you, 11 Nov 2026", "in your bags: " .. t)
+  -- The item can change before the game says the cast succeeded.
+  advance(60)
+  fire("UNIT_SPELLCAST_SENT", "player", "", "Cast-2", 20030)
+  enchantWorn(16, 1896)
+  fire("UNIT_SPELLCAST_SUCCEEDED", "player", "Cast-2", 20030)
+  t = hover(link(12784, 1896))
+  ok(t == "Superior Impact by you, 11 Nov 2026", "worn: " .. t)
+''',
+"an item you use on your gear is remembered by its name": r'''
+  bags["0:2"] = link(15564)
+  equipped[5] = 6125
+  login(nil, nil)
+  C_Container.UseContainerItem(0, 2)
+  advance(20)  -- picking the item to use it on can take a while
+  cast(19057); enchantWorn(5, 1843)
+  local t = hover(link(6125, 1843))
+  ok(t:find("^Rugged Armor Kit by you, 11 Nov 2026"), t)
+''',
+"an enchant that appears without a cast of yours isn't credited to you": r'''
+  bags["0:1"] = link(14136)
+  login(nil, nil)
+  enchantBag("0:1", 849)
+  ok(hover(link(14136, 849)) == "", "with no cast: " .. hover(link(14136, 849)))
+  cast(13882); advance(30); enchantBag("0:1", 850)
+  ok(hover(link(14136, 850)) == "", "a cast long before: " .. hover(link(14136, 850)))
+  -- Gear that arrives already enchanted (from the auction house) isn't yours.
+  cast(458); bags["0:3"] = link(19137, 2523); fire("BAG_UPDATE_DELAYED")
+  ok(hover(link(19137, 2523)) == "", "arrived enchanted: " .. hover(link(19137, 2523)))
+''',
+"a trade enchant stays credited to the enchanter": r'''
+  bags["0:1"] = link(12784)
+  login(nil, nil)
+  trade("Bob", { mine = link(12784), enchant = "Enchant 2H Weapon - Crusader" })
+  enchantBag("0:1", 1900)
+  ok(hover(link(12784, 1900)) == "Crusader by Bob, 11 Nov 2026", hover(link(12784, 1900)))
+''',
+"replacing an enchant yourself shows yours instead": r'''
+  equipped[16] = 12784; wornEnchant[16] = 1900
+  login(nil, nil)
+  trade("Bob", { mine = link(12784, 1900), enchant = "Enchant 2H Weapon - Crusader" })
+  ok(hover(link(12784, 1900)) == "Crusader by Bob, 11 Nov 2026", "Bob's first")
+  advance(60)
+  cast(20030); enchantWorn(16, 1896)
+  ok(hover(link(12784, 1896)) == "Superior Impact by you, 11 Nov 2026", hover(link(12784, 1896)))
+''',
+"/storied debug says when you enchant your gear": r'''
+  bags["0:1"] = link(14136)
+  login(nil, nil)
+  cmd("debug"); out = {}
+  cast(13882); enchantBag("0:1", 849)
+  local o = plain(table.concat(out, "\n"))
+  ok(o:find("you enchanted Silver%-thread Cloak: Lesser Agility"), o)
+  out = {}
+  advance(30)
+  enchantBag("0:1", 850)
+  o = plain(table.concat(out, "\n"))
+  ok(o:find("Silver%-thread Cloak got a new enchant, not from a cast of yours"), o)
 ''',
 
 # ---- where it came from ----
