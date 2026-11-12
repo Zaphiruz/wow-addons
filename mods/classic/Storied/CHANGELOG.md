@@ -1,5 +1,11 @@
 # Storied changelog
 
+## 0.4.0 (2026-11-12)
+
+- Enchants you put on your own gear are now remembered, such as "Lesser Agility by you, 12 Nov 2026". Before, only enchants from a trade were recorded.
+- Items you use on your gear, like armor kits and Arcanums, are remembered too, named after the item: "Rugged Armor Kit by you". Use them from your bags; from an action bar they're named after their spell instead.
+- When you replace an enchant yourself, the tooltip shows yours instead of losing the line.
+
 ## 0.3.0 (2026-11-11)
 
 - Type `/storied` to open your story: a window listing your level-ups and deaths, newest first, with filters for each. `/storied settings` opens the settings.
