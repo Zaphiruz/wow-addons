@@ -247,6 +247,60 @@ SCENARIOS = {
   ok(list(said) == "GUILD: Ding 20! | GUILD: Ding 21!", list(said))
   ok(#emoteLines == 0, "cheered yourself: " .. list(emoteLines))
 ''',
+"your own name on the guild list isn't cheered while the game hides your name": r'''
+  login(nil)
+  -- Forever can hide UnitName("player") at restricted moments.
+  units.player.name = SECRET
+  roster = { { name = "Zaphiruz-Whitemane", level = 19, online = true } }
+  fire("GUILD_ROSTER_UPDATE")
+  roster[1].level = 20
+  fire("GUILD_ROSTER_UPDATE")
+  advance(3)
+  ok(#said == 0 and #emoteLines == 0, "cheered yourself: " .. list(said) .. " / " .. list(emoteLines))
+''',
+"your own name on the guild list isn't cheered when its realm is written differently": r'''
+  login(nil)
+  roster = { { name = "Zaphiruz-White Mane", level = 19, online = true } }
+  fire("GUILD_ROSTER_UPDATE")
+  roster[1].level = 20
+  fire("GUILD_ROSTER_UPDATE")
+  advance(3)
+  ok(#said == 0 and #emoteLines == 0, "cheered yourself: " .. list(said) .. " / " .. list(emoteLines))
+''',
+"/huzzah debug shows how the guild list writes your name": r'''
+  login(nil)
+  roster = { { name = "Ann-Whitemane", level = 10, online = true },
+             { name = "Zaphiruz-White Mane", level = 19, online = true } }
+  local o = cmd("debug")
+  ok(o:find("You are Zaphiruz%-Whitemane; the guild list has you as Zaphiruz%-White Mane"), o)
+  roster = {}
+  o = cmd("debug"); o = cmd("debug")
+  ok(o:find("not on the guild list"), o)
+''',
+"a unit that is you isn't cheered, even when the game won't say it's you": r'''
+  login(nil)
+  -- Your own nameplate, where UnitIsUnit(unit, "player") came back false.
+  see("nameplate1", { name = "Zaphiruz", level = 19, guild = true })
+  fire("NAME_PLATE_UNIT_ADDED", "nameplate1")
+  ding("nameplate1", 20)
+  advance(3)
+  ok(#said == 0 and #emoteLines == 0, "cheered yourself: " .. list(said) .. " / " .. list(emoteLines))
+''',
+"/huzzah debug says where a ding was seen": r'''
+  login(nil)
+  cmd("debug")
+  roster = { { name = "Ann-Whitemane", level = 10, online = true } }
+  fire("GUILD_ROSTER_UPDATE")
+  see("target", { name = "Cid", level = 30 })
+  fire("PLAYER_TARGET_CHANGED")
+  out = {}
+  roster[1].level = 11
+  fire("GUILD_ROSTER_UPDATE")
+  ding("target", 31)
+  local o = table.concat(out, "\n")
+  ok(o:find("Ann%-Whitemane reached level 11 %(guild, from the guild list%)"), o)
+  ok(o:find("Cid%-Whitemane reached level 31 %(stranger, from target%)"), o)
+''',
 "a guildmate's ding is found when the guild list refreshes": r'''
   login(nil)
   roster = { { name = "Ann-Whitemane", level = 10, online = true } }

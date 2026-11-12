@@ -164,11 +164,28 @@ local function perform(kind, full, level)
   sendChat(text, channel, to)
 end
 
-local function react(kind, full, level)
+local myName  -- your name, remembered while the game shows it
+
+-- Is full ("Name-Realm") you? Only the name part is compared: the guild list
+-- can write the realm differently, and Forever can hide your name at
+-- restricted moments, when the one remembered is used.
+local function rememberMe()
+  local name = UnitName("player")
+  if not isSecret(name) and type(name) == "string" and name ~= "" then myName = name end
+end
+
+local function isMe(full)
+  rememberMe()
+  return myName ~= nil and full:match("^[^-]+") == myName
+end
+
+-- source says where the ding was seen, for /huzzah debug.
+local function react(kind, full, level, source)
+  if kind ~= "self" and isMe(full) then return end  -- your own ding is "self" only
   local key = full .. ":" .. level
   if reacted[key] then return end
   reacted[key] = true
-  dbg("%s reached level %d (%s)", full, level, HEADING[kind]:lower())
+  dbg("%s reached level %d (%s, from %s)", full, level, kind, source)
   if not db[kind].on then return end
   C_Timer.After(DELAY_MIN + math.random() * (DELAY_MAX - DELAY_MIN), function()
     perform(kind, full, level)
@@ -190,7 +207,9 @@ local levels = {}        -- "Name-Realm" -> last level seen
 
 -- Name and level of another player under unit, or nil.
 local function playerAt(unit)
-  if not UnitIsPlayer(unit) or UnitIsUnit(unit, "player") then return end
+  if not UnitIsPlayer(unit) then return end
+  local me = UnitIsUnit(unit, "player")
+  if isSecret(me) or me then return end  -- hidden: it might be you
   local level = UnitLevel(unit)
   if isSecret(level) or type(level) ~= "number" or level <= 0 then return end
   local full = fullName(unit)
@@ -219,23 +238,29 @@ local function onUnitLevel(unit)
   if not full then return end
   local old = levels[full]
   levels[full] = level
-  if old and level > old then react(kindOf(unit), full, level) end
+  if old and level > old then react(kindOf(unit), full, level, unit) end
 end
 
-local function scanGuild()
-  if not IsInGuild() then return end
-  local me = fullName("player")  -- you're on the list too; your own ding is "self"
+-- Each readable guild list entry: name ("Name-Realm"), level, online.
+local function guildList()
+  local list = {}
   for i = 1, GetNumGuildMembers() do
     local name, _, _, level, _, _, _, _, online = GetGuildRosterInfo(i)
     if type(name) == "string" and not isSecret(name) and type(level) == "number" and not isSecret(level) then
       if not name:find("-", 1, true) then name = name .. "-" .. myRealm end
-    else
-      name = nil
+      list[#list + 1] = { name = name, level = level, online = online }
     end
-    if name and name ~= me then
-      local old = levels[name]
-      levels[name] = level
-      if old and level > old and online then react("guild", name, level) end
+  end
+  return list
+end
+
+local function scanGuild()
+  if not IsInGuild() then return end
+  for _, m in ipairs(guildList()) do
+    if not isMe(m.name) then  -- you're on the list too; your own ding is "self"
+      local old = levels[m.name]
+      levels[m.name] = m.level
+      if old and m.level > old and m.online then react("guild", m.name, m.level, "the guild list") end
     end
   end
 end
@@ -408,6 +433,21 @@ SlashCmdList.HUZZAH = function(msg)
   elseif word == "debug" then
     debugging = not debugging
     say("debug %s.", debugging and "on" or "off")
+    if debugging then
+      local you, listed = fullName("player") or (myName and myName .. " (name hidden right now)") or "hidden", nil
+      if IsInGuild() then
+        for _, m in ipairs(guildList()) do
+          if isMe(m.name) then listed = m.name end
+        end
+        if listed then
+          say("You are %s; the guild list has you as %s.", you, listed)
+        else
+          say("You are %s; not on the guild list yet.", you)
+        end
+      else
+        say("You are %s; not in a guild.", you)
+      end
+    end
   elseif word == "help" then
     for _, line in ipairs(HELP) do say(line) end
   else
@@ -436,7 +476,7 @@ events:SetScript("OnEvent", function(_, event, arg1)
     pcall(onUnitLevel, arg1)
   elseif event == "PLAYER_LEVEL_UP" then
     local full = fullName("player")
-    if full and type(arg1) == "number" then react("self", full, arg1) end
+    if full and type(arg1) == "number" then react("self", full, arg1, "your level-up") end
   elseif event == "GROUP_ROSTER_UPDATE" then
     pcall(rememberGroup)
   elseif event == "PLAYER_TARGET_CHANGED" then
@@ -452,6 +492,7 @@ events:SetScript("OnEvent", function(_, event, arg1)
   elseif event == "PLAYER_LOGIN" then
     if not db then return end
     myRealm = (GetNormalizedRealmName and GetNormalizedRealmName()) or GetRealmName():gsub("%s", "")
+    rememberMe()
     buildPanel()
     rememberGroup()
     remember("target")
