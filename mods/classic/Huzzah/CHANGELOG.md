@@ -1,5 +1,9 @@
 # Huzzah changelog
 
+## 0.1.3 (2026-11-12)
+
+- Fixed an "AddOn 'Huzzah' tried to call the protected function" error on World of Warcraft: Forever, where no emote played. Forever blocks emote lines sent by addons, so there Huzzah does the plain emote instead: aimed at the person if they're your target, otherwise just "You cheer." Your party or guild message still names them. Classic Era is unchanged.
+
 ## 0.1.2 (2026-11-11)
 
 - Fixed congratulating yourself in guild chat on your own level-up, as if you were a guildmate. Your own ding now only uses the "You" setting.

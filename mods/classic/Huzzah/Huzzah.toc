@@ -1,7 +1,7 @@
 ## Interface: 11509, 16001
 ## Title: Huzzah
 ## Notes: Emotes and sends a message when your group, guild, a stranger nearby or you level up.
-## Version: 0.1.2
+## Version: 0.1.3
 ## X-Curse-Project-ID: 1797282
 ## SavedVariables: HuzzahDB
 Huzzah.lua
