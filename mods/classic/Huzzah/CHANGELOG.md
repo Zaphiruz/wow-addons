@@ -1,5 +1,10 @@
 # Huzzah changelog
 
+## 0.1.5 (2026-11-12)
+
+- The emote for someone else's level-up now only plays when they're your target. Before, it could cheer at whatever you had targeted, such as an NPC, when a party member dinged.
+- On World of Warcraft: Forever, if they aren't your target there's no emote; your chat message still goes out. On Classic Era the emote line naming them is used, as before.
+
 ## 0.1.4 (2026-11-12)
 
 - Fixed Huzzah congratulating you in guild chat after your own level-up on World of Warcraft: Forever. Your own ding now only uses the "You" setting.

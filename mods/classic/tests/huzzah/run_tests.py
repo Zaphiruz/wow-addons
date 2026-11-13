@@ -437,16 +437,18 @@ SCENARIOS = {
   ding("party1", 20); advance(3)
   ok(#emotes == 0 and list(emoteLines) == "cheers for Bob!", list(emotes) .. " / " .. list(emoteLines))
 ''',
-"if a custom line can't be sent, a plain emote instead": r'''
+"if a custom line can't be sent, no plain emote at someone else": r'''
   login(nil)
   emoteBlocked = true
   see("party1", { name = "Bob", level = 19, group = true })
   fire("GROUP_ROSTER_UPDATE")
+  units.target = { name = "Hogger", level = 11, isPlayer = false }
   ding("party1", 20); advance(3)
-  ok(list(emotes) == "CHEER" and #emoteLines == 0, list(emotes))
+  ok(#emotes == 0 and #emoteLines == 0, "cheered at Hogger: " .. list(emotes))
+  units.target = nil
   emoteBlocked, lockdown = false, true
   ding("party1", 21); advance(3)
-  ok(list(emotes) == "CHEER | CHEER" and #emoteLines == 0, "locked chat: " .. list(emotes))
+  ok(#emotes == 0 and #emoteLines == 0, "locked chat, emoted anyway: " .. list(emotes))
 ''',
 "every emote has its own wording": r'''
   login(nil)
@@ -534,17 +536,35 @@ SCENARIOS = {
   cmd("debug")
   see("party1", { name = "Bob", level = 19, group = true })
   fire("GROUP_ROSTER_UPDATE")
+  units.target = units.party1
   out = {}
   ding("party1", 20); advance(3)
   ok(#blocked == 0, "tried a blocked emote line: " .. list(blocked))
   ok(list(emotes) == "CHEER" and #emoteLines == 0, list(emotes))
   ok(list(said) == "PARTY: Gz Bob, 20!", "the message still names them: " .. list(said))
   ok(table.concat(out, "\n"):find("plain emote"), "debug says which emote: " .. table.concat(out, "\n"))
-  units.target = units.party1
-  ding("party1", 21); advance(3)
-  ok(list(emotes) == "CHEER | CHEER" and #blocked == 0, "at the target: " .. list(emotes))
   local o = cmd("test")
   ok(o:find("/cheer") and not o:find("cheers for"), o)
+''',
+"on Forever, no emote unless the one who dinged is your target": r'''
+  tocVersion = 16001
+  login(nil)
+  cmd("debug")
+  see("party1", { name = "Bob", level = 19, group = true })
+  fire("GROUP_ROSTER_UPDATE")
+  units.target = { name = "Innkeeper Farley", level = 30, isPlayer = false }
+  out = {}
+  ding("party1", 20); advance(3)
+  ok(#emotes == 0, "cheered at the innkeeper: " .. list(emotes))
+  ok(list(said) == "PARTY: Gz Bob, 20!", "the message still goes: " .. list(said))
+  ok(table.concat(out, "\n"):find("not your target"), "debug says why: " .. table.concat(out, "\n"))
+  see("target", { name = "Ann", level = 40 })
+  ding("party1", 21); advance(3)
+  ok(#emotes == 0, "cheered at Ann: " .. list(emotes))
+  units.target = nil
+  ding("party1", 22); advance(3)
+  ok(#emotes == 0, "emoted with no target: " .. list(emotes))
+  ok(#blocked == 0, list(blocked))
 ''',
 "hidden (secret) names and levels are skipped without errors": r'''
   login(nil); allOn()

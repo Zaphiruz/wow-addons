@@ -125,20 +125,24 @@ local emoteLinesBlocked = (select(4, GetBuildInfo()) or 0) >= 16000
 
 -- The game aims an emote only at your current target; a name given with it
 -- is ignored. So the player who dinged gets the real emote if they're your
--- target, and otherwise a custom emote line naming them. If that line can't
--- be sent, a plain emote at least plays.
+-- target, and otherwise a custom emote line naming them. A plain emote never
+-- plays while someone else (or nobody) is targeted: it would cheer at them.
 local function emoteAt(kind, token, full, short)
   local emote = (C_ChatInfo and C_ChatInfo.PerformEmote) or DoEmote
-  if emoteLinesBlocked then
-    dbg("plain emote /%s (Forever blocks emote lines)", token:lower())
-  elseif kind ~= "self" and not isTarget(full) then
+  if kind ~= "self" and not isTarget(full) then
+    if emoteLinesBlocked then
+      dbg("no emote: %s is not your target (Forever blocks emote lines)", short)
+      return
+    end
     local line = emoteLine(token, short)
     if not chatLocked() and sendChat(line, "EMOTE") then
       dbg("custom emote: %s", line)
-      return
+    else
+      dbg("couldn't send the custom emote, and %s is not your target: no emote", short)
     end
-    dbg("couldn't send the custom emote, a plain one instead")
+    return
   end
+  if emoteLinesBlocked then dbg("plain emote /%s at your target", token:lower()) end
   if emote then pcall(emote, token) end
 end
 
@@ -392,7 +396,7 @@ local function describe(kind, name, level)
     if kind == "self" then
       parts[#parts + 1] = "/" .. cfg.emote:lower()
     elseif emoteLinesBlocked then
-      parts[#parts + 1] = format("/%s (aimed at %s if they're your target)", cfg.emote:lower(), name)
+      parts[#parts + 1] = format("/%s if %s is your target, otherwise no emote", cfg.emote:lower(), name)
     else
       parts[#parts + 1] = format("/%s if %s is your target, otherwise the emote \"%s %s\"",
         cfg.emote:lower(), name, UnitName("player"), emoteLine(cfg.emote, name))
