@@ -1,5 +1,11 @@
 # Huzzah changelog
 
+## 0.1.6 (2026-11-13)
+
+- Fixed Huzzah still congratulating you in guild chat after your own level-up on World of Warcraft: Forever. It now finds you on the guild list by your character, not only by name.
+- As a backstop, for 30 seconds after your own level-up nobody is congratulated for reaching that same level.
+- `/huzzah debug` says how many guild members it could read, and how many the game hid, when it can't find you on the list.
+
 ## 0.1.5 (2026-11-12)
 
 - The emote for someone else's level-up now only plays when they're your target. Before, it could cheer at whatever you had targeted, such as an NPC, when a party member dinged.

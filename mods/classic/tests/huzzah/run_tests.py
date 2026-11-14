@@ -37,7 +37,8 @@ function advance(seconds)
 end
 
 -- Units the game can name. Each: name, realm (nil = ours), level, and flags.
-units = { player = { name = "Zaphiruz", level = 19, isPlayer = true } }
+units = { player = { name = "Zaphiruz", level = 19, isPlayer = true, guid = "Player-1-00000001" } }
+function UnitGUID(u) local x = units[u]; if x then return x.guid end end
 function GetRealmName() return "Whitemane" end
 function GetNormalizedRealmName() return "Whitemane" end
 function UnitName(u) local x = units[u]; if x then return x.name, x.realm end end
@@ -69,7 +70,8 @@ function IsInGuild() return guild end
 function GetNumGuildMembers() return #roster, #roster end
 function GetGuildRosterInfo(i)
   local m = roster[i]
-  if m then return m.name, "Member", 2, m.level, "Mage", "Elwynn Forest", "", "", m.online end
+  if m then return m.name, "Member", 2, m.level, "Mage", "Elwynn Forest", "", "", m.online,
+                   0, "MAGE", 0, 0, false, false, 4, m.guid end
 end
 C_GuildInfo = { GuildRoster = function() rosterRequests = rosterRequests + 1 end }
 
@@ -266,6 +268,63 @@ SCENARIOS = {
   fire("GUILD_ROSTER_UPDATE")
   advance(3)
   ok(#said == 0 and #emoteLines == 0, "cheered yourself: " .. list(said) .. " / " .. list(emoteLines))
+''',
+"your guild list entry is found by its character ID, however its name is written": r'''
+  login(nil)
+  HuzzahDB.self.on = true
+  roster = { { name = "Ann-Whitemane", level = 10, online = true, guid = "Player-1-00000002" },
+             { name = "ZAPHIRUZ", level = 19, online = true, guid = "Player-1-00000001" } }
+  fire("GUILD_ROSTER_UPDATE")
+  roster[2].level = 20
+  fire("GUILD_ROSTER_UPDATE")
+  advance(60)
+  ok(#said == 0 and #emoteLines == 0, "cheered yourself: " .. list(said) .. " / " .. list(emoteLines))
+  local o = cmd("debug")
+  ok(o:find("the guild list has you as ZAPHIRUZ"), o)
+''',
+"no guild cheer for the level you just reached, whoever the guild list says it is": r'''
+  login(nil)
+  HuzzahDB.self.on = true
+  cmd("debug")
+  -- An entry Huzzah can't tell is you: a different name, no character ID.
+  roster = { { name = "Unrecognised-Whitemane", level = 19, online = true } }
+  fire("GUILD_ROSTER_UPDATE")
+  out = {}
+  -- The guild list can change just before PLAYER_LEVEL_UP, or just after.
+  roster[1].level = 20
+  fire("GUILD_ROSTER_UPDATE")
+  units.player.level = 20
+  fire("PLAYER_LEVEL_UP", 20)
+  advance(3)
+  ok(list(said) == "GUILD: Ding 20!", "cheered your own level: " .. list(said))
+  ok(table.concat(out, "\n"):find("you just reached level 20"), "debug says why: " .. table.concat(out, "\n"))
+  advance(60)
+  units.player.level = 21
+  fire("PLAYER_LEVEL_UP", 21)
+  advance(2)
+  roster[1].level = 21
+  fire("GUILD_ROSTER_UPDATE")
+  advance(3)
+  ok(list(said) == "GUILD: Ding 20! | GUILD: Ding 21!", "after the roster: " .. list(said))
+''',
+"a guildmate reaching some other level right after your ding is still cheered": r'''
+  login(nil)
+  HuzzahDB.self.on = true
+  roster = { { name = "Ann-Whitemane", level = 10, online = true, guid = "Player-1-00000002" } }
+  fire("GUILD_ROSTER_UPDATE")
+  units.player.level = 20
+  fire("PLAYER_LEVEL_UP", 20)
+  roster[1].level = 11
+  fire("GUILD_ROSTER_UPDATE")
+  advance(3)
+  ok(list(said) == "GUILD: Ding 20! | GUILD: Grats on 11, Ann!", list(said))
+''',
+"/huzzah debug says how much of the guild list it could read": r'''
+  login(nil)
+  roster = { { name = "Ann-Whitemane", level = 10, online = true },
+             { name = SECRET, level = 19, online = true } }
+  local o = cmd("debug")
+  ok(o:find("not on the guild list") and o:find("2 members, 1 hidden"), o)
 ''',
 "/huzzah debug shows how the guild list writes your name": r'''
   login(nil)

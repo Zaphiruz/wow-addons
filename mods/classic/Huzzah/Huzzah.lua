@@ -168,19 +168,37 @@ local function perform(kind, full, level)
   sendChat(text, channel, to)
 end
 
-local myName  -- your name, remembered while the game shows it
+local myName, myGUID  -- your name and character ID, remembered while the game shows them
+local SELF_WINDOW = 30   -- seconds after your own ding when nobody is cheered for that level
+local ownDing            -- { level, at } of your last level-up
 
--- Is full ("Name-Realm") you? Only the name part is compared: the guild list
--- can write the realm differently, and Forever can hide your name at
--- restricted moments, when the one remembered is used.
+-- Is full ("Name-Realm") you? Only the name part is compared, ignoring case:
+-- the guild list can write the realm differently, and Forever can hide your
+-- name at restricted moments, when the one remembered is used.
 local function rememberMe()
   local name = UnitName("player")
   if not isSecret(name) and type(name) == "string" and name ~= "" then myName = name end
+  local guid = UnitGUID and UnitGUID("player")
+  if not isSecret(guid) and type(guid) == "string" and guid ~= "" then myGUID = guid end
 end
 
 local function isMe(full)
   rememberMe()
-  return myName ~= nil and full:match("^[^-]+") == myName
+  return myName ~= nil and full:match("^[^-]+"):lower() == myName:lower()
+end
+
+-- Is this guild list entry you? Its character ID says so for certain; the
+-- name is the fallback when the list doesn't give one.
+local function isMeEntry(m)
+  rememberMe()
+  if m.guid and myGUID then return m.guid == myGUID end
+  return isMe(m.name)
+end
+
+-- Did you reach this level yourself a moment ago? Then a guild list or unit
+-- change to that level is most likely you under a name Huzzah didn't match.
+local function justReached(level)
+  return ownDing ~= nil and ownDing.level == level and GetTime() - ownDing.at <= SELF_WINDOW
 end
 
 -- source says where the ding was seen, for /huzzah debug.
@@ -191,8 +209,17 @@ local function react(kind, full, level, source)
   reacted[key] = true
   dbg("%s reached level %d (%s, from %s)", full, level, kind, source)
   if not db[kind].on then return end
+  -- Checked when the reaction is due: your own PLAYER_LEVEL_UP can come
+  -- just after the guild list shows your new level.
+  local function skip()
+    if kind ~= "self" and justReached(level) then
+      dbg("not cheering %s: you just reached level %d yourself, so it may be you", full, level)
+      return true
+    end
+  end
+  if skip() then return end
   C_Timer.After(DELAY_MIN + math.random() * (DELAY_MAX - DELAY_MIN), function()
-    perform(kind, full, level)
+    if not skip() then perform(kind, full, level) end
   end)
 end
 
@@ -245,23 +272,29 @@ local function onUnitLevel(unit)
   if old and level > old then react(kindOf(unit), full, level, unit) end
 end
 
--- Each readable guild list entry: name ("Name-Realm"), level, online.
+-- Each readable guild list entry: name ("Name-Realm"), level, online and
+-- guid (character ID, when the list gives one). Also returns how many
+-- entries there were, and how many of those the game hid.
 local function guildList()
-  local list = {}
-  for i = 1, GetNumGuildMembers() do
-    local name, _, _, level, _, _, _, _, online = GetGuildRosterInfo(i)
-    if type(name) == "string" and not isSecret(name) and type(level) == "number" and not isSecret(level) then
+  local list, total, hidden = {}, GetNumGuildMembers() or 0, 0
+  if isSecret(total) or type(total) ~= "number" then return list, 0, 0 end
+  for i = 1, total do
+    local name, _, _, level, _, _, _, _, online, _, _, _, _, _, _, _, guid = GetGuildRosterInfo(i)
+    if not isSecret(name) and type(name) == "string" and not isSecret(level) and type(level) == "number" then
       if not name:find("-", 1, true) then name = name .. "-" .. myRealm end
-      list[#list + 1] = { name = name, level = level, online = online }
+      if isSecret(guid) or type(guid) ~= "string" or guid == "" then guid = nil end
+      list[#list + 1] = { name = name, level = level, online = online, guid = guid }
+    else
+      hidden = hidden + 1
     end
   end
-  return list
+  return list, total, hidden
 end
 
 local function scanGuild()
   if not IsInGuild() then return end
   for _, m in ipairs(guildList()) do
-    if not isMe(m.name) then  -- you're on the list too; your own ding is "self"
+    if not isMeEntry(m) then  -- you're on the list too; your own ding is "self"
       local old = levels[m.name]
       levels[m.name] = m.level
       if old and m.level > old and m.online then react("guild", m.name, m.level, "the guild list") end
@@ -440,13 +473,14 @@ SlashCmdList.HUZZAH = function(msg)
     if debugging then
       local you, listed = fullName("player") or (myName and myName .. " (name hidden right now)") or "hidden", nil
       if IsInGuild() then
-        for _, m in ipairs(guildList()) do
-          if isMe(m.name) then listed = m.name end
+        local members, total, hidden = guildList()
+        for _, m in ipairs(members) do
+          if isMeEntry(m) then listed = m.name .. (m.guid and " (matched by character ID)" or "") end
         end
         if listed then
           say("You are %s; the guild list has you as %s.", you, listed)
         else
-          say("You are %s; not on the guild list yet.", you)
+          say("You are %s; not on the guild list (it has %d members, %d hidden).", you, total, hidden)
         end
       else
         say("You are %s; not in a guild.", you)
@@ -480,6 +514,7 @@ events:SetScript("OnEvent", function(_, event, arg1)
     pcall(onUnitLevel, arg1)
   elseif event == "PLAYER_LEVEL_UP" then
     local full = fullName("player")
+    if type(arg1) == "number" then ownDing = { level = arg1, at = GetTime() } end
     if full and type(arg1) == "number" then react("self", full, arg1, "your level-up") end
   elseif event == "GROUP_ROSTER_UPDATE" then
     pcall(rememberGroup)
