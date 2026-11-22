@@ -103,6 +103,10 @@ confirmations (`ConfirmBindOnUse`) and Logout in Downcast and Hawker 0.2.0.
   character. Migrate old shapes on load instead of dropping them.
 - Nothing that changes action bars or secure frames runs in combat. Defer it
   until `PLAYER_REGEN_ENABLED` and tell the player it's waiting.
+- The same goes for opening the settings window: `Settings.OpenToCategory`
+  calls the protected `C_SettingsUtil.OpenSettingsPanel` in both games, and in
+  combat it does nothing but log ADDON_ACTION_BLOCKED against the addon
+  (`pcall` doesn't catch that). Check `InCombatLockdown()` first.
 - `/<cmd> help` lists every command. An unknown word says so and points to help.
 - Chat lines are capped at 255 characters; refuse longer ones when they're added.
 

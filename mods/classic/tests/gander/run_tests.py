@@ -259,6 +259,8 @@ end
 
 -- The game's settings window.
 categories, subcategories, opened = {}, {}, nil
+fighting = false
+function InCombatLockdown() return fighting end
 Settings = {
   RegisterCanvasLayoutSubcategory = function(parent, frame, name)
     local c = { frame = frame, name = name, id = 78, parent = parent }
@@ -272,7 +274,10 @@ Settings = {
     return c
   end,
   RegisterAddOnCategory = function(c) table.insert(categories, c) end,
-  OpenToCategory = function(id) opened = id end,
+  OpenToCategory = function(id)
+    assert(not fighting, "opened the settings in combat: the game blocks that and blames the addon")
+    opened = id
+  end,
 }
 
 function fire(e, ...) local f = events[e]; if f then f.scripts.OnEvent(f, e, ...) end end
@@ -1083,6 +1088,53 @@ SCENARIOS = {
   panel():Show()
   panel().orderButton:Click()
   ok(opened == 78, "opened " .. tostring(opened))
+''',
+# ---- the settings and combat ----
+"asked for in a fight, the settings open when it ends": r'''
+  login(nil)
+  fighting = true
+  out = {}
+  GanderMinimapButton:Click("RightButton")
+  ok(opened == nil, "opened in combat")
+  local o = table.concat(out, " / ")
+  ok(o:find("fight") and o:find("when it ends"), "doesn't say it's waiting: " .. o)
+  fighting = false
+  fire("PLAYER_REGEN_ENABLED")
+  ok(opened == 77, "didn't open after the fight: " .. tostring(opened))
+  opened = nil
+  fire("PLAYER_REGEN_ENABLED")
+  ok(opened == nil, "opened again after the next fight")
+''',
+"every way to the settings waits for the fight to end": r'''
+  login(nil)
+  fighting = true
+  ok(cmd("settings"):find("fight") and opened == nil, "/gander settings in combat")
+  fighting = false; fire("PLAYER_REGEN_ENABLED")
+  ok(opened == 77, "/gander settings after the fight: " .. tostring(opened))
+
+  opened = nil
+  cmd("")
+  fighting = true
+  GanderBestiary.settings:Click()
+  ok(opened == nil, "the bestiary's button in combat")
+  fighting = false; fire("PLAYER_REGEN_ENABLED")
+  ok(opened == 77, "the bestiary's button after the fight: " .. tostring(opened))
+
+  opened = nil
+  panel():Show()
+  fighting = true
+  panel().orderButton:Click()
+  ok(opened == nil, "the Stat order button in combat")
+  fighting = false; fire("PLAYER_REGEN_ENABLED")
+  ok(opened == 78, "the Stat order button after the fight: " .. tostring(opened))
+''',
+"with no fight on, nothing waits": r'''
+  login(nil)
+  cmd("settings")
+  ok(opened == 77, "opened " .. tostring(opened))
+  opened = nil
+  fire("PLAYER_REGEN_ENABLED")
+  ok(opened == nil, "opened again when a later fight ended")
 ''',
 # ---- the minimap button ----
 "the minimap button opens the bestiary, and right-click opens the settings": r'''

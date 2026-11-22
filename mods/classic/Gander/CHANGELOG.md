@@ -1,5 +1,9 @@
 # Gander changelog
 
+## 0.7.1 (2026-11-22)
+
+- Fixed an error when you asked for the settings during a fight (right-clicking the minimap button, the bestiary's Settings button, "Stat order..." or /gander settings). The game doesn't let addons open the settings window in combat, so Gander now tells you and opens it when the fight ends.
+
 ## 0.7.0 (2026-11-22)
 
 - You can now choose the order of the stat lines. Options > AddOns > Gander has a new "Stat order" page: drag a line up or down, and a gold marker shows where it will land. The tooltip and the bestiary both follow your order.

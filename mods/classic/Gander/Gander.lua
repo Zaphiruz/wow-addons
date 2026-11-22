@@ -844,6 +844,29 @@ local function addCheck(key, label, x, y, onClick)
   panel.checks[key] = check
 end
 
+-- Open the settings window at one of our pages. The game blocks addons from
+-- opening it during combat (and blames the addon), so in a fight the page
+-- waits and opens when the fight ends.
+local waitingPage
+
+local function openPage(page, missing)
+  if not page then
+    say(missing)
+  elseif InCombatLockdown() then
+    waitingPage = page
+    say("the settings can't be opened in a fight. They'll open when it ends.")
+  else
+    waitingPage = nil
+    pcall(Settings.OpenToCategory, page:GetID())
+  end
+end
+
+local function fightEnded()
+  local page = waitingPage
+  waitingPage = nil
+  if page then openPage(page) end
+end
+
 local function buildOrderPage()
   orderPage = CreateFrame("Frame", "GanderOrderPanel")
   orderPage.rows, orderPage.rowHeight = {}, ORDER_ROW
@@ -951,11 +974,7 @@ local function buildPanel()
   panel.orderButton:SetPoint("TOPLEFT", 20, -270)
   panel.orderButton:SetText("Stat order...")
   panel.orderButton:SetScript("OnClick", function()
-    if orderCategory then
-      pcall(Settings.OpenToCategory, orderCategory:GetID())
-    else
-      say("the Stat order page isn't available here.")
-    end
+    openPage(orderCategory, "the Stat order page isn't available here.")
   end)
 
   panel.count = panel:CreateFontString(nil, "ARTWORK", "GameFontDisableSmall")
@@ -983,11 +1002,7 @@ local bestiary
 local showing, searching, offset, selected = "all", "", 0, nil
 
 local function openSettings()
-  if category then
-    pcall(Settings.OpenToCategory, category:GetID())
-  else
-    say("the settings window isn't available here.")
-  end
+  openPage(category, "the settings window isn't available here.")
 end
 
 -- The newest value of one field for a mob, from any level, ours or heard.
@@ -1400,7 +1415,8 @@ end
 -- Startup
 ---------------------------------------------------------------------------
 local events = CreateFrame("Frame")
-for _, e in ipairs({ "ADDON_LOADED", "PLAYER_LOGIN", "PLAYER_TARGET_CHANGED", "CHAT_MSG_ADDON" }) do
+for _, e in ipairs({ "ADDON_LOADED", "PLAYER_LOGIN", "PLAYER_TARGET_CHANGED", "CHAT_MSG_ADDON",
+                     "PLAYER_REGEN_ENABLED" }) do
   pcall(events.RegisterEvent, events, e)
 end
 events:SetScript("OnEvent", function(_, event, arg1, ...)
@@ -1424,5 +1440,7 @@ events:SetScript("OnEvent", function(_, event, arg1, ...)
     if UnitExists("target") and not isPlayer("target") then pcall(look, "target") end
   elseif event == "CHAT_MSG_ADDON" then
     pcall(onAddonMessage, arg1, ...)
+  elseif event == "PLAYER_REGEN_ENABLED" then
+    fightEnded()
   end
 end)
