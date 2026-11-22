@@ -146,11 +146,13 @@ end
 --
 -- GanderDB.mobs[creatureID] = { lv = { [level] = record }, heard = { ... } }.
 -- lv holds what we saw ourselves, heard what other players told us; each
--- record is { at = when, by = who (heard only), v = values by field }. Kept
--- apart so every value keeps its true source, and ours always wins. A
--- defense of level x 5 isn't stored: it can always be worked out.
+-- record is { at = when it was seen, by = who (heard only), v = values by
+-- field }. Kept apart so every value keeps its true source. Whichever was
+-- seen most recently is shown, so a change someone else saw replaces our
+-- older sighting. A defense of level x 5 isn't stored: it can always be
+-- worked out.
 ---------------------------------------------------------------------------
-local queueSend  -- set below, in Sharing
+local queueSend, askAbout  -- set below, in Sharing
 
 local function ruleDefense(level)
   if level and level > 0 then return level * 5 end
@@ -158,6 +160,7 @@ end
 
 -- Store what we just saw ourselves, and pass it on if it brought something new.
 local function remember(id, level, v)
+  if next(v) == nil then return end  -- nothing was visible: not a sighting
   local mob = db.mobs[id]
   local old = mob and mob.lv[level]
   local values, changed = {}, false
@@ -190,23 +193,36 @@ local function newestWith(records, key)
   return best
 end
 
+-- Of our record and a heard one, the more recently seen that has this field.
+local function newer(ours, theirs, key)
+  local a = ours and ours.v[key] ~= nil
+  local b = theirs and theirs.v[key] ~= nil
+  if a and b then return theirs.at > ours.at and theirs or ours end
+  return (a and ours) or (b and theirs) or nil
+end
+
 -- What is remembered for this mob at this level: field -> { value, record }.
--- Our own record for that level comes first, then what we heard for it.
--- Fields that don't change with level can also come from another level.
+-- The most recently seen value wins, ours or heard. Fields that don't change
+-- with level can also come from another level.
 local function recall(id, level)
   local found = {}
   local mob = id and db.mobs[id]
   if not mob then return found end
   local seen, heard = mob.lv or {}, mob.heard or {}
   for key, spec in pairs(FIELD) do
-    local rec = level and seen[level]
-    if not (rec and rec.v[key] ~= nil) then rec = level and heard[level] end
-    if not (rec and rec.v[key] ~= nil) and not spec.perLevel then
-      rec = newestWith(seen, key) or newestWith(heard, key)
+    local rec = level and newer(seen[level], heard[level], key) or nil
+    if not rec and not spec.perLevel then
+      rec = newer(newestWith(seen, key), newestWith(heard, key), key)
     end
-    if rec and rec.v[key] ~= nil then found[key] = { rec.v[key], rec } end
+    if rec then found[key] = { rec.v[key], rec } end
   end
   return found
+end
+
+-- Is anything remembered for this mob at this level, ours or heard?
+local function knows(id, level)
+  local mob = db.mobs[id]
+  return mob ~= nil and ((mob.lv and mob.lv[level]) or (mob.heard and mob.heard[level])) and true or false
 end
 
 ---------------------------------------------------------------------------
@@ -308,11 +324,13 @@ end
 -- A mob in a fight isn't remembered, since debuffs and enrages change its
 -- stats for a while.
 local function look(unit)
-  local v = read(unit)
+  local v, hid = read(unit)
   local id, level = identify(unit)
   if id and level then
     local fighting = call("UnitAffectingCombat", unit)
     if not isSecret(fighting) and not fighting then remember(id, level, v) end
+    -- The game is hiding this mob's stats and nothing is known: ask around.
+    if next(hid) ~= nil and not knows(id, level) then askAbout(id, level) end
   end
   return linesFor(v, id, level)
 end
@@ -350,18 +368,23 @@ end
 -- Sharing with other players
 --
 -- Hidden addon messages, prefix "Gander", each starting with protocol "1":
---   1:M:<creatureID>:<level>:<field>=<value>,<field>=<value>,...
--- Sent to guild and group a few seconds after learning something new, one
--- mob at a time, and never while chat is locked or a boss fight is on.
--- Only what we saw ourselves is sent, so nothing echoes back and forth, and
--- what we saw ourselves is always shown ahead of what we heard.
+--   1:M:<creatureID>:<level>:<field>=<value>,...[,t=<seconds since seen>]
+--   1:Q:<creatureID>:<level>      who has seen this mob?
+-- A mob is sent to guild and group a few seconds after learning something
+-- new, one at a time, and never while chat is locked or a boss fight is on.
+-- Only what we saw ourselves is sent, so nothing echoes back and forth.
+-- "t" says how long ago it was seen (left out when under a minute), so the
+-- receiver can keep whichever sighting is newest; clocks needn't agree.
 -- Fields a newer version adds are ignored by this one.
 --
--- The same message also goes to a custom chat channel, "Gander", which every
+-- The same messages also go to a custom chat channel, "Gander", which every
 -- player running Gander joins: that reaches people outside guild and group.
--- Anyone can join a channel, so what's heard there never replaces what a
--- guildmate or group member said. The channel is joined a while after login
--- so it doesn't take the number of one of the game's own channels.
+-- The channel is joined a while after login so it doesn't take the number
+-- of one of the game's own channels.
+--
+-- A question is asked when the game hides a mob's stats and nothing is
+-- remembered for it. Whoever saw that mob answers after a short random
+-- wait, the way the question came, unless someone else answers first.
 ---------------------------------------------------------------------------
 local PREFIX = "Gander"
 local CHANNEL = "Gander"
@@ -372,12 +395,21 @@ local SEND_GAP = 2     -- seconds between mobs
 local SEND_RETRY = 5   -- seconds before trying again while chat is locked
 local MAX_MESSAGE = 255
 local MAX_ID, MAX_LEVEL = 9999999, 255
+local MAX_AGE = 10 * 365 * 86400  -- a sighting older than this is nonsense
+local FRESH = 60                  -- a sighting younger than this is sent without its age
+local ASK_AGAIN = 600             -- seconds before asking about the same mob again
+local ANSWER_MIN, ANSWER_MAX = 1, 4  -- seconds to wait before answering a question
+local ANSWER_CAP, ANSWER_WINDOW = 10, 60  -- at most this many answers in this many seconds
 
 local ECHO_WINDOW = 15 -- seconds in which our own message can come back to us
 
 local queue, queued, sendPending = {}, {}, false
 local sentAt = {}      -- message text -> when we sent it
 local channelRefused = false  -- the game won't take addon messages on channels
+local asked = {}       -- "id:level" -> when we, or someone else, last asked about it
+local toldAt = {}      -- "id:level" -> when someone else last told everyone about it
+local answering = {}   -- "id:level" -> true while an answer of ours is waiting
+local answerTimes = {} -- when we sent our recent answers
 
 local RESULT = Enum and Enum.SendAddonMessageResult or {}
 local THROTTLED = { [RESULT.AddonMessageThrottle or 3] = true, [RESULT.ChannelThrottle or 8] = true }
@@ -433,19 +465,29 @@ local function chatLocked()
   return fighting ~= nil and fighting() and true or false
 end
 
-local function encode(id, level, v)
+-- The message for a mob seen age seconds ago.
+local function encode(id, level, v, age)
   local parts = {}
   for _, f in ipairs(FIELDS) do
     local value = v[f[1]]
     if value ~= nil then parts[#parts + 1] = f[1] .. "=" .. (f[2] == "n" and compact(value) or value) end
   end
   local head = format("1:M:%d:%d:", id, level)
-  local text = head .. table.concat(parts, ",")
+  local tail = (age and age >= FRESH) and format(",t=%d", math.min(age, MAX_AGE)) or ""
+  local text = head .. table.concat(parts, ",") .. tail
   while #text > MAX_MESSAGE and #parts > 1 do
     tremove(parts)
-    text = head .. table.concat(parts, ",")
+    text = head .. table.concat(parts, ",") .. tail
   end
   return text
+end
+
+-- Remember that we sent text, so its copy coming back isn't taken as news.
+local function noteSent(text)
+  for old, at in pairs(sentAt) do
+    if GetTime() - at > ECHO_WINDOW then sentAt[old] = nil end
+  end
+  sentAt[text] = GetTime()
 end
 
 local function flush()
@@ -461,16 +503,18 @@ local function flush()
     return
   end
   local item = tremove(queue, 1)
-  queued[item.id .. ":" .. item.level] = nil
+  queued[item.key] = nil
   local retry = false
   local mob = db.mobs[item.id]
   local rec = mob and mob.lv[item.level]
-  if rec and C_ChatInfo and C_ChatInfo.SendAddonMessage then
-    local text = encode(item.id, item.level, rec.v)
-    for old, at in pairs(sentAt) do
-      if GetTime() - at > ECHO_WINDOW then sentAt[old] = nil end
-    end
-    sentAt[text] = GetTime()
+  local text
+  if item.q then
+    text = format("1:Q:%d:%d", item.id, item.level)
+  elseif rec then
+    text = encode(item.id, item.level, rec.v, time() - rec.at)
+  end
+  if text and C_ChatInfo and C_ChatInfo.SendAddonMessage then
+    noteSent(text)
     local went, note = {}, nil  -- where it went, and why not the channel
     if not item.channelOnly then
       if IsInGuild() then
@@ -489,7 +533,7 @@ local function flush()
       note = "the game refuses channel messages"
     elseif not channelNumber() then
       note = "not in the Gander channel yet"
-    elseif channelKnows(mob, item.level, rec.v) then
+    elseif rec and not item.q and channelKnows(mob, item.level, rec.v) then
       note = "the Gander channel already had it"
     else
       local outcome = sendToChannel(text)
@@ -500,7 +544,7 @@ local function flush()
         item.tries = (item.tries or 0) + 1
         if item.tries <= CHANNEL_TRIES then
           item.channelOnly = true
-          queued[item.id .. ":" .. item.level] = true
+          queued[item.key] = true
           queue[#queue + 1] = item
           retry = true
         end
@@ -509,10 +553,11 @@ local function flush()
         note = "the Gander channel didn't take it"
       end
     end
+    local what = item.q and format("asked about mob %d (level %d):", item.id, item.level) or "shared"
     if #went > 0 then
-      dbg("shared %s with %s%s", text, table.concat(went, ", "), note and (" (" .. note .. ")") or "")
+      dbg("%s %s with %s%s", what, text, table.concat(went, ", "), note and (" (" .. note .. ")") or "")
     else
-      dbg("%s: shared with nobody (%s)", text, note or "no guild or group")
+      dbg("%s %s: shared with nobody (%s)", what, text, note or "no guild or group")
     end
   end
   if #queue > 0 then
@@ -521,16 +566,17 @@ local function flush()
   end
 end
 
-queueSend = function(id, level)
+-- Queue a mob we saw (or, with question, a question about one) for sending.
+queueSend = function(id, level, question)
   if not db.share then return end
-  local key = id .. ":" .. level
+  local key = (question and "q:" or "") .. id .. ":" .. level
   if queued[key] then
     for _, item in ipairs(queue) do
-      if item.id == id and item.level == level then item.channelOnly, item.tries = nil, nil end
+      if item.key == key then item.channelOnly, item.tries = nil, nil end
     end
   else
     queued[key] = true
-    queue[#queue + 1] = { id = id, level = level }
+    queue[#queue + 1] = { key = key, id = id, level = level, q = question or nil }
   end
   if not sendPending then
     sendPending = true
@@ -538,9 +584,67 @@ queueSend = function(id, level)
   end
 end
 
+-- Ask who has seen this mob, unless it was asked about a short while ago.
+askAbout = function(id, level)
+  if not db.share then return end
+  local key = id .. ":" .. level
+  if asked[key] and GetTime() - asked[key] < ASK_AGAIN then return end
+  asked[key] = GetTime()
+  queueSend(id, level, true)
+end
+
 local function isMe(sender)
   local name, realm = sender:match("^([^-]+)%-?(.*)$")
   return name == myName and (realm == "" or realm == myRealm)
+end
+
+-- Answer a question about a mob we saw ourselves, the way the question came.
+local function answer(key, id, level, route, questionAt)
+  answering[key] = nil
+  if not db.share or chatLocked() then return end
+  if toldAt[key] and toldAt[key] >= questionAt then
+    dbg("someone else answered about mob %d first", id)
+    return
+  end
+  local mob = db.mobs[id]
+  local rec = mob and mob.lv and mob.lv[level]
+  if not (rec and C_ChatInfo and C_ChatInfo.SendAddonMessage) then return end
+  local text = encode(id, level, rec.v, time() - rec.at)
+  noteSent(text)
+  if route == "CHANNEL" then
+    sendToChannel(text)
+  else
+    pcall(C_ChatInfo.SendAddonMessage, PREFIX, text, route)
+  end
+  answerTimes[#answerTimes + 1] = GetTime()
+  dbg("answered a question about mob %d (level %d) on %s", id, level, route:lower())
+end
+
+-- Someone asked who has seen a mob. Wait a random moment, so that of
+-- everyone who could answer only the first does.
+local function onQuestion(id, level, route, sender)
+  local key = id .. ":" .. level
+  asked[key] = GetTime()  -- no need for us to ask as well
+  local mob = db.mobs[id]
+  if not (mob and mob.lv and mob.lv[level]) or answering[key] then return end
+  if route == "GUILD" then
+    if not IsInGuild() then return end
+  elseif route == "PARTY" or route == "RAID" then
+    if not IsInGroup() then return end
+  elseif route ~= "CHANNEL" then
+    return
+  end
+  -- Never more than a few answers a minute, however many questions arrive.
+  while answerTimes[1] and GetTime() - answerTimes[1] > ANSWER_WINDOW do tremove(answerTimes, 1) end
+  local waiting = 0
+  for _ in pairs(answering) do waiting = waiting + 1 end
+  if #answerTimes + waiting >= ANSWER_CAP then return end
+  answering[key] = true
+  local questionAt = GetTime()
+  dbg("%s asked about mob %d (level %d)", sender, id, level)
+  C_Timer.After(ANSWER_MIN + math.random() * (ANSWER_MAX - ANSWER_MIN), function()
+    answer(key, id, level, route, questionAt)
+  end)
 end
 
 local function onAddonMessage(prefix, text, channel, sender)
@@ -551,31 +655,39 @@ local function onAddonMessage(prefix, text, channel, sender)
   -- and realms are written several ways), so the text we just sent is.
   local mine = sentAt[text]
   if (mine and GetTime() - mine <= ECHO_WINDOW) or isMe(sender) then return end
-  local id, level, body = text:match("^1:M:(%d+):(%-?%d+):(.+)$")
+  local kind, id, level, body = text:match("^1:(%u):(%d+):(%-?%d+):?(.*)$")
   id, level = tonumber(id), tonumber(level)
   if not id or id < 1 or id > MAX_ID then return end
   if not (level == -1 or (level >= 1 and level <= MAX_LEVEL)) then return end
-  local values = {}
+  if kind == "Q" then
+    if body == "" then onQuestion(id, level, channel, sender) end
+    return
+  end
+  if kind ~= "M" or body == "" then return end
+  local values, age = {}, 0
   for key, raw in body:gmatch("(%w+)=([^,]*)") do
     local spec = FIELD[key]
     if spec then
       if spec.kind == "n" then raw = raw:find("^%d+%.?%d*$") and tonumber(raw) or nil end
       values[key] = clean(spec.kind, raw)
+    elseif key == "t" then
+      age = raw:find("^%d+$") and tonumber(raw) or -1
     end
   end
-  if next(values) == nil then return end
+  if next(values) == nil or age < 0 or age > MAX_AGE then return end
   local who = sender:match("^[^-]+")
   dbg("heard mob %d (level %d) from %s", id, level, sender)
+  toldAt[id .. ":" .. level] = GetTime()
   local mob = db.mobs[id]
   if not mob then
     mob = { lv = {}, heard = {} }
     db.mobs[id] = mob
   end
   mob.heard = mob.heard or {}
-  local viaChannel = channel == "CHANNEL"
+  local seenAt = time() - age
   local told = mob.heard[level]
-  if viaChannel and told and not told.ch then return end  -- a stranger doesn't replace guild or group
-  mob.heard[level] = { at = time(), by = who, v = values, ch = viaChannel or nil }  -- else the newest telling wins
+  if told and told.at > seenAt then return end  -- we already heard of a newer sighting
+  mob.heard[level] = { at = seenAt, by = who, v = values, ch = (channel == "CHANNEL") or nil }
 end
 
 ---------------------------------------------------------------------------

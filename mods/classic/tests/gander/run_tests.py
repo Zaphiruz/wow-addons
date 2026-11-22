@@ -19,6 +19,7 @@ function GetTime() return now end
 clock = 1795000000  -- the calendar time, which moves with the game time
 function time() return clock end
 date = os.date
+math.random = function(a, b) if a then return b or a end return 0.5 end
 
 timers = {}
 C_Timer = { After = function(d, fn) table.insert(timers, { at = now + d, fn = fn }) end }
@@ -229,6 +230,10 @@ function panel() return categories[1].frame end
 -- Log in with the channel switched off, for tests about guild and group only.
 function loginNoChannel() login({ channel = false }) end
 function check(key) return panel().checks[key] end
+function known(id, level, values, age)
+  GanderDB.mobs[id] = GanderDB.mobs[id] or { lv = {}, heard = {} }
+  GanderDB.mobs[id].lv[level] = { at = clock - (age or 0), v = values }
+end
 function today() return tonumber(os.date("%d", clock)) .. " " .. os.date("%b", clock) end
 '''
 
@@ -446,7 +451,8 @@ SCENARIOS = {
   ok(#sent == 0, "sent in lockdown")
   lockdown = false
   advance(30)
-  ok(list(sent) == "GUILD: 1:M:3100:9:spd=2", list(sent))
+  -- Held back for over a minute, so it says how long ago the mob was seen.
+  ok(#sent == 1 and sent[1]:find("^GUILD: 1:M:3100:9:spd=2,t=6%d$"), list(sent))
 ''',
 "on Classic Era sending waits for a boss fight to end too": r'''
   classicEra()
@@ -488,18 +494,23 @@ SCENARIOS = {
   advance(30)
   ok(list(sent) == "GUILD: 1:M:4000:20:spd=2", "sent only what you saw: " .. list(sent))
 ''',
-"your own sighting beats what others send; among others the newest wins": r'''
+"the most recently seen value wins, whoever saw it": r'''
   login(nil)
-  hear("1:M:3100:9:spd=3", "Bob-Whitemane")
-  advance(5)
-  hear("1:M:3100:9:spd=2.5", "Ann-Whitemane")
-  units.mouseover = mob(3100, { name = "Boar", level = 9, hidden = true })
-  ok(hover("mouseover"):find("Attack speed: 2.5 %(from Ann%)"), hover("mouseover"))
   units.mouseover = BOAR()
-  ok(hover("mouseover") == "Defense: 45 | Attack speed: 2.0", hover("mouseover"))
-  hear("1:M:3100:9:spd=3", "Bob-Whitemane")
+  hover("mouseover")                       -- you see it: speed 2
+  advance(60)
+  hear("1:M:3100:9:spd=3", "Bob-Whitemane")  -- Bob sees it later: speed 3
   units.mouseover.hidden = true
-  ok(hover("mouseover"):find("Attack speed: 2.0 %(seen"), hover("mouseover"))
+  ok(hover("mouseover"):find("Attack speed: 3.0 %(from Bob%)"), "Bob's is newer: " .. hover("mouseover"))
+  advance(60)
+  hear("1:M:3100:9:spd=5,t=86400", "Ann-Whitemane")  -- Ann saw it a day ago
+  ok(hover("mouseover"):find("Attack speed: 3.0 %(from Bob%)"), "an older sighting replaced a newer one: " .. hover("mouseover"))
+  hear("1:M:3100:9:spd=2.5,t=20", "Ann-Whitemane")   -- and again 20 seconds ago
+  ok(hover("mouseover"):find("Attack speed: 2.5 %(from Ann%)"), "newest among others: " .. hover("mouseover"))
+  units.mouseover.hidden = false
+  ok(hover("mouseover") == "Defense: 45 | Attack speed: 2.0", "live beats everything: " .. hover("mouseover"))
+  units.mouseover.hidden = true
+  ok(hover("mouseover"):find("Attack speed: 2.0 %(seen"), "you saw it last: " .. hover("mouseover"))
 ''',
 "your own messages coming back aren't taken as someone else's, however the game names you": r'''
   loginNoChannel()
@@ -574,18 +585,16 @@ SCENARIOS = {
   hover("mouseover"); advance(4)
   ok(table.concat(out, " / "):find("channel is throttled"), table.concat(out, " / "))
 ''',
-"channel strangers don't replace what guild or group told you": r'''
+"a newer telling replaces an older one, whichever way it came": r'''
   login(nil)
   hear("1:M:3100:9:spd=3", "Bob-Whitemane", "GUILD")
+  advance(5)
   hear("1:M:3100:9:spd=9", "Eve-Whitemane", "CHANNEL")
-  ok(GanderDB.mobs[3100].heard[9].by == "Bob", "a stranger replaced a guildmate")
-  hear("1:M:5:9:spd=9", "Eve-Whitemane", "CHANNEL")
-  ok(GanderDB.mobs[5].heard[9].by == "Eve", "channel data not kept")
-  hear("1:M:5:9:spd=8", "Mal-Whitemane", "CHANNEL")
-  ok(GanderDB.mobs[5].heard[9].by == "Mal", "newest channel telling wins")
-  hear("1:M:5:9:spd=1.5", "Bob-Whitemane", "PARTY")
-  hear("1:M:5:9:spd=7", "Eve-Whitemane", "CHANNEL")
-  ok(GanderDB.mobs[5].heard[9].by == "Bob" and GanderDB.mobs[5].heard[9].v.spd == 1.5, "group beats channel")
+  ok(GanderDB.mobs[3100].heard[9].by == "Eve", "the newer channel telling wasn't taken")
+  hear("1:M:3100:9:spd=3,t=3600", "Bob-Whitemane", "GUILD")
+  ok(GanderDB.mobs[3100].heard[9].by == "Eve", "an hour-old telling replaced a fresh one")
+  hear("1:M:3100:9:spd=4,t=999999999999", "Bob-Whitemane", "GUILD")
+  ok(GanderDB.mobs[3100].heard[9].by == "Eve", "a nonsense age was accepted")
 ''',
 "a mob the channel already told you, with the same values, isn't sent to the channel again": r'''
   login(nil)
@@ -642,6 +651,134 @@ SCENARIOS = {
   check("share"):Click()
   ok(list(channels) == "Gander", "sharing on joins it again")
 ''',
+"a share says how long ago the mob was seen, once that's more than a minute": r'''
+  loginNoChannel()
+  units.mouseover = BOAR()
+  hover("mouseover"); advance(10)
+  ok(list(sent) == "GUILD: 1:M:3100:9:spd=2", "a fresh sighting has no age: " .. list(sent))
+  hear("1:M:5:9:spd=2,t=86400", "Bob-Whitemane")
+  ok(GanderDB.mobs[5].heard[9].at == clock - 86400, "stored when it was seen: " .. tostring(GanderDB.mobs[5].heard[9].at - clock))
+''',
+"a hidden mob you know nothing about is asked for, once": r'''
+  login(nil)
+  advance(40)
+  cmd("debug")
+  out = {}
+  units.mouseover = mob(4000, { name = "Wizard", level = 20, hidden = true })
+  hover("mouseover"); advance(10)
+  ok(list(sent) == "GUILD: 1:Q:4000:20 | CHANNEL Gander: 1:Q:4000:20", list(sent))
+  ok(table.concat(out, " / "):find("asked"), "debug says it asked: " .. table.concat(out, " / "))
+  hover("mouseover"); advance(60)
+  ok(#sent == 2, "asked again too soon: " .. list(sent))
+  advance(600)
+  hover("mouseover"); advance(10)
+  ok(#sent == 4, "asks again after ten minutes: " .. list(sent))
+''',
+"the answer to a question shows on the tooltip": r'''
+  login(nil)
+  advance(40)
+  units.mouseover = mob(4000, { name = "Wizard", level = 20, hidden = true })
+  hover("mouseover"); advance(5)
+  hear("1:M:4000:20:hp=900,spd=2.5,t=7200", "Bob-Whitemane", "CHANNEL")
+  local t = hover("mouseover")
+  ok(t == "Defense: 100 | Health: 900 (from Bob) | Attack speed: 2.5 (from Bob)", t)
+''',
+"nothing is asked when the mob is visible, remembered, unidentified, or sharing is off": r'''
+  login(nil)
+  advance(40)
+  units.mouseover = BOAR()                                   -- visible
+  hover("mouseover"); advance(10)
+  sent = {}
+  units.mouseover.hidden = true                              -- remembered
+  hover("mouseover"); advance(10)
+  hear("1:M:5:9:spd=2", "Bob-Whitemane")
+  units.mouseover = mob(5, { name = "Cat", level = 9, hidden = true })   -- heard of
+  hover("mouseover"); advance(10)
+  units.mouseover = mob(6, { name = "Owl", level = 9, hidden = true, noid = true })  -- unidentified
+  hover("mouseover"); advance(10)
+  ok(#sent == 0, "asked: " .. list(sent))
+  GanderDB.share = false
+  units.mouseover = mob(7, { name = "Bat", level = 9, hidden = true })
+  hover("mouseover"); advance(10)
+  ok(#sent == 0, "asked with sharing off: " .. list(sent))
+''',
+"someone else's question for the same mob saves you asking": r'''
+  login(nil)
+  advance(40)
+  hear("1:Q:4000:20", "Bob-Whitemane", "CHANNEL")
+  units.mouseover = mob(4000, { name = "Wizard", level = 20, hidden = true })
+  hover("mouseover"); advance(10)
+  ok(#sent == 0, "asked anyway: " .. list(sent))
+''',
+"a question is answered by someone who saw the mob, the way it came, with its age": r'''
+  login(nil)
+  advance(40)
+  cmd("debug")
+  known(3100, 9, { spd = 2, class = "WARRIOR" }, 7200)
+  out = {}
+  hear("1:Q:3100:9", "Bob-Whitemane", "CHANNEL")
+  ok(#sent == 0, "answered at once, before anyone else could")
+  advance(10)
+  ok(list(sent) == "CHANNEL Gander: 1:M:3100:9:spd=2,class=WARRIOR,t=7202", list(sent))
+  ok(table.concat(out, " / "):find("answer"), "debug says it answered: " .. table.concat(out, " / "))
+  hear("1:Q:3100:9", "Ann-Whitemane", "GUILD")
+  advance(10)
+  ok(sent[2] and sent[2]:find("^GUILD: 1:M:3100:9:spd=2,class=WARRIOR,t=72%d%d$"), "a guild question is answered in guild: " .. list(sent))
+  grouped = true
+  hear("1:Q:3100:9", "Ann-Whitemane", "PARTY")
+  advance(10)
+  ok(sent[3] and sent[3]:find("^PARTY: "), "a party question is answered in party: " .. list(sent))
+''',
+"no answer when you only heard about the mob, don't know it, or sharing is off": r'''
+  login(nil)
+  advance(40)
+  hear("1:M:5:9:spd=2", "Eve-Whitemane")
+  hear("1:Q:5:9", "Bob-Whitemane", "CHANNEL")      -- only heard of it
+  hear("1:Q:6:9", "Bob-Whitemane", "CHANNEL")      -- never heard of it
+  known(7, 9, { spd = 2 })
+  hear("1:Q:7:10", "Bob-Whitemane", "CHANNEL")     -- another level
+  advance(10)
+  ok(#sent == 0, list(sent))
+  GanderDB.share = false
+  hear("1:Q:7:9", "Bob-Whitemane", "CHANNEL")
+  advance(10)
+  ok(#sent == 0, "answered with sharing off: " .. list(sent))
+''',
+"if someone else answers first, you stay quiet": r'''
+  login(nil)
+  advance(40)
+  known(3100, 9, { spd = 2 })
+  hear("1:Q:3100:9", "Bob-Whitemane", "CHANNEL")
+  advance(1)
+  hear("1:M:3100:9:spd=2", "Ann-Whitemane", "CHANNEL")
+  advance(10)
+  ok(#sent == 0, "answered after Ann did: " .. list(sent))
+  hear("1:Q:3100:9", "Bob-Whitemane", "CHANNEL")   -- asked again later: nobody answers this time
+  advance(10)
+  ok(#sent == 1, "a later question is answered: " .. list(sent))
+''',
+"the same question asked many times gets one answer, and a flood of questions is capped": r'''
+  login(nil)
+  advance(40)
+  known(3100, 9, { spd = 2 })
+  for i = 1, 5 do hear("1:Q:3100:9", "Bob-Whitemane", "CHANNEL") end
+  advance(10)
+  ok(#sent == 1, "answered a repeat: " .. #sent)
+  sent = {}
+  for i = 1, 40 do known(100 + i, 9, { spd = 2 }) end
+  for i = 1, 40 do hear("1:Q:" .. (100 + i) .. ":9", "Eve-Whitemane", "CHANNEL") end
+  advance(30)
+  ok(#sent >= 5 and #sent <= 12, "a flood from one player: " .. #sent)
+''',
+"no answer is sent while chat is locked or a boss fight is on": r'''
+  login(nil)
+  advance(40)
+  known(3100, 9, { spd = 2 })
+  encounter = true
+  hear("1:Q:3100:9", "Bob-Whitemane", "CHANNEL")
+  advance(10)
+  ok(#sent == 0, list(sent))
+''',
 "junk and unknown messages are ignored": r'''
   login(nil)
   hear("1:M:abc:9:spd=2")
@@ -650,6 +787,7 @@ SCENARIOS = {
   hear("2:M:3102:9:spd=2")
   hear("1:Z:3103:9:spd=2")
   hear("1:M:3104:9:spd=2", "Zaphiruz-Whitemane")
+  hear("1:Q:abc:9"); hear("1:Q:3100:900"); hear("1:Q:3100"); hear("1:Q:3100:9:extra")
   fire("CHAT_MSG_ADDON", "OtherAddon", "1:M:3105:9:spd=2", "GUILD", "Bob-Whitemane")
   fire("CHAT_MSG_ADDON", "Gander", SECRET, "GUILD", "Bob-Whitemane")
   for id in pairs(GanderDB.mobs) do ok(false, "stored mob " .. tostring(id)) end

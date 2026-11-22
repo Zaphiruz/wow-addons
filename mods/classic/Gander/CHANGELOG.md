@@ -1,5 +1,12 @@
 # Gander changelog
 
+## 0.3.0 (2026-11-22)
+
+- Gander now asks for mobs it knows nothing about. When the game hides a mob's stats and nothing is remembered for it, a hidden question goes to your guild, group and the Gander channel, and whoever has seen that mob answers. The lines appear on the tooltip marked "(from Bob)". The same mob isn't asked about again for 10 minutes.
+- Gander answers other players' questions too, for mobs you have seen yourself. Everyone who could answer waits a moment, and only the first one does.
+- Newer data now replaces older data. Each shared mob says how long ago it was seen, and the most recently seen values are shown, whether you or someone else saw them. Before, your own sighting was kept forever, even after a mob's stats changed.
+- Questions and answers aren't sent during a boss fight, because the game blocks them. If the game hides which mob it is, there is nothing to ask about.
+
 ## 0.2.1 (2026-11-22)
 
 - `/gander debug` now says where each share went, such as "shared with guild, party, the Gander channel", and why the channel was skipped when it was.
