@@ -471,21 +471,48 @@ local function flush()
       if GetTime() - at > ECHO_WINDOW then sentAt[old] = nil end
     end
     sentAt[text] = GetTime()
+    local went, note = {}, nil  -- where it went, and why not the channel
     if not item.channelOnly then
-      if IsInGuild() then pcall(C_ChatInfo.SendAddonMessage, PREFIX, text, "GUILD") end
-      local group = IsInRaid() and "RAID" or (IsInGroup() and "PARTY") or nil
-      if group then pcall(C_ChatInfo.SendAddonMessage, PREFIX, text, group) end
-      dbg("shared %s", text)
-    end
-    if not channelKnows(mob, item.level, rec.v) and sendToChannel(text) == "retry" then
-      -- Throttled: try the channel again later, without repeating the rest.
-      item.tries = (item.tries or 0) + 1
-      if item.tries <= CHANNEL_TRIES then
-        item.channelOnly = true
-        queued[item.id .. ":" .. item.level] = true
-        queue[#queue + 1] = item
-        retry = true
+      if IsInGuild() then
+        pcall(C_ChatInfo.SendAddonMessage, PREFIX, text, "GUILD")
+        went[#went + 1] = "guild"
       end
+      local group = IsInRaid() and "RAID" or (IsInGroup() and "PARTY") or nil
+      if group then
+        pcall(C_ChatInfo.SendAddonMessage, PREFIX, text, group)
+        went[#went + 1] = group:lower()
+      end
+    end
+    if not channelWanted() then
+      note = "the Gander channel is switched off"
+    elseif channelRefused then
+      note = "the game refuses channel messages"
+    elseif not channelNumber() then
+      note = "not in the Gander channel yet"
+    elseif channelKnows(mob, item.level, rec.v) then
+      note = "the Gander channel already had it"
+    else
+      local outcome = sendToChannel(text)
+      if outcome == "sent" then
+        went[#went + 1] = "the Gander channel"
+      elseif outcome == "retry" then
+        -- Throttled: try the channel again later, without repeating the rest.
+        item.tries = (item.tries or 0) + 1
+        if item.tries <= CHANNEL_TRIES then
+          item.channelOnly = true
+          queued[item.id .. ":" .. item.level] = true
+          queue[#queue + 1] = item
+          retry = true
+        end
+        note = retry and "the Gander channel is throttled, trying again soon" or "the Gander channel is throttled, gave up"
+      else
+        note = "the Gander channel didn't take it"
+      end
+    end
+    if #went > 0 then
+      dbg("shared %s with %s%s", text, table.concat(went, ", "), note and (" (" .. note .. ")") or "")
+    else
+      dbg("%s: shared with nobody (%s)", text, note or "no guild or group")
     end
   end
   if #queue > 0 then

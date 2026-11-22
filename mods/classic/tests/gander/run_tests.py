@@ -548,6 +548,32 @@ SCENARIOS = {
   hover("mouseover"); advance(10)
   ok(sent[3] == "CHANNEL Gander: 1:M:5:9:spd=1.5" and #sent == 3, "with no guild or group: " .. list(sent))
 ''',
+"/gander debug says where each share went": r'''
+  login(nil)
+  grouped = true
+  cmd("debug")
+  out = {}
+  units.mouseover = BOAR()
+  hover("mouseover"); advance(10)
+  ok(table.concat(out, " / "):find("shared 1:M:3100:9:spd=2 with guild, party"), "before the channel is joined: " .. table.concat(out, " / "))
+  ok(table.concat(out, " / "):find("not in the Gander channel yet"), "says why not the channel: " .. table.concat(out, " / "))
+  advance(40)
+  out = {}
+  units.mouseover = mob(5, { name = "Cat", level = 9, def = 45, speed = 1.5 })
+  hover("mouseover"); advance(10)
+  ok(table.concat(out, " / "):find("shared 1:M:5:9:spd=1.5 with guild, party, the Gander channel"), table.concat(out, " / "))
+  guild, grouped = false, false
+  hear("1:M:6:9:spd=3", "Eve-Whitemane", "CHANNEL")
+  out = {}
+  units.mouseover = mob(6, { name = "Owl", level = 9, def = 45, speed = 3 })
+  hover("mouseover"); advance(10)
+  ok(table.concat(out, " / "):find("shared with nobody") and table.concat(out, " / "):find("already had it"), table.concat(out, " / "))
+  channelResult = Enum.SendAddonMessageResult.ChannelThrottle
+  out = {}
+  units.mouseover = mob(7, { name = "Bat", level = 9, def = 45, speed = 1 })
+  hover("mouseover"); advance(4)
+  ok(table.concat(out, " / "):find("channel is throttled"), table.concat(out, " / "))
+''',
 "channel strangers don't replace what guild or group told you": r'''
   login(nil)
   hear("1:M:3100:9:spd=3", "Bob-Whitemane", "GUILD")

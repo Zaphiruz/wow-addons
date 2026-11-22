@@ -1,5 +1,9 @@
 # Gander changelog
 
+## 0.2.1 (2026-11-22)
+
+- `/gander debug` now says where each share went, such as "shared with guild, party, the Gander channel", and why the channel was skipped when it was.
+
 ## 0.2.0 (2026-11-22)
 
 - What you learn is now also shared on a chat channel called "Gander", which every player running Gander joins. That reaches people outside your guild and group. Nothing shows in your chat window: the messages are hidden ones only addons read.
