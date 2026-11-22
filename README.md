@@ -6,6 +6,7 @@ World of Warcraft addons, released to CurseForge from this repository.
 |---|---|---|
 | [Bushel](mods/classic/Bushel) | Classic Era, Forever | Counts the herbs, ore and skins you gather by type, shown in tooltips |
 | [Downcast](mods/classic/Downcast) | Classic Era | Lets macros cast the best rank of a buff or HoT that can land on a low-level player |
+| [Gander](mods/classic/Gander) | Classic Era, Forever | Shows a mob's stats on its tooltip, remembers them for when the game hides them, and shares them with guild and group |
 | [Hawker](mods/classic/Hawker) | Classic Era, Forever | Keeps a list of advert lines and says a random one with `/hawk` |
 | [Hopscotch](mods/classic/Hopscotch) | Classic Era, Forever | Counts every hop off the ground, for each character and the whole account |
 | [Huzzah](mods/classic/Huzzah) | Classic Era, Forever | Emotes and sends a message when your group, guild, a stranger nearby or you level up |

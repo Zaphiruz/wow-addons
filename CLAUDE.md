@@ -1,6 +1,6 @@
 # WoW addons
 
-World of Warcraft Classic Era addons (Bushel, Downcast, Hawker, Hopscotch, Huzzah, Storied), released to
+World of Warcraft Classic Era addons (Bushel, Downcast, Gander, Hawker, Hopscotch, Huzzah, Storied), released to
 CurseForge and GitHub from this one repository. The README covers the layout
 and release commands for people; this file is how we work on it.
 
@@ -24,9 +24,12 @@ and release commands for people; this file is how we work on it.
   `D:\Battle.net\Games\World of Warcraft\_forever_`, version 1.60.1,
   `## Interface: 16001`. Its UI is built on modern retail code (12.1), so check
   APIs against the `forever` branch of wow-ui-source, not `classic_era`.
-- Bushel, Hawker, Hopscotch, Huzzah and Storied support both games from one folder:
+- Bushel, Gander, Hawker, Hopscotch, Huzzah and Storied support both games from one folder:
   `## Interface: 11509, 16001`. Downcast is Classic Era only.
-- All five are junction-linked into `_forever_\Interface\AddOns` as well.
+- On Forever the CurseForge app installs the released addons as real folders
+  (it replaced the junctions), so the game there runs the last release, not
+  your edits. Check with `Get-Item <folder>`: `LinkType` is empty for a real
+  folder. An addon that isn't on CurseForge yet can still be junction-linked.
 - Differences that matter so far: chat is `C_ChatInfo.SendChatMessage` (no
   global `SendChatMessage`), and addon chat started from a macro is blocked
   during instance encounters. Prefer the modern name and fall back to the
@@ -36,6 +39,11 @@ and release commands for people; this file is how we work on it.
 - Forever adds "secret values": some API results can't be read by addons in
   restricted moments. Check a function's documentation for `Secret*` flags
   before using its results.
+- For mobs, Forever sends `UnitDefenseSkill` (level x 5) and `UnitAttackSpeed`.
+  `UnitArmor`, `UnitResistance`, `UnitDamage` and `UnitAttackPower` return 0
+  for them (tested on 1.60.1). Zero means "not sent", not a real zero.
+- The boss-fight check is `C_InstanceEncounter.IsEncounterInProgress` on
+  Forever and the global `IsEncounterInProgress` on Classic Era.
 
 ## How we build a change
 
