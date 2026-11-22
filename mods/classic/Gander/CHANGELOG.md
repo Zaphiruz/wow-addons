@@ -1,5 +1,12 @@
 # Gander changelog
 
+## 0.5.0 (2026-11-22)
+
+- New bestiary: type `/gander` to open a window listing every mob Gander remembers, with its level, type and zone. Click a mob to see everything known about it, level by level, with who saw it and when.
+- Search the list by name, zone, type or creature number, and show everything, only what you saw yourself, or only what you heard from others. Scroll with the mouse wheel.
+- Gander now remembers each mob's name, type, rank (elite, rare, boss) and the zone you first saw it in, and shares them along with its stats. Mobs remembered before this version show as "Mob #1108" until you see them again.
+- `/gander` now opens the bestiary. The settings moved to `/gander settings`, and there's a Settings button in the bestiary.
+
 ## 0.4.1 (2026-11-22)
 
 - New switch in Options > AddOns > Gander: "Only accept signed messages". It's on by default. Switch it off to also take unsigned messages, such as ones from versions before 0.4.0 or ones typed by hand. What you send is always signed.

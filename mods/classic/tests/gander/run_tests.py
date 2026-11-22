@@ -71,6 +71,12 @@ end
 function UnitExists(u) return U(u) ~= nil end
 function UnitIsPlayer(u) local x = U(u); return x ~= nil and x.isPlayer == true end
 function UnitLevel(u) local x = U(u); return x and x.level or 0 end
+-- Where you are, and what kind of creature a mob is: its type ("Beast") and
+-- rank ("elite", "rare", ...; "normal" when unset).
+zoneName = "Durotar"
+function GetRealZoneText() return zoneName end
+function UnitCreatureType(u) local x = U(u); if not x then return nil end if x.noid then return SECRET end return x.type end
+function UnitClassification(u) local x = U(u); return x and x.rank or "normal" end
 function UnitAffectingCombat(u) local x = U(u); return x ~= nil and x.combat == true end
 function UnitName(u) local x = U(u); if not x then return nil end if x.noid then return SECRET end return x.name end
 function UnitGUID(u) local x = U(u); if not x then return nil end if x.noid then return SECRET end return x.guid end
@@ -114,6 +120,17 @@ function sign(payload)
   return payload .. "#" .. string.format("%08x", h)
 end
 unsignedSent = 0
+fullMessages = false
+function withoutInfo(payload)
+  local head, body = payload:match("^(%d:%u:%d+:%-?%d+:)(.*)$")
+  if not head then return payload end
+  local keep = {}
+  for part in body:gmatch("[^,]+") do
+    local key = part:match("^(%w+)=")
+    if not (key == "n" or key == "ty" or key == "rk" or key == "z") then keep[#keep + 1] = part end
+  end
+  return head .. table.concat(keep, ",")
+end
 -- Custom chat channels: the names joined, in order. channelResult is what the
 -- game answers to an addon message sent to a channel (0 = sent).
 channels, channelResult = {}, 0
@@ -132,6 +149,7 @@ C_ChatInfo = {
     local payload = text:match("^(.*)#%x+$")
     if not payload or sign(payload) ~= text then unsignedSent = unsignedSent + 1 end
     text = payload or text
+    if not fullMessages then text = withoutInfo(text) end
     assert(not lockdown and not encounter, "sent while chat is locked")
     if channel == "CHANNEL" then
       assert(channels[target] ~= nil, "sent to a channel that isn't joined: " .. tostring(target))
@@ -171,6 +189,16 @@ function widget(kind, name, parent, template)
   function w:Show() self.shown = true; if self.scripts.OnShow then self.scripts.OnShow(self) end end
   function w:Hide() self.shown = false end
   function w:IsShown() return self.shown end
+  function w:SetEnabled(v) self.enabled = not not v end
+  function w:IsEnabled() return self.enabled end
+  function w:GetStringHeight() return 0 end
+  function w:SetMaxLetters(n) self.maxLetters = n end
+  -- The player types into an edit box.
+  function w:Type(t)
+    if self.maxLetters and #t > self.maxLetters then t = t:sub(1, self.maxLetters) end
+    self.text = t
+    if self.scripts.OnTextChanged then self.scripts.OnTextChanged(self, true) end
+  end
   function w:CreateFontString(n) return widget("FontString", n, self) end
   function w:CreateTexture(n) return widget("Texture", n, self) end
   function w:Click(button)
@@ -250,6 +278,17 @@ function known(id, level, values, age)
   GanderDB.mobs[id] = GanderDB.mobs[id] or { lv = {}, heard = {} }
   GanderDB.mobs[id].lv[level] = { at = clock - (age or 0), v = values }
 end
+-- Three mobs: two seen in Stranglethorn Vale, one heard about from Bob.
+function sampleMobs()
+  zoneName = "Stranglethorn Vale"
+  units.mouseover = mob(681, { name = "Young Stranglethorn Tiger", level = 30, def = 150, speed = 1.3,
+                               type = "Beast", family = "Cat" })
+  hover("mouseover")
+  units.mouseover = mob(1108, { name = "Mistvale Gorilla", level = 33, def = 165, speed = 2, type = "Beast", rank = "elite" })
+  hover("mouseover")
+  hear("2:M:4000:20:spd=2.5,n=Defias Wizard,ty=Humanoid,z=Westfall", "Bob-Whitemane")
+end
+function rowText(r) return r.name:GetText() .. " / " .. r.level:GetText() .. " / " .. r.kind:GetText() .. " / " .. r.zone:GetText() end
 function today() return tonumber(os.date("%d", clock)) .. " " .. os.date("%b", clock) end
 '''
 
@@ -583,15 +622,15 @@ SCENARIOS = {
   out = {}
   units.mouseover = BOAR()
   hover("mouseover"); advance(10)
-  ok(table.concat(out, " / "):find("shared 2:M:3100:9:spd=2 with guild, party"), "before the channel is joined: " .. table.concat(out, " / "))
+  ok(table.concat(out, " / "):find("shared 2:M:3100:9:spd=2,n=Elder Mottled Boar,z=Durotar with guild, party"), "before the channel is joined: " .. table.concat(out, " / "))
   ok(table.concat(out, " / "):find("not in the Gander channel yet"), "says why not the channel: " .. table.concat(out, " / "))
   advance(40)
   out = {}
   units.mouseover = mob(5, { name = "Cat", level = 9, def = 45, speed = 1.5 })
   hover("mouseover"); advance(10)
-  ok(table.concat(out, " / "):find("shared 2:M:5:9:spd=1.5 with guild, party, the Gander channel"), table.concat(out, " / "))
+  ok(table.concat(out, " / "):find("shared 2:M:5:9:spd=1.5,n=Cat,z=Durotar with guild, party, the Gander channel"), table.concat(out, " / "))
   guild, grouped = false, false
-  hear("2:M:6:9:spd=3", "Eve-Whitemane", "CHANNEL")
+  hear("2:M:6:9:spd=3,n=Owl,z=Durotar", "Eve-Whitemane", "CHANNEL")
   out = {}
   units.mouseover = mob(6, { name = "Owl", level = 9, def = 45, speed = 3 })
   hover("mouseover"); advance(10)
@@ -616,7 +655,7 @@ SCENARIOS = {
 "a mob the channel already told you, with the same values, isn't sent to the channel again": r'''
   login(nil)
   advance(40)
-  hear("2:M:3100:9:spd=2", "Eve-Whitemane", "CHANNEL")
+  hear("2:M:3100:9:spd=2,n=Elder Mottled Boar,z=Durotar", "Eve-Whitemane", "CHANNEL")
   units.mouseover = BOAR()
   hover("mouseover"); advance(10)
   ok(list(sent) == "GUILD: 2:M:3100:9:spd=2", list(sent))
@@ -921,9 +960,184 @@ SCENARIOS = {
 ''',
 
 # ---- commands ----
-"/gander opens the settings": r'''
+"/gander settings opens the settings": r'''
+  login(nil)
+  cmd("settings")
+  ok(opened == 77, "opened " .. tostring(opened))
+  ok(cmd("help"):find("/gander settings"), cmd("help"))
+''',
+"a mob's name, type, rank and zone are remembered": r'''
+  login(nil)
+  sampleMobs()
+  local tiger, gorilla = GanderDB.mobs[681].lv[30].v, GanderDB.mobs[1108].lv[33].v
+  ok(tiger.n == "Young Stranglethorn Tiger" and tiger.ty == "Beast" and tiger.z == "Stranglethorn Vale", "tiger")
+  ok(tiger.rk == nil, "a normal mob has no rank: " .. tostring(tiger.rk))
+  ok(gorilla.n == "Mistvale Gorilla" and gorilla.rk == "ELITE", "gorilla: " .. tostring(gorilla.rk))
+  local t = hover("mouseover")
+  ok(t == "Defense: 165 | Attack speed: 2.0", "the tooltip gets no extra lines: " .. t)
+''',
+"the first zone a mob was seen in is kept, and wandering doesn't re-send it": r'''
+  loginNoChannel()
+  units.mouseover = BOAR()
+  hover("mouseover"); advance(10)
+  zoneName = "The Barrens"
+  hover("mouseover"); advance(10)
+  ok(GanderDB.mobs[3100].lv[9].v.z == "Durotar", GanderDB.mobs[3100].lv[9].v.z)
+  ok(#sent == 1, "sent again for a new zone: " .. #sent)
+''',
+"names, types, ranks and zones are shared and heard": r'''
+  loginNoChannel()
+  fullMessages = true
+  zoneName = "Stranglethorn Vale"
+  units.mouseover = mob(1108, { name = "Mistvale Gorilla", level = 33, def = 165, speed = 2, type = "Beast", rank = "elite" })
+  hover("mouseover"); advance(10)
+  ok(list(sent) == "GUILD: 2:M:1108:33:spd=2,n=Mistvale Gorilla,ty=Beast,rk=ELITE,z=Stranglethorn Vale", list(sent))
+  hear("2:M:4000:20:spd=2.5,n=Defias Wizard,ty=Humanoid,rk=RARE,z=Westfall", "Bob-Whitemane")
+  local v = GanderDB.mobs[4000].heard[20].v
+  ok(v.n == "Defias Wizard" and v.ty == "Humanoid" and v.rk == "RARE" and v.z == "Westfall", "heard")
+  hear("2:M:4001:20:spd=2.5,n=" .. string.rep("x", 60) .. ",z=|cffff0000red", "Bob-Whitemane")
+  v = GanderDB.mobs[4001].heard[20].v
+  ok(v.n == nil and v.z == nil and v.spd == 2.5, "a silly name or zone is dropped, the rest kept")
+''',
+"a mob remembered before names were kept gets its name the next time it's seen": r'''
+  loginNoChannel()
+  known(3100, 9, { spd = 2 }, 86400)
+  units.mouseover = BOAR()
+  hover("mouseover"); advance(10)
+  ok(GanderDB.mobs[3100].lv[9].v.n == "Elder Mottled Boar", "no name")
+  ok(#sent == 1, "the name is passed on: " .. #sent)
+''',
+
+# ---- the bestiary window ----
+"/gander opens the bestiary, a list of every remembered mob": r'''
+  login(nil)
+  sampleMobs()
+  ok(GanderBestiary == nil or not GanderBestiary:IsShown(), "open before it was asked for")
+  cmd("")
+  local w = GanderBestiary
+  ok(w and w:IsShown(), "not shown")
+  ok(w.count:GetText() == "3 mobs", w.count:GetText())
+  ok(rowText(w.rows[1]) == "Defias Wizard / 20 / Humanoid / Westfall", rowText(w.rows[1]))
+  ok(rowText(w.rows[2]) == "Mistvale Gorilla (Elite) / 33 / Beast / Stranglethorn Vale", rowText(w.rows[2]))
+  ok(rowText(w.rows[3]) == "Young Stranglethorn Tiger / 30 / Beast / Stranglethorn Vale", rowText(w.rows[3]))
+  ok(w.rows[3]:IsShown() and not w.rows[4]:IsShown(), "rows shown")
+  local escapes = false
+  for _, n in ipairs(UISpecialFrames) do if n == "GanderBestiary" then escapes = true end end
+  ok(escapes, "Escape doesn't close it")
+  cmd("")
+  ok(not w:IsShown(), "a second /gander didn't close it")
+''',
+"a mob seen at several levels shows the range; a skull level shows ??": r'''
+  login(nil)
+  units.mouseover = mob(681, { name = "Tiger", level = 30, def = 150, speed = 1.3 })
+  hover("mouseover")
+  units.mouseover = mob(681, { name = "Tiger", level = 32, def = 160, speed = 1.3 })
+  hover("mouseover")
+  hear("2:M:681:31:spd=1.3", "Bob-Whitemane")
+  units.mouseover = mob(11502, { name = "Ragnaros", level = -1, speed = 2, rank = "worldboss" })
+  hover("mouseover")
+  cmd("")
+  local w = GanderBestiary
+  ok(rowText(w.rows[1]):find("^Ragnaros %(Boss%) / %?%? /"), rowText(w.rows[1]))
+  ok(rowText(w.rows[2]):find("^Tiger / 30%-32 /"), rowText(w.rows[2]))
+''',
+"a mob with no name yet is listed by its number, after the named ones": r'''
+  login(nil)
+  known(1108, 33, { spd = 2 })
+  known(681, 30, { spd = 1.3, n = "Young Stranglethorn Tiger" })
+  cmd("")
+  local w = GanderBestiary
+  ok(w.rows[1].name:GetText() == "Young Stranglethorn Tiger", w.rows[1].name:GetText())
+  ok(w.rows[2].name:GetText() == "Mob #1108", w.rows[2].name:GetText())
+''',
+"searching narrows the list by name, zone, type or number": r'''
+  login(nil)
+  sampleMobs()
+  cmd("")
+  local w = GanderBestiary
+  w.search:Type("TIGER")
+  ok(w.rows[1].name:GetText() == "Young Stranglethorn Tiger" and not w.rows[2]:IsShown(), "by name")
+  ok(w.count:GetText() == "1 of 3 mobs", w.count:GetText())
+  w.search:Type("westfall")
+  ok(w.rows[1].name:GetText() == "Defias Wizard" and not w.rows[2]:IsShown(), "by zone")
+  w.search:Type("beast")
+  ok(w.rows[2]:IsShown() and not w.rows[3]:IsShown(), "by type")
+  w.search:Type("1108")
+  ok(w.rows[1].name:GetText() == "Mistvale Gorilla (Elite)" and not w.rows[2]:IsShown(), "by number")
+  w.search:Type("(")
+  ok(w.rows[1]:IsShown() and w.rows[1].name:GetText() == "Mistvale Gorilla (Elite)", "a bracket is plain text, not a pattern")
+  w.search:Type("zzz")
+  ok(not w.rows[1]:IsShown() and w.count:GetText() == "0 of 3 mobs", w.count:GetText())
+  w.search:Type("")
+  ok(w.rows[3]:IsShown() and w.count:GetText() == "3 mobs", "cleared")
+''',
+"the list can show everything, only what you saw, or only what you heard": r'''
+  login(nil)
+  sampleMobs()
+  cmd("")
+  local w = GanderBestiary
+  ok(w.filters.all:IsEnabled() == false and w.filters.seen:IsEnabled() == true, "All is the one picked")
+  w.filters.heard:Click()
+  ok(w.rows[1].name:GetText() == "Defias Wizard" and not w.rows[2]:IsShown(), "heard")
+  ok(w.filters.heard:IsEnabled() == false and w.filters.all:IsEnabled() == true, "Heard is the one picked")
+  w.filters.seen:Click()
+  ok(w.rows[1].name:GetText() == "Mistvale Gorilla (Elite)" and w.rows[2]:IsShown() and not w.rows[3]:IsShown(), "seen")
+  w.filters.all:Click()
+  ok(w.rows[3]:IsShown(), "all")
+''',
+"clicking a mob shows everything known about it": r'''
+  login(nil)
+  sampleMobs()
+  hear("2:M:681:31:spd=1.4,t=86400", "Bob-Whitemane")
+  cmd("")
+  local w = GanderBestiary
+  ok(plain(w.detail:GetText()):find("Click a mob"), "a hint before anything is picked: " .. w.detail:GetText())
+  w.rows[3]:Click()
+  local d = plain(w.detail:GetText())
+  ok(d:find("Young Stranglethorn Tiger") and d:find("id 681"), d)
+  ok(d:find("Beast, Cat") and d:find("Stranglethorn Vale"), d)
+  ok(d:find("Level 30 %- seen " .. today()), d)
+  ok(d:find("Defense 150") and d:find("Attack speed 1.3"), d)
+  ok(d:find("Level 31 %- from Bob, "), d)
+  ok(d:find("Defense 155") and d:find("Attack speed 1.4"), d)
+  w.rows[2]:Click()
+  d = plain(w.detail:GetText())
+  ok(d:find("Mistvale Gorilla") and d:find("Elite") and not d:find("Tiger"), d)
+''',
+"more mobs than fit are scrolled with the mouse wheel": r'''
+  login(nil)
+  for i = 1, 25 do known(100 + i, 9, { spd = 2, n = string.format("Mob %02d", i) }) end
+  cmd("")
+  local w = GanderBestiary
+  local last = #w.rows
+  ok(last >= 8 and last < 25, "rows: " .. last)
+  ok(w.rows[1].name:GetText() == "Mob 01" and w.rows[last].name:GetText() == string.format("Mob %02d", last), "top")
+  ok(w.count:GetText() == "25 mobs", w.count:GetText())
+  w.list:GetScript("OnMouseWheel")(w.list, -1)
+  ok(w.rows[1].name:GetText() == "Mob 04", "one notch down: " .. w.rows[1].name:GetText())
+  for i = 1, 20 do w.list:GetScript("OnMouseWheel")(w.list, -1) end
+  ok(w.rows[last].name:GetText() == "Mob 25" and w.rows[last]:IsShown(), "stops at the end: " .. w.rows[last].name:GetText())
+  for i = 1, 20 do w.list:GetScript("OnMouseWheel")(w.list, 1) end
+  ok(w.rows[1].name:GetText() == "Mob 01", "stops at the top")
+  w.list:GetScript("OnMouseWheel")(w.list, -1)
+  w.search:Type("Mob 2")
+  ok(w.rows[1].name:GetText() == "Mob 20", "a search starts from the top: " .. w.rows[1].name:GetText())
+''',
+"the open list updates when something is learned or heard": r'''
   login(nil)
   cmd("")
+  local w = GanderBestiary
+  ok(w.count:GetText() == "0 mobs" and not w.rows[1]:IsShown(), w.count:GetText())
+  units.mouseover = BOAR()
+  hover("mouseover")
+  ok(w.count:GetText() == "1 mob" and w.rows[1].name:GetText() == "Elder Mottled Boar", w.count:GetText())
+  hear("2:M:4000:20:spd=2.5,n=Defias Wizard", "Bob-Whitemane")
+  ok(w.count:GetText() == "2 mobs" and w.rows[1].name:GetText() == "Defias Wizard", w.count:GetText())
+''',
+"the bestiary's Settings button opens the settings": r'''
+  login(nil)
+  cmd("")
+  GanderBestiary.settings:Click()
   ok(opened == 77, "opened " .. tostring(opened))
 ''',
 "/gander help, debug and unknown words": r'''

@@ -7,6 +7,7 @@ local db              -- GanderDB
 local panel, category
 local debugging = false
 local myName, myRealm
+local refreshBestiary = function() end  -- replaced once the window exists
 
 local function say(fmt, ...) print("|cffc0a060Gander|r: " .. format(fmt, ...)) end
 local function dbg(fmt, ...) if debugging then say("|cff999999" .. fmt .. "|r", ...) end end
@@ -59,6 +60,9 @@ end
 -- Every stat is a field: a short key, what kind of value it is, and whether
 -- it changes with the mob's level. A stat the game doesn't send for mobs
 -- reads as zero, so zero means "not sent" and gets no line.
+--
+-- The last four fields aren't stats: they say which mob this is (its name,
+-- creature type, rank and the zone it was first seen in), for the bestiary.
 ---------------------------------------------------------------------------
 local FIELDS = {
   { "def", "n", true }, { "armor", "n", true },
@@ -70,12 +74,23 @@ local FIELDS = {
   { "rspd", "n", false }, { "rmin", "n", true }, { "rmax", "n", true },
   { "s1", "n", true }, { "s2", "n", true }, { "s3", "n", true }, { "s4", "n", true }, { "s5", "n", true },
   { "run", "n", false }, { "class", "token", false }, { "fam", "name", false },
+  { "n", "text", false }, { "ty", "name", false }, { "rk", "token", false }, { "z", "text", false },
 }
 local FIELD = {}
 for _, f in ipairs(FIELDS) do FIELD[f[1]] = { kind = f[2], perLevel = f[3] } end
+local INFO = { n = true, ty = true, rk = true, z = true }
+local RANK = { ELITE = "Elite", RARE = "Rare", RAREELITE = "Rare elite", WORLDBOSS = "Boss" }
 
 local MAX_NUMBER = 1000000000
-local MAX_TOKEN, MAX_NAME = 20, 24
+local MAX_TOKEN, MAX_NAME, MAX_TEXT = 20, 24, 40
+
+-- Do these values hold any stat, not just which mob it is?
+local function hasStats(values)
+  for key in pairs(values) do
+    if not INFO[key] then return true end
+  end
+  return false
+end
 
 -- Is value a usable reading for this kind of field? Returns it cleaned up.
 local function clean(kind, value)
@@ -83,7 +98,8 @@ local function clean(kind, value)
     if type(value) == "number" and value > 0 and value <= MAX_NUMBER then return round(value) end
   elseif kind == "token" then
     if type(value) == "string" and #value <= MAX_TOKEN and value:find("^%u+$") then return value end
-  elseif type(value) == "string" and value ~= "" and #value <= MAX_NAME and not value:find("[,=:|#%c]") then
+  elseif type(value) == "string" and value ~= "" and #value <= (kind == "text" and MAX_TEXT or MAX_NAME)
+         and not value:find("[,=:|#%c]") then
     return value
   end
 end
@@ -124,6 +140,15 @@ local function read(unit)
   take("run", (select(2, call("GetUnitSpeed", unit))))
   take("class", (select(2, call("UnitClass", unit))))
   take("fam", (call("UnitCreatureFamily", unit)))
+  take("n", (call("UnitName", unit)))
+  take("ty", (call("UnitCreatureType", unit)))
+  local rank = call("UnitClassification", unit)
+  if isSecret(rank) then
+    hid.rk = true
+  elseif type(rank) == "string" and RANK[rank:upper()] then
+    v.rk = rank:upper()
+  end
+  take("z", (call("GetRealZoneText")))
   return v, hid
 end
 
@@ -167,6 +192,7 @@ local function remember(id, level, v)
   for key, value in pairs(old and old.v or {}) do values[key] = value end
   for key, value in pairs(v) do
     if key == "def" and value == ruleDefense(level) then value = nil end
+    if key == "z" and values.z ~= nil then value = nil end  -- the first zone it was seen in is kept
     if value ~= nil and values[key] ~= value then
       values[key] = value
       changed = true
@@ -177,10 +203,14 @@ local function remember(id, level, v)
     mob = { lv = {}, heard = {} }
     db.mobs[id] = mob
   end
-  mob.lv[level] = { at = time(), v = values }
+  -- Only seeing its stats counts as a fresh sighting: a hidden mob whose
+  -- name still shows mustn't make old stats look newly seen.
+  local seenAt = (hasStats(v) or not old) and time() or old.at
+  mob.lv[level] = { at = seenAt, v = values }
   if changed then
     dbg("learned mob %d at level %d", id, level)
-    queueSend(id, level)
+    if hasStats(values) then queueSend(id, level) end
+    refreshBestiary()
   end
 end
 
@@ -219,10 +249,12 @@ local function recall(id, level)
   return found
 end
 
--- Is anything remembered for this mob at this level, ours or heard?
+-- Are any stats remembered for this mob at this level, ours or heard?
 local function knows(id, level)
   local mob = db.mobs[id]
-  return mob ~= nil and ((mob.lv and mob.lv[level]) or (mob.heard and mob.heard[level])) and true or false
+  if not mob then return false end
+  local seen, heard = mob.lv and mob.lv[level], mob.heard and mob.heard[level]
+  return (seen and hasStats(seen.v)) or (heard and hasStats(heard.v)) or false
 end
 
 ---------------------------------------------------------------------------
@@ -634,7 +666,7 @@ local function answer(key, id, level, route, questionAt)
   end
   local mob = db.mobs[id]
   local rec = mob and mob.lv and mob.lv[level]
-  if not (rec and C_ChatInfo and C_ChatInfo.SendAddonMessage) then return end
+  if not (rec and hasStats(rec.v) and C_ChatInfo and C_ChatInfo.SendAddonMessage) then return end
   local wire = signed(encode(id, level, rec.v, time() - rec.at))
   noteSent(wire)
   if route == "CHANNEL" then
@@ -652,7 +684,8 @@ local function onQuestion(id, level, route, sender)
   local key = id .. ":" .. level
   asked[key] = GetTime()  -- no need for us to ask as well
   local mob = db.mobs[id]
-  if not (mob and mob.lv and mob.lv[level]) or answering[key] then return end
+  local ours = mob and mob.lv and mob.lv[level]
+  if not (ours and hasStats(ours.v)) or answering[key] then return end
   if route == "GUILD" then
     if not IsInGuild() then return end
   elseif route == "PARTY" or route == "RAID" then
@@ -723,6 +756,7 @@ local function onAddonMessage(prefix, text, channel, sender)
   local told = mob.heard[level]
   if told and told.at > seenAt then return end  -- we already heard of a newer sighting
   mob.heard[level] = { at = seenAt, by = who, v = values, ch = (channel == "CHANNEL") or nil }
+  refreshBestiary()
 end
 
 ---------------------------------------------------------------------------
@@ -799,10 +833,283 @@ local function buildPanel()
 end
 
 ---------------------------------------------------------------------------
+-- The bestiary (/gander): every remembered mob, and all that's known of it
+---------------------------------------------------------------------------
+local ROWS = 10           -- mobs visible at once
+local WHEEL_STEP = 3      -- rows per notch of the mouse wheel
+local SHOW = { { "all", "All" }, { "seen", "Seen by me" }, { "heard", "Heard" } }
+local bestiary
+local showing, searching, offset, selected = "all", "", 0, nil
+
+local function openSettings()
+  if category then
+    pcall(Settings.OpenToCategory, category:GetID())
+  else
+    say("the settings window isn't available here.")
+  end
+end
+
+-- The newest value of one field for a mob, from any level, ours or heard.
+local function info(mob, key)
+  local rec = newer(newestWith(mob.lv or {}, key), newestWith(mob.heard or {}, key), key)
+  return rec and rec.v[key]
+end
+
+-- "30", "30-32" or "??" for the levels a mob is known at.
+local function levelText(mob)
+  local lo, hi
+  for _, records in ipairs({ mob.lv or {}, mob.heard or {} }) do
+    for level in pairs(records) do
+      if level > 0 then
+        lo = math.min(lo or level, level)
+        hi = math.max(hi or level, level)
+      end
+    end
+  end
+  if not lo then return "??" end
+  return lo == hi and tostring(lo) or (lo .. "-" .. hi)
+end
+
+-- Every remembered mob as a list entry, named ones first by name.
+local function allEntries()
+  local list = {}
+  for id, mob in pairs(db.mobs) do
+    local name, rank = info(mob, "n"), info(mob, "rk")
+    local seen = next(mob.lv or {}) ~= nil
+    list[#list + 1] = {
+      id = id, mob = mob, named = name ~= nil, seen = seen,
+      name = (name or ("Mob #" .. id)) .. (rank and RANK[rank] and (" (" .. RANK[rank] .. ")") or ""),
+      level = levelText(mob), kind = info(mob, "ty") or "", zone = info(mob, "z") or "",
+    }
+  end
+  table.sort(list, function(a, b)
+    if a.named ~= b.named then return a.named end
+    if a.named and a.name:lower() ~= b.name:lower() then return a.name:lower() < b.name:lower() end
+    return a.id < b.id
+  end)
+  return list
+end
+
+local function matches(entry)
+  if showing == "seen" and not entry.seen then return false end
+  if showing == "heard" and entry.seen then return false end
+  if searching == "" then return true end
+  local haystack = (entry.name .. "\n" .. entry.zone .. "\n" .. entry.kind .. "\n" .. entry.id):lower()
+  return haystack:find(searching:lower(), 1, true) ~= nil
+end
+
+local function when(at) return tonumber(date("%d", at)) .. " " .. date("%b", at) end
+
+-- One record's stats on a line: "Defense 150 · Attack speed 1.3".
+local function statsLine(level, rec)
+  local parts = {}
+  local function get(key) return rec.v[key] end
+  for _, line in ipairs(LINES) do
+    if line.key ~= "family" then
+      if firstOf(line.fields, get) then
+        local label, value = line.text(get)
+        parts[#parts + 1] = label .. " " .. value
+      elseif line.key == "defense" and ruleDefense(level) then
+        parts[#parts + 1] = "Defense " .. commas(ruleDefense(level))
+      end
+    end
+  end
+  if not hasStats(rec.v) then parts[#parts + 1] = "(its stats were hidden)" end
+  return table.concat(parts, "  ·  ")
+end
+
+-- Everything known about one mob, as text for the lower pane.
+local function detailText(id)
+  local mob = id and db.mobs[id]
+  if not mob then return GREY .. "Click a mob to see everything known about it.|r" end
+  local out = {}
+  local rank = info(mob, "rk")
+  out[#out + 1] = LABEL .. (info(mob, "n") or ("Mob #" .. id)) .. "|r" .. GREY .. "  (id " .. id .. ")|r"
+  local about = {}
+  local kind, family = info(mob, "ty"), info(mob, "fam")
+  if kind or family then about[#about + 1] = (kind or "") .. ((kind and family) and ", " or "") .. (family or "") end
+  if rank and RANK[rank] then about[#about + 1] = RANK[rank] end
+  if info(mob, "z") then about[#about + 1] = info(mob, "z") end
+  if #about > 0 then out[#out + 1] = table.concat(about, "  ·  ") end
+  local levels = {}
+  for _, records in ipairs({ mob.lv or {}, mob.heard or {} }) do
+    for level in pairs(records) do levels[level] = true end
+  end
+  local sorted = {}
+  for level in pairs(levels) do sorted[#sorted + 1] = level end
+  table.sort(sorted)
+  for _, level in ipairs(sorted) do
+    local title = "Level " .. (level > 0 and level or "??")
+    local seen, heard = mob.lv and mob.lv[level], mob.heard and mob.heard[level]
+    if seen then
+      out[#out + 1] = " "
+      out[#out + 1] = LABEL .. title .. " - seen " .. when(seen.at) .. "|r"
+      out[#out + 1] = statsLine(level, seen)
+    end
+    if heard then
+      out[#out + 1] = " "
+      out[#out + 1] = LABEL .. title .. " - from " .. heard.by .. ", " .. when(heard.at) .. "|r"
+      out[#out + 1] = statsLine(level, heard)
+    end
+  end
+  return table.concat(out, "\n")
+end
+
+local function drawBestiary()
+  local all, shown = allEntries(), {}
+  for _, entry in ipairs(all) do
+    if matches(entry) then shown[#shown + 1] = entry end
+  end
+  offset = math.max(0, math.min(offset, #shown - ROWS))
+  for i, row in ipairs(bestiary.rows) do
+    local entry = shown[offset + i]
+    if entry then
+      row.id = entry.id
+      row.name:SetText(entry.name)
+      row.level:SetText(entry.level)
+      row.kind:SetText(entry.kind)
+      row.zone:SetText(entry.zone)
+      row.picked:SetShown(entry.id == selected)
+      row:Show()
+    else
+      row.id = nil
+      row:Hide()
+    end
+  end
+  local total = #all
+  local noun = total == 1 and "mob" or "mobs"
+  if #shown == total then
+    bestiary.count:SetText(format("%s %s", commas(total), noun))
+  else
+    bestiary.count:SetText(format("%s of %s %s", commas(#shown), commas(total), noun))
+  end
+  for key, button in pairs(bestiary.filters) do button:SetEnabled(key ~= showing) end
+  bestiary.detail:SetText(detailText(selected))
+  bestiary.child:SetHeight(math.max(10, (bestiary.detail:GetStringHeight() or 0) + 10))
+end
+
+local function buildBestiary()
+  bestiary = CreateFrame("Frame", "GanderBestiary", UIParent, "BasicFrameTemplateWithInset")
+  bestiary:Hide()
+  bestiary:SetSize(560, 540)
+  bestiary:SetPoint("CENTER")
+  bestiary:SetFrameStrata("HIGH")
+  bestiary:SetClampedToScreen(true)
+  bestiary:SetMovable(true)
+  bestiary:EnableMouse(true)
+  bestiary:RegisterForDrag("LeftButton")
+  bestiary:SetScript("OnDragStart", bestiary.StartMoving)
+  bestiary:SetScript("OnDragStop", bestiary.StopMovingOrSizing)
+  if type(bestiary.TitleText) == "table" then bestiary.TitleText:SetText("Gander: Bestiary") end
+  tinsert(UISpecialFrames, "GanderBestiary")  -- Escape closes it
+
+  local label = bestiary:CreateFontString(nil, "ARTWORK", "GameFontNormal")
+  label:SetPoint("TOPLEFT", 16, -36)
+  label:SetText("Search")
+  bestiary.search = CreateFrame("EditBox", "GanderBestiarySearch", bestiary, "InputBoxTemplate")
+  bestiary.search:SetSize(150, 22)
+  bestiary.search:SetPoint("LEFT", label, "RIGHT", 12, 0)
+  bestiary.search:SetAutoFocus(false)
+  bestiary.search:SetMaxLetters(40)
+  bestiary.search:SetScript("OnTextChanged", function(self)
+    searching, offset = strtrim(self:GetText() or ""), 0
+    drawBestiary()
+  end)
+  bestiary.search:SetScript("OnEnterPressed", function(self) self:ClearFocus() end)
+  bestiary.search:SetScript("OnEscapePressed", function(self) self:ClearFocus() end)
+
+  bestiary.filters = {}
+  local x = 232
+  for _, f in ipairs(SHOW) do
+    local b = CreateFrame("Button", nil, bestiary, "UIPanelButtonTemplate")
+    b:SetSize(f[1] == "seen" and 92 or 64, 22)
+    b:SetPoint("TOPLEFT", x, -31)
+    b:SetText(f[2])
+    b:SetScript("OnClick", function()
+      showing, offset = f[1], 0
+      drawBestiary()
+    end)
+    bestiary.filters[f[1]] = b
+    x = x + (f[1] == "seen" and 96 or 68)
+  end
+  bestiary.settings = CreateFrame("Button", nil, bestiary, "UIPanelButtonTemplate")
+  bestiary.settings:SetSize(76, 22)
+  bestiary.settings:SetPoint("TOPRIGHT", -14, -31)
+  bestiary.settings:SetText("Settings")
+  bestiary.settings:SetScript("OnClick", openSettings)
+
+  local columns = { name = 20, level = 280, kind = 330, zone = 420 }
+  for key, title in pairs({ name = "Name", level = "Level", kind = "Type", zone = "Zone" }) do
+    local h = bestiary:CreateFontString(nil, "ARTWORK", "GameFontNormalSmall")
+    h:SetPoint("TOPLEFT", columns[key], -64)
+    h:SetText(title)
+  end
+  bestiary.count = bestiary:CreateFontString(nil, "ARTWORK", "GameFontDisableSmall")
+  bestiary.count:SetPoint("TOPRIGHT", -18, -64)
+
+  -- The list: fixed rows, moved through with the mouse wheel.
+  bestiary.list = CreateFrame("Frame", nil, bestiary)
+  bestiary.list:SetPoint("TOPLEFT", 12, -80)
+  bestiary.list:SetSize(536, ROWS * 20)
+  bestiary.list:EnableMouseWheel(true)
+  bestiary.list:SetScript("OnMouseWheel", function(_, delta)
+    offset = offset - delta * WHEEL_STEP
+    drawBestiary()
+  end)
+  bestiary.rows = {}
+  for i = 1, ROWS do
+    local row = CreateFrame("Button", nil, bestiary.list)
+    row:SetSize(536, 20)
+    row:SetPoint("TOPLEFT", 0, -(i - 1) * 20)
+    row:SetHighlightTexture("Interface\\QuestFrame\\UI-QuestTitleHighlight", "ADD")
+    row.picked = row:CreateTexture(nil, "BACKGROUND")
+    row.picked:SetAllPoints()
+    row.picked:SetColorTexture(1, 0.82, 0, 0.18)
+    row.picked:Hide()
+    for key, font in pairs({ name = "GameFontHighlight", level = "GameFontHighlight",
+                             kind = "GameFontHighlightSmall", zone = "GameFontHighlightSmall" }) do
+      row[key] = row:CreateFontString(nil, "ARTWORK", font)
+      row[key]:SetPoint("LEFT", columns[key] - 12, 0)
+      row[key]:SetJustifyH("LEFT")
+    end
+    row.name:SetWidth(252)
+    row.zone:SetWidth(126)
+    row:SetScript("OnClick", function(self)
+      selected = self.id
+      drawBestiary()
+    end)
+    bestiary.rows[i] = row
+  end
+
+  -- Everything known about the mob that was clicked.
+  local scroll = CreateFrame("ScrollFrame", "GanderBestiaryScroll", bestiary, "UIPanelScrollFrameTemplate")
+  scroll:SetPoint("TOPLEFT", 16, -(80 + ROWS * 20 + 12))
+  scroll:SetPoint("BOTTOMRIGHT", -34, 12)
+  bestiary.child = CreateFrame("Frame", nil, scroll)
+  bestiary.child:SetSize(500, 10)
+  scroll:SetScrollChild(bestiary.child)
+  bestiary.detail = bestiary.child:CreateFontString(nil, "ARTWORK", "GameFontHighlight")
+  bestiary.detail:SetPoint("TOPLEFT")
+  bestiary.detail:SetWidth(500)
+  bestiary.detail:SetJustifyH("LEFT")
+  bestiary.detail:SetJustifyV("TOP")
+  bestiary.detail:SetSpacing(3)
+
+  bestiary:SetScript("OnShow", drawBestiary)
+  refreshBestiary = function() if bestiary:IsShown() then drawBestiary() end end
+end
+
+local function toggleBestiary()
+  if not bestiary then buildBestiary() end
+  if bestiary:IsShown() then bestiary:Hide() else bestiary:Show() end
+end
+
+---------------------------------------------------------------------------
 -- Commands
 ---------------------------------------------------------------------------
 local HELP = {
-  "/gander  -  open the settings",
+  "/gander  -  open the bestiary: every mob Gander remembers",
+  "/gander settings  -  choose which lines show, and how sharing works",
   "/gander debug  -  print what the game says about your target, and what Gander learns, sends and hears",
   "/gander help  -  this list",
 }
@@ -858,11 +1165,9 @@ SlashCmdList.GANDER = function(msg)
   end
   local word = strtrim(msg or ""):match("^(%S*)"):lower()
   if word == "" then
-    if category then
-      pcall(Settings.OpenToCategory, category:GetID())
-    else
-      say("the settings window isn't available here.")
-    end
+    toggleBestiary()
+  elseif word == "settings" then
+    openSettings()
   elseif word == "debug" then
     debugging = not debugging
     say("debug %s.", debugging and "on" or "off")
