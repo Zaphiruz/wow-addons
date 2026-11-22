@@ -46,6 +46,10 @@ and release commands for people; this file is how we work on it.
   sender of an addon message is written that way. Don't spot yourself by
   comparing names: use the GUID, or for your own addon messages coming back,
   the text you just sent.
+- Addon messages can go to a custom chat channel on Forever:
+  `C_ChatInfo.SendAddonMessage(prefix, text, "CHANNEL", GetChannelName(name))`
+  returned 0 (Success) in game. Gander joins its channel with
+  `JoinTemporaryChannel`. Untested on Classic Era.
 - The boss-fight check is `C_InstanceEncounter.IsEncounterInProgress` on
   Forever and the global `IsEncounterInProgress` on Classic Era.
 

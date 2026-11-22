@@ -1,5 +1,13 @@
 # Gander changelog
 
+## 0.2.0 (2026-11-22)
+
+- What you learn is now also shared on a chat channel called "Gander", which every player running Gander joins. That reaches people outside your guild and group. Nothing shows in your chat window: the messages are hidden ones only addons read.
+- The channel is joined about 30 seconds after you log in, so it doesn't take the number of General or Trade. It uses one of your chat channel slots.
+- Anyone can join a channel, so what's heard there never replaces what a guildmate or group member told you, and what you saw yourself still comes first.
+- New switch in Options > AddOns > Gander: "Also share on the Gander chat channel". Switching it off leaves the channel.
+- `/gander debug` says whether you're in the channel.
+
 ## 0.1.1 (2026-11-22)
 
 - Fixed Gander treating your own shared messages as if another player had sent them. With `/gander debug` on, every share was followed by two "heard" lines naming you.

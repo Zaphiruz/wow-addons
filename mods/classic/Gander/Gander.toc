@@ -1,7 +1,7 @@
 ## Interface: 11509, 16001
 ## Title: Gander
 ## Notes: Shows a mob's stats on its tooltip: defense, attack speed and anything else the game reveals. Remembers them for when the game hides them, and shares them with your guild and group.
-## Version: 0.1.1
+## Version: 0.2.0
 ## X-Curse-Project-ID: 1824428
 ## SavedVariables: GanderDB
 Gander.lua

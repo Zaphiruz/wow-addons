@@ -104,15 +104,31 @@ function IsInGroup() return grouped end
 function IsInRaid() return raid end
 C_InstanceEncounter = { IsEncounterInProgress = function() return encounter end }  -- Forever's name
 sent, prefixes = {}, {}
+-- Custom chat channels: the names joined, in order. channelResult is what the
+-- game answers to an addon message sent to a channel (0 = sent).
+channels, channelResult = {}, 0
+refusals = {}  -- channel sends the game answered with an error
+function JoinTemporaryChannel(name) for _, c in ipairs(channels) do if c == name then return end end table.insert(channels, name) end
+function LeaveChannelByName(name) for i, c in ipairs(channels) do if c == name then table.remove(channels, i) return end end end
+function GetChannelName(name) for i, c in ipairs(channels) do if c == name then return i, c, 0 end end return 0, nil, 0 end
+Enum = Enum or {}
+Enum.SendAddonMessageResult = { Success = 0, AddonMessageThrottle = 3, InvalidChatType = 4, InvalidChannel = 7, ChannelThrottle = 8 }
 echo = "Zaphiruz-Whitemane"  -- how the game names you as the sender of your own messages
 C_ChatInfo = {
   RegisterAddonMessagePrefix = function(p) prefixes[p] = true; return true end,
   SendAddonMessage = function(prefix, text, channel, target)
     assert(#text <= 255, "addon message too long: " .. #text)
     assert(not lockdown and not encounter, "sent while chat is locked")
-    table.insert(sent, channel .. ": " .. text)
+    if channel == "CHANNEL" then
+      assert(channels[target] ~= nil, "sent to a channel that isn't joined: " .. tostring(target))
+      if channelResult ~= 0 then table.insert(refusals, channelResult); return channelResult end
+      table.insert(sent, "CHANNEL " .. channels[target] .. ": " .. text)
+    else
+      table.insert(sent, channel .. ": " .. text)
+    end
     -- The game sends your own guild and group messages back to you.
     if echo then fire("CHAT_MSG_ADDON", prefix, text, channel, echo, echo) end
+    return 0
   end,
   InChatMessagingLockdown = function() return lockdown end,
 }
@@ -158,7 +174,7 @@ GameTooltip.lines, GameTooltip.unit = {}, false
 function GameTooltip:AddLine(t) table.insert(self.lines, t) end
 function GameTooltip:ClearLines() self.lines = {}; self:RunHooks("OnTooltipCleared") end
 function GameTooltip:GetUnit() if self.unit then return UnitName(self.unit), self.unit end end
-Enum = { TooltipDataType = { Item = 0, Unit = 2 } }
+Enum.TooltipDataType = { Item = 0, Unit = 2 }
 postCalls = {}
 TooltipDataProcessor = { AddTooltipPostCall = function(kind, fn)
   postCalls[kind] = postCalls[kind] or {}; table.insert(postCalls[kind], fn) end }
@@ -210,6 +226,8 @@ function cmd(s) out = {}; SlashCmdList.GANDER(s); return table.concat(out, "\n")
 function ok(c, m) if not c then error("FAIL: " .. tostring(m), 2) end end
 function list(t) return table.concat(t, " | ") end
 function panel() return categories[1].frame end
+-- Log in with the channel switched off, for tests about guild and group only.
+function loginNoChannel() login({ channel = false }) end
 function check(key) return panel().checks[key] end
 function today() return tonumber(os.date("%d", clock)) .. " " .. os.date("%b", clock) end
 '''
@@ -219,6 +237,7 @@ SCENARIOS = {
 "first login sets up the defaults": r'''
   login(nil)
   ok(GanderDB.tooltips == true and GanderDB.remembered == true and GanderDB.share == true, "switches on")
+  ok(GanderDB.channel == true, "channel on")
   ok(type(GanderDB.mobs) == "table" and next(GanderDB.mobs) == nil, "empty memory")
   for _, k in ipairs({ "defense", "armor", "resist", "health", "power", "speed", "damage", "ap", "ranged",
                        "stats", "run", "class", "family" }) do
@@ -417,7 +436,7 @@ SCENARIOS = {
   ok(#sent == 0, list(sent))
 ''',
 "sending waits while chat is locked or a boss fight is on": r'''
-  login(nil)
+  loginNoChannel()
   units.mouseover = BOAR()
   encounter = true
   hover("mouseover"); advance(30)
@@ -431,7 +450,7 @@ SCENARIOS = {
 ''',
 "on Classic Era sending waits for a boss fight to end too": r'''
   classicEra()
-  login(nil)
+  loginNoChannel()
   units.mouseover = mob(3100, { name = "Boar", level = 9, speed = 2 })
   encounter = true
   hover("mouseover"); advance(30)
@@ -441,7 +460,7 @@ SCENARIOS = {
   ok(list(sent) == "GUILD: 1:M:3100:9:spd=2", list(sent))
 ''',
 "many new mobs are sent a few at a time": r'''
-  login(nil)
+  loginNoChannel()
   for i = 1, 6 do
     units.mouseover = mob(100 + i, { name = "Mob" .. i, level = 9, def = 45, speed = 2 })
     hover("mouseover")
@@ -452,7 +471,7 @@ SCENARIOS = {
   ok(#sent == 6, "all sent in the end: " .. #sent)
 ''',
 "what another player learned is shown as theirs": r'''
-  login(nil)
+  loginNoChannel()
   hear("1:M:4000:20:hp=900,spd=2.5,class=MAGE,armor=1200,r2=50", "Bob-Whitemane")
   units.mouseover = mob(4000, { name = "Wizard", level = 20, def = 100 })
   local t = hover("mouseover")
@@ -483,7 +502,7 @@ SCENARIOS = {
   ok(hover("mouseover"):find("Attack speed: 2.0 %(seen"), hover("mouseover"))
 ''',
 "your own messages coming back aren't taken as someone else's, however the game names you": r'''
-  login(nil)
+  loginNoChannel()
   grouped = true
   cmd("debug")
   -- Forever characters can have a surname, and the sender name needn't match UnitName.
@@ -500,6 +519,102 @@ SCENARIOS = {
   advance(60)
   hear("1:M:201:9:spd=2", "Bob-Whitemane")
   ok(GanderDB.mobs[201].heard[9].by == "Bob", "ignored Bob")
+''',
+"the Gander channel is joined a while after login, not at once": r'''
+  login(nil)
+  ok(#channels == 0, "joined at login")
+  advance(20)
+  ok(#channels == 0, "joined before the game's own channels")
+  advance(20)
+  ok(list(channels) == "Gander", list(channels))
+''',
+"the channel isn't joined with sharing or the channel switched off": r'''
+  login({ share = false })
+  advance(60)
+  ok(#channels == 0, "joined with sharing off")
+  login({ channel = false })
+  advance(60)
+  ok(#channels == 0, "joined with the channel off")
+''',
+"a newly learned mob goes to the channel as well as guild and group": r'''
+  login(nil)
+  advance(40)
+  units.mouseover = BOAR()
+  hover("mouseover"); advance(10)
+  ok(list(sent) == "GUILD: 1:M:3100:9:spd=2 | CHANNEL Gander: 1:M:3100:9:spd=2", list(sent))
+  ok(next(GanderDB.mobs[3100].heard) == nil, "took its own channel message as someone else's")
+  guild = false
+  units.mouseover = mob(5, { name = "Cat", level = 9, def = 45, speed = 1.5 })
+  hover("mouseover"); advance(10)
+  ok(sent[3] == "CHANNEL Gander: 1:M:5:9:spd=1.5" and #sent == 3, "with no guild or group: " .. list(sent))
+''',
+"channel strangers don't replace what guild or group told you": r'''
+  login(nil)
+  hear("1:M:3100:9:spd=3", "Bob-Whitemane", "GUILD")
+  hear("1:M:3100:9:spd=9", "Eve-Whitemane", "CHANNEL")
+  ok(GanderDB.mobs[3100].heard[9].by == "Bob", "a stranger replaced a guildmate")
+  hear("1:M:5:9:spd=9", "Eve-Whitemane", "CHANNEL")
+  ok(GanderDB.mobs[5].heard[9].by == "Eve", "channel data not kept")
+  hear("1:M:5:9:spd=8", "Mal-Whitemane", "CHANNEL")
+  ok(GanderDB.mobs[5].heard[9].by == "Mal", "newest channel telling wins")
+  hear("1:M:5:9:spd=1.5", "Bob-Whitemane", "PARTY")
+  hear("1:M:5:9:spd=7", "Eve-Whitemane", "CHANNEL")
+  ok(GanderDB.mobs[5].heard[9].by == "Bob" and GanderDB.mobs[5].heard[9].v.spd == 1.5, "group beats channel")
+''',
+"a mob the channel already told you, with the same values, isn't sent to the channel again": r'''
+  login(nil)
+  advance(40)
+  hear("1:M:3100:9:spd=2", "Eve-Whitemane", "CHANNEL")
+  units.mouseover = BOAR()
+  hover("mouseover"); advance(10)
+  ok(list(sent) == "GUILD: 1:M:3100:9:spd=2", list(sent))
+  hear("1:M:5:9:spd=3", "Eve-Whitemane", "CHANNEL")
+  units.mouseover = mob(5, { name = "Cat", level = 9, def = 45, speed = 1.5 })
+  hover("mouseover"); advance(10)
+  ok(sent[#sent] == "CHANNEL Gander: 1:M:5:9:spd=1.5", "different values are sent: " .. list(sent))
+''',
+"if the game refuses channel messages, Gander stops trying": r'''
+  login(nil)
+  advance(40)
+  cmd("debug")
+  channelResult = Enum.SendAddonMessageResult.InvalidChatType
+  out = {}
+  for i = 1, 3 do
+    units.mouseover = mob(100 + i, { name = "Mob" .. i, level = 9, def = 45, speed = 2 })
+    hover("mouseover"); advance(10)
+  end
+  ok(#refusals == 1, "kept trying: " .. #refusals)
+  ok(#sent == 3, "guild still gets them: " .. list(sent))
+  ok(table.concat(out, " / "):find("refuses"), "debug says so: " .. table.concat(out, " / "))
+''',
+"a throttled channel message is tried again later, without repeating it to the guild": r'''
+  login(nil)
+  advance(40)
+  channelResult = Enum.SendAddonMessageResult.ChannelThrottle
+  units.mouseover = BOAR()
+  hover("mouseover"); advance(4)
+  ok(list(sent) == "GUILD: 1:M:3100:9:spd=2" and #refusals == 1, list(sent))
+  channelResult = 0
+  advance(30)
+  ok(list(sent) == "GUILD: 1:M:3100:9:spd=2 | CHANNEL Gander: 1:M:3100:9:spd=2", list(sent))
+  channelResult = Enum.SendAddonMessageResult.ChannelThrottle
+  refusals = {}
+  units.mouseover = mob(5, { name = "Cat", level = 9, def = 45, speed = 1.5 })
+  hover("mouseover"); advance(120)
+  ok(#refusals >= 2 and #refusals <= 5, "retries, then gives up: " .. #refusals)
+''',
+"the channel switch joins and leaves the channel": r'''
+  login(nil)
+  advance(40)
+  panel():Show()
+  check("channel"):Click()
+  ok(GanderDB.channel == false and #channels == 0, "left the channel")
+  check("channel"):Click()
+  ok(GanderDB.channel == true and list(channels) == "Gander", "joined again")
+  check("share"):Click()
+  ok(#channels == 0, "sharing off leaves the channel")
+  check("share"):Click()
+  ok(list(channels) == "Gander", "sharing on joins it again")
 ''',
 "junk and unknown messages are ignored": r'''
   login(nil)
@@ -527,7 +642,7 @@ SCENARIOS = {
   login(nil)
   ok(#categories == 1 and categories[1].name == "Gander", "registered")
   panel():Show()
-  for _, k in ipairs({ "tooltips", "remembered", "share", "defense", "armor", "resist", "health", "power",
+  for _, k in ipairs({ "tooltips", "remembered", "share", "channel", "defense", "armor", "resist", "health", "power",
                        "speed", "damage", "ap", "ranged", "stats", "run", "class", "family" }) do
     ok(check(k) and check(k):GetChecked() == true, "switch " .. k)
   end

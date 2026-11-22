@@ -43,7 +43,7 @@ local LINE_LABEL = {
 local function loadSettings()
   GanderDB = type(GanderDB) == "table" and GanderDB or {}
   db = GanderDB
-  for _, key in ipairs({ "tooltips", "remembered", "share" }) do
+  for _, key in ipairs({ "tooltips", "remembered", "share", "channel" }) do
     if type(db[key]) ~= "boolean" then db[key] = true end
   end
   if type(db.lines) ~= "table" then db.lines = {} end
@@ -356,8 +356,17 @@ end
 -- Only what we saw ourselves is sent, so nothing echoes back and forth, and
 -- what we saw ourselves is always shown ahead of what we heard.
 -- Fields a newer version adds are ignored by this one.
+--
+-- The same message also goes to a custom chat channel, "Gander", which every
+-- player running Gander joins: that reaches people outside guild and group.
+-- Anyone can join a channel, so what's heard there never replaces what a
+-- guildmate or group member said. The channel is joined a while after login
+-- so it doesn't take the number of one of the game's own channels.
 ---------------------------------------------------------------------------
 local PREFIX = "Gander"
+local CHANNEL = "Gander"
+local JOIN_DELAY = 30  -- seconds after login before joining the channel
+local CHANNEL_TRIES = 3  -- times a throttled channel message is tried again
 local SEND_DELAY = 3   -- seconds after learning before the first send
 local SEND_GAP = 2     -- seconds between mobs
 local SEND_RETRY = 5   -- seconds before trying again while chat is locked
@@ -368,6 +377,55 @@ local ECHO_WINDOW = 15 -- seconds in which our own message can come back to us
 
 local queue, queued, sendPending = {}, {}, false
 local sentAt = {}      -- message text -> when we sent it
+local channelRefused = false  -- the game won't take addon messages on channels
+
+local RESULT = Enum and Enum.SendAddonMessageResult or {}
+local THROTTLED = { [RESULT.AddonMessageThrottle or 3] = true, [RESULT.ChannelThrottle or 8] = true }
+local NOT_JOINED = RESULT.InvalidChannel or 7
+
+local function channelWanted() return db.share and db.channel end
+
+-- Our number for the channel, or nil if we aren't in it.
+local function channelNumber()
+  local number = call("GetChannelName", CHANNEL)
+  if isSecret(number) or type(number) ~= "number" or number <= 0 then return end
+  return number
+end
+
+local function joinChannel()
+  if not channelWanted() or channelNumber() then return end
+  call("JoinTemporaryChannel", CHANNEL)
+  dbg("joined the %s channel", CHANNEL)
+end
+
+local function leaveChannel()
+  if channelNumber() then call("LeaveChannelByName", CHANNEL) end
+end
+
+-- Did the channel already tell us everything in values for this mob?
+local function channelKnows(mob, level, values)
+  local told = mob.heard and mob.heard[level]
+  if not (told and told.ch) then return false end
+  for key, value in pairs(values) do
+    if told.v[key] ~= value then return false end
+  end
+  return true
+end
+
+-- Send text to the channel. Returns "sent", "retry" (throttled) or nil.
+local function sendToChannel(text)
+  if channelRefused or not channelWanted() then return end
+  local number = channelNumber()
+  if not number then return end
+  local ok, result = pcall(C_ChatInfo.SendAddonMessage, PREFIX, text, "CHANNEL", number)
+  if not ok then return end
+  if result == nil or result == true or result == (RESULT.Success or 0) then return "sent" end
+  if THROTTLED[result] then return "retry" end
+  if result ~= NOT_JOINED and result ~= false then
+    channelRefused = true
+    dbg("the game refuses addon messages on chat channels (result %s); sharing with guild and group only", tostring(result))
+  end
+end
 
 local function chatLocked()
   if C_ChatInfo and C_ChatInfo.InChatMessagingLockdown and C_ChatInfo.InChatMessagingLockdown() then return true end
@@ -404,6 +462,7 @@ local function flush()
   end
   local item = tremove(queue, 1)
   queued[item.id .. ":" .. item.level] = nil
+  local retry = false
   local mob = db.mobs[item.id]
   local rec = mob and mob.lv[item.level]
   if rec and C_ChatInfo and C_ChatInfo.SendAddonMessage then
@@ -412,21 +471,37 @@ local function flush()
       if GetTime() - at > ECHO_WINDOW then sentAt[old] = nil end
     end
     sentAt[text] = GetTime()
-    if IsInGuild() then pcall(C_ChatInfo.SendAddonMessage, PREFIX, text, "GUILD") end
-    local group = IsInRaid() and "RAID" or (IsInGroup() and "PARTY") or nil
-    if group then pcall(C_ChatInfo.SendAddonMessage, PREFIX, text, group) end
-    dbg("shared %s", text)
+    if not item.channelOnly then
+      if IsInGuild() then pcall(C_ChatInfo.SendAddonMessage, PREFIX, text, "GUILD") end
+      local group = IsInRaid() and "RAID" or (IsInGroup() and "PARTY") or nil
+      if group then pcall(C_ChatInfo.SendAddonMessage, PREFIX, text, group) end
+      dbg("shared %s", text)
+    end
+    if not channelKnows(mob, item.level, rec.v) and sendToChannel(text) == "retry" then
+      -- Throttled: try the channel again later, without repeating the rest.
+      item.tries = (item.tries or 0) + 1
+      if item.tries <= CHANNEL_TRIES then
+        item.channelOnly = true
+        queued[item.id .. ":" .. item.level] = true
+        queue[#queue + 1] = item
+        retry = true
+      end
+    end
   end
   if #queue > 0 then
     sendPending = true
-    C_Timer.After(SEND_GAP, flush)
+    C_Timer.After(retry and SEND_RETRY or SEND_GAP, flush)
   end
 end
 
 queueSend = function(id, level)
   if not db.share then return end
   local key = id .. ":" .. level
-  if not queued[key] then
+  if queued[key] then
+    for _, item in ipairs(queue) do
+      if item.id == id and item.level == level then item.channelOnly, item.tries = nil, nil end
+    end
+  else
     queued[key] = true
     queue[#queue + 1] = { id = id, level = level }
   end
@@ -470,7 +545,10 @@ local function onAddonMessage(prefix, text, channel, sender)
     db.mobs[id] = mob
   end
   mob.heard = mob.heard or {}
-  mob.heard[level] = { at = time(), by = who, v = values }  -- the newest telling wins
+  local viaChannel = channel == "CHANNEL"
+  local told = mob.heard[level]
+  if viaChannel and told and not told.ch then return end  -- a stranger doesn't replace guild or group
+  mob.heard[level] = { at = time(), by = who, v = values, ch = viaChannel or nil }  -- else the newest telling wins
 end
 
 ---------------------------------------------------------------------------
@@ -483,7 +561,7 @@ local function countMobs()
 end
 
 local function refreshPanel()
-  for _, key in ipairs({ "tooltips", "remembered", "share" }) do panel.checks[key]:SetChecked(db[key]) end
+  for _, key in ipairs({ "tooltips", "remembered", "share", "channel" }) do panel.checks[key]:SetChecked(db[key]) end
   for _, key in ipairs(LINE_KEYS) do panel.checks[key]:SetChecked(db.lines[key]) end
   local n = countMobs()
   panel.count:SetText(format("Remembering %s %s.", commas(n), n == 1 and "mob" or "mobs"))
@@ -513,20 +591,25 @@ local function buildPanel()
   addCheck("tooltips", "Show on mob tooltips", 16, -64, function(on) db.tooltips = on end)
   addCheck("remembered", "Show remembered values (in grey) when the live ones are hidden", 16, -92,
            function(on) db.remembered = on end)
+  local function channelChanged()
+    if channelWanted() then joinChannel() else leaveChannel() end
+  end
   addCheck("share", "Share what I learn with my guild and group, and use what they share", 16, -120,
-           function(on) db.share = on end)
+           function(on) db.share = on; channelChanged() end)
+  addCheck("channel", "Also share on the Gander chat channel, with everyone running Gander", 40, -148,
+           function(on) db.channel = on; channelChanged() end)
 
   local header = panel:CreateFontString(nil, "ARTWORK", "GameFontNormal")
-  header:SetPoint("TOPLEFT", 16, -160)
+  header:SetPoint("TOPLEFT", 16, -188)
   header:SetText("Lines to show")
   local perColumn = math.ceil(#LINE_KEYS / 2)
   for i, key in ipairs(LINE_KEYS) do
     local column, rowIndex = math.floor((i - 1) / perColumn), (i - 1) % perColumn
-    addCheck(key, LINE_LABEL[key], 16 + column * 280, -180 - rowIndex * 28, function(on) db.lines[key] = on end)
+    addCheck(key, LINE_LABEL[key], 16 + column * 280, -208 - rowIndex * 28, function(on) db.lines[key] = on end)
   end
 
   panel.count = panel:CreateFontString(nil, "ARTWORK", "GameFontDisableSmall")
-  panel.count:SetPoint("TOPLEFT", 16, -180 - perColumn * 28 - 12)
+  panel.count:SetPoint("TOPLEFT", 16, -208 - perColumn * 28 - 12)
 
   panel:SetScript("OnShow", refreshPanel)
 
@@ -576,6 +659,18 @@ local function describeTarget()
   if #hidden > 0 then say("hidden right now: %s", table.concat(hidden, " ")) end
 end
 
+local function describeChannel()
+  if not channelWanted() then
+    say("the Gander channel is switched off.")
+  elseif channelRefused then
+    say("the game refuses addon messages on chat channels here.")
+  elseif channelNumber() then
+    say("in the Gander channel, as channel %d.", channelNumber())
+  else
+    say("not in the Gander channel yet (it's joined %d seconds after login).", JOIN_DELAY)
+  end
+end
+
 SLASH_GANDER1 = "/gander"
 SlashCmdList.GANDER = function(msg)
   if not (db and panel) then
@@ -592,7 +687,10 @@ SlashCmdList.GANDER = function(msg)
   elseif word == "debug" then
     debugging = not debugging
     say("debug %s.", debugging and "on" or "off")
-    if debugging then describeTarget() end
+    if debugging then
+      describeTarget()
+      describeChannel()
+    end
   elseif word == "help" then
     for _, line in ipairs(HELP) do say(line) end
   else
@@ -619,6 +717,7 @@ events:SetScript("OnEvent", function(_, event, arg1, ...)
     buildPanel()
     if C_ChatInfo and C_ChatInfo.RegisterAddonMessagePrefix then
       pcall(C_ChatInfo.RegisterAddonMessagePrefix, PREFIX)
+      C_Timer.After(JOIN_DELAY, joinChannel)
     end
   elseif not (db and panel) then
     return
