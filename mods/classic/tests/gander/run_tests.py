@@ -189,6 +189,9 @@ function widget(kind, name, parent, template)
   function w:Show() self.shown = true; if self.scripts.OnShow then self.scripts.OnShow(self) end end
   function w:Hide() self.shown = false end
   function w:IsShown() return self.shown end
+  function w:SetShown(v) if v then self:Show() else self:Hide() end end
+  function w:ClearAllPoints() self.point = nil end
+  function w:SetPoint(...) self.point = { ... } end
   function w:SetEnabled(v) self.enabled = not not v end
   function w:IsEnabled() return self.enabled end
   function w:GetStringHeight() return 0 end
@@ -213,6 +216,12 @@ function CreateFrame(kind, name, parent, template)
   return w
 end
 UIParent = widget("Frame", "UIParent")
+Minimap = widget("Frame", "Minimap")
+function Minimap:GetCenter() return 100, 100 end
+function Minimap:GetWidth() return 140 end
+function Minimap:GetEffectiveScale() return 1 end
+cursorX, cursorY = 0, 0
+function GetCursorPosition() return cursorX, cursorY end
 
 GameTooltip = widget("GameTooltip", "GameTooltip")
 GameTooltip.lines, GameTooltip.unit = {}, false
@@ -299,6 +308,7 @@ SCENARIOS = {
   ok(GanderDB.tooltips == true and GanderDB.remembered == true and GanderDB.share == true, "switches on")
   ok(GanderDB.channel == true, "channel on")
   ok(GanderDB.signedOnly == true, "signed only on")
+  ok(GanderDB.minimap.hide == false and GanderDB.minimap.angle == 225, "minimap button on, bottom left")
   ok(type(GanderDB.mobs) == "table" and next(GanderDB.mobs) == nil, "empty memory")
   for _, k in ipairs({ "defense", "armor", "resist", "health", "power", "speed", "damage", "ap", "ranged",
                        "stats", "run", "class", "family" }) do
@@ -944,7 +954,7 @@ SCENARIOS = {
   login(nil)
   ok(#categories == 1 and categories[1].name == "Gander", "registered")
   panel():Show()
-  for _, k in ipairs({ "tooltips", "remembered", "share", "channel", "signedOnly", "defense", "armor", "resist", "health", "power",
+  for _, k in ipairs({ "tooltips", "remembered", "share", "channel", "signedOnly", "minimap", "defense", "armor", "resist", "health", "power",
                        "speed", "damage", "ap", "ranged", "stats", "run", "class", "family" }) do
     ok(check(k) and check(k):GetChecked() == true, "switch " .. k)
   end
@@ -960,6 +970,66 @@ SCENARIOS = {
 ''',
 
 # ---- commands ----
+# ---- the minimap button ----
+"the minimap button opens the bestiary, and right-click opens the settings": r'''
+  login(nil)
+  local b = GanderMinimapButton
+  ok(b and b:IsShown() and b.parent == Minimap, "no button on the minimap")
+  b:Click()
+  ok(GanderBestiary and GanderBestiary:IsShown(), "a click didn't open the bestiary")
+  b:Click()
+  ok(not GanderBestiary:IsShown(), "a second click didn't close it")
+  b:Click("RightButton")
+  ok(opened == 77 and not GanderBestiary:IsShown(), "a right-click didn't open the settings")
+''',
+"the minimap button can be switched off in the settings, and that's remembered": r'''
+  login(nil)
+  panel():Show()
+  check("minimap"):Click()
+  ok(GanderDB.minimap.hide == true and not GanderMinimapButton:IsShown(), "still shown")
+  local saved = GanderDB
+  login(saved)
+  ok(not GanderMinimapButton:IsShown(), "shown after logging back in")
+  panel():Show()
+  ok(check("minimap"):GetChecked() == false, "the switch shows it as off")
+  check("minimap"):Click()
+  ok(GanderDB.minimap.hide == false and GanderMinimapButton:IsShown(), "didn't come back")
+''',
+"dragging moves the button around the minimap's edge, and the place is kept": r'''
+  login(nil)
+  local b = GanderMinimapButton
+  local x, y = b.point[4], b.point[5]
+  ok(b.point[2] == Minimap and x < -40 and y < -40, "starts bottom left: " .. tostring(x) .. ", " .. tostring(y))
+  b:GetScript("OnDragStart")(b)
+  cursorX, cursorY = 100, 300            -- straight above the minimap's centre
+  b:GetScript("OnUpdate")(b, 0.1)
+  b:GetScript("OnDragStop")(b)
+  ok(math.abs(GanderDB.minimap.angle - 90) < 0.01, "angle " .. tostring(GanderDB.minimap.angle))
+  x, y = b.point[4], b.point[5]
+  ok(math.abs(x) < 0.01 and y > 60, "now at the top: " .. tostring(x) .. ", " .. tostring(y))
+  ok(b:GetScript("OnUpdate") == nil, "still following the cursor after the drag")
+  local saved = GanderDB
+  login(saved)
+  x, y = GanderMinimapButton.point[4], GanderMinimapButton.point[5]
+  ok(math.abs(x) < 0.01 and y > 60, "kept after logging back in: " .. tostring(x) .. ", " .. tostring(y))
+''',
+"a click at the end of a drag doesn't open the bestiary": r'''
+  login(nil)
+  local b = GanderMinimapButton
+  b:GetScript("OnDragStart")(b)
+  ok(b:GetScript("OnClick") ~= nil, "no click handler")
+  b:GetScript("OnDragStop")(b)
+  ok(GanderBestiary == nil or not GanderBestiary:IsShown(), "dragging opened the bestiary")
+''',
+"a game with no minimap frame still loads": r'''
+  getmetatable(_G).__index.Minimap = nil   -- where the guard keeps the game's globals
+  ok(Minimap == nil, "the mock minimap is still there")
+  login(nil)
+  ok(GanderMinimapButton == nil, "made a button with nowhere to put it")
+  panel():Show()
+  check("minimap"):Click()
+  ok(cmd("help"):find("/gander settings"), "commands still work")
+''',
 "/gander settings opens the settings": r'''
   login(nil)
   cmd("settings")

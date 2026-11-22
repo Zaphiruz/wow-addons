@@ -8,6 +8,7 @@ local panel, category
 local debugging = false
 local myName, myRealm
 local refreshBestiary = function() end  -- replaced once the window exists
+local updateMinimapButton = function() end  -- replaced once the button exists
 
 local function say(fmt, ...) print("|cffc0a060Gander|r: " .. format(fmt, ...)) end
 local function dbg(fmt, ...) if debugging then say("|cff999999" .. fmt .. "|r", ...) end end
@@ -52,6 +53,9 @@ local function loadSettings()
     if type(db.lines[key]) ~= "boolean" then db.lines[key] = true end
   end
   if type(db.mobs) ~= "table" then db.mobs = {} end
+  if type(db.minimap) ~= "table" then db.minimap = {} end
+  if type(db.minimap.hide) ~= "boolean" then db.minimap.hide = false end
+  if type(db.minimap.angle) ~= "number" then db.minimap.angle = 225 end  -- bottom left
 end
 
 ---------------------------------------------------------------------------
@@ -772,6 +776,7 @@ local function refreshPanel()
   for _, key in ipairs({ "tooltips", "remembered", "share", "channel", "signedOnly" }) do
     panel.checks[key]:SetChecked(db[key])
   end
+  panel.checks.minimap:SetChecked(not db.minimap.hide)
   for _, key in ipairs(LINE_KEYS) do panel.checks[key]:SetChecked(db.lines[key]) end
   local n = countMobs()
   panel.count:SetText(format("Remembering %s %s.", commas(n), n == 1 and "mob" or "mobs"))
@@ -812,17 +817,22 @@ local function buildPanel()
   addCheck("signedOnly", "Only accept signed messages (ignores ones typed by hand, or from before 0.4.0)", 40, -176,
            function(on) db.signedOnly = on end)
 
+  addCheck("minimap", "Show a minimap button that opens the bestiary", 16, -204, function(on)
+    db.minimap.hide = not on
+    updateMinimapButton()
+  end)
+
   local header = panel:CreateFontString(nil, "ARTWORK", "GameFontNormal")
-  header:SetPoint("TOPLEFT", 16, -216)
+  header:SetPoint("TOPLEFT", 16, -244)
   header:SetText("Lines to show")
   local perColumn = math.ceil(#LINE_KEYS / 2)
   for i, key in ipairs(LINE_KEYS) do
     local column, rowIndex = math.floor((i - 1) / perColumn), (i - 1) % perColumn
-    addCheck(key, LINE_LABEL[key], 16 + column * 280, -236 - rowIndex * 28, function(on) db.lines[key] = on end)
+    addCheck(key, LINE_LABEL[key], 16 + column * 280, -264 - rowIndex * 28, function(on) db.lines[key] = on end)
   end
 
   panel.count = panel:CreateFontString(nil, "ARTWORK", "GameFontDisableSmall")
-  panel.count:SetPoint("TOPLEFT", 16, -236 - perColumn * 28 - 12)
+  panel.count:SetPoint("TOPLEFT", 16, -264 - perColumn * 28 - 12)
 
   panel:SetScript("OnShow", refreshPanel)
 
@@ -1105,6 +1115,78 @@ local function toggleBestiary()
 end
 
 ---------------------------------------------------------------------------
+-- The minimap button
+--
+-- Left-click opens the bestiary, right-click the settings. It sits on the
+-- minimap's edge at GanderDB.minimap.angle (degrees, 0 = right, 90 = top)
+-- and can be dragged around it. Switched off in the settings, it's hidden.
+---------------------------------------------------------------------------
+local ICON = "Interface\\Icons\\INV_Misc_Spyglass_02"
+local minimapButton
+
+local function placeMinimapButton()
+  local angle = math.rad(db.minimap.angle)
+  local radius = (Minimap:GetWidth() or 140) / 2 + 5
+  minimapButton:ClearAllPoints()
+  minimapButton:SetPoint("CENTER", Minimap, "CENTER", math.cos(angle) * radius, math.sin(angle) * radius)
+end
+
+-- While dragging: keep the button on the edge, towards the cursor.
+local function followCursor()
+  local cx, cy = Minimap:GetCenter()
+  local x, y = GetCursorPosition()
+  local scale = Minimap:GetEffectiveScale() or 1
+  if not (cx and cy and x and y) or scale == 0 then return end
+  db.minimap.angle = math.deg(math.atan2(y / scale - cy, x / scale - cx))
+  placeMinimapButton()
+end
+
+local function buildMinimapButton()
+  if type(Minimap) ~= "table" then return end
+  local b = CreateFrame("Button", "GanderMinimapButton", Minimap)
+  minimapButton = b
+  b:SetSize(31, 31)
+  b:SetFrameStrata("MEDIUM")
+  b:SetFrameLevel(8)
+  b:RegisterForClicks("LeftButtonUp", "RightButtonUp")
+  b:RegisterForDrag("LeftButton")
+  b:SetHighlightTexture("Interface\\Minimap\\UI-Minimap-ZoomButton-Highlight")
+
+  local back = b:CreateTexture(nil, "BACKGROUND")
+  back:SetTexture("Interface\\Minimap\\UI-Minimap-Background")
+  back:SetSize(20, 20)
+  back:SetPoint("TOPLEFT", 7, -5)
+  local icon = b:CreateTexture(nil, "ARTWORK")
+  icon:SetTexture(ICON)
+  icon:SetTexCoord(0.05, 0.95, 0.05, 0.95)
+  icon:SetSize(17, 17)
+  icon:SetPoint("TOPLEFT", 7, -6)
+  local border = b:CreateTexture(nil, "OVERLAY")
+  border:SetTexture("Interface\\Minimap\\MiniMap-TrackingBorder")
+  border:SetSize(53, 53)
+  border:SetPoint("TOPLEFT")
+
+  b:SetScript("OnClick", function(_, button)
+    if button == "RightButton" then openSettings() else toggleBestiary() end
+  end)
+  b:SetScript("OnDragStart", function(self) self:SetScript("OnUpdate", followCursor) end)
+  b:SetScript("OnDragStop", function(self) self:SetScript("OnUpdate", nil) end)
+  b:SetScript("OnEnter", function(self)
+    GameTooltip:SetOwner(self, "ANCHOR_LEFT")
+    GameTooltip:SetText("Gander")
+    GameTooltip:AddLine("Left-click: open the bestiary", 1, 1, 1)
+    GameTooltip:AddLine("Right-click: settings", 1, 1, 1)
+    GameTooltip:AddLine("Drag: move around the minimap", 0.6, 0.6, 0.6)
+    GameTooltip:Show()
+  end)
+  b:SetScript("OnLeave", function() GameTooltip:Hide() end)
+
+  placeMinimapButton()
+  updateMinimapButton = function() b:SetShown(not db.minimap.hide) end
+  updateMinimapButton()
+end
+
+---------------------------------------------------------------------------
 -- Commands
 ---------------------------------------------------------------------------
 local HELP = {
@@ -1199,6 +1281,7 @@ events:SetScript("OnEvent", function(_, event, arg1, ...)
     myRealm = (GetNormalizedRealmName and GetNormalizedRealmName()) or GetRealmName():gsub("%s", "")
     hookTooltips()
     buildPanel()
+    pcall(buildMinimapButton)
     if C_ChatInfo and C_ChatInfo.RegisterAddonMessagePrefix then
       pcall(C_ChatInfo.RegisterAddonMessagePrefix, PREFIX)
       C_Timer.After(JOIN_DELAY, joinChannel)

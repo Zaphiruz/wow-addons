@@ -1,5 +1,10 @@
 # Gander changelog
 
+## 0.6.0 (2026-11-22)
+
+- New minimap button: left-click opens the bestiary, right-click opens the settings. Drag it to move it around the edge of the minimap.
+- To hide it, switch off "Show a minimap button that opens the bestiary" in Options > AddOns > Gander.
+
 ## 0.5.0 (2026-11-22)
 
 - New bestiary: type `/gander` to open a window listing every mob Gander remembers, with its level, type and zone. Click a mob to see everything known about it, level by level, with who saw it and when.
