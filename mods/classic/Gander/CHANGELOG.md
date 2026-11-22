@@ -1,5 +1,10 @@
 # Gander changelog
 
+## 0.4.1 (2026-11-22)
+
+- New switch in Options > AddOns > Gander: "Only accept signed messages". It's on by default. Switch it off to also take unsigned messages, such as ones from versions before 0.4.0 or ones typed by hand. What you send is always signed.
+- Fixed a rare case where Gander didn't answer a question because it had heard about that mob in the same instant.
+
 ## 0.4.0 (2026-11-22)
 
 - Shared messages are now signed. Gander ignores any message that doesn't carry its signature, so mob stats typed by hand into chat commands aren't accepted. This stops casual tampering; it can't stop someone who copies Gander's own code.

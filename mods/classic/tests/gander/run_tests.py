@@ -259,6 +259,7 @@ SCENARIOS = {
   login(nil)
   ok(GanderDB.tooltips == true and GanderDB.remembered == true and GanderDB.share == true, "switches on")
   ok(GanderDB.channel == true, "channel on")
+  ok(GanderDB.signedOnly == true, "signed only on")
   ok(type(GanderDB.mobs) == "table" and next(GanderDB.mobs) == nil, "empty memory")
   for _, k in ipairs({ "defense", "armor", "resist", "health", "power", "speed", "damage", "ap", "ranged",
                        "stats", "run", "class", "family" }) do
@@ -825,6 +826,41 @@ SCENARIOS = {
   hear("2:M:3100:9:spd=2")
   ok(GanderDB.mobs[3100].heard[9].v.spd == 2, "a signed message wasn't taken")
 ''',
+"with signed only switched off, unsigned messages are taken too": r'''
+  login({ signedOnly = false })
+  ok(GanderDB.signedOnly == false, "the saved switch wasn't kept")
+  advance(40)
+  cmd("debug")
+  out = {}
+  hearRaw("1:M:3100:9:spd=3", "Old-Whitemane")             -- a version before 0.4.0
+  ok(GanderDB.mobs[3100] and GanderDB.mobs[3100].heard[9].by == "Old", "the old unsigned kind wasn't taken")
+  hearRaw("2:M:5:9:spd=2.5", "Bob-Whitemane")              -- typed by hand
+  ok(GanderDB.mobs[5] and GanderDB.mobs[5].heard[9].v.spd == 2.5, "a hand-typed message wasn't taken")
+  hearRaw("2:M:6:9:spd=4#00000000", "Bob-Whitemane")       -- a wrong signature
+  ok(GanderDB.mobs[6] and GanderDB.mobs[6].heard[9].v.spd == 4, "a wrongly signed message wasn't taken")
+  hear("2:M:7:9:spd=2", "Ann-Whitemane")                   -- signed ones still work
+  ok(GanderDB.mobs[7] and GanderDB.mobs[7].heard[9].by == "Ann", "a signed message wasn't taken")
+  ok(table.concat(out, " / "):find("unsigned"), "debug says it was unsigned: " .. table.concat(out, " / "))
+  hearRaw("1:M:abc:9:spd=2"); hearRaw("nonsense"); hearRaw("#"); hearRaw("1:M:8:9:spd=-1#zz")
+  ok(GanderDB.mobs[8] == nil, "junk was stored")
+  known(3100, 9, { spd = 2 })
+  hearRaw("1:Q:3100:9", "Old-Whitemane", "CHANNEL")        -- an unsigned question is answered
+  advance(10)
+  ok(#sent == 1 and unsignedSent == 0, "answered, and still signs what it sends: " .. list(sent))
+''',
+"the signed only switch in the panel takes effect at once": r'''
+  login(nil)
+  panel():Show()
+  hearRaw("1:M:3100:9:spd=3")
+  ok(GanderDB.mobs[3100] == nil, "unsigned taken while signed only is on")
+  check("signedOnly"):Click()
+  ok(GanderDB.signedOnly == false, "switch off")
+  hearRaw("1:M:3100:9:spd=3")
+  ok(GanderDB.mobs[3100] ~= nil, "unsigned not taken after switching it off")
+  check("signedOnly"):Click()
+  hearRaw("1:M:5:9:spd=3")
+  ok(GanderDB.signedOnly == true and GanderDB.mobs[5] == nil, "switch back on")
+''',
 "an unsigned question gets no answer": r'''
   login(nil)
   advance(40)
@@ -869,7 +905,7 @@ SCENARIOS = {
   login(nil)
   ok(#categories == 1 and categories[1].name == "Gander", "registered")
   panel():Show()
-  for _, k in ipairs({ "tooltips", "remembered", "share", "channel", "defense", "armor", "resist", "health", "power",
+  for _, k in ipairs({ "tooltips", "remembered", "share", "channel", "signedOnly", "defense", "armor", "resist", "health", "power",
                        "speed", "damage", "ap", "ranged", "stats", "run", "class", "family" }) do
     ok(check(k) and check(k):GetChecked() == true, "switch " .. k)
   end

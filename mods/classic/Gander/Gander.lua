@@ -43,7 +43,7 @@ local LINE_LABEL = {
 local function loadSettings()
   GanderDB = type(GanderDB) == "table" and GanderDB or {}
   db = GanderDB
-  for _, key in ipairs({ "tooltips", "remembered", "share", "channel" }) do
+  for _, key in ipairs({ "tooltips", "remembered", "share", "channel", "signedOnly" }) do
     if type(db[key]) ~= "boolean" then db[key] = true end
   end
   if type(db.lines) ~= "table" then db.lines = {} end
@@ -375,7 +375,8 @@ end
 -- one is ignored, so stats typed by hand with /run aren't taken. The key is
 -- in this file, so it only stops the casual case: someone who copies this
 -- code can still sign what they like. Versions before 0.4.0 spoke protocol
--- "1", unsigned; the two ignore each other.
+-- "1", unsigned. With the "signed only" setting off, unsigned messages of
+-- either protocol are taken as well; what we send is always signed.
 -- A mob is sent to guild and group a few seconds after learning something
 -- new, one at a time, and never while chat is locked or a boss fight is on.
 -- Only what we saw ourselves is sent, so nothing echoes back and forth.
@@ -627,7 +628,7 @@ end
 local function answer(key, id, level, route, questionAt)
   answering[key] = nil
   if not db.share or chatLocked() then return end
-  if toldAt[key] and toldAt[key] >= questionAt then
+  if toldAt[key] and toldAt[key] > questionAt then  -- told after the question: that was its answer
     dbg("someone else answered about mob %d first", id)
     return
   end
@@ -682,10 +683,14 @@ local function onAddonMessage(prefix, text, channel, sender)
   if (mine and GetTime() - mine <= ECHO_WINDOW) or isMe(sender) then return end
   local payload = verified(text)
   if not payload then
-    dbg("ignored a message from %s that isn't signed by Gander", sender)
-    return
+    if db.signedOnly then
+      dbg("ignored a message from %s that isn't signed by Gander", sender)
+      return
+    end
+    payload = text:match("^(.*)#[^#]*$") or text  -- drop a signature that didn't check out
+    dbg("taking an unsigned message from %s (signed only is off)", sender)
   end
-  local kind, id, level, body = payload:match("^2:(%u):(%d+):(%-?%d+):?(.*)$")
+  local kind, id, level, body = payload:match("^[12]:(%u):(%d+):(%-?%d+):?(.*)$")
   id, level = tonumber(id), tonumber(level)
   if not id or id < 1 or id > MAX_ID then return end
   if not (level == -1 or (level >= 1 and level <= MAX_LEVEL)) then return end
@@ -730,7 +735,9 @@ local function countMobs()
 end
 
 local function refreshPanel()
-  for _, key in ipairs({ "tooltips", "remembered", "share", "channel" }) do panel.checks[key]:SetChecked(db[key]) end
+  for _, key in ipairs({ "tooltips", "remembered", "share", "channel", "signedOnly" }) do
+    panel.checks[key]:SetChecked(db[key])
+  end
   for _, key in ipairs(LINE_KEYS) do panel.checks[key]:SetChecked(db.lines[key]) end
   local n = countMobs()
   panel.count:SetText(format("Remembering %s %s.", commas(n), n == 1 and "mob" or "mobs"))
@@ -768,17 +775,20 @@ local function buildPanel()
   addCheck("channel", "Also share on the Gander chat channel, with everyone running Gander", 40, -148,
            function(on) db.channel = on; channelChanged() end)
 
+  addCheck("signedOnly", "Only accept signed messages (ignores ones typed by hand, or from before 0.4.0)", 40, -176,
+           function(on) db.signedOnly = on end)
+
   local header = panel:CreateFontString(nil, "ARTWORK", "GameFontNormal")
-  header:SetPoint("TOPLEFT", 16, -188)
+  header:SetPoint("TOPLEFT", 16, -216)
   header:SetText("Lines to show")
   local perColumn = math.ceil(#LINE_KEYS / 2)
   for i, key in ipairs(LINE_KEYS) do
     local column, rowIndex = math.floor((i - 1) / perColumn), (i - 1) % perColumn
-    addCheck(key, LINE_LABEL[key], 16 + column * 280, -208 - rowIndex * 28, function(on) db.lines[key] = on end)
+    addCheck(key, LINE_LABEL[key], 16 + column * 280, -236 - rowIndex * 28, function(on) db.lines[key] = on end)
   end
 
   panel.count = panel:CreateFontString(nil, "ARTWORK", "GameFontDisableSmall")
-  panel.count:SetPoint("TOPLEFT", 16, -208 - perColumn * 28 - 12)
+  panel.count:SetPoint("TOPLEFT", 16, -236 - perColumn * 28 - 12)
 
   panel:SetScript("OnShow", refreshPanel)
 
