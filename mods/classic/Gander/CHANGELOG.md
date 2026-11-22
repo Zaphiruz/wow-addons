@@ -1,5 +1,11 @@
 # Gander changelog
 
+## 0.4.0 (2026-11-22)
+
+- Shared messages are now signed. Gander ignores any message that doesn't carry its signature, so mob stats typed by hand into chat commands aren't accepted. This stops casual tampering; it can't stop someone who copies Gander's own code.
+- Everyone needs 0.4.0 or later to share with each other. Older versions and this one ignore each other's messages. What you already remembered is kept.
+- `/gander debug` says when a message was ignored for not being signed.
+
 ## 0.3.0 (2026-11-22)
 
 - Gander now asks for mobs it knows nothing about. When the game hides a mob's stats and nothing is remembered for it, a hidden question goes to your guild, group and the Gander channel, and whoever has seen that mob answers. The lines appear on the tooltip marked "(from Bob)". The same mob isn't asked about again for 10 minutes.

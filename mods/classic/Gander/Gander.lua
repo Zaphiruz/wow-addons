@@ -83,7 +83,7 @@ local function clean(kind, value)
     if type(value) == "number" and value > 0 and value <= MAX_NUMBER then return round(value) end
   elseif kind == "token" then
     if type(value) == "string" and #value <= MAX_TOKEN and value:find("^%u+$") then return value end
-  elseif type(value) == "string" and value ~= "" and #value <= MAX_NAME and not value:find("[,=:|%c]") then
+  elseif type(value) == "string" and value ~= "" and #value <= MAX_NAME and not value:find("[,=:|#%c]") then
     return value
   end
 end
@@ -367,9 +367,15 @@ end
 ---------------------------------------------------------------------------
 -- Sharing with other players
 --
--- Hidden addon messages, prefix "Gander", each starting with protocol "1":
---   1:M:<creatureID>:<level>:<field>=<value>,...[,t=<seconds since seen>]
---   1:Q:<creatureID>:<level>      who has seen this mob?
+-- Hidden addon messages, prefix "Gander", each starting with protocol "2"
+-- and ending with a signature:
+--   2:M:<creatureID>:<level>:<field>=<value>,...[,t=<seconds since seen>]#<signature>
+--   2:Q:<creatureID>:<level>#<signature>      who has seen this mob?
+-- The signature is a keyed checksum of the rest. A message without the right
+-- one is ignored, so stats typed by hand with /run aren't taken. The key is
+-- in this file, so it only stops the casual case: someone who copies this
+-- code can still sign what they like. Versions before 0.4.0 spoke protocol
+-- "1", unsigned; the two ignore each other.
 -- A mob is sent to guild and group a few seconds after learning something
 -- new, one at a time, and never while chat is locked or a boss fight is on.
 -- Only what we saw ourselves is sent, so nothing echoes back and forth.
@@ -394,6 +400,8 @@ local SEND_DELAY = 3   -- seconds after learning before the first send
 local SEND_GAP = 2     -- seconds between mobs
 local SEND_RETRY = 5   -- seconds before trying again while chat is locked
 local MAX_MESSAGE = 255
+local SIGN_KEY = "Gander:honk:4d7e1c9a"
+local SIGN_LENGTH = 9  -- "#" and eight hex digits
 local MAX_ID, MAX_LEVEL = 9999999, 255
 local MAX_AGE = 10 * 365 * 86400  -- a sighting older than this is nonsense
 local FRESH = 60                  -- a sighting younger than this is sent without its age
@@ -465,6 +473,22 @@ local function chatLocked()
   return fighting ~= nil and fighting() and true or false
 end
 
+-- A keyed checksum of payload, as eight hex digits. Plain arithmetic, so it
+-- gives the same answer in both games without the bit library.
+local function signature(payload)
+  local h, text = 7, SIGN_KEY .. payload .. SIGN_KEY
+  for i = 1, #text do h = (h * 131 + text:byte(i)) % 2147483647 end
+  return format("%08x", h)
+end
+
+local function signed(payload) return payload .. "#" .. signature(payload) end
+
+-- The payload of a properly signed message, or nil.
+local function verified(text)
+  local payload, sig = text:match("^(.*)#(%x+)$")
+  if payload and sig == signature(payload) then return payload end
+end
+
 -- The message for a mob seen age seconds ago.
 local function encode(id, level, v, age)
   local parts = {}
@@ -472,10 +496,10 @@ local function encode(id, level, v, age)
     local value = v[f[1]]
     if value ~= nil then parts[#parts + 1] = f[1] .. "=" .. (f[2] == "n" and compact(value) or value) end
   end
-  local head = format("1:M:%d:%d:", id, level)
+  local head = format("2:M:%d:%d:", id, level)
   local tail = (age and age >= FRESH) and format(",t=%d", math.min(age, MAX_AGE)) or ""
   local text = head .. table.concat(parts, ",") .. tail
-  while #text > MAX_MESSAGE and #parts > 1 do
+  while #text > MAX_MESSAGE - SIGN_LENGTH and #parts > 1 do
     tremove(parts)
     text = head .. table.concat(parts, ",") .. tail
   end
@@ -509,21 +533,22 @@ local function flush()
   local rec = mob and mob.lv[item.level]
   local text
   if item.q then
-    text = format("1:Q:%d:%d", item.id, item.level)
+    text = format("2:Q:%d:%d", item.id, item.level)
   elseif rec then
     text = encode(item.id, item.level, rec.v, time() - rec.at)
   end
   if text and C_ChatInfo and C_ChatInfo.SendAddonMessage then
-    noteSent(text)
+    local wire = signed(text)
+    noteSent(wire)
     local went, note = {}, nil  -- where it went, and why not the channel
     if not item.channelOnly then
       if IsInGuild() then
-        pcall(C_ChatInfo.SendAddonMessage, PREFIX, text, "GUILD")
+        pcall(C_ChatInfo.SendAddonMessage, PREFIX, wire, "GUILD")
         went[#went + 1] = "guild"
       end
       local group = IsInRaid() and "RAID" or (IsInGroup() and "PARTY") or nil
       if group then
-        pcall(C_ChatInfo.SendAddonMessage, PREFIX, text, group)
+        pcall(C_ChatInfo.SendAddonMessage, PREFIX, wire, group)
         went[#went + 1] = group:lower()
       end
     end
@@ -536,7 +561,7 @@ local function flush()
     elseif rec and not item.q and channelKnows(mob, item.level, rec.v) then
       note = "the Gander channel already had it"
     else
-      local outcome = sendToChannel(text)
+      local outcome = sendToChannel(wire)
       if outcome == "sent" then
         went[#went + 1] = "the Gander channel"
       elseif outcome == "retry" then
@@ -609,12 +634,12 @@ local function answer(key, id, level, route, questionAt)
   local mob = db.mobs[id]
   local rec = mob and mob.lv and mob.lv[level]
   if not (rec and C_ChatInfo and C_ChatInfo.SendAddonMessage) then return end
-  local text = encode(id, level, rec.v, time() - rec.at)
-  noteSent(text)
+  local wire = signed(encode(id, level, rec.v, time() - rec.at))
+  noteSent(wire)
   if route == "CHANNEL" then
-    sendToChannel(text)
+    sendToChannel(wire)
   else
-    pcall(C_ChatInfo.SendAddonMessage, PREFIX, text, route)
+    pcall(C_ChatInfo.SendAddonMessage, PREFIX, wire, route)
   end
   answerTimes[#answerTimes + 1] = GetTime()
   dbg("answered a question about mob %d (level %d) on %s", id, level, route:lower())
@@ -655,7 +680,12 @@ local function onAddonMessage(prefix, text, channel, sender)
   -- and realms are written several ways), so the text we just sent is.
   local mine = sentAt[text]
   if (mine and GetTime() - mine <= ECHO_WINDOW) or isMe(sender) then return end
-  local kind, id, level, body = text:match("^1:(%u):(%d+):(%-?%d+):?(.*)$")
+  local payload = verified(text)
+  if not payload then
+    dbg("ignored a message from %s that isn't signed by Gander", sender)
+    return
+  end
+  local kind, id, level, body = payload:match("^2:(%u):(%d+):(%-?%d+):?(.*)$")
   id, level = tonumber(id), tonumber(level)
   if not id or id < 1 or id > MAX_ID then return end
   if not (level == -1 or (level >= 1 and level <= MAX_LEVEL)) then return end
