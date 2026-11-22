@@ -42,6 +42,10 @@ and release commands for people; this file is how we work on it.
 - For mobs, Forever sends `UnitDefenseSkill` (level x 5) and `UnitAttackSpeed`.
   `UnitArmor`, `UnitResistance`, `UnitDamage` and `UnitAttackPower` return 0
   for them (tested on 1.60.1). Zero means "not sent", not a real zero.
+- Forever character names can have a surname ("Elicia Antikleia"), and the
+  sender of an addon message is written that way. Don't spot yourself by
+  comparing names: use the GUID, or for your own addon messages coming back,
+  the text you just sent.
 - The boss-fight check is `C_InstanceEncounter.IsEncounterInProgress` on
   Forever and the global `IsEncounterInProgress` on Classic Era.
 

@@ -104,12 +104,15 @@ function IsInGroup() return grouped end
 function IsInRaid() return raid end
 C_InstanceEncounter = { IsEncounterInProgress = function() return encounter end }  -- Forever's name
 sent, prefixes = {}, {}
+echo = "Zaphiruz-Whitemane"  -- how the game names you as the sender of your own messages
 C_ChatInfo = {
   RegisterAddonMessagePrefix = function(p) prefixes[p] = true; return true end,
   SendAddonMessage = function(prefix, text, channel, target)
     assert(#text <= 255, "addon message too long: " .. #text)
     assert(not lockdown and not encounter, "sent while chat is locked")
     table.insert(sent, channel .. ": " .. text)
+    -- The game sends your own guild and group messages back to you.
+    if echo then fire("CHAT_MSG_ADDON", prefix, text, channel, echo, echo) end
   end,
   InChatMessagingLockdown = function() return lockdown end,
 }
@@ -478,6 +481,25 @@ SCENARIOS = {
   hear("1:M:3100:9:spd=3", "Bob-Whitemane")
   units.mouseover.hidden = true
   ok(hover("mouseover"):find("Attack speed: 2.0 %(seen"), hover("mouseover"))
+''',
+"your own messages coming back aren't taken as someone else's, however the game names you": r'''
+  login(nil)
+  grouped = true
+  cmd("debug")
+  -- Forever characters can have a surname, and the sender name needn't match UnitName.
+  for i, name in ipairs({ "Zaphiruz Antikleia", "Zaphiruz Antikleia-Whitemane", "Zaphiruz-White Mane" }) do
+    echo = name
+    out = {}
+    units.mouseover = mob(200 + i, { name = "Mob" .. i, level = 9, def = 45, speed = 2 })
+    hover("mouseover"); advance(10)
+    ok(#sent == i * 2, "sent to guild and party: " .. list(sent))
+    ok(next(GanderDB.mobs[200 + i].heard) == nil, "stored your own message as heard from " .. name)
+    ok(not table.concat(out, " / "):find("heard"), "said it heard you: " .. table.concat(out, " / "))
+  end
+  -- The same values from someone else, later, are still theirs.
+  advance(60)
+  hear("1:M:201:9:spd=2", "Bob-Whitemane")
+  ok(GanderDB.mobs[201].heard[9].by == "Bob", "ignored Bob")
 ''',
 "junk and unknown messages are ignored": r'''
   login(nil)

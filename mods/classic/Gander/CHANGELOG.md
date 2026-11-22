@@ -1,5 +1,9 @@
 # Gander changelog
 
+## 0.1.1 (2026-11-22)
+
+- Fixed Gander treating your own shared messages as if another player had sent them. With `/gander debug` on, every share was followed by two "heard" lines naming you.
+
 ## 0.1.0 (2026-11-22)
 
 - Shows a mob's stats on its tooltip. A line appears for every stat the game reveals about that mob: on World of Warcraft: Forever that's defense and attack speed today, and Gander will show armor, resistances, health, mana, damage, attack power, ranged attack, base stats, run speed, class and family whenever the game sends them.

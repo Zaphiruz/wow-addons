@@ -364,7 +364,10 @@ local SEND_RETRY = 5   -- seconds before trying again while chat is locked
 local MAX_MESSAGE = 255
 local MAX_ID, MAX_LEVEL = 9999999, 255
 
+local ECHO_WINDOW = 15 -- seconds in which our own message can come back to us
+
 local queue, queued, sendPending = {}, {}, false
+local sentAt = {}      -- message text -> when we sent it
 
 local function chatLocked()
   if C_ChatInfo and C_ChatInfo.InChatMessagingLockdown and C_ChatInfo.InChatMessagingLockdown() then return true end
@@ -405,6 +408,10 @@ local function flush()
   local rec = mob and mob.lv[item.level]
   if rec and C_ChatInfo and C_ChatInfo.SendAddonMessage then
     local text = encode(item.id, item.level, rec.v)
+    for old, at in pairs(sentAt) do
+      if GetTime() - at > ECHO_WINDOW then sentAt[old] = nil end
+    end
+    sentAt[text] = GetTime()
     if IsInGuild() then pcall(C_ChatInfo.SendAddonMessage, PREFIX, text, "GUILD") end
     local group = IsInRaid() and "RAID" or (IsInGroup() and "PARTY") or nil
     if group then pcall(C_ChatInfo.SendAddonMessage, PREFIX, text, group) end
@@ -437,7 +444,11 @@ end
 local function onAddonMessage(prefix, text, channel, sender)
   if isSecret(prefix) or prefix ~= PREFIX or not db.share then return end
   if isSecret(text) or isSecret(sender) or type(text) ~= "string" or type(sender) ~= "string" then return end
-  if isMe(sender) then return end
+  -- The game sends our own guild and group messages back to us. The sender
+  -- name can't be relied on to spot them (Forever names can have a surname,
+  -- and realms are written several ways), so the text we just sent is.
+  local mine = sentAt[text]
+  if (mine and GetTime() - mine <= ECHO_WINDOW) or isMe(sender) then return end
   local id, level, body = text:match("^1:M:(%d+):(%-?%d+):(.+)$")
   id, level = tonumber(id), tonumber(level)
   if not id or id < 1 or id > MAX_ID then return end
@@ -452,7 +463,7 @@ local function onAddonMessage(prefix, text, channel, sender)
   end
   if next(values) == nil then return end
   local who = sender:match("^[^-]+")
-  dbg("heard mob %d (level %d) from %s", id, level, who)
+  dbg("heard mob %d (level %d) from %s", id, level, sender)
   local mob = db.mobs[id]
   if not mob then
     mob = { lv = {}, heard = {} }
