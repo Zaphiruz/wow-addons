@@ -53,6 +53,18 @@ local function loadSettings()
     if type(db.lines[key]) ~= "boolean" then db.lines[key] = true end
   end
   if type(db.mobs) ~= "table" then db.mobs = {} end
+  -- The order the lines are shown in: what's saved and still valid, then
+  -- any line it doesn't mention, in the usual order.
+  local order, placed = {}, {}
+  for _, key in ipairs(type(db.order) == "table" and db.order or {}) do
+    if type(key) == "string" and LINE_LABEL[key] and not placed[key] then
+      order[#order + 1], placed[key] = key, true
+    end
+  end
+  for _, key in ipairs(LINE_KEYS) do
+    if not placed[key] then order[#order + 1] = key end
+  end
+  db.order = order
   if type(db.minimap) ~= "table" then db.minimap = {} end
   if type(db.minimap.hide) ~= "boolean" then db.minimap.hide = false end
   if type(db.minimap.angle) ~= "number" then db.minimap.angle = 225 end  -- bottom left
@@ -313,6 +325,9 @@ local LINES = {
   { key = "family", fields = { "fam" }, text = function(get) return "Family", get("fam") end },
 }
 
+local LINE = {}
+for _, line in ipairs(LINES) do LINE[line.key] = line end
+
 local LABEL, VALUE, GREY = "|cffffd100", "|cffffffff", "|cff999999"
 
 local function source(rec)
@@ -332,7 +347,8 @@ local function linesFor(v, id, level)
   local mem = db.remembered and recall(id, level) or {}
   local function live(key) return v[key] end
   local function kept(key) return mem[key] and mem[key][1] end
-  for _, line in ipairs(LINES) do
+  for _, lineKey in ipairs(db.order) do
+    local line = LINE[lineKey]
     if db.lines[line.key] then
       if firstOf(line.fields, live) then
         local label, value = line.text(live)
@@ -772,12 +788,48 @@ local function countMobs()
   return n
 end
 
+-- The Stat order page: one row per line, in the order they're shown. A row
+-- is dragged up or down to move its line, and its tick shows or hides it.
+local ORDER_ROW = 26      -- height of a row
+local orderPage, orderCategory
+local dragging            -- the position of the row being dragged
+
+local function drawOrder()
+  if not orderPage then return end
+  for i, row in ipairs(orderPage.rows) do
+    local key = db.order[i]
+    row.key = key
+    row.number:SetText(i .. ".")
+    row.label:SetText(LINE_LABEL[key])
+    row.check:SetChecked(db.lines[key])
+    row:SetAlpha(dragging == i and 0.4 or 1)
+    panel.checks[key] = row.check
+  end
+end
+
+-- The position the cursor is over, from 1 to the number of lines.
+local function dropPosition()
+  local _, y = GetCursorPosition()
+  local scale = orderPage.list:GetEffectiveScale() or 1
+  local top = orderPage.list:GetTop()
+  if not (y and top) or scale == 0 then return dragging end
+  local position = math.floor((top - y / scale) / ORDER_ROW) + 1
+  return math.max(1, math.min(#db.order, position))
+end
+
+local function endDrag()
+  dragging = nil
+  orderPage:SetScript("OnUpdate", nil)
+  orderPage.marker:Hide()
+  drawOrder()
+end
+
 local function refreshPanel()
   for _, key in ipairs({ "tooltips", "remembered", "share", "channel", "signedOnly" }) do
     panel.checks[key]:SetChecked(db[key])
   end
   panel.checks.minimap:SetChecked(not db.minimap.hide)
-  for _, key in ipairs(LINE_KEYS) do panel.checks[key]:SetChecked(db.lines[key]) end
+  drawOrder()
   local n = countMobs()
   panel.count:SetText(format("Remembering %s %s.", commas(n), n == 1 and "mob" or "mobs"))
 end
@@ -790,6 +842,75 @@ local function addCheck(key, label, x, y, onClick)
   text:SetPoint("LEFT", check, "RIGHT", 4, 0)
   text:SetText(label)
   panel.checks[key] = check
+end
+
+local function buildOrderPage()
+  orderPage = CreateFrame("Frame", "GanderOrderPanel")
+  orderPage.rows, orderPage.rowHeight = {}, ORDER_ROW
+
+  local title = orderPage:CreateFontString(nil, "ARTWORK", "GameFontNormalLarge")
+  title:SetPoint("TOPLEFT", 16, -16)
+  title:SetText("Gander: stat order")
+  local intro = orderPage:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall")
+  intro:SetPoint("TOPLEFT", title, "BOTTOMLEFT", 0, -8)
+  intro:SetText("Drag a line up or down to change where it appears on the tooltip and in the bestiary. Untick a line to hide it.")
+
+  orderPage.list = CreateFrame("Frame", nil, orderPage)
+  orderPage.list:SetPoint("TOPLEFT", 16, -64)
+  orderPage.list:SetSize(420, #LINE_KEYS * ORDER_ROW)
+  for i = 1, #LINE_KEYS do
+    local row = CreateFrame("Button", nil, orderPage.list)
+    row.index = i
+    row:SetSize(420, ORDER_ROW)
+    row:SetPoint("TOPLEFT", 0, -(i - 1) * ORDER_ROW)
+    row:RegisterForDrag("LeftButton")
+    row:SetHighlightTexture("Interface\\QuestFrame\\UI-QuestTitleHighlight", "ADD")
+    row.number = row:CreateFontString(nil, "ARTWORK", "GameFontDisable")
+    row.number:SetPoint("LEFT", 4, 0)
+    row.check = CreateFrame("CheckButton", nil, row, "UICheckButtonTemplate")
+    row.check:SetSize(24, 24)
+    row.check:SetPoint("LEFT", 32, 0)
+    row.check:SetScript("OnClick", function(self) db.lines[row.key] = self:GetChecked() and true or false end)
+    row.label = row:CreateFontString(nil, "ARTWORK", "GameFontHighlight")
+    row.label:SetPoint("LEFT", 62, 0)
+    row:SetScript("OnDragStart", function(self)
+      dragging = self.index
+      drawOrder()
+      -- While dragging, a gold line marks where the row will land.
+      orderPage:SetScript("OnUpdate", function()
+        local to = dropPosition()
+        local edge = (to > dragging) and to or (to - 1)
+        orderPage.marker:ClearAllPoints()
+        orderPage.marker:SetPoint("TOPLEFT", orderPage.list, "TOPLEFT", 0, -edge * ORDER_ROW)
+        orderPage.marker:Show()
+      end)
+    end)
+    row:SetScript("OnDragStop", function()
+      if dragging then
+        local to = dropPosition()
+        tinsert(db.order, to, tremove(db.order, dragging))
+      end
+      endDrag()
+    end)
+    orderPage.rows[i] = row
+  end
+  orderPage.marker = orderPage.list:CreateTexture(nil, "OVERLAY")
+  orderPage.marker:SetColorTexture(1, 0.82, 0, 0.9)
+  orderPage.marker:SetSize(420, 2)
+  orderPage.marker:Hide()
+
+  orderPage.reset = CreateFrame("Button", nil, orderPage, "UIPanelButtonTemplate")
+  orderPage.reset:SetSize(120, 22)
+  orderPage.reset:SetPoint("TOPLEFT", 16, -64 - #LINE_KEYS * ORDER_ROW - 12)
+  orderPage.reset:SetText("Reset order")
+  orderPage.reset:SetScript("OnClick", function()
+    db.order = {}
+    for i, key in ipairs(LINE_KEYS) do db.order[i] = key end
+    drawOrder()
+  end)
+
+  orderPage:SetScript("OnShow", refreshPanel)
+  orderPage:SetScript("OnHide", function() if dragging then endDrag() end end)
 end
 
 local function buildPanel()
@@ -822,23 +943,33 @@ local function buildPanel()
     updateMinimapButton()
   end)
 
-  local header = panel:CreateFontString(nil, "ARTWORK", "GameFontNormal")
-  header:SetPoint("TOPLEFT", 16, -244)
-  header:SetText("Lines to show")
-  local perColumn = math.ceil(#LINE_KEYS / 2)
-  for i, key in ipairs(LINE_KEYS) do
-    local column, rowIndex = math.floor((i - 1) / perColumn), (i - 1) % perColumn
-    addCheck(key, LINE_LABEL[key], 16 + column * 280, -264 - rowIndex * 28, function(on) db.lines[key] = on end)
-  end
+  local note = panel:CreateFontString(nil, "ARTWORK", "GameFontHighlight")
+  note:SetPoint("TOPLEFT", 20, -248)
+  note:SetText("Which lines show, and in what order, is on its own page:")
+  panel.orderButton = CreateFrame("Button", nil, panel, "UIPanelButtonTemplate")
+  panel.orderButton:SetSize(120, 22)
+  panel.orderButton:SetPoint("TOPLEFT", 20, -270)
+  panel.orderButton:SetText("Stat order...")
+  panel.orderButton:SetScript("OnClick", function()
+    if orderCategory then
+      pcall(Settings.OpenToCategory, orderCategory:GetID())
+    else
+      say("the Stat order page isn't available here.")
+    end
+  end)
 
   panel.count = panel:CreateFontString(nil, "ARTWORK", "GameFontDisableSmall")
-  panel.count:SetPoint("TOPLEFT", 16, -264 - perColumn * 28 - 12)
+  panel.count:SetPoint("TOPLEFT", 20, -310)
 
+  buildOrderPage()
   panel:SetScript("OnShow", refreshPanel)
 
   if Settings and Settings.RegisterCanvasLayoutCategory then
     category = Settings.RegisterCanvasLayoutCategory(panel, "Gander")
     Settings.RegisterAddOnCategory(category)
+    if Settings.RegisterCanvasLayoutSubcategory then
+      orderCategory = Settings.RegisterCanvasLayoutSubcategory(category, orderPage, "Stat order")
+    end
   end
 end
 
@@ -914,7 +1045,8 @@ local function when(at) return tonumber(date("%d", at)) .. " " .. date("%b", at)
 local function statsLine(level, rec)
   local parts = {}
   local function get(key) return rec.v[key] end
-  for _, line in ipairs(LINES) do
+  for _, lineKey in ipairs(db.order) do
+    local line = LINE[lineKey]
     if line.key ~= "family" then
       if firstOf(line.fields, get) then
         local label, value = line.text(get)

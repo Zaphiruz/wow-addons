@@ -191,6 +191,8 @@ function widget(kind, name, parent, template)
   function w:IsShown() return self.shown end
   function w:SetShown(v) if v then self:Show() else self:Hide() end end
   function w:ClearAllPoints() self.point = nil end
+  function w:GetTop() return rawget(self, "top") or 500 end
+  function w:GetEffectiveScale() return 1 end
   function w:SetPoint(...) self.point = { ... } end
   function w:SetEnabled(v) self.enabled = not not v end
   function w:IsEnabled() return self.enabled end
@@ -256,8 +258,14 @@ function classicEra()
 end
 
 -- The game's settings window.
-categories, opened = {}, nil
+categories, subcategories, opened = {}, {}, nil
 Settings = {
+  RegisterCanvasLayoutSubcategory = function(parent, frame, name)
+    local c = { frame = frame, name = name, id = 78, parent = parent }
+    function c:GetID() return self.id end
+    table.insert(subcategories, c)
+    return c
+  end,
   RegisterCanvasLayoutCategory = function(frame, name)
     local c = { frame = frame, name = name, id = 77 }
     function c:GetID() return self.id end
@@ -270,7 +278,7 @@ Settings = {
 function fire(e, ...) local f = events[e]; if f then f.scripts.OnEvent(f, e, ...) end end
 function login(saved)
   GanderDB = saved
-  events, timers, categories, postCalls = {}, {}, {}, {}
+  events, timers, categories, subcategories, postCalls = {}, {}, {}, {}, {}
   GameTooltip.hooks = {}
   assert(loadstring(ADDON_SRC, "Gander.lua"))("Gander")
   fire("ADDON_LOADED", "Gander")
@@ -283,6 +291,18 @@ function panel() return categories[1].frame end
 -- Log in with the channel switched off, for tests about guild and group only.
 function loginNoChannel() login({ channel = false }) end
 function check(key) return panel().checks[key] end
+function orderPage() return subcategories[1].frame end
+DEFAULT_ORDER = "defense armor resist health power speed damage ap ranged stats run class family"
+function orderText() return table.concat(GanderDB.order, " ") end
+-- Drag the line in row `from` and drop it on row `to` of the Stat order page.
+function dragRow(from, to)
+  local page = orderPage()
+  local row = page.rows[from]
+  row:GetScript("OnDragStart")(row)
+  cursorX, cursorY = 50, page.list:GetTop() - (to - 0.5) * page.rowHeight
+  if page:GetScript("OnUpdate") then page:GetScript("OnUpdate")(page, 0.1) end
+  row:GetScript("OnDragStop")(row)
+end
 function known(id, level, values, age)
   GanderDB.mobs[id] = GanderDB.mobs[id] or { lv = {}, heard = {} }
   GanderDB.mobs[id].lv[level] = { at = clock - (age or 0), v = values }
@@ -970,6 +990,100 @@ SCENARIOS = {
 ''',
 
 # ---- commands ----
+# ---- the order of the lines ----
+"lines start in the usual order, and a saved order is repaired on login": r'''
+  login(nil)
+  ok(orderText() == DEFAULT_ORDER, orderText())
+  login({ order = { "speed", "defense", "bogus", "speed", 7 } })
+  ok(orderText() == "speed defense armor resist health power damage ap ranged stats run class family", orderText())
+''',
+"tooltip lines follow the chosen order": r'''
+  login({ order = { "speed", "defense" } })
+  units.mouseover = BOAR()
+  ok(hover("mouseover") == "Attack speed: 2.0 | Defense: 45", hover("mouseover"))
+''',
+"the bestiary lists a mob's stats in the chosen order": r'''
+  login({ order = { "speed", "defense" } })
+  sampleMobs()
+  cmd("")
+  GanderBestiary.rows[3]:Click()
+  local d = plain(GanderBestiary.detail:GetText())
+  ok(d:find("Attack speed 1.3.-Defense 150"), d)
+''',
+"the Stat order page is under Gander in the settings, listing the lines in order": r'''
+  login(nil)
+  ok(#subcategories == 1 and subcategories[1].name == "Stat order" and subcategories[1].parent == categories[1], "not registered under Gander")
+  local page = orderPage()
+  page:Show()
+  ok(#page.rows == 13, "rows: " .. #page.rows)
+  ok(page.rows[1].label:GetText() == "Defense" and page.rows[6].label:GetText() == "Attack speed", page.rows[1].label:GetText())
+  ok(page.rows[1].number:GetText() == "1." and page.rows[13].number:GetText() == "13.", "numbered")
+  ok(page.rows[1].check:GetChecked() == true, "ticked")
+  ok(not page.marker:IsShown(), "the drop marker shows before any drag")
+''',
+"dragging a line moves it, and the tooltip follows": r'''
+  login(nil)
+  local page = orderPage()
+  page:Show()
+  dragRow(6, 1)                               -- Attack speed to the top
+  ok(orderText() == "speed defense armor resist health power damage ap ranged stats run class family", orderText())
+  ok(page.rows[1].label:GetText() == "Attack speed" and page.rows[2].label:GetText() == "Defense", "the page redraws")
+  units.mouseover = BOAR()
+  ok(hover("mouseover") == "Attack speed: 2.0 | Defense: 45", hover("mouseover"))
+  dragRow(1, 3)                               -- and down to third
+  ok(table.concat(GanderDB.order, " ", 1, 3) == "defense armor speed", orderText())
+  dragRow(3, 99)                              -- dropped below the list: last
+  ok(GanderDB.order[13] == "speed", orderText())
+  dragRow(13, -5)                             -- dropped above the list: first
+  ok(GanderDB.order[1] == "speed", orderText())
+  local before = orderText()
+  dragRow(4, 4)                               -- dropped where it was
+  ok(orderText() == before and #GanderDB.order == 13, orderText())
+  local saved = GanderDB
+  login(saved)
+  ok(orderText() == before, "the order is kept across logins: " .. orderText())
+''',
+"a marker shows where the line will land while it's dragged": r'''
+  login(nil)
+  local page = orderPage()
+  page:Show()
+  local row = page.rows[6]
+  row:GetScript("OnDragStart")(row)
+  cursorX, cursorY = 50, page.list:GetTop() - 0.5 * page.rowHeight
+  page:GetScript("OnUpdate")(page, 0.1)
+  ok(page.marker:IsShown(), "no marker during the drag")
+  ok(GanderDB.order[6] == "speed", "moved before it was dropped")
+  row:GetScript("OnDragStop")(row)
+  ok(not page.marker:IsShown() and page:GetScript("OnUpdate") == nil, "the drag didn't end cleanly")
+''',
+"each line's tick moves with it": r'''
+  login(nil)
+  local page = orderPage()
+  page:Show()
+  dragRow(6, 1)
+  ok(check("speed") == page.rows[1].check, "the tick for Attack speed isn't on its row")
+  check("speed"):Click()
+  ok(GanderDB.lines.speed == false and GanderDB.lines.defense == true, "the wrong line was switched off")
+  dragRow(1, 2)
+  ok(page.rows[2].check:GetChecked() == false and page.rows[1].check:GetChecked() == true, "the tick's state didn't follow its line")
+  units.mouseover = BOAR()
+  ok(hover("mouseover") == "Defense: 45", hover("mouseover"))
+''',
+"Reset order puts the lines back": r'''
+  login({ order = { "family", "speed" } })
+  local page = orderPage()
+  page:Show()
+  ok(page.rows[1].label:GetText() == "Family", page.rows[1].label:GetText())
+  page.reset:Click()
+  ok(orderText() == DEFAULT_ORDER, orderText())
+  ok(page.rows[1].label:GetText() == "Defense", "the page didn't redraw")
+''',
+"the settings page has a button that opens the Stat order page": r'''
+  login(nil)
+  panel():Show()
+  panel().orderButton:Click()
+  ok(opened == 78, "opened " .. tostring(opened))
+''',
 # ---- the minimap button ----
 "the minimap button opens the bestiary, and right-click opens the settings": r'''
   login(nil)

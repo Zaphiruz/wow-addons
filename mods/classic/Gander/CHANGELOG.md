@@ -1,5 +1,12 @@
 # Gander changelog
 
+## 0.7.0 (2026-11-22)
+
+- You can now choose the order of the stat lines. Options > AddOns > Gander has a new "Stat order" page: drag a line up or down, and a gold marker shows where it will land. The tooltip and the bestiary both follow your order.
+- The ticks that show or hide each line moved to that page, next to the line they belong to.
+- "Reset order" puts the lines back in the usual order.
+- The main settings page has a "Stat order..." button that takes you there.
+
 ## 0.6.0 (2026-11-22)
 
 - New minimap button: left-click opens the bestiary, right-click opens the settings. Drag it to move it around the edge of the minimap.
