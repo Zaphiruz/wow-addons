@@ -1,5 +1,9 @@
 # Huzzah changelog
 
+## 0.1.7 (2026-11-22)
+
+- Fixed an error when you typed /huzzah during a fight. The game doesn't let addons open the settings window in combat, so Huzzah now tells you and opens it when the fight ends.
+
 ## 0.1.6 (2026-11-13)
 
 - Fixed Huzzah still congratulating you in guild chat after your own level-up on World of Warcraft: Forever. It now finds you on the guild list by your character, not only by name.

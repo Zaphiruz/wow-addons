@@ -144,6 +144,8 @@ UIParent = widget("Frame", "UIParent")
 
 -- The game's settings window.
 categories, opened = {}, nil
+fighting = false
+function InCombatLockdown() return fighting end
 Settings = {
   RegisterCanvasLayoutCategory = function(frame, name)
     local c = { frame = frame, name = name, id = 77 }
@@ -151,7 +153,10 @@ Settings = {
     return c
   end,
   RegisterAddOnCategory = function(c) table.insert(categories, c) end,
-  OpenToCategory = function(id) opened = id end,
+  OpenToCategory = function(id)
+    assert(not fighting, "opened the settings in combat: the game blocks that and blames the addon")
+    opened = id
+  end,
 }
 
 function fire(e, ...) local f = events[e]; if f then f.scripts.OnEvent(f, e, ...) end end
@@ -671,6 +676,28 @@ SCENARIOS = {
   ok(b:GetText() == "None", b:GetText())
 ''',
 
+# ---- the settings and combat ----
+"asked for in a fight, the settings open when it ends": r'''
+  login(nil)
+  fighting = true
+  local o = cmd("")
+  ok(opened == nil, "opened in combat")
+  ok(o:find("fight") and o:find("when it ends"), "doesn't say it's waiting: " .. o)
+  fighting = false
+  fire("PLAYER_REGEN_ENABLED")
+  ok(opened == 77, "didn't open after the fight: " .. tostring(opened))
+  opened = nil
+  fire("PLAYER_REGEN_ENABLED")
+  ok(opened == nil, "opened again after the next fight")
+''',
+"with no fight on, the settings don't wait": r'''
+  login(nil)
+  cmd("")
+  ok(opened == 77, "opened " .. tostring(opened))
+  opened = nil
+  fire("PLAYER_REGEN_ENABLED")
+  ok(opened == nil, "opened again when a later fight ended")
+''',
 # ---- commands ----
 "/huzzah test previews every reaction without sending": r'''
   login(nil)

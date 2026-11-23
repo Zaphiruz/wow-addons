@@ -452,6 +452,27 @@ local function test()
   end
 end
 
+-- Open the settings window at our page. The game blocks addons from opening
+-- it during combat (and blames the addon), so in a fight it waits and opens
+-- when the fight ends.
+local settingsWaiting = false
+
+local function openSettings()
+  if not category then
+    say("the settings window isn't available here.")
+  elseif InCombatLockdown() then
+    settingsWaiting = true
+    say("the settings can't be opened in a fight. They'll open when it ends.")
+  else
+    settingsWaiting = false
+    pcall(Settings.OpenToCategory, category:GetID())
+  end
+end
+
+local function fightEnded()
+  if settingsWaiting then openSettings() end
+end
+
 SLASH_HUZZAH1 = "/huzzah"
 SlashCmdList.HUZZAH = function(msg)
   if not (db and panel) then
@@ -460,11 +481,7 @@ SlashCmdList.HUZZAH = function(msg)
   end
   local word = strtrim(msg or ""):match("^(%S*)"):lower()
   if word == "" then
-    if category then
-      pcall(Settings.OpenToCategory, category:GetID())
-    else
-      say("the settings window isn't available here.")
-    end
+    openSettings()
   elseif word == "test" then
     test()
   elseif word == "debug" then
@@ -499,7 +516,8 @@ end
 local events = CreateFrame("Frame")
 for _, e in ipairs({ "ADDON_LOADED", "PLAYER_LOGIN", "PLAYER_LEVEL_UP", "UNIT_LEVEL",
                      "GROUP_ROSTER_UPDATE", "PLAYER_TARGET_CHANGED", "UPDATE_MOUSEOVER_UNIT",
-                     "PLAYER_FOCUS_CHANGED", "NAME_PLATE_UNIT_ADDED", "GUILD_ROSTER_UPDATE" }) do
+                     "PLAYER_FOCUS_CHANGED", "NAME_PLATE_UNIT_ADDED", "GUILD_ROSTER_UPDATE",
+                     "PLAYER_REGEN_ENABLED" }) do
   pcall(events.RegisterEvent, events, e)
 end
 events:SetScript("OnEvent", function(_, event, arg1)
@@ -528,6 +546,8 @@ events:SetScript("OnEvent", function(_, event, arg1)
     if type(arg1) == "string" then pcall(remember, arg1) end
   elseif event == "GUILD_ROSTER_UPDATE" then
     pcall(scanGuild)
+  elseif event == "PLAYER_REGEN_ENABLED" then
+    fightEnded()
   elseif event == "PLAYER_LOGIN" then
     if not db then return end
     myRealm = (GetNormalizedRealmName and GetNormalizedRealmName()) or GetRealmName():gsub("%s", "")
