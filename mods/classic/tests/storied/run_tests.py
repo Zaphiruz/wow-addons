@@ -329,6 +329,8 @@ UIParent = widget("Frame", "UIParent")
 
 -- The game's settings window.
 categories, opened = {}, nil
+fighting = false
+function InCombatLockdown() return fighting end
 Settings = {
   RegisterCanvasLayoutCategory = function(frame, name)
     local c = { frame = frame, name = name, id = 88 }
@@ -336,7 +338,10 @@ Settings = {
     return c
   end,
   RegisterAddOnCategory = function(c) table.insert(categories, c) end,
-  OpenToCategory = function(id) opened = id end,
+  OpenToCategory = function(id)
+    assert(not fighting, "opened the settings in combat: the game blocks that and blames the addon")
+    opened = id
+  end,
 }
 
 -- The game tooltip, with the item data hook the client offers.
@@ -1023,6 +1028,38 @@ SCENARIOS = {
   ok(hover(link(12784)) == "1 kill", "still works after")
 ''',
 
+# ---- the settings and combat ----
+"asked for in a fight, the settings open when it ends": r'''
+  login(nil, nil)
+  fighting = true
+  local o = cmd("settings")
+  ok(opened == nil, "opened in combat")
+  ok(o:find("fight") and o:find("when it ends"), "doesn't say it's waiting: " .. o)
+  fighting = false
+  fire("PLAYER_REGEN_ENABLED")
+  ok(opened == 88, "didn't open after the fight: " .. tostring(opened))
+  opened = nil
+  fire("PLAYER_REGEN_ENABLED")
+  ok(opened == nil, "opened again after the next fight")
+''',
+"the story window's Settings button waits for the fight to end too": r'''
+  login(nil, nil)
+  cmd("")
+  fighting = true
+  StoriedStory.settings:Click()
+  ok(opened == nil, "opened in combat")
+  fighting = false
+  fire("PLAYER_REGEN_ENABLED")
+  ok(opened == 88, "didn't open after the fight: " .. tostring(opened))
+''',
+"with no fight on, the settings don't wait": r'''
+  login(nil, nil)
+  cmd("settings")
+  ok(opened == 88, "opened " .. tostring(opened))
+  opened = nil
+  fire("PLAYER_REGEN_ENABLED")
+  ok(opened == nil, "opened again when a later fight ended")
+''',
 # ---- commands ----
 "/storied help, debug and unknown words": r'''
   login(nil, nil)

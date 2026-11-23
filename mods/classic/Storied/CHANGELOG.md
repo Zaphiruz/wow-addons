@@ -1,5 +1,9 @@
 # Storied changelog
 
+## 0.4.1 (2026-11-22)
+
+- Fixed an error when you asked for the settings during a fight (/storied settings, or the Settings button on the story window). The game doesn't let addons open the settings window in combat, so Storied now tells you and opens it when the fight ends.
+
 ## 0.4.0 (2026-11-12)
 
 - Enchants you put on your own gear are now remembered, such as "Lesser Agility by you, 12 Nov 2026". Before, only enchants from a trade were recorded.

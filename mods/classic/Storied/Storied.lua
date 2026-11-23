@@ -1033,12 +1033,25 @@ local function buildPanel()
   end
 end
 
+-- Open the settings window at our page. The game blocks addons from opening
+-- it during combat (and blames the addon), so in a fight it waits and opens
+-- when the fight ends.
+local settingsWaiting = false
+
 local function openSettings()
-  if category then
-    pcall(Settings.OpenToCategory, category:GetID())
-  else
+  if not category then
     say("the settings window isn't available here.")
+  elseif InCombatLockdown() then
+    settingsWaiting = true
+    say("the settings can't be opened in a fight. They'll open when it ends.")
+  else
+    settingsWaiting = false
+    pcall(Settings.OpenToCategory, category:GetID())
   end
+end
+
+local function fightEnded()
+  if settingsWaiting then openSettings() end
 end
 
 ---------------------------------------------------------------------------
@@ -1204,6 +1217,7 @@ local HANDLERS = {
   PLAYER_LEVEL_UP = onLevel,
   TIME_PLAYED_MSG = onPlayed,
   PLAYER_DEAD = onDeath,
+  PLAYER_REGEN_ENABLED = fightEnded,
 }
 -- Classic Era only: Forever doesn't let addons read the combat log.
 if getCombatLog then HANDLERS.COMBAT_LOG_EVENT_UNFILTERED = onCombatLog end
