@@ -3,7 +3,14 @@ name: Tests
 on:
   push:
     branches: [main]
+  # The Gander data workflow tests its own pull requests before opening them.
+  # They only touch these files, and running this for them too would leave a
+  # "workflows awaiting approval" button on each, which isn't the approval
+  # that workflow waits for.
   pull_request:
+    paths-ignore:
+      - mods/classic/data/**
+      - mods/classic/GanderData/GanderData.lua
 
 jobs:
   test:
