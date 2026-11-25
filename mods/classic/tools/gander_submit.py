@@ -313,6 +313,11 @@ def listed_name(data, game, kind, key, offered=None):
         return offered
 
 
+def waiting_name(data, game, mob, sub):
+    """Does this waiting mob offer a name the database doesn't have for it yet?"""
+    return bool(sub.get("name")) and not listed_name(data, game, "mobs", mob, sub["name"])
+
+
 def same(a, b):
     if isinstance(a, (int, float)) and isinstance(b, (int, float)):
         return abs(a - b) <= 0.005
@@ -324,8 +329,10 @@ def open_claims(data, payload, words):
     game = payload["game"]
     listed = data["games"].get(game, {"mobs": {}, "spells": {}, "instances": {}})
     for mob, sub in payload["mobs"].items():
-        if not listed_name(data, game, "mobs", mob, sub.get("name")) and sub.get("name"):
+        if waiting_name(data, game, mob, sub):
             yield "m" + mob, sub["name"]
+        elif mob not in listed["mobs"] and not listed_name(data, game, "mobs", mob):
+            yield "m" + mob, ""   # a new mob sent without a name
         have = listed["mobs"].get(mob, {}).get("levels", {})
         for level, seen in sub["levels"].items():
             for key, value in seen["v"].items():
@@ -392,12 +399,14 @@ def apply_payload(data, payload, table, approve, words):
     moved = 0
     for mob in list(payload["mobs"]):
         sub = payload["mobs"][mob]
-        name = (listed_name(data, game, "mobs", mob, sub.get("name"))
-                or confirmed(table, game, "m" + mob, approve))
+        name = listed_name(data, game, "mobs", mob, sub.get("name"))
         if not name:
-            continue
+            # None: nobody has confirmed a name. "": approved without one.
+            name = confirmed(table, game, "m" + mob, approve)
+            if name is None and mob not in g["mobs"]:
+                continue
         entry = gi.mob_entry(g, mob)
-        entry["name"] = entry["name"] or name
+        entry["name"] = entry["name"] or name or ""
         for level in list(sub["levels"]):
             seen = sub["levels"][level]
             for key in list(seen["v"]):
@@ -413,7 +422,8 @@ def apply_payload(data, payload, table, approve, words):
                 moved += 1
                 if differs and key == "z":
                     continue   # mobs wander: keep the zone the database has
-                slot = entry["levels"].setdefault(level, {"at": seen["at"], "v": {"n": entry["name"]}})
+                slot = entry["levels"].setdefault(
+                    level, {"at": seen["at"], "v": {"n": entry["name"]} if entry["name"] else {}})
                 slot["v"][key] = value
                 slot["at"] = max(slot["at"], seen["at"])
                 if key in WORDS:
@@ -435,7 +445,8 @@ def apply_payload(data, payload, table, approve, words):
                 have["at"] = cast["at"]
                 if "build" in cast:
                     have["build"] = cast["build"]
-        if not sub["levels"] and not sub["spells"]:
+        # A name still waiting to be confirmed keeps the mob here after its stats have gone in.
+        if not sub["levels"] and not sub["spells"] and not waiting_name(data, game, mob, sub):
             del payload["mobs"][mob]
     for instance in list(payload["instances"]):
         entry = payload["instances"][instance]
@@ -460,7 +471,7 @@ def settle(data, held, approve=None):
         table, words = claims(data, held), known_words(data)
         if not sum(apply_payload(data, payload, table, approve, words) for payload in held["pending"]):
             break
-    held["pending"] = [payload for payload in held["pending"] if facts(payload)]
+    held["pending"] = [payload for payload in held["pending"] if payload["mobs"] or payload["instances"]]
 
 
 def drop(data, held, tokens):
@@ -484,11 +495,11 @@ def drop(data, held, tokens):
                     del sub["levels"][level]
             for spell in [s for s in sub["spells"] if "s" + s in tokens]:
                 del sub["spells"][spell]
-            if not sub["levels"] and not sub["spells"]:
+            if not sub["levels"] and not sub["spells"] and not waiting_name(data, payload["game"], mob, sub):
                 del payload["mobs"][mob]
         payload["spells"] = {s: name for s, name in payload["spells"].items() if "s" + s not in tokens}
         payload["instances"] = {i: e for i, e in payload["instances"].items() if "i" + i not in tokens}
-    held["pending"] = [payload for payload in held["pending"] if facts(payload)]
+    held["pending"] = [payload for payload in held["pending"] if payload["mobs"] or payload["instances"]]
 
 
 def expire(held, today):
@@ -528,7 +539,7 @@ def render_held(data, held):
         zones, words, differs = [], [], []
         for key in sorted(keys, key=lambda k: (k[0], [int(n) for n in re.findall(r"\d+", k)[:2]], k)):
             text, claim = best(keys[key])
-            others = sorted(t for t in keys[key] if t != text)
+            others = sorted(t or "no name" for t in keys[key] if t != text)
             also = f" (also sent as: {', '.join(others)})" if others else ""
             if key.startswith("t:z:"):
                 zones.append(f"- {text} {who(claim)}")
@@ -541,7 +552,7 @@ def render_held(data, held):
                 differs.append(f"- `m{mob}` {entry['name'] or 'Mob ' + mob}, level {level}: {LABELS[stat]} {old} → "
                                f"{json.loads(text)}{also} {who(claim)}")
             else:
-                named[key[0]].append(f"- `{key}` {text}{also} {who(claim)}")
+                named[key[0]].append(f"- `{key}` {text or '(no name sent)'}{also} {who(claim)}")
         section("New mobs", named["m"])
         section("New spells", named["s"])
         section("New instances", named["i"])
@@ -609,6 +620,7 @@ def process(data, held, issues, comments, owner, now, approve_hash=None):
         else:
             result["stale"] = True
     expire(held, today)
+    settle(data, held)   # the database may have learned a name since the last run
 
     for note in sorted(comments, key=lambda c: c.get("id", 0)):
         if (note.get("user") or {}).get("login") != owner or (note.get("reactions") or {}).get("+1"):
@@ -671,8 +683,12 @@ def process(data, held, issues, comments, owner, now, approve_hash=None):
     body = [note or "Nothing new for players in this one: it records what is waiting to be confirmed."]
     if taken:
         body.append("Submissions: " + ", ".join(f"#{number}" for number, *_ in taken))
-    body.append("Merged without review, because every fact in it passed the checks, was confirmed by a second "
-                "sender, or was approved by the repository owner. Tests ran before the merge.")
+    why = []
+    if taken:
+        why.append("What came from submissions passed the checks or was confirmed by a second sender.")
+    if "approved held data" in did:
+        why.append("The held data in it was approved by the repository owner.")
+    body.append(" ".join(why + ["Tests ran before the merge."]))
     result["body"] = "\n\n".join(body) + "\n"
     return result
 

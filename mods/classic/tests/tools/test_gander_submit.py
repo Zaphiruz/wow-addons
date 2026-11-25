@@ -217,6 +217,41 @@ class Intake(unittest.TestCase):
                                                     "z": "The Barrens"})
         self.assertEqual(self.held["pending"], [])
 
+    # ---- mobs with no name ----
+    def nameless(self):
+        """Gander saw this mob before it kept names: it is listed, with stats and no name."""
+        self.forever()["mobs"]["1421"] = {"name": "", "spells": {}, "levels": {"31": {"at": T0, "v": {"spd": 2}}}}
+
+    def test_stats_for_a_listed_mob_with_no_name_go_in(self):
+        self.nameless()
+        r = self.go([issue(1, sub({"1421": {"levels": {"31": seen(spd=2, armor=1247)}}}))])
+        self.assertEqual(self.forever()["mobs"]["1421"]["levels"]["31"]["v"], {"spd": 2, "armor": 1247})
+        self.assertEqual(self.held["pending"], [])
+        self.assertIn("2 facts went into", r["issues"][0]["comment"])
+
+    def test_a_name_for_a_listed_mob_that_has_none_waits_but_its_stats_do_not(self):
+        self.nameless()
+        self.go([issue(1, sub({"1421": {"name": "Private Merle", "levels": {"31": seen(armor=1247)}}}))])
+        mob = self.forever()["mobs"]["1421"]
+        self.assertEqual((mob["name"], mob["levels"]["31"]["v"]["armor"]), ("", 1247))
+        text, count = gs.render_held(self.data, self.held)
+        self.assertEqual(count, 1)
+        self.assertIn("`m1421` Private Merle", text)
+        self.go([issue(2, sub({"1421": {"name": "Private Merle", "levels": {"31": seen(spd=2)}}}), user=200)])
+        self.assertEqual(self.forever()["mobs"]["1421"]["name"], "Private Merle")
+        self.assertEqual(self.held["pending"], [])
+
+    def test_a_new_mob_sent_without_a_name_can_be_seen_and_approved(self):
+        self.go([issue(1, sub({"5555": {"levels": {"20": seen(spd=2)}}}))])
+        self.assertNotIn("5555", self.forever()["mobs"])
+        text, count = gs.render_held(self.data, self.held)
+        self.assertEqual(count, 1)
+        self.assertIn("`m5555` (no name sent)", text)
+        self.go(comments=[comment(11, "approve m5555")])
+        self.assertEqual(self.forever()["mobs"]["5555"]["levels"]["20"]["v"], {"spd": 2})
+        self.assertEqual(self.forever()["mobs"]["5555"]["name"], "")
+        self.assertEqual(self.held["pending"], [])
+
     def test_two_senders_who_disagree_about_a_name_both_wait(self):
         self.go([issue(1, sub(STORMER)),
                  issue(2, sub({"3273": {"name": "Rude Name", "levels": {"12": seen(spd=2)}}}), user=200)])
@@ -260,6 +295,15 @@ class Intake(unittest.TestCase):
         self.assertNotIn("36", self.forever()["instances"])
         self.go([issue(2, sub(instances={"36": {"minutes": 10, "name": "The Deadmines"}}), user=200)])
         self.assertEqual(self.forever()["instances"]["36"], {"name": "The Deadmines", "minutes": 50})
+
+    def test_what_waits_goes_in_once_the_database_knows_the_mob(self):
+        self.go([issue(1, sub(STORMER))])
+        self.assertNotIn("3273", self.forever()["mobs"])
+        # The importer, run by hand, adds the mob from the owner's own game.
+        self.forever()["mobs"]["3273"] = {"name": "Kolkar Stormer", "spells": {}, "levels": {}}
+        self.go()
+        self.assertEqual(self.forever()["mobs"]["3273"]["levels"]["12"]["v"]["armor"], 300)
+        self.assertEqual(self.held["pending"], [])
 
     def test_what_waits_too_long_is_forgotten(self):
         self.go([issue(1, sub(STORMER))])
@@ -402,6 +446,14 @@ class Intake(unittest.TestCase):
         self.assertEqual(r["title"], "Gander data: 1 submission")
         self.assertIn("#7", r["body"])
         self.assertIn("stats for 1 more mob", r["body"])
+        self.assertIn("passed the checks", r["body"])
+        self.assertNotIn("approved by the repository owner", r["body"])
+
+    def test_an_approved_pull_request_says_the_owner_approved_it(self):
+        self.waiting()
+        r = self.go(approve_hash=gs.held_hash(self.held))
+        self.assertIn("approved by the repository owner", r["body"])
+        self.assertNotIn("without review", r["body"])
 
 
 class CommandLine(unittest.TestCase):
