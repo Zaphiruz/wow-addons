@@ -3840,18 +3840,20 @@
     "3418": {
      "levels": {
       "22": {
-       "at": 1795375064,
+       "at": 1795576879,
        "v": {
         "armor": 932,
         "class": "WARRIOR",
         "dmax": 42.41,
         "dmin": 31.99,
         "run": 8,
-        "spd": 2
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "The Barrens"
        }
       }
      },
-     "name": "",
+     "name": "Kirge Sternhorn",
      "spells": {}
     },
     "3424": {
@@ -3903,6 +3905,26 @@
      "name": "Korran",
      "spells": {}
     },
+    "3430": {
+     "levels": {
+      "17": {
+       "at": 1795576896,
+       "v": {
+        "armor": 756,
+        "class": "WARRIOR",
+        "dmax": 33.21,
+        "dmin": 25.05,
+        "n": "Mangletooth",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "The Barrens"
+       }
+      }
+     },
+     "name": "Mangletooth",
+     "spells": {}
+    },
     "3432": {
      "levels": {
       "15": {
@@ -3918,6 +3940,26 @@
       }
      },
      "name": "Mankrik",
+     "spells": {}
+    },
+    "3433": {
+     "levels": {
+      "14": {
+       "at": 1795576874,
+       "v": {
+        "armor": 650,
+        "class": "WARRIOR",
+        "dmax": 26.94,
+        "dmin": 20.29,
+        "n": "Tatternack Steelforge",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "The Barrens"
+       }
+      }
+     },
+     "name": "Tatternack Steelforge",
      "spells": {}
     },
     "3442": {

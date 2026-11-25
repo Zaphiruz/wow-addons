@@ -149,9 +149,12 @@ GanderData = {
       [3387] = "Jorn Skyseer",
       [3399] = "Zamja",
       [3400] = "Xen'to",
+      [3418] = "Kirge Sternhorn",
       [3424] = "Thunderhawk Cloudscraper",
       [3428] = "Korran",
+      [3430] = "Mangletooth",
       [3432] = "Mankrik",
+      [3433] = "Tatternack Steelforge",
       [3442] = "Sputtervalve",
       [3444] = "Dig Rat",
       [3453] = "Wharfmaster Dizzywig",
@@ -796,7 +799,7 @@ GanderData = {
         [30] = { at = 1795388518, v = { class = "WARRIOR", n = "Xen'to", run = 8, spd = 2, ty = "Humanoid", z = "Orgrimmar" } },
       },
       [3418] = {
-        [22] = { at = 1795375064, v = { armor = 932, class = "WARRIOR", dmax = 42.41, dmin = 31.99, run = 8, spd = 2 } },
+        [22] = { at = 1795576879, v = { armor = 932, class = "WARRIOR", dmax = 42.41, dmin = 31.99, run = 8, spd = 2, ty = "Humanoid", z = "The Barrens" } },
       },
       [3424] = {
         [22] = { at = 1795575557, v = { class = "PALADIN", fam = "Wind Serpent", n = "Thunderhawk Cloudscraper", run = 8, spd = 2, ty = "Beast", z = "The Barrens" } },
@@ -807,8 +810,14 @@ GanderData = {
       [3428] = {
         [12] = { at = 1795574943, v = { class = "WARRIOR", n = "Korran", run = 8, spd = 2, ty = "Humanoid", z = "The Barrens" } },
       },
+      [3430] = {
+        [17] = { at = 1795576896, v = { armor = 756, class = "WARRIOR", dmax = 33.21, dmin = 25.05, n = "Mangletooth", run = 8, spd = 2, ty = "Humanoid", z = "The Barrens" } },
+      },
       [3432] = {
         [15] = { at = 1795575045, v = { class = "WARRIOR", n = "Mankrik", run = 8, spd = 2, ty = "Humanoid", z = "The Barrens" } },
+      },
+      [3433] = {
+        [14] = { at = 1795576874, v = { armor = 650, class = "WARRIOR", dmax = 26.94, dmin = 20.29, n = "Tatternack Steelforge", run = 8, spd = 2, ty = "Humanoid", z = "The Barrens" } },
       },
       [3442] = {
         [15] = { at = 1795563739, v = { class = "WARRIOR", n = "Sputtervalve", run = 8, spd = 2, ty = "Humanoid", z = "The Barrens" } },
