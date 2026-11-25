@@ -2240,6 +2240,18 @@
         "ty": "Beast",
         "z": "Silverpine Forest"
        }
+      },
+      "13": {
+       "at": 1795643869,
+       "v": {
+        "class": "WARRIOR",
+        "fam": "Bear",
+        "n": "Giant Grizzled Bear",
+        "run": 8,
+        "spd": 2,
+        "ty": "Beast",
+        "z": "Silverpine Forest"
+       }
       }
      },
      "name": "Giant Grizzled Bear",
@@ -2348,6 +2360,17 @@
     },
     "1888": {
      "levels": {
+      "18": {
+       "at": 1795643727,
+       "v": {
+        "class": "MAGE",
+        "n": "Dalaran Watcher",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Silverpine Forest"
+       }
+      },
       "19": {
        "at": 1795643399,
        "v": {

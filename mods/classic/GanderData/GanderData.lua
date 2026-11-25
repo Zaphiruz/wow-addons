@@ -754,6 +754,7 @@ GanderData = {
       },
       [1797] = {
         [12] = { at = 1795643341, v = { class = "WARRIOR", fam = "Bear", n = "Giant Grizzled Bear", run = 8, spd = 2, ty = "Beast", z = "Silverpine Forest" } },
+        [13] = { at = 1795643869, v = { class = "WARRIOR", fam = "Bear", n = "Giant Grizzled Bear", run = 8, spd = 2, ty = "Beast", z = "Silverpine Forest" } },
       },
       [1865] = {
         [12] = { at = 1795643143, v = { class = "WARRIOR", n = "Ravenclaw Raider", run = 8, spd = 2, ty = "Undead", z = "Silverpine Forest" } },
@@ -771,6 +772,7 @@ GanderData = {
         [14] = { at = 1795642993, v = { class = "PALADIN", n = "Ravenclaw Servant", run = 8, spd = 2, ty = "Undead", z = "Silverpine Forest" } },
       },
       [1888] = {
+        [18] = { at = 1795643727, v = { class = "MAGE", n = "Dalaran Watcher", run = 8, spd = 2, ty = "Humanoid", z = "Silverpine Forest" } },
         [19] = { at = 1795643399, v = { class = "MAGE", n = "Dalaran Watcher", run = 8, spd = 2, ty = "Humanoid", z = "Silverpine Forest" } },
       },
       [1912] = {
