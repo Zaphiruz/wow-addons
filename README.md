@@ -71,7 +71,7 @@ the next patch version and a changelog line, ready to release with its tag.
 ### Data from other players
 
 Players can send what their Gander has learned with the "Send Gander data"
-issue form. The **Gander data** workflow checks each submission with
+issue form. Gander makes the block to paste there: `/gander send` in game. The **Gander data** workflow checks each submission with
 `mods/classic/tools/gander_submit.py` and sorts every fact in it:
 
 - **It passes the checks** (a sane value, nothing in the database says

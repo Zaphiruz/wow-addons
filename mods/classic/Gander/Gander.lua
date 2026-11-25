@@ -56,6 +56,8 @@ local function loadSettings()
   if type(db.mobs) ~= "table" then db.mobs = {} end
   if type(db.autolog) ~= "boolean" then db.autolog = false end
   if type(db.autologWorld) ~= "boolean" then db.autologWorld = false end
+  if type(db.remind) ~= "boolean" then db.remind = false end
+  if type(db.sendPlayed) ~= "number" or db.sendPlayed < 0 then db.sendPlayed = 0 end
   -- The order the lines are shown in: what's saved and still valid, then
   -- any line it doesn't mention, in the usual order.
   local order, placed = {}, {}
@@ -191,7 +193,7 @@ end
 -- GanderDB.mobs[creatureID] = { lv = { [level] = record }, heard = { ... } }.
 -- lv holds what we saw ourselves, heard what other players told us; each
 -- record is { at = when it was seen, by = who (heard only), v = values by
--- field }. Kept apart so every value keeps its true source. Whichever was
+-- field, sent = true once it went to the database (lv only) }. Kept apart so every value keeps its true source. Whichever was
 -- seen most recently is shown, so a change someone else saw replaces our
 -- older sighting. A defense of level x 5 isn't stored: it can always be
 -- worked out.
@@ -261,7 +263,8 @@ local function remember(id, level, v)
   -- Only seeing its stats counts as a fresh sighting: a hidden mob whose
   -- name still shows mustn't make old stats look newly seen.
   local seenAt = (hasStats(v) or not old) and time() or old.at
-  mob.lv[level] = { at = seenAt, v = values }
+  -- Sent to the database already? Seeing the same values again isn't news.
+  mob.lv[level] = { at = seenAt, v = values, sent = not changed and old and old.sent or nil }
   if changed then
     dbg("learned mob %d at level %d", id, level)
     if hasStats(values) then queueSend(id, level) end
@@ -934,6 +937,272 @@ local function checkLogging()
 end
 
 ---------------------------------------------------------------------------
+-- Sending to the database (/gander send)
+--
+-- GanderData grows from what players send in. The window makes a block of
+-- text from the sightings that haven't been sent yet: only what this player
+-- saw, never what was heard, and nobody's name. The player pastes it into a
+-- page in their browser and then says so, and those sightings are marked
+-- (record.sent) so they aren't offered again. A sighting whose values
+-- change later is news again.
+--
+-- The block is the JSON that tools/gander_submit.py checks: format 1.
+--
+-- All of it sits in a block of its own: a Lua file may have 200 local
+-- variables at its top level, and this one is close to that.
+---------------------------------------------------------------------------
+local openSend, maybeRemind, startClock
+do
+local SEND_URL = "https://github.com/Zaphiruz/wow-addons/issues/new?template=gander-data.yml"
+local BLOCK_SIZE = 30000        -- characters in one block; a GitHub issue holds 65,536
+local REMIND_AFTER = 4 * 3600   -- seconds of play between reminders
+local REMIND_TICK = 60          -- seconds between counts of play time
+local sendWindow, sendBlock
+local clockRunning = false
+
+local function jsonString(text)
+  return '"' .. text:gsub('[%c"\\]', function(c) return (c == '"' or c == "\\") and "\\" .. c or "" end) .. '"'
+end
+
+-- The keys of t that are of one type, in order.
+local function sortedKeys(t, kind)
+  local keys = {}
+  for key in pairs(t) do
+    if type(key) == kind then keys[#keys + 1] = key end
+  end
+  table.sort(keys)
+  return keys
+end
+
+-- One mob's unsent sightings as JSON, and the records in it. Nil if there
+-- are none.
+local function mobBlock(id, mob)
+  local name
+  local levels, records = {}, {}
+  for _, level in ipairs(sortedKeys(mob.lv, "number")) do
+    local rec = mob.lv[level]
+    if type(rec) == "table" and type(rec.v) == "table" and type(rec.at) == "number" then
+      if type(rec.v.n) == "string" then name = name or rec.v.n end
+      local values = {}
+      for _, key in ipairs(sortedKeys(rec.v, "string")) do
+        local value = rec.v[key]
+        if key == "n" or rec.sent then
+          -- the name is the mob's, not the sighting's
+        elseif type(value) == "number" then
+          values[#values + 1] = jsonString(key) .. ":" .. compact(value)
+        elseif type(value) == "string" then
+          values[#values + 1] = jsonString(key) .. ":" .. jsonString(value)
+        end
+      end
+      if #values > 0 then
+        levels[#levels + 1] = format('"%d":{"at":%d,"v":{%s}}', level, rec.at, table.concat(values, ","))
+        records[#records + 1] = { id = id, level = level, rec = rec }
+      end
+    end
+  end
+  if #levels == 0 then return end
+  return format('"%d":{%s"levels":{%s}}', id, name and ('"name":' .. jsonString(name) .. ",") or "",
+                table.concat(levels, ",")), records
+end
+
+-- The next block to send: its text, the records in it, and how many
+-- sightings are waiting in all.
+local function buildBlock()
+  local pieces, records, size, waiting = {}, {}, 0, 0
+  for _, id in ipairs(sortedKeys(db.mobs, "number")) do
+    local mob = db.mobs[id]
+    local text, found
+    if type(mob) == "table" and type(mob.lv) == "table" then text, found = mobBlock(id, mob) end
+    if text then
+      waiting = waiting + #found
+      if size == 0 or size + #text + 1 <= BLOCK_SIZE - 100 then
+        pieces[#pieces + 1] = text
+        size = size + #text + 1
+        for _, item in ipairs(found) do records[#records + 1] = item end
+      else
+        size = BLOCK_SIZE  -- full: the rest wait for the next block, in order
+      end
+    end
+  end
+  local text = ""
+  if #pieces > 0 then
+    text = format('{"format":1,"game":"%s","locale":%s,"mobs":{%s}}', GAME, jsonString(GetLocale() or "enUS"),
+                  table.concat(pieces, ","))
+  end
+  return { text = text, records = records, waiting = waiting }
+end
+
+local function sameValues(a, b)
+  for key, value in pairs(a) do
+    if b[key] ~= value then return false end
+  end
+  for key in pairs(b) do
+    if a[key] == nil then return false end
+  end
+  return true
+end
+
+-- Mark a block's sightings as sent. One that changed since the block was
+-- made stays unsent. Returns how many were marked.
+local function markSent(block)
+  local n = 0
+  for _, item in ipairs(block.records) do
+    local mob = db.mobs[item.id]
+    local now = mob and mob.lv and mob.lv[item.level]
+    if now and (now == item.rec or sameValues(now.v, item.rec.v)) then
+      now.sent = true
+      n = n + 1
+    end
+  end
+  return n
+end
+
+local function sightings(n) return commas(n) .. (n == 1 and " sighting" or " sightings") end
+
+-- Put text in a box the player copies from. Whatever they type is undone.
+local function fill(box, text)
+  box.keep = text
+  box:SetText(text)
+end
+
+local function copyBox(box)
+  box:SetAutoFocus(false)
+  box:SetScript("OnTextChanged", function(self, typed)
+    if typed then
+      self:SetText(self.keep or "")
+      self:HighlightText()
+    end
+  end)
+  box:SetScript("OnEditFocusGained", function(self) self:HighlightText() end)
+  box:SetScript("OnEscapePressed", function(self) self:ClearFocus() end)
+end
+
+local function drawSend()
+  sendBlock = buildBlock()
+  local here, waiting = #sendBlock.records, sendBlock.waiting
+  if here == 0 then
+    sendWindow.summary:SetText("Nothing new to send. Everything you've seen has already been sent.")
+  elseif here < waiting then
+    sendWindow.summary:SetText(format("You have %s the database hasn't had from you. This block holds %s of them: "
+      .. "the next one comes up when you say this one is sent.", sightings(waiting), commas(here)))
+  else
+    sendWindow.summary:SetText(format("You have %s the database hasn't had from you.", sightings(here)))
+  end
+  fill(sendWindow.url, SEND_URL)
+  fill(sendWindow.data, sendBlock.text)
+  sendWindow.sent:SetEnabled(here > 0)
+end
+
+local function buildSend()
+  local w = CreateFrame("Frame", "GanderSend", UIParent, "BasicFrameTemplateWithInset")
+  sendWindow = w
+  w:Hide()
+  w:SetSize(520, 420)
+  w:SetPoint("CENTER")
+  w:SetFrameStrata("DIALOG")
+  w:SetClampedToScreen(true)
+  w:SetMovable(true)
+  w:EnableMouse(true)
+  w:RegisterForDrag("LeftButton")
+  w:SetScript("OnDragStart", w.StartMoving)
+  w:SetScript("OnDragStop", w.StopMovingOrSizing)
+  if type(w.TitleText) == "table" then w.TitleText:SetText("Gander: send to the GanderData database") end
+  tinsert(UISpecialFrames, "GanderSend")  -- Escape closes it
+
+  local function line(text, y, font)
+    local f = w:CreateFontString(nil, "ARTWORK", font or "GameFontHighlight")
+    f:SetPoint("TOPLEFT", 16, y)
+    f:SetWidth(488)
+    f:SetJustifyH("LEFT")
+    f:SetText(text)
+    return f
+  end
+  w.summary = line("", -34)
+  line("They are mob stats only: no character, realm or account names.", -76, "GameFontDisableSmall")
+  line("1. Open this address in your browser. It needs a free GitHub account.", -98, "GameFontNormal")
+  w.url = CreateFrame("EditBox", "GanderSendUrl", w, "InputBoxTemplate")
+  w.url:SetSize(476, 22)
+  w.url:SetPoint("TOPLEFT", 24, -116)
+  copyBox(w.url)
+  line("2. Click in the box below, press Ctrl+C, and paste it into the Data box on that page.", -148,
+       "GameFontNormal")
+  local scroll = CreateFrame("ScrollFrame", "GanderSendScroll", w, "UIPanelScrollFrameTemplate")
+  scroll:SetPoint("TOPLEFT", 20, -170)
+  scroll:SetPoint("BOTTOMRIGHT", -36, 84)
+  local back = scroll:CreateTexture(nil, "BACKGROUND")
+  back:SetAllPoints(scroll)
+  back:SetColorTexture(0, 0, 0, 0.5)
+  w.data = CreateFrame("EditBox", "GanderSendData", scroll)
+  w.data:SetMultiLine(true)
+  w.data:SetMaxLetters(0)
+  w.data:SetFontObject("ChatFontNormal")
+  w.data:SetWidth(456)
+  copyBox(w.data)
+  scroll:SetScrollChild(w.data)
+  scroll:EnableMouse(true)
+  scroll:SetScript("OnMouseDown", function() w.data:SetFocus() end)
+  local last = w:CreateFontString(nil, "ARTWORK", "GameFontNormal")
+  last:SetPoint("BOTTOMLEFT", 16, 56)
+  last:SetText("3. Tell Gander, so these aren't sent twice.")
+
+  w.sent = CreateFrame("Button", nil, w, "UIPanelButtonTemplate")
+  w.sent:SetSize(120, 24)
+  w.sent:SetPoint("BOTTOMLEFT", 16, 20)
+  w.sent:SetText("I sent it")
+  w.sent:SetScript("OnClick", function()
+    local n = markSent(sendBlock)
+    db.sendPlayed = 0
+    say("marked %s as sent. Thank you!", sightings(n))
+    drawSend()
+    if #sendBlock.records == 0 then w:Hide() end
+  end)
+  w.later = CreateFrame("Button", nil, w, "UIPanelButtonTemplate")
+  w.later:SetSize(120, 24)
+  w.later:SetPoint("BOTTOMRIGHT", -16, 20)
+  w.later:SetText("Later")
+  w.later:SetScript("OnClick", function() w:Hide() end)
+end
+
+function openSend()
+  if not sendWindow then buildSend() end
+  drawSend()
+  sendWindow:Show()
+end
+
+-- The reminder: after enough play, one chat line the next time the player
+-- is somewhere quiet (a city or an inn) or logs in. Never in a fight or an
+-- instance, and never with nothing to send.
+function maybeRemind(atLogin)
+  if not db.remind or db.sendPlayed < REMIND_AFTER then return end
+  if InCombatLockdown() or IsInInstance() then return end
+  if not (atLogin or call("IsResting")) then return end
+  local n = buildBlock().waiting
+  if n == 0 then return end
+  db.sendPlayed = 0
+  say("you have %s the GanderData database hasn't had from you. Type /gander send to share %s.", sightings(n),
+      n == 1 and "it" or "them")
+end
+
+local function countPlay()
+  if not db.remind then
+    clockRunning = false
+    return
+  end
+  db.sendPlayed = db.sendPlayed + REMIND_TICK
+  pcall(maybeRemind, false)
+  C_Timer.After(REMIND_TICK, countPlay)
+end
+
+-- Play time is only counted while the reminder is switched on.
+function startClock()
+  if db.remind and not clockRunning then
+    clockRunning = true
+    C_Timer.After(REMIND_TICK, countPlay)
+  end
+end
+end
+
+---------------------------------------------------------------------------
 -- Settings panel (Options > AddOns > Gander)
 ---------------------------------------------------------------------------
 local function countMobs()
@@ -985,6 +1254,7 @@ local function refreshPanel()
   panel.checks.minimap:SetChecked(not db.minimap.hide)
   panel.checks.autolog:SetChecked(db.autolog)
   panel.checks.autologWorld:SetChecked(db.autologWorld)
+  panel.checks.remind:SetChecked(db.remind)
   drawOrder()
   local n = countMobs()
   local text = format("Remembering %s %s.", commas(n), n == 1 and "mob" or "mobs")
@@ -1142,19 +1412,30 @@ local function buildPanel()
              checkLogging()
            end)
 
+  addCheck("remind", "Remind me after 4 hours of play when I have sightings to send to the database", 16, -288,
+           function(on)
+             db.remind = on
+             startClock()
+           end)
+
   local note = panel:CreateFontString(nil, "ARTWORK", "GameFontHighlight")
-  note:SetPoint("TOPLEFT", 20, -304)
+  note:SetPoint("TOPLEFT", 20, -332)
   note:SetText("Which lines show, and in what order, is on its own page:")
+  panel.sendButton = CreateFrame("Button", nil, panel, "UIPanelButtonTemplate")
+  panel.sendButton:SetSize(180, 22)
+  panel.sendButton:SetPoint("TOPLEFT", 150, -354)
+  panel.sendButton:SetText("Send to the database...")
+  panel.sendButton:SetScript("OnClick", openSend)
   panel.orderButton = CreateFrame("Button", nil, panel, "UIPanelButtonTemplate")
   panel.orderButton:SetSize(120, 22)
-  panel.orderButton:SetPoint("TOPLEFT", 20, -326)
+  panel.orderButton:SetPoint("TOPLEFT", 20, -354)
   panel.orderButton:SetText("Stat order...")
   panel.orderButton:SetScript("OnClick", function()
     openPage(orderCategory, "the Stat order page isn't available here.")
   end)
 
   panel.count = panel:CreateFontString(nil, "ARTWORK", "GameFontDisableSmall")
-  panel.count:SetPoint("TOPLEFT", 20, -366)
+  panel.count:SetPoint("TOPLEFT", 20, -394)
   panel.count:SetWidth(580)
   panel.count:SetJustifyH("LEFT")
 
@@ -1537,6 +1818,7 @@ end
 local HELP = {
   "/gander  -  open the bestiary: every mob Gander remembers or its database knows",
   "/gander settings  -  choose which lines show, and how sharing works",
+  "/gander send  -  give what you've seen to the GanderData database, for every player",
   "/gander debug  -  print what the game says about your target, what Gander learns, sends and hears, and the mob casts and control effects it sees",
   "/gander help  -  this list",
 }
@@ -1784,6 +2066,8 @@ SlashCmdList.GANDER = function(msg)
     toggleBestiary()
   elseif word == "settings" then
     openSettings()
+  elseif word == "send" then
+    openSend()
   elseif word == "debug" then
     debugging = not debugging
     say("debug %s.", debugging and "on" or "off")
@@ -1804,7 +2088,7 @@ end
 ---------------------------------------------------------------------------
 local events = CreateFrame("Frame")
 for _, e in ipairs({ "ADDON_LOADED", "PLAYER_LOGIN", "PLAYER_TARGET_CHANGED", "CHAT_MSG_ADDON",
-                     "PLAYER_REGEN_ENABLED", "PLAYER_ENTERING_WORLD" }) do
+                     "PLAYER_REGEN_ENABLED", "PLAYER_ENTERING_WORLD", "PLAYER_UPDATE_RESTING" }) do
   pcall(events.RegisterEvent, events, e)
 end
 events:SetScript("OnEvent", function(_, event, arg1, ...)
@@ -1822,6 +2106,7 @@ events:SetScript("OnEvent", function(_, event, arg1, ...)
       pcall(C_ChatInfo.RegisterAddonMessagePrefix, PREFIX)
       C_Timer.After(JOIN_DELAY, joinChannel)
     end
+    startClock()
   elseif not (db and panel) then
     return
   elseif event == "PLAYER_TARGET_CHANGED" then
@@ -1832,5 +2117,8 @@ events:SetScript("OnEvent", function(_, event, arg1, ...)
     fightEnded()
   elseif event == "PLAYER_ENTERING_WORLD" then
     pcall(checkLogging)
+    pcall(maybeRemind, arg1 == true)  -- arg1: this is the login, not a loading screen
+  elseif event == "PLAYER_UPDATE_RESTING" then
+    pcall(maybeRemind, false)
   end
 end)

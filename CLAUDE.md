@@ -126,6 +126,11 @@ confirmations (`ConfirmBindOnUse`) and Logout in Downcast and Hawker 0.2.0.
   (`pcall` doesn't catch that). Check `InCombatLockdown()` first.
 - `/<cmd> help` lists every command. An unknown word says so and points to help.
 - Chat lines are capped at 255 characters; refuse longer ones when they're added.
+- Lua 5.1 allows 200 local variables in one function, and a file's top level
+  is one function. Over that, the file doesn't load at all ("main function
+  has more than 200 local variables"). Gander.lua has about 194, so put a new
+  section's locals inside `do ... end` and declare only what the rest of the
+  file calls outside it, as "Sending to the database" does.
 
 ### Classic Era behaviour we verified in game
 
@@ -184,6 +189,9 @@ confirmations (`ConfirmBindOnUse`) and Logout in Downcast and Hawker 0.2.0.
 - `main` now moves by itself. Pull before working on GanderData or running
   the importer:
   `git -c credential.helper= -c "credential.helper=!gh auth git-credential" pull https://github.com/Zaphiruz/wow-addons.git main`
+- Gander's `/gander send` window makes the submission block in Lua
+  (`buildBlock`). Its format and `gander_submit.py`'s checks must change
+  together: Gander's tests run each block through `gander_submit.validate`.
 - Issue text is untrusted. The workflow never puts it in a command, and the
   only free text taken from a submission is a name that passes
   `good_name` and is then held. Keep it that way when changing either.

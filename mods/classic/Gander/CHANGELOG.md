@@ -1,5 +1,13 @@
 # Gander changelog
 
+## 0.10.0 (2026-11-25)
+
+- New: `/gander send` (or the "Send to the database..." button in the settings) opens a window that turns what you've seen into a block of text. Paste it on the page the window names and it's checked and added to GanderData, for every player.
+- The block holds only mob stats you saw yourself: nothing you heard from other players, and no character, realm or account names.
+- Gander remembers what you've sent, so next time only new sightings are offered. A big bestiary is sent in a few parts.
+- New setting, off by default: a line in chat after 4 hours of play when you have something to send. It only shows in a city or inn, or as you log in, and never in a fight or a dungeon.
+- Sending needs a free GitHub account for now.
+
 ## 0.9.0 (2026-11-25)
 
 - Gander's data now lives in its own addon, GanderData, so it can grow without waiting for a new Gander. Install GanderData alongside Gander to get it. Gander still works without it, exactly as before: it learns what you see and shares with other players.

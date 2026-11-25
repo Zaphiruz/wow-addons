@@ -3,6 +3,9 @@ import pathlib
 import sys
 from lupa import lua51
 
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[2] / "tools"))
+import gander_submit  # noqa: E402
+
 ADDON = open(sys.argv[1], encoding="utf-8").read()
 GUARD = (pathlib.Path(__file__).parent.parent / "guard_globals.lua").read_text(encoding="utf-8")
 
@@ -201,7 +204,8 @@ function widget(kind, name, parent, template)
   function w:SetMaxLetters(n) self.maxLetters = n end
   -- The player types into an edit box.
   function w:Type(t)
-    if self.maxLetters and #t > self.maxLetters then t = t:sub(1, self.maxLetters) end
+    local limit = rawget(self, "maxLetters")   -- none set, or 0, means no limit
+    if limit and limit > 0 and #t > limit then t = t:sub(1, limit) end
     self.text = t
     if self.scripts.OnTextChanged then self.scripts.OnTextChanged(self, true) end
   end
@@ -382,6 +386,16 @@ function sampleMobs()
   units.mouseover = mob(1108, { name = "Mistvale Gorilla", level = 33, def = 165, speed = 2, type = "Beast", rank = "elite" })
   hover("mouseover")
   hear("2:M:4000:20:spd=2.5,n=Defias Wizard,ty=Humanoid,z=Westfall", "Bob-Whitemane")
+end
+-- Sending to the database: are you in a city or inn, and the game's language.
+resting = false
+function IsResting() return resting end
+function GetLocale() return "enUS" end
+-- How many of the printed lines are the reminder.
+function reminders()
+  local n = 0
+  for _, line in ipairs(out) do if line:find("/gander send", 1, true) then n = n + 1 end end
+  return n
 end
 function rowText(r) return r.name:GetText() .. " / " .. r.level:GetText() .. " / " .. r.kind:GetText() .. " / " .. r.zone:GetText() end
 function today() return tonumber(os.date("%d", clock)) .. " " .. os.date("%b", clock) end
@@ -1056,6 +1070,185 @@ SCENARIOS = {
   ok(panel().count:GetText():find("1 mob"), panel().count:GetText())
 ''',
 
+# ---- sending to the database ----
+"/gander send shows the address and a block of what you saw yourself": r'''
+  login(nil)
+  sampleMobs()
+  cmd("send")
+  local w = GanderSend
+  ok(w and w:IsShown(), "no window")
+  ok(w.url:GetText() == "https://github.com/Zaphiruz/wow-addons/issues/new?template=gander-data.yml", w.url:GetText())
+  local block = w.data:GetText()
+  ok(block:find('"format":1', 1, true) and block:find('"game":"forever"', 1, true)
+     and block:find('"locale":"enUS"', 1, true), block)
+  ok(block:find('"681":{"name":"Young Stranglethorn Tiger"', 1, true), block)
+  ok(block:find('"spd":1.3', 1, true) and block:find('"z":"Stranglethorn Vale"', 1, true), block)
+  ok(not block:find("Wizard") and not block:find("Bob") and not block:find("Zaphiruz"),
+     "sent what was only heard, or somebody's name: " .. block)
+  ok(not block:find('"n":', 1, true), "the name belongs to the mob, not the sighting: " .. block)
+  ok(w.summary:GetText():find("2 sightings", 1, true), w.summary:GetText())
+  ok(w.sent:IsEnabled(), "I sent it should be clickable")
+  CHECK_BLOCK, CHECK_MOBS = block, "681,1108"
+''',
+"Classic Era says which game the block is from": r'''
+  classicEra()
+  login(nil)
+  units.mouseover = BOAR(); hover("mouseover")
+  cmd("send")
+  ok(GanderSend.data:GetText():find('"game":"classic"', 1, true), GanderSend.data:GetText())
+  CHECK_BLOCK, CHECK_MOBS = GanderSend.data:GetText(), "3100"
+''',
+"a name with quotes in it still makes a block the checker can read": r'''
+  login(nil)
+  units.mouseover = mob(2501, { name = '"Sea Wolf" MacKinley', level = 44, speed = 2 }); hover("mouseover")
+  cmd("send")
+  ok(GanderSend.data:GetText():find([["name":"\"Sea Wolf\" MacKinley"]], 1, true), GanderSend.data:GetText())
+  CHECK_BLOCK, CHECK_MOBS, CHECK_NAME = GanderSend.data:GetText(), "2501", '"Sea Wolf" MacKinley'
+''',
+"I sent it marks the block, and only new sightings are offered next": r'''
+  login(nil)
+  sampleMobs()
+  cmd("send")
+  local w = GanderSend
+  out = {}
+  w.sent:Click()
+  ok(list(out):find("2 sightings", 1, true), "didn't say what was marked: " .. list(out))
+  ok(not w:IsShown(), "nothing is left, so the window should close")
+  cmd("send")
+  ok(w:IsShown() and w.data:GetText() == "" and w.summary:GetText():find("Nothing new", 1, true), w.summary:GetText())
+  ok(not w.sent:IsEnabled(), "there is nothing to mark")
+  -- Seeing the same mob the same way again changes nothing...
+  units.mouseover = mob(681, { name = "Young Stranglethorn Tiger", level = 30, def = 150, speed = 1.3,
+                               type = "Beast", family = "Cat" })
+  hover("mouseover")
+  cmd("send")
+  ok(w.data:GetText() == "", "offered an unchanged sighting twice: " .. w.data:GetText())
+  -- ...a new value for it, or a new mob, is news.
+  units.mouseover.speed = 1.5; hover("mouseover")
+  units.mouseover = BOAR(); hover("mouseover")
+  cmd("send")
+  local block = w.data:GetText()
+  ok(w.summary:GetText():find("2 sightings", 1, true), w.summary:GetText())
+  ok(block:find('"681"', 1, true) and block:find('"3100"', 1, true) and not block:find('"1108"', 1, true), block)
+  ok(w.sent:IsEnabled(), "I sent it should be clickable again")
+''',
+"what was sent stays sent after a reload": r'''
+  login({ mobs = { [3100] = { heard = {}, lv = {
+    [9] = { at = clock - 50, sent = true, v = { spd = 2, n = "Elder Mottled Boar" } },
+    [10] = { at = clock - 40, v = { spd = 2, n = "Elder Mottled Boar" } } } } } })
+  cmd("send")
+  local block = GanderSend.data:GetText()
+  ok(block:find('"10":', 1, true) and not block:find('"9":', 1, true), block)
+  ok(GanderSend.summary:GetText():find("1 sighting ", 1, true), GanderSend.summary:GetText())
+''',
+"Later closes the window and marks nothing": r'''
+  login(nil)
+  sampleMobs()
+  cmd("send")
+  local w, block = GanderSend, GanderSend.data:GetText()
+  w.later:Click()
+  ok(not w:IsShown(), "still open")
+  cmd("send")
+  ok(w:IsShown() and w.data:GetText() == block, "Later changed what is waiting")
+''',
+"what is typed into a box is put back": r'''
+  login(nil)
+  sampleMobs()
+  cmd("send")
+  local w, block = GanderSend, GanderSend.data:GetText()
+  w.data:Type("oops"); w.url:Type("oops")
+  ok(w.data:GetText() == block and w.url:GetText():find("^https://github.com/"), "a box kept what was typed")
+''',
+"a big bestiary is sent in parts": r'''
+  login(nil)
+  for id = 1, 600 do
+    known(1000 + id, 20, { spd = 2, armor = 500 + id, n = "Mob Number " .. id, ty = "Humanoid", z = "The Barrens" })
+  end
+  cmd("send")
+  local w, parts, sent = GanderSend, 0, 0
+  ok(w.summary:GetText():find("600 sightings", 1, true), w.summary:GetText())
+  CHECK_BLOCK = w.data:GetText()
+  while w:IsShown() and parts < 20 do
+    local block = w.data:GetText()
+    ok(#block > 0 and #block <= 30000, "a part of " .. #block .. " characters")
+    for _ in block:gmatch('"name":') do sent = sent + 1 end
+    parts = parts + 1
+    w.sent:Click()
+    if parts == 1 then
+      ok(w:IsShown() and not w.summary:GetText():find("600 sightings", 1, true),
+         "the next part should say how many are left: " .. w.summary:GetText())
+    end
+  end
+  ok(parts >= 2 and parts < 20, parts .. " parts")
+  ok(sent == 600, sent .. " mobs sent in all")
+''',
+"the reminder is off until it's ticked": r'''
+  login(nil)
+  ok(GanderDB.remind == false, "should start off")
+  sampleMobs()
+  advance(5 * 3600)
+  out = {}; resting = true; fire("PLAYER_UPDATE_RESTING")
+  ok(reminders() == 0, "reminded without being asked: " .. list(out))
+''',
+"after 4 hours of play it reminds you in a city, once": r'''
+  login({ remind = true })
+  sampleMobs()
+  advance(4 * 3600 - 120)
+  out = {}; resting = true; fire("PLAYER_UPDATE_RESTING")
+  ok(reminders() == 0, "too early: " .. list(out))
+  resting = false
+  advance(240)
+  ok(reminders() == 0, "reminded out in the world: " .. list(out))
+  resting = true; fire("PLAYER_UPDATE_RESTING")
+  ok(reminders() == 1 and list(out):find("2 sightings", 1, true), list(out))
+  fire("PLAYER_UPDATE_RESTING"); advance(600)
+  ok(reminders() == 1, "said it again: " .. list(out))
+  advance(4 * 3600)
+  ok(reminders() == 2, "should remind again after another 4 hours, still in the city: " .. list(out))
+''',
+"play time carries over to the next login": r'''
+  login({ remind = true, sendPlayed = 4 * 3600, mobs = { [3100] = { heard = {}, lv = {
+    [9] = { at = clock - 50, v = { spd = 2, n = "Elder Mottled Boar" } } } } } })
+  out = {}
+  fire("PLAYER_ENTERING_WORLD", true, false)
+  ok(reminders() == 1 and list(out):find("1 sighting ", 1, true), list(out))
+  ok(GanderDB.sendPlayed == 0, "the wait should start over")
+  fire("PLAYER_ENTERING_WORLD", false, false)
+  ok(reminders() == 1, "reminded on a loading screen: " .. list(out))
+''',
+"it doesn't remind in a fight, in a dungeon, or with nothing to send": r'''
+  login({ remind = true, sendPlayed = 5 * 3600 })
+  resting = true
+  out = {}; fire("PLAYER_UPDATE_RESTING")
+  ok(reminders() == 0, "nothing to send: " .. list(out))
+  units.mouseover = BOAR(); hover("mouseover")
+  fighting = true; fire("PLAYER_UPDATE_RESTING")
+  ok(reminders() == 0, "in a fight: " .. list(out))
+  fighting = false; instance = BFD; fire("PLAYER_UPDATE_RESTING")
+  ok(reminders() == 0, "in a dungeon: " .. list(out))
+  instance = nil; fire("PLAYER_UPDATE_RESTING")
+  ok(reminders() == 1, list(out))
+''',
+"sending starts the wait over": r'''
+  login({ remind = true, sendPlayed = 5 * 3600 })
+  units.mouseover = BOAR(); hover("mouseover")
+  cmd("send"); GanderSend.sent:Click()
+  ok(GanderDB.sendPlayed == 0, tostring(GanderDB.sendPlayed))
+''',
+"the settings page has the reminder tick and a Send button": r'''
+  login(nil)
+  panel():Show()
+  ok(not check("remind"):GetChecked(), "should start unticked")
+  check("remind"):Click()
+  ok(GanderDB.remind == true, "the tick didn't save")
+  sampleMobs()
+  advance(4 * 3600 + 60)
+  resting = true; out = {}; fire("PLAYER_UPDATE_RESTING")
+  ok(reminders() == 1, "ticking it should start the clock: " .. list(out))
+  panel().sendButton:Click()
+  ok(GanderSend and GanderSend:IsShown(), "the button didn't open the window")
+  ok(cmd("help"):find("/gander send", 1, true), cmd("help"))
+''',
 # ---- commands ----
 # ---- the order of the lines ----
 "lines start in the usual order, and a saved order is repaired on login": r'''
@@ -1925,6 +2118,20 @@ SCENARIOS = {
 ''',
 }
 
+def check_block(L):
+    """A scenario that sets CHECK_BLOCK wants the block Gander made checked the
+    way the Gander data workflow will check it: all of it must be usable."""
+    g = L.globals()
+    if g.CHECK_BLOCK is None:
+        return
+    clean, dropped, english = gander_submit.validate(gander_submit.parse_body(g.CHECK_BLOCK), g.clock)
+    assert dropped == 0 and english, f"the workflow would leave out {dropped} facts"
+    if g.CHECK_MOBS is not None:
+        assert sorted(clean["mobs"], key=int) == sorted(g.CHECK_MOBS.split(","), key=int), sorted(clean["mobs"])
+    if g.CHECK_NAME is not None:
+        assert g.CHECK_NAME in [m.get("name") for m in clean["mobs"].values()], clean["mobs"]
+
+
 failed = 0
 for name, body in SCENARIOS.items():
     L = lua51.LuaRuntime()
@@ -1933,6 +2140,7 @@ for name, body in SCENARIOS.items():
         L.execute(MOCK)
         L.execute(GUARD)
         L.execute(body)
+        check_block(L)
         print("PASS", name)
     except Exception as e:
         failed += 1
