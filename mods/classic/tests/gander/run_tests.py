@@ -1255,6 +1255,48 @@ SCENARIOS = {
   check("autolog"):Click()
   ok(GanderDB.autolog == false and logging == false, "unticking it didn't stop logging")
 ''',
+"the open world is logged only with its own tick": r'''
+  login({ autolog = true })
+  ok(GanderDB.autologWorld == false, "on by default")
+  enter(nil)
+  ok(logging == false, "logged the open world without its tick")
+  login({ autolog = true, autologWorld = true })
+  local o = enter(nil)
+  ok(logging == true, "not logging in the open world")
+  ok(o:find("logging combat") and o:find("untick") and not o:find("when you leave"), o)
+  ok(enter(nil) == "", "said it again on the next loading screen")
+''',
+"with the open world ticked, logging carries on through dungeons": r'''
+  login({ autolog = true, autologWorld = true })
+  enter(nil)
+  ok(enter(BFD) == "" and logging == true, "something changed on entering a dungeon")
+  ok(enter(nil) == "" and logging == true, "something changed on leaving it")
+  local o = enter({ id = 36, name = "The Deadmines", kind = "party" })
+  ok(logging == false and o:find("off again"), "kept logging a dungeon the list already covers: " .. o)
+  enter(nil)
+  ok(logging == true, "didn't start again outside")
+  enter({ id = 489, name = "Warsong Gulch", kind = "pvp" })
+  ok(logging == false, "logged a battleground")
+''',
+"the open-world tick does nothing without the main setting": r'''
+  login({ autolog = false, autologWorld = true })
+  enter(nil)
+  ok(logging == false, "logged with the main setting off")
+  panel():Show()
+  ok(check("autologWorld"):GetChecked() == true, "the tick doesn't show what's saved")
+  check("autolog"):Click()
+  ok(logging == true, "switching the main setting on didn't start it")
+  check("autologWorld"):Click()
+  ok(GanderDB.autologWorld == false and logging == false, "unticking the open world didn't stop it")
+''',
+"logging you started yourself outside is left alone too": r'''
+  login({ autolog = true, autologWorld = true })
+  logging = true
+  ok(enter(nil) == "", "spoke up about logging it didn't start")
+  panel():Show()
+  check("autologWorld"):Click()
+  ok(logging == true, "switched off logging the player started")
+''',
 "if the game won't switch logging on, Gander says so": r'''
   login({ autolog = true })
   loggingAllowed = false

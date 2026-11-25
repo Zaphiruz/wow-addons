@@ -55,6 +55,7 @@ local function loadSettings()
   end
   if type(db.mobs) ~= "table" then db.mobs = {} end
   if type(db.autolog) ~= "boolean" then db.autolog = false end
+  if type(db.autologWorld) ~= "boolean" then db.autologWorld = false end
   -- The order the lines are shown in: what's saved and still valid, then
   -- any line it doesn't mention, in the usual order.
   local order, placed = {}, {}
@@ -840,8 +841,12 @@ end
 -- that file is where the list of what mobs cast comes from. With the setting
 -- on, Gander switches that logging on inside a dungeon or raid and off again
 -- on the way out. It doesn't bother once the list has plenty from an
--- instance, and it never touches logging the player switched on themselves:
--- GanderDB.logging is set only while logging that Gander started is running.
+-- instance. A second setting keeps it on in the open world as well, where
+-- the game hides mob spells from addons just the same; there's no "plenty"
+-- out there, so that one logs until it's unticked. Battlegrounds and arenas
+-- are never logged. Gander never touches logging the player switched on
+-- themselves: GanderDB.logging is set only while logging that Gander started
+-- is running.
 ---------------------------------------------------------------------------
 local AUTOLOG_ENOUGH = 90   -- minutes of logged fighting after which an instance is covered
 
@@ -856,17 +861,27 @@ local function checkLogging()
   local name, _, _, _, _, _, _, instanceID = call("GetInstanceInfo")
   if isSecret(inside) or isSecret(kind) or isSecret(instanceID) then return end
   if isSecret(name) or type(name) ~= "string" then name = "this instance" end
-  local wanted = db.autolog and inside and (kind == "party" or kind == "raid") or false
-  if wanted and type(shipped.instances) == "table" and (shipped.instances[instanceID] or 0) >= AUTOLOG_ENOUGH then
-    dbg("not logging %s: the list already has plenty from here", name)
-    wanted = false
+  local dungeon = inside and (kind == "party" or kind == "raid") or false
+  local wanted = false
+  if db.autolog and dungeon then
+    wanted = true
+    if type(shipped.instances) == "table" and (shipped.instances[instanceID] or 0) >= AUTOLOG_ENOUGH then
+      dbg("not logging %s: the list already has plenty from here", name)
+      wanted = false
+    end
+  elseif db.autolog and db.autologWorld and not inside then
+    wanted = true
   end
   if wanted then
     if isLogging() then return end
     call("LoggingCombat", true)
     if isLogging() then
       db.logging = true
-      say("logging combat in %s to a file, to learn what its mobs cast. It stops when you leave.", name)
+      if dungeon then
+        say("logging combat in %s to a file, to learn what its mobs cast. It stops when you leave.", name)
+      else
+        say("logging combat to a file, to learn what mobs cast. It stays on until you untick the setting.")
+      end
     else
       say("couldn't switch combat logging on here.")
     end
@@ -930,6 +945,7 @@ local function refreshPanel()
   end
   panel.checks.minimap:SetChecked(not db.minimap.hide)
   panel.checks.autolog:SetChecked(db.autolog)
+  panel.checks.autologWorld:SetChecked(db.autologWorld)
   drawOrder()
   local n = countMobs()
   panel.count:SetText(format("Remembering %s %s.", commas(n), n == 1 and "mob" or "mobs"))
@@ -1073,19 +1089,25 @@ local function buildPanel()
              checkLogging()
            end)
 
+  addCheck("autologWorld", "Also in the open world (logs every fight until this is unticked)", 40, -260,
+           function(on)
+             db.autologWorld = on
+             checkLogging()
+           end)
+
   local note = panel:CreateFontString(nil, "ARTWORK", "GameFontHighlight")
-  note:SetPoint("TOPLEFT", 20, -276)
+  note:SetPoint("TOPLEFT", 20, -304)
   note:SetText("Which lines show, and in what order, is on its own page:")
   panel.orderButton = CreateFrame("Button", nil, panel, "UIPanelButtonTemplate")
   panel.orderButton:SetSize(120, 22)
-  panel.orderButton:SetPoint("TOPLEFT", 20, -298)
+  panel.orderButton:SetPoint("TOPLEFT", 20, -326)
   panel.orderButton:SetText("Stat order...")
   panel.orderButton:SetScript("OnClick", function()
     openPage(orderCategory, "the Stat order page isn't available here.")
   end)
 
   panel.count = panel:CreateFontString(nil, "ARTWORK", "GameFontDisableSmall")
-  panel.count:SetPoint("TOPLEFT", 20, -338)
+  panel.count:SetPoint("TOPLEFT", 20, -366)
 
   buildOrderPage()
   panel:SetScript("OnShow", refreshPanel)

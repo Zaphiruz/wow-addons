@@ -45,8 +45,9 @@ and release commands for people; this file is how we work on it.
 - In a dungeon fight on Forever (Blackfathom Deeps trash, 1.60.1), the
   `UNIT_SPELLCAST_*` events fire for nameplate units but the mob's name, GUID
   and the spell ID are all secret, and so is the `C_LossOfControl` data for a
-  disarm on the player. Addons can't learn what dungeon mobs cast there. The
-  open world is untested.
+  disarm on the player. In the open world (The Barrens) the mob's name and
+  GUID are readable during the fight, but the spell ID is still secret. So an
+  addon can't learn what any mob casts on Forever, in or out of a dungeon.
 - Forever's Combat Log chat tab is fed by `COMBAT_LOG_MESSAGE`, whose text is
   a `|K`-protected string (from Blizzard's source, not tested): it draws on
   screen but code can't read what it says.
@@ -55,7 +56,8 @@ and release commands for people; this file is how we work on it.
   spell names (seen in Blackfathom Deeps). The game writes it late, so it can
   sit at 0 bytes for minutes. Addons can't read it; a script outside the game
   can. `LoggingCombat(true)` from `/run` switched it on in a dungeon without
-  an error, so an addon can toggle it (not yet tried from an event handler).
+  an error, and Gander 0.8.0 switches it on from `PLAYER_ENTERING_WORLD` when
+  entering a dungeon (seen working in game), so no key press is needed.
 - Forever character names can have a surname ("Elicia Antikleia"), and the
   sender of an addon message is written that way. Don't spot yourself by
   comparing names: use the GUID, or for your own addon messages coming back,
@@ -150,6 +152,9 @@ confirmations (`ConfirmBindOnUse`) and Logout in Downcast and Hawker 0.2.0.
   games' `Logs` folders into `mods/classic/data/gander_abilities.json` and
   rewrite it. The importer deletes each log it has finished unless `--keep` is
   given; ask before running it without `--keep`.
+- The game keeps its current log file open until the client exits, even after
+  logging is switched off, so that file can't be deleted while the game runs.
+  The importer remembers how far it read and deletes it on a later run.
 - The list is per game (`forever`, `classic`) and only ever grows: a later log
   adds spells and counts, it never removes one.
 - It reaches players only through a Gander release, so an import worth

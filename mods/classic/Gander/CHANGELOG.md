@@ -1,5 +1,9 @@
 # Gander changelog
 
+## 0.8.1 (2026-11-24)
+
+- New option under the combat logging setting: "Also in the open world". With both ticked, Gander keeps combat logging on outside dungeons too, so open-world mobs can join the list of what mobs cast. It's off by default and logs every fight until you untick it. Battlegrounds are never logged.
+
 ## 0.8.0 (2026-11-24)
 
 - New "Casts:" line on mob tooltips and in the bestiary, naming the spells a mob is known to use. The list ships with Gander and will grow with each release. It starts with Blackfathom Deeps on World of Warcraft: Forever.
