@@ -1339,11 +1339,200 @@ end
 local HELP = {
   "/gander  -  open the bestiary: every mob Gander remembers",
   "/gander settings  -  choose which lines show, and how sharing works",
-  "/gander debug  -  print what the game says about your target, and what Gander learns, sends and hears",
+  "/gander debug  -  print what the game says about your target, what Gander learns, sends and hears, and the mob casts and control effects it sees",
   "/gander help  -  this list",
 }
 
 -- What the game says about your target right now, for sending to the author.
+---------------------------------------------------------------------------
+-- The ability probe (part of /gander debug)
+--
+-- A test for a feature that doesn't exist yet: remembering what a mob can
+-- do to you. While debug is on, it prints each mob cast, each new debuff on
+-- you and each control effect (stun, disarm...) the game reports, so we can
+-- see what each game lets an addon know, and when it's hidden.
+---------------------------------------------------------------------------
+local PROBE_REPEAT = 30   -- seconds before the same thing is printed again
+local PROBE_EVENTS = { "UNIT_SPELLCAST_START", "UNIT_SPELLCAST_CHANNEL_START", "UNIT_SPELLCAST_SUCCEEDED",
+                       "UNIT_AURA", "LOSS_OF_CONTROL_ADDED" }
+local CAST_WORD = { UNIT_SPELLCAST_START = "starts casting", UNIT_SPELLCAST_CHANNEL_START = "channels",
+                    UNIT_SPELLCAST_SUCCEEDED = "used" }
+local LOG_EVENTS = { SPELL_CAST_START = true, SPELL_CAST_SUCCESS = true, SPELL_AURA_APPLIED = true }
+local probeFrame
+local probePrinted = {}   -- what was printed -> when
+
+-- Print line, unless the same thing (key) was printed a moment ago: a mob
+-- seen as both your target and a nameplate reports each cast twice.
+local function probeSay(key, line)
+  local t = GetTime()
+  if probePrinted[key] and t - probePrinted[key] < PROBE_REPEAT then return end
+  probePrinted[key] = t
+  dbg("%s", line)
+end
+
+-- "Defias Pillager (id 589)" and 589 for the mob under unit. Nothing for a
+-- player or a player's pet.
+local function probeMob(unit)
+  if isSecret(unit) or type(unit) ~= "string" then return "a hidden unit" end
+  if isPlayer(unit) then return end
+  local theirs = call("UnitPlayerControlled", unit)
+  if not isSecret(theirs) and theirs then return end
+  local name = call("UnitName", unit)
+  if isSecret(name) or type(name) ~= "string" then name = "(name hidden)" end
+  local id = identify(unit)
+  return format("%s (id %s)", name, id and tostring(id) or "hidden"), id
+end
+
+-- "Fireball (spell 133)" and 133.
+local function probeSpell(id, name)
+  if isSecret(id) or type(id) ~= "number" then return "a hidden spell" end
+  if isSecret(name) or type(name) ~= "string" then
+    if C_Spell and C_Spell.GetSpellName then
+      name = results(pcall(C_Spell.GetSpellName, id))
+    else
+      name = call("GetSpellInfo", id)
+    end
+  end
+  if isSecret(name) or type(name) ~= "string" then name = "unnamed" end
+  return format("%s (spell %d)", name, id), id
+end
+
+-- Who put an aura on you: a mob's name and id, "caster unknown", or nothing
+-- for a player.
+local function probeCaster(aura)
+  local source = aura.sourceUnit
+  if source == nil then return "caster unknown" end
+  if isSecret(source) then return "caster hidden" end
+  return (probeMob(source))
+end
+
+local function probeCast(event, unit, _, spellID)
+  if not isSecret(unit) and unit == "player" then return end
+  local who, id = probeMob(unit)
+  if not who then return end
+  local what, spell = probeSpell(spellID)
+  probeSay(format("cast:%s:%s:%s", event, tostring(id), tostring(spell)),
+           format("cast: %s %s %s [seen as %s]", who, CAST_WORD[event], what, isSecret(unit) and "?" or tostring(unit)))
+end
+
+local function probeDebuff(aura)
+  if isSecret(aura) then
+    probeSay("debuff:hidden", "debuff on you: hidden")
+    return
+  end
+  if type(aura) ~= "table" then return end
+  local harmful = aura.isHarmful
+  if not isSecret(harmful) and not harmful then return end
+  local from = probeCaster(aura)
+  if not from then return end
+  local what, spell = probeSpell(aura.spellId, aura.name)
+  local kind = aura.dispelName
+  if isSecret(kind) or type(kind) ~= "string" or kind == "" then kind = nil end
+  probeSay(format("debuff:%s:%s", tostring(spell), from),
+           format("debuff on you: %s%s, %s%s", what, kind and (", " .. kind) or "",
+                  from:find("^caster ") and "" or "from ", from))
+end
+
+local function probeAuras(unit, info)
+  if isSecret(unit) or unit ~= "player" or isSecret(info) or type(info) ~= "table" then return end
+  local added = info.addedAuras
+  if isSecret(added) or type(added) ~= "table" then return end
+  for _, aura in ipairs(added) do probeDebuff(aura) end
+end
+
+local function probeControl(unit, index)
+  if isSecret(unit) or type(unit) ~= "string" then unit = "player" end
+  local loc, data = C_LossOfControl, nil
+  if loc and loc.GetActiveLossOfControlDataByUnit then
+    data = results(pcall(loc.GetActiveLossOfControlDataByUnit, unit, index))
+  elseif loc and loc.GetActiveLossOfControlData and unit == "player" then
+    data = results(pcall(loc.GetActiveLossOfControlData, index))
+  end
+  if isSecret(data) then
+    probeSay("control:hidden:" .. unit, format("control effect on %s: hidden", unit))
+    return
+  end
+  if type(data) ~= "table" then
+    probeSay("control:none:" .. unit, format("control effect on %s: the game gave no details", unit))
+    return
+  end
+  local kind, text = data.locType, data.displayText
+  if isSecret(kind) or type(kind) ~= "string" then kind = "kind hidden" end
+  if isSecret(text) or type(text) ~= "string" then text = "?" end
+  local what, spell = probeSpell(data.spellID)
+  local from = "caster unknown"
+  local instance = data.auraInstanceID
+  if isSecret(instance) then
+    from = "caster hidden"
+  elseif instance ~= nil and C_UnitAuras and C_UnitAuras.GetAuraDataByAuraInstanceID then
+    local aura = results(pcall(C_UnitAuras.GetAuraDataByAuraInstanceID, unit, instance))
+    if isSecret(aura) then
+      from = "caster hidden"
+    elseif type(aura) == "table" then
+      from = probeCaster(aura) or "a player"
+    end
+  end
+  probeSay(format("control:%s:%s:%s:%s", unit, kind, tostring(spell), from),
+           format('control effect on %s: %s ("%s") from %s, %s', unit, kind, text, what, from))
+end
+
+-- Classic Era only: the combat log names the mob and spell for everything nearby.
+local function probeLog()
+  local _, sub, _, sourceGUID, sourceName, _, _, _, destName, _, _, spellID, spellName = CombatLogGetCurrentEventInfo()
+  if not LOG_EVENTS[sub] or type(sourceGUID) ~= "string" then return end
+  local kind, npc = sourceGUID:match("^(%a+)%-%d+%-%d+%-%d+%-%d+%-(%d+)%-")
+  if kind ~= "Creature" and kind ~= "Vehicle" then return end
+  local what
+  if type(spellID) == "number" and spellID > 0 then
+    what = probeSpell(spellID, spellName)
+  else
+    what = format("%s (no spell id)", tostring(spellName))
+  end
+  probeSay(format("log:%s:%s:%s", sub, npc, tostring(spellName)),
+           format("combat log: %s (id %s) %s %s%s", tostring(sourceName), npc, sub, what,
+                  type(destName) == "string" and (" on " .. destName) or ""))
+end
+
+local function probeEvent(event, ...)
+  if CAST_WORD[event] then
+    probeCast(event, ...)
+  elseif event == "UNIT_AURA" then
+    probeAuras(...)
+  elseif event == "LOSS_OF_CONTROL_ADDED" then
+    probeControl(...)
+  elseif event == "COMBAT_LOG_EVENT_UNFILTERED" then
+    probeLog()
+  end
+end
+
+-- Start or stop the probe. It only listens while debug is on: these events
+-- fire constantly in a fight.
+local function setProbe(on)
+  if not probeFrame then
+    probeFrame = CreateFrame("Frame")
+    probeFrame:SetScript("OnEvent", function(_, event, ...)
+      local ok, err = pcall(probeEvent, event, ...)
+      if not ok then probeSay("error:" .. event, format("probe error on %s: %s", event, tostring(err))) end
+    end)
+  end
+  local hasLog = type(CombatLogGetCurrentEventInfo) == "function"
+  local wanted, missing = {}, {}
+  for _, e in ipairs(PROBE_EVENTS) do wanted[#wanted + 1] = e end
+  if hasLog then wanted[#wanted + 1] = "COMBAT_LOG_EVENT_UNFILTERED" end
+  for _, e in ipairs(wanted) do
+    if not on then
+      pcall(probeFrame.UnregisterEvent, probeFrame, e)
+    elseif not pcall(probeFrame.RegisterEvent, probeFrame, e) then
+      missing[#missing + 1] = e
+    end
+  end
+  if not on then return end
+  probePrinted = {}
+  say("watching for mob casts, new debuffs on you and control effects%s. Each is printed once every %d seconds.",
+      hasLog and ", and reading the combat log" or "", PROBE_REPEAT)
+  if #missing > 0 then say("this game has no event called %s.", table.concat(missing, ", ")) end
+end
+
 local function describeTarget()
   if not UnitExists("target") then
     say("no target. Target a mob to see what the game says about it.")
@@ -1404,6 +1593,7 @@ SlashCmdList.GANDER = function(msg)
       describeTarget()
       describeChannel()
     end
+    setProbe(debugging)
   elseif word == "help" then
     for _, line in ipairs(HELP) do say(line) end
   else

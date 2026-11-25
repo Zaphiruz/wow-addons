@@ -182,6 +182,7 @@ function widget(kind, name, parent, template)
   function w:HookScript(s, fn) self.hooks[s] = self.hooks[s] or {}; table.insert(self.hooks[s], fn) end
   function w:RunHooks(s, ...) for _, fn in ipairs(self.hooks[s] or {}) do fn(self, ...) end end
   function w:RegisterEvent(e) events[e] = self end
+  function w:UnregisterEvent(e) if events[e] == self then events[e] = nil end end
   function w:SetText(t) self.text = t == nil and "" or tostring(t) end
   function w:GetText() return self.text end
   function w:SetChecked(v) self.checked = not not v end
@@ -255,6 +256,22 @@ function classicEra()
   forever = false; TooltipDataProcessor = nil; UnitDefenseSkill = nil
   C_InstanceEncounter = nil
   function IsEncounterInProgress() return encounter end
+  function CombatLogGetCurrentEventInfo() return unpack(combatLog) end
+end
+
+-- Spells, and what the game says about debuffs and control effects.
+spells = { [133] = "Fireball", [6253] = "Backhand", [744] = "Poison", [700] = "Sleep" }
+C_Spell = { GetSpellName = function(id) return spells[id] end }
+controls, auras = {}, {}   -- controls[unit][index], auras[unit][auraInstanceID]
+C_LossOfControl = { GetActiveLossOfControlDataByUnit = function(u, i) return controls[u] and controls[u][i] end }
+C_UnitAuras = { GetAuraDataByAuraInstanceID = function(u, id) return auras[u] and auras[u][id] end }
+combatLog = {}             -- Classic Era: the combat log line being read
+PILLAGER = function() return mob(589, { name = "Defias Pillager", level = 15 }) end
+-- Switch debug on, clear the chat, and return a function giving what's printed since.
+function probing()
+  cmd("debug")
+  out = {}
+  return function() local o = table.concat(out, " / "); out = {}; return o end
 end
 
 -- The game's settings window.
@@ -1088,6 +1105,132 @@ SCENARIOS = {
   panel():Show()
   panel().orderButton:Click()
   ok(opened == 78, "opened " .. tostring(opened))
+''',
+# ---- the ability probe ----
+"debug prints a mob's casts, once each": r'''
+  login(nil)
+  units.target = PILLAGER()
+  ok(events.UNIT_SPELLCAST_START == nil, "watching casts before debug is on")
+  ok(cmd("debug"):find("watching for mob casts"), "doesn't say it's watching")
+  out = {}
+  fire("UNIT_SPELLCAST_START", "target", "Cast-1", 133)
+  local o = table.concat(out, " / ")
+  ok(o:find("Defias Pillager") and o:find("id 589") and o:find("starts casting") and o:find("Fireball") and o:find("spell 133"), o)
+  ok(o:find("target", 1, true), "doesn't say which unit it was seen through: " .. o)
+  units.nameplate1 = units.target
+  out = {}
+  fire("UNIT_SPELLCAST_START", "nameplate1", "Cast-1", 133)
+  ok(#out == 0, "the same cast was printed twice: " .. table.concat(out, " / "))
+  fire("UNIT_SPELLCAST_SUCCEEDED", "target", "Cast-1", 133)
+  ok(table.concat(out, " / "):find("used Fireball"), table.concat(out, " / "))
+  out = {}
+  fire("UNIT_SPELLCAST_CHANNEL_START", "target", "Cast-2", 700)
+  ok(table.concat(out, " / "):find("channels Sleep"), table.concat(out, " / "))
+  advance(31)
+  out = {}
+  fire("UNIT_SPELLCAST_START", "target", "Cast-3", 133)
+  ok(#out == 1, "a later cast of the same spell isn't printed again")
+''',
+"the probe leaves players' casts alone": r'''
+  login(nil)
+  units.target = { name = "Bob", level = 20, isPlayer = true, guid = "Player-1-00000002" }
+  local printed = probing()
+  fire("UNIT_SPELLCAST_START", "target", "Cast-1", 133)
+  fire("UNIT_SPELLCAST_SUCCEEDED", "player", "Cast-2", 133)
+  ok(printed() == "", "printed a player's cast")
+''',
+"a cast the game hides is printed as hidden, without errors": r'''
+  login(nil)
+  units.target = mob(589, { name = "Defias Pillager", level = 15, noid = true })
+  local printed = probing()
+  fire("UNIT_SPELLCAST_START", "target", SECRET, SECRET)
+  local o = printed()
+  ok(o:find("hidden spell") and not o:find("error"), o)
+  ok(not o:find("589"), "named a mob the game hides: " .. o)
+''',
+"debug prints a control effect, its kind and the mob behind it": r'''
+  login(nil)
+  units.nameplate2 = PILLAGER()
+  local printed = probing()
+  controls.player = { { locType = "STUN", spellID = 6253, displayText = "Stunned", auraInstanceID = 7 } }
+  auras.player = { [7] = { spellId = 6253, name = "Backhand", sourceUnit = "nameplate2", isHarmful = true } }
+  fire("LOSS_OF_CONTROL_ADDED", "player", 1)
+  local o = printed()
+  ok(o:find("control effect on player") and o:find("STUN") and o:find("Stunned"), o)
+  ok(o:find("Backhand") and o:find("spell 6253") and o:find("Defias Pillager") and o:find("id 589"), o)
+
+  advance(31)
+  auras.player = {}
+  fire("LOSS_OF_CONTROL_ADDED", "player", 1)
+  ok(printed():find("caster unknown"), "doesn't say when the caster can't be found")
+
+  advance(31)
+  controls.player = { SECRET }
+  fire("LOSS_OF_CONTROL_ADDED", "player", 1)
+  o = printed()
+  ok(o:find("hidden") and not o:find("error"), o)
+
+  advance(31)
+  controls.player = { { locType = SECRET, spellID = SECRET, displayText = SECRET, auraInstanceID = SECRET } }
+  fire("LOSS_OF_CONTROL_ADDED", "player", 1)
+  o = printed()
+  ok(o:find("kind hidden") and o:find("hidden spell") and o:find("caster hidden") and not o:find("error"), o)
+''',
+"debug prints new debuffs on you and who cast them": r'''
+  login(nil)
+  units.target = PILLAGER()
+  units.party1 = { name = "Bob", level = 20, isPlayer = true, guid = "Player-1-00000002" }
+  local printed = probing()
+  fire("UNIT_AURA", "player", { addedAuras = {
+    { spellId = 744, name = "Poison", dispelName = "Poison", sourceUnit = "target", isHarmful = true, auraInstanceID = 9 },
+    { spellId = 133, name = "Fireball", sourceUnit = "target", isHarmful = false, auraInstanceID = 10 },
+    { spellId = 700, name = "Sleep", sourceUnit = "party1", isHarmful = true, auraInstanceID = 11 },
+  } })
+  local o = printed()
+  ok(o:find("debuff on you") and o:find("Poison %(spell 744%), Poison") and o:find("Defias Pillager %(id 589%)"), o)
+  ok(not o:find("Fireball"), "printed a buff: " .. o)
+  ok(not o:find("Sleep"), "printed a player's debuff: " .. o)
+  fire("UNIT_AURA", "target", { addedAuras = { { spellId = 6253, name = "Backhand", isHarmful = true } } })
+  ok(printed() == "", "printed a debuff on someone else")
+  fire("UNIT_AURA", "player", { addedAuras = { { spellId = 6253, name = "Backhand", isHarmful = true } } })
+  ok(printed():find("caster unknown"), "doesn't say when the caster isn't given")
+  fire("UNIT_AURA", "player", { isFullUpdate = true })
+  fire("UNIT_AURA", "player", nil)
+  fire("UNIT_AURA", "player", { addedAuras = { SECRET } })
+  o = printed()
+  ok(o:find("hidden") and not o:find("error"), o)
+''',
+"on Classic Era the probe also reads the combat log": r'''
+  classicEra()
+  login(nil)
+  ok(cmd("debug"):find("combat log"), "doesn't mention the combat log")
+  out = {}
+  combatLog = { 1, "SPELL_CAST_SUCCESS", false, "Creature-0-4444-1-55-589-0000ABCDEF", "Defias Pillager", 0, 0,
+                "Player-1-00000001", "Zaphiruz", 0, 0, 6253, "Backhand", 1 }
+  fire("COMBAT_LOG_EVENT_UNFILTERED")
+  local o = table.concat(out, " / ")
+  ok(o:find("combat log") and o:find("Defias Pillager %(id 589%)") and o:find("SPELL_CAST_SUCCESS"), o)
+  ok(o:find("Backhand %(spell 6253%)") and o:find("on Zaphiruz"), o)
+  out = {}
+  combatLog[2] = "SWING_DAMAGE"
+  fire("COMBAT_LOG_EVENT_UNFILTERED")
+  combatLog[2], combatLog[4] = "SPELL_CAST_SUCCESS", "Player-1-00000002"
+  fire("COMBAT_LOG_EVENT_UNFILTERED")
+  ok(#out == 0, "printed a swing or a player's spell: " .. table.concat(out, " / "))
+  combatLog[4], combatLog[12] = "Creature-0-4444-1-55-589-0000ABCDEF", 0
+  combatLog[13] = "Strike"
+  fire("COMBAT_LOG_EVENT_UNFILTERED")
+  ok(table.concat(out, " / "):find("Strike %(no spell id%)"), table.concat(out, " / "))
+''',
+"Forever has no combat log to read, and debug off stops the probe": r'''
+  login(nil)
+  local o = cmd("debug")
+  ok(not o:find("combat log"), o)
+  ok(events.COMBAT_LOG_EVENT_UNFILTERED == nil, "watching a combat log that isn't there")
+  ok(events.UNIT_SPELLCAST_START and events.UNIT_AURA and events.LOSS_OF_CONTROL_ADDED, "not watching")
+  cmd("debug")
+  ok(events.UNIT_SPELLCAST_START == nil and events.UNIT_AURA == nil and events.LOSS_OF_CONTROL_ADDED == nil, "still watching with debug off")
+  ok(events.PLAYER_TARGET_CHANGED ~= nil, "stopped the addon's own events")
 ''',
 # ---- the settings and combat ----
 "asked for in a fight, the settings open when it ends": r'''

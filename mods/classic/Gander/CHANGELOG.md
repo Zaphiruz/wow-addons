@@ -1,5 +1,9 @@
 # Gander changelog
 
+## 0.7.2 (2026-11-24)
+
+- /gander debug now also prints the mob casts, new debuffs on you and control effects (stuns, disarms and the like) that the game reports while it's on. This is a test for a possible future feature, remembering what each mob can do. Nothing is saved or shared yet.
+
 ## 0.7.1 (2026-11-22)
 
 - Fixed an error when you asked for the settings during a fight (right-clicking the minimap button, the bestiary's Settings button, "Stat order..." or /gander settings). The game doesn't let addons open the settings window in combat, so Gander now tells you and opens it when the fight ends.
