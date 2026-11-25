@@ -838,7 +838,7 @@ GanderData = {
         [55] = { at = 1795614730, v = { armor = 3292, class = "WARRIOR", dmax = 436.44, dmin = 329.12, n = "Doras", rk = "ELITE", run = 8, spd = 2, ty = "Humanoid", z = "Orgrimmar" } },
       },
       [3320] = {
-        [45] = { at = 1795614499, v = { armor = 2742, class = "WARRIOR", dmax = 100.32, dmin = 75.65, n = "Soran", run = 8, spd = 2, ty = "Humanoid", z = "Orgrimmar" } },
+        [45] = { at = 1795641794, v = { armor = 2742, class = "WARRIOR", dmax = 100.32, dmin = 75.65, n = "Soran", r2 = 14, r3 = 14, r4 = 14, r5 = 14, r6 = 14, run = 8, spd = 2, ty = "Humanoid", z = "Orgrimmar" } },
       },
       [3338] = {
         [60] = { at = 1795575039, v = { class = "WARRIOR", n = "Sergra Darkthorn", rk = "ELITE", run = 8, spd = 2, ty = "Humanoid", z = "The Barrens" } },
