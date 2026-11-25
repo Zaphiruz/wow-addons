@@ -1,6 +1,6 @@
 # Gander changelog
 
-## 0.9.0 (2026-11-24)
+## 0.9.0 (2026-11-25)
 
 - Gander's data now lives in its own addon, GanderData, so it can grow without waiting for a new Gander. Install GanderData alongside Gander to get it. Gander still works without it, exactly as before: it learns what you see and shares with other players.
 - With GanderData installed, tooltips show its stats (in grey, marked "database") for mobs the game is hiding and you haven't seen. Anything you or another player saw more recently still wins, and a live reading always does.

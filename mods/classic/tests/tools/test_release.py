@@ -172,6 +172,19 @@ class WithAddon(unittest.TestCase):
         })
         self.assertIn(b"PK fake zip", body)
 
+    def test_upload_lists_optional_addons(self):
+        d = make_addon(self.root)
+        toc = d / "Thing.toc"
+        toc.write_text(toc.read_text(encoding="utf-8").replace(
+            "Thing.lua", "## X-Curse-Optional: thingdata, other-thing\nThing.lua"), encoding="utf-8")
+        opener = FakeOpener([{"id": 7, "name": "1.15.9"}])
+        release.upload("Thing", token="secret", root=self.root, opener=opener)
+        body = opener.requests[1].data
+        meta = json.loads(body.split(b'name="metadata"\r\n\r\n')[1].split(b"\r\n--")[0])
+        self.assertEqual(meta["relations"], {"projects": [
+            {"slug": "thingdata", "type": "optionalDependency"},
+            {"slug": "other-thing", "type": "optionalDependency"}]})
+
     def test_dry_run_sends_nothing(self):
         make_addon(self.root)
         opener = FakeOpener([])

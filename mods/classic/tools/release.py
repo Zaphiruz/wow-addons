@@ -8,7 +8,9 @@ Tags look like "Hawker/v0.1.0":    python release.py tag Hawker/v0.1.0  prints "
 
 Upload reads the CurseForge project from "## X-Curse-Project-ID:" in the .toc,
 the game versions from "## Interface:" (11509 -> 1.15.9), and the API token
-from the CF_API_TOKEN environment variable.
+from the CF_API_TOKEN environment variable. "## X-Curse-Optional: slug, slug"
+lists other CurseForge projects (by the last part of their address) that the
+upload names as optional dependencies, so the app offers them together.
 """
 import argparse
 import json
@@ -37,6 +39,7 @@ class Release:
     project_id: str
     changelog: str
     zip_path: pathlib.Path
+    optional: list
 
 
 def read_toc(path):
@@ -127,6 +130,7 @@ def load(addon, root=ROOT):
         project_id=toc.get("X-Curse-Project-ID", ""),
         changelog=changelog_section(text, version),
         zip_path=root / "dist" / f"{addon}-{version}.zip",
+        optional=[slug for slug in toc.get("X-Curse-Optional", "").replace(" ", "").split(",") if slug],
     )
 
 
@@ -160,6 +164,8 @@ def upload(addon, token, root=ROOT, opener=urllib.request.urlopen, dry_run=False
         "displayName": f"{addon} {r.version}",
         "releaseType": release_type(r.version),
     }
+    if r.optional:
+        meta["relations"] = {"projects": [{"slug": slug, "type": "optionalDependency"} for slug in r.optional]}
     if dry_run:
         meta["gameVersionNames"] = r.game_versions
         return meta

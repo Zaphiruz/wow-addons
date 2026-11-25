@@ -214,7 +214,10 @@ commit SHA to `--target`) instead of pushing the tag.
    player creates the project, uploads 0.1.0 by hand, and sets the Issues
    tracker to External with
    `https://github.com/Zaphiruz/wow-addons/issues/new/choose`.
-5. Put the project ID in the `.toc`: `## X-Curse-Project-ID: <id>`.
+5. Put the project ID in the `.toc`: `## X-Curse-Project-ID: <id>`. An addon
+   that works better with another one lists it with
+   `## X-Curse-Optional: <slug>` (the last part of that project's CurseForge
+   address), as Gander does for GanderData.
 6. Add the addon's name to:
    - the Addon dropdown in `.github/ISSUE_TEMPLATE/bug.yml` and `feature.yml`
    - the `addons` list in `.github/workflows/issue-labels.yml`
