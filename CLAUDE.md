@@ -1,6 +1,6 @@
 # WoW addons
 
-World of Warcraft Classic Era addons (Bushel, Downcast, Gander, Hawker, Hopscotch, Huzzah, Storied), released to
+World of Warcraft Classic Era addons (Bushel, Downcast, Gander, GanderData, Hawker, Hopscotch, Huzzah, Storied), released to
 CurseForge and GitHub from this one repository. The README covers the layout
 and release commands for people; this file is how we work on it.
 
@@ -24,7 +24,7 @@ and release commands for people; this file is how we work on it.
   `D:\Battle.net\Games\World of Warcraft\_forever_`, version 1.60.1,
   `## Interface: 16001`. Its UI is built on modern retail code (12.1), so check
   APIs against the `forever` branch of wow-ui-source, not `classic_era`.
-- Bushel, Gander, Hawker, Hopscotch, Huzzah and Storied support both games from one folder:
+- Bushel, Gander, GanderData, Hawker, Hopscotch, Huzzah and Storied support both games from one folder:
   `## Interface: 11509, 16001`. Downcast is Classic Era only.
 - On Forever the CurseForge app installs the released addons as real folders
   (it replaced the junctions), so the game there runs the last release, not
@@ -146,20 +146,31 @@ confirmations (`ConfirmBindOnUse`) and Logout in Downcast and Hawker 0.2.0.
   `hooksecurefunc` on both is safe. A real hop is `IsFalling()` turning true
   just after a press.
 
-## Gander's abilities list
+## GanderData, Gander's database
 
-- `mods/classic/Gander/Abilities.lua` is generated: never edit it by hand. Run
-  `python mods/classic/tools/gander_import.py` to read new combat logs from both
-  games' `Logs` folders into `mods/classic/data/gander_abilities.json` and
-  rewrite it. The importer deletes each log it has finished unless `--keep` is
-  given; ask before running it without `--keep`.
+- GanderData is its own addon: what each mob casts, and stats players have
+  seen, per game (`forever`, `classic`). Gander lists it as an optional
+  dependency and treats it as a third source after "seen" and "heard": the
+  most recent sighting wins, and a live reading beats everything. Without it
+  Gander works alone, and has no Casts line on Forever.
+- `mods/classic/GanderData/GanderData.lua` is generated: never edit it by hand.
+  Run `python mods/classic/tools/gander_import.py`. It reads new combat logs
+  from both games' `Logs` folders and the saved Gander database under `WTF`
+  (own sightings only, never what was heard or from whom) into
+  `mods/classic/data/gander_data.json`, then rewrites the Lua file.
+- Every data change is a patch version: when an import changes the data, the
+  importer bumps GanderData's `.toc` and adds the changelog line itself. Commit
+  that and push the `GanderData/v<version>` tag as for any release. `--no-bump`
+  skips it.
+- The importer deletes each log it has finished unless `--keep` is given; ask
+  before running it without `--keep`.
 - The game keeps its current log file open until the client exits, even after
   logging is switched off, so that file can't be deleted while the game runs.
   The importer remembers how far it read and deletes it on a later run.
-- The list is per game (`forever`, `classic`) and only ever grows: a later log
-  adds spells and counts, it never removes one.
-- It reaches players only through a Gander release, so an import worth
-  shipping gets a version bump like any other change.
+- Data only ever grows: a later import adds spells, counts and newer
+  sightings, it never removes a mob or a spell.
+- Account folder names are private: the importer finds the saved database by
+  pattern and never writes its path anywhere.
 
 ## Releasing
 

@@ -1,24 +1,38 @@
-"""Turns combat log files into Gander's list of what each mob casts.
+"""Builds GanderData, the database addon Gander reads: what each mob casts, and its stats.
 
-Usage: python gander_import.py              import every new log, then delete the logs
+Usage: python gander_import.py              import everything new, then delete the logs
        python gander_import.py --keep       import, but leave the log files alone
        python gander_import.py --dry-run    show what an import would do; change nothing
-       python gander_import.py --logs DIR   read logs from DIR (repeatable) instead of the game folders
+       python gander_import.py --no-bump    don't give GanderData a new version
+       python gander_import.py --logs DIR   read combat logs from DIR (repeatable)
+       python gander_import.py --saved GAME=FILE
+                                            read a saved Gander database (repeatable);
+                                            GAME is forever or classic
 
-The game writes Logs/WoWCombatLog-<date>.txt while combat logging is on
-(/combatlog, or Gander's "log combat in dungeons" setting). Addons can't read
-that file, so this script does. From each log it keeps one kind of fact:
-"this hostile mob cast or applied this spell". Players, their pets and their
-totems are skipped, and no player name is written anywhere.
+It reads two things from the game folders:
 
-What it writes:
-  mods/classic/data/gander_abilities.json      everything imported so far (kept in git)
-  mods/classic/Gander/Abilities.lua            the same list for the addon to load
+  Combat logs (Logs/WoWCombatLog-<date>.txt), written while combat logging is
+  on (/combatlog, or Gander's "log combat" setting). Addons can't read them.
+  One kind of fact is kept: "this hostile mob cast or applied this spell".
+  Players, their pets and their totems are skipped.
+
+  Gander's saved database (WTF/Account/<account>/SavedVariables/Gander.lua):
+  the stats this player saw with their own eyes. What Gander only heard from
+  other players is left out, and so is who it heard it from.
+
+No player or account name is written anywhere. What it writes:
+
+  mods/classic/data/gander_data.json           everything imported so far (kept in git)
+  mods/classic/GanderData/GanderData.lua       the same data for the game to load
+  mods/classic/GanderData/GanderData.toc       a new patch version, when the data changed
+  mods/classic/GanderData/CHANGELOG.md         and a line saying what was added
   mods/classic/data/gander_import_state.json   how far into each kept log it has read
                                                (this PC only, not in git)
 
 A log is deleted once it has been read to the end, unless --keep is given or
 the file changed in the last ten minutes (the game may still be writing it).
+The game keeps its current log open until it exits, so that one is only
+deleted on a later run.
 """
 import argparse
 import csv
@@ -30,13 +44,14 @@ import sys
 import time
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent  # mods/classic
-DATA = ROOT / "data" / "gander_abilities.json"
+DATA = ROOT / "data" / "gander_data.json"
 STATE = ROOT / "data" / "gander_import_state.json"
-LUA = ROOT / "Gander" / "Abilities.lua"
+ADDON = ROOT / "GanderData"
 GAME_DIR = pathlib.Path(r"D:\Battle.net\Games\World of Warcraft")
-DEFAULT_LOGS = [GAME_DIR / "_forever_" / "Logs", GAME_DIR / "_classic_era_" / "Logs"]
+# Game folder -> the name Gander uses for that game.
+FOLDERS = {"_forever_": "forever", "_classic_era_": "classic"}
 
-# PROJECT_ID in the log's header line -> the name Gander uses for that game.
+# PROJECT_ID in a log's header line -> game.
 GAMES = {"18": "forever", "2": "classic"}
 EVENTS = {"SPELL_CAST_START", "SPELL_CAST_SUCCESS", "SPELL_AURA_APPLIED"}
 # Effects every mob can cause, which say nothing about the mob.
@@ -46,15 +61,32 @@ FRIENDLY, HOSTILE, PLAYER_CONTROL, NPC_CONTROL = 0x10, 0x40, 0x100, 0x200
 GAP = 30       # seconds: a longer pause between log lines isn't counted as fighting
 IN_USE = 600   # seconds: a log changed more recently than this may still be open in the game
 
+# The stats Gander stores for a mob, as in Gander.lua's FIELDS: numbers,
+# or short pieces of text (the mob's name, type, zone and so on).
+NUMBERS = {"def", "armor", "r1", "r2", "r3", "r4", "r5", "r6", "hp", "pow", "spd", "oh", "dmin", "dmax", "ap",
+           "rspd", "rmin", "rmax", "s1", "s2", "s3", "s4", "s5", "run"}
+TEXTS = {"ptype": 20, "class": 20, "rk": 20, "fam": 24, "ty": 24, "n": 40, "z": 40}
+INFO = {"n", "ty", "rk", "z"}  # which mob it is, not a stat
+MAX_NUMBER = 1000000000
+
 LINE = re.compile(r"^(\d+)/(\d+)(?:/(\d+))? (\d+):(\d+):(\d+)\.(\d+)\S*  (.*)$")
 
 
 def empty_data():
-    return {"version": 1, "games": {}}
+    return {"version": 2, "games": {}}
 
 
 def game_data(data, game):
     return data["games"].setdefault(game, {"instances": {}, "spells": {}, "mobs": {}})
+
+
+def mob_entry(g, mob, name=None):
+    entry = g["mobs"].setdefault(str(mob), {"name": name or "", "spells": {}, "levels": {}})
+    entry.setdefault("spells", {})
+    entry.setdefault("levels", {})
+    if name:
+        entry["name"] = name
+    return entry
 
 
 def creature_id(guid):
@@ -128,7 +160,7 @@ class Reader:
             if len(f) >= 6 and player_owned(f[1], flags_of(f[3])):
                 self.summoned.add(f[5])
         elif event in EVENTS:
-            self.read_spell(game, event, next(csv.reader([rest])), when)
+            self.read_spell(game, next(csv.reader([rest])), when)
 
     def count_time(self, game, when):
         instance = self.ctx.get("instance")
@@ -141,7 +173,7 @@ class Reader:
         if self.last is None or when > self.last:
             self.last = when
 
-    def read_spell(self, game, event, f, when):
+    def read_spell(self, game, f, when):
         if len(f) < 11:
             return
         guid, name, flags = f[1], f[2], flags_of(f[3])
@@ -155,11 +187,9 @@ class Reader:
         g = game_data(self.data, game)
         mob, spell = str(mob), f[9]
         g["spells"][spell] = f[10]
-        if mob not in g["mobs"]:
-            g["mobs"][mob] = {"name": name, "spells": {}}
+        if not g["mobs"].get(mob, {}).get("spells"):
             self.new_mobs += 1
-        entry = g["mobs"][mob]
-        entry["name"] = name
+        entry = mob_entry(g, mob, name)
         if spell not in entry["spells"]:
             entry["spells"][spell] = {"n": 0, "spawns": 0}
             self.new_spells += 1
@@ -171,26 +201,110 @@ class Reader:
         self.spawns.setdefault((game, mob, spell), set()).add(guid)
 
 
+# --------------------------------------------------------------- saved stats
+def clean_values(values):
+    """The fields of one saved sighting that are real stats, cleaned up."""
+    out = {}
+    for key, value in values.items():
+        if key in NUMBERS:
+            if isinstance(value, (int, float)) and not isinstance(value, bool) and 0 < value <= MAX_NUMBER:
+                out[key] = int(value) if float(value).is_integer() else round(float(value), 2)
+        elif key in TEXTS:
+            if isinstance(value, str) and 0 < len(value) <= TEXTS[key] and value.isprintable():
+                out[key] = value
+    return out
+
+
+def lua_to_python(value):
+    if hasattr(value, "items"):  # a Lua table
+        return {lua_to_python(k): lua_to_python(v) for k, v in value.items()}
+    if isinstance(value, float) and value.is_integer():
+        return int(value)
+    return value
+
+
+def read_saved(path):
+    """GanderDB.mobs from a saved-variables file, as plain Python values. The
+    file is Lua, so it runs in a bare Lua state with nothing to reach out with."""
+    from lupa import lua51
+    lua = lua51.LuaRuntime(register_eval=False, register_builtins=False)
+    lua.execute("os, io, require, dofile, loadfile, load, loadstring, package, debug, python = nil")
+    lua.execute(pathlib.Path(path).read_text(encoding="utf-8", errors="replace"))
+    saved = lua.globals().GanderDB
+    mobs = saved.mobs if saved is not None else None
+    return lua_to_python(mobs) if mobs is not None else {}
+
+
+def has_stats(entry):
+    return any(lv["v"].keys() - INFO for lv in entry.get("levels", {}).values())
+
+
+def merge_saved(data, game, mobs):
+    """Add this player's own sightings. Returns how many mobs and levels were new."""
+    g = game_data(data, game)
+    new_mobs = new_levels = 0
+    for mob, record in mobs.items():
+        if not isinstance(mob, int) or mob <= 0 or not isinstance(record, dict):
+            continue
+        for level, seen in (record.get("lv") or {}).items():
+            if not isinstance(level, int) or not isinstance(seen, dict) or not isinstance(seen.get("v"), dict):
+                continue
+            values = clean_values(seen["v"])
+            at = seen.get("at")
+            if not values or not isinstance(at, (int, float)):
+                continue
+            had_stats = has_stats(g["mobs"].get(str(mob), {}))
+            entry = mob_entry(g, mob, values.get("n"))
+            old = entry["levels"].get(str(level))
+            if old is None:
+                entry["levels"][str(level)] = {"at": int(at), "v": values}
+                new_levels += 1
+            elif at >= old["at"]:
+                old["v"] = {**old["v"], **values}  # the newer sighting wins, field by field
+                old["at"] = int(at)
+            else:
+                old["v"] = {**values, **old["v"]}
+            if not had_stats and has_stats(entry):
+                new_mobs += 1
+    return new_mobs, new_levels
+
+
+# ------------------------------------------------------------------ writing
 def lua_string(text):
     return '"' + str(text).replace("\\", "\\\\").replace('"', '\\"').replace("\n", " ") + '"'
 
 
-def to_lua(data):
-    """The addon's copy: per game, minutes logged in each instance, spell
-    names, and each mob's spells with the most often seen first."""
-    out = ["-- What each mob casts, gathered from combat log files.",
+def lua_value(value):
+    if isinstance(value, str):
+        return lua_string(value)
+    return repr(value) if isinstance(value, float) else str(int(value))
+
+
+def lua_comment(text):
+    return str(text).replace("\n", " ").replace("\r", " ")
+
+
+def to_lua(data, version):
+    """The addon's copy. Per game: minutes logged in each instance, spell
+    names, mob names, each mob's spells (most often seen first), and each
+    mob's stats in the shape Gander keeps its own sightings in."""
+    out = ["-- GanderData: what each mob casts and its stats, for the Gander addon.",
            "-- Generated by mods/classic/tools/gander_import.py. Don't edit by hand.",
-           "local _, ns = ...",
-           "ns.abilities = {"]
+           "GanderData = {",
+           f"  version = {lua_string(version)},"]
     for game in sorted(data["games"]):
         g = data["games"][game]
-        mobs = {}
+        casts, stats, names = {}, {}, {}
         for mob, entry in g["mobs"].items():
-            spells = [s for s in entry["spells"] if int(s) not in IGNORED_SPELLS]
+            spells = [s for s in entry.get("spells", {}) if int(s) not in IGNORED_SPELLS]
             spells.sort(key=lambda s: (-entry["spells"][s]["n"], int(s)))
             if spells:
-                mobs[mob] = spells
-        used = sorted({int(s) for spells in mobs.values() for s in spells})
+                casts[mob] = spells
+            if entry.get("levels"):
+                stats[mob] = entry["levels"]
+            if (spells or entry.get("levels")) and entry.get("name"):
+                names[mob] = entry["name"]
+        used = sorted({int(s) for spells in casts.values() for s in spells})
         out.append(f"  {game} = {{")
         out.append("    instances = {  -- minutes of fighting logged in each")
         for instance in sorted(g["instances"], key=int):
@@ -201,17 +315,26 @@ def to_lua(data):
         for spell in used:
             out.append(f"      [{spell}] = {lua_string(g['spells'].get(str(spell), ''))},")
         out.append("    },")
-        out.append("    mobs = {")
-        for mob in sorted(mobs, key=int):
-            out.append(f"      [{int(mob)}] = {{ {', '.join(mobs[mob])} }},  -- {lua_comment(g['mobs'][mob]['name'])}")
+        out.append("    names = {")
+        for mob in sorted(names, key=int):
+            out.append(f"      [{int(mob)}] = {lua_string(names[mob])},")
+        out.append("    },")
+        out.append("    casts = {")
+        for mob in sorted(casts, key=int):
+            out.append(f"      [{int(mob)}] = {{ {', '.join(casts[mob])} }},")
+        out.append("    },")
+        out.append("    stats = {")
+        for mob in sorted(stats, key=int):
+            out.append(f"      [{int(mob)}] = {{")
+            for level in sorted(stats[mob], key=int):
+                seen = stats[mob][level]
+                values = ", ".join(f"{key} = {lua_value(seen['v'][key])}" for key in sorted(seen["v"]))
+                out.append(f"        [{int(level)}] = {{ at = {int(seen['at'])}, v = {{ {values} }} }},")
+            out.append("      },")
         out.append("    },")
         out.append("  },")
     out.append("}")
     return "\n".join(out) + "\n"
-
-
-def lua_comment(text):
-    return str(text).replace("\n", " ").replace("\r", " ")
 
 
 def load_json(path, default):
@@ -232,9 +355,68 @@ def size(n):
     return f"{n / 1024:.0f} KB"
 
 
-def run(log_dirs, data_path=DATA, state_path=STATE, lua_path=LUA, keep=False, dry_run=False, now=None, out=print):
+def counts(data):
+    """Per game: mobs with casts, abilities in all, mobs with stats."""
+    out = {}
+    for game, g in data["games"].items():
+        with_casts = [m for m in g["mobs"].values() if m.get("spells")]
+        out[game] = (len(with_casts), sum(len(m["spells"]) for m in with_casts),
+                     sum(1 for m in g["mobs"].values() if has_stats(m)))
+    return out
+
+
+def some(n, one, many):
+    return f"{n} {one if n == 1 else many}"
+
+
+def changelog_line(before, after):
+    """One line for players saying what an import added, or None if nothing."""
+    titles = {"forever": "Forever", "classic": "Classic Era"}
+    parts = []
+    for game in sorted(after):
+        b, a = before.get(game, (0, 0, 0)), after[game]
+        added = []
+        if a[0] > b[0]:
+            added.append(f"what {some(a[0] - b[0], 'more mob casts', 'more mobs cast')}")
+        elif a[1] > b[1]:
+            added.append(f"{some(a[1] - b[1], 'more ability', 'more abilities')} for mobs already listed")
+        if a[2] > b[2]:
+            added.append(f"stats for {some(a[2] - b[2], 'more mob', 'more mobs')}")
+        if added:
+            parts.append(f"{titles.get(game, game)}: {' and '.join(added)}.")
+    return " ".join(parts) or None
+
+
+def bump(addon, note, today):
+    """Give GanderData the next patch version and a changelog entry. Returns the version."""
+    toc = addon / f"{addon.name}.toc"
+    text = toc.read_text(encoding="utf-8")
+    m = re.search(r"^## Version:\s*(\d+)\.(\d+)\.(\d+)\s*$", text, re.M)
+    if not m:
+        raise SystemExit(f"{toc} has no '## Version: x.y.z' line")
+    version = f"{m.group(1)}.{m.group(2)}.{int(m.group(3)) + 1}"
+    toc.write_text(text[:m.start()] + f"## Version: {version}" + text[m.end():], encoding="utf-8", newline="\n")
+    log = addon / "CHANGELOG.md"
+    old = log.read_text(encoding="utf-8") if log.is_file() else f"# {addon.name} changelog\n"
+    head, sep, rest = old.partition("\n## ")
+    entry = f"## {version} ({today})\n\n- {note}\n"
+    log.write_text(f"{head.rstrip()}\n\n{entry}{sep}{rest}" if sep else f"{old.rstrip()}\n\n{entry}",
+                   encoding="utf-8", newline="\n")
+    return version
+
+
+def current_version(addon):
+    toc = addon / f"{addon.name}.toc"
+    m = toc.is_file() and re.search(r"^## Version:\s*(\S+)", toc.read_text(encoding="utf-8"), re.M)
+    return m.group(1) if m else "0.0.0"
+
+
+def run(log_dirs, saved=(), data_path=DATA, state_path=STATE, addon=ADDON, keep=False, dry_run=False,
+        bump_version=True, now=None, out=print):
     now = time.time() if now is None else now
     data = load_json(data_path, empty_data())
+    data["version"] = 2
+    before = counts(data)
     state = load_json(state_path, {})
     left_on_disk = 0
     found = set()
@@ -273,25 +455,61 @@ def run(log_dirs, data_path=DATA, state_path=STATE, lua_path=LUA, keep=False, dr
         del state[key]  # a log that has gone
     if not found:
         out("no combat logs found. Switch logging on in game with /combatlog or Gander's setting.")
-    totals = ", ".join(f"{game}: {len(g['mobs'])} mobs" for game, g in sorted(data["games"].items()))
-    out(f"the list now has {totals or 'nothing'}; {size(left_on_disk)} of logs left on disk.")
+    for game, path in saved:
+        new_mobs, new_levels = merge_saved(data, game, read_saved(path))
+        out(f"saved Gander database ({game}): stats for {new_mobs} new mobs, {new_levels} new mob levels")
+
+    after = counts(data)
+    totals = ", ".join(f"{game}: casts for {c[0]} mobs, stats for {c[2]}" for game, c in sorted(after.items()))
+    out(f"the database now has {totals or 'nothing'}; {size(left_on_disk)} of logs left on disk.")
+    lua_path = addon / f"{addon.name}.lua"
+    version = current_version(addon)
+    changed = not lua_path.is_file() or lua_path.read_text(encoding="utf-8") != to_lua(data, version)
     if dry_run:
-        out("dry run: nothing was written or deleted.")
+        out("dry run: nothing was written or deleted." + (" The data would change." if changed else ""))
         return data
     save_json(data_path, data)
     save_json(state_path, state)
-    lua_path.parent.mkdir(parents=True, exist_ok=True)
-    lua_path.write_text(to_lua(data), encoding="utf-8", newline="\n")
+    if changed and bump_version and (addon / f"{addon.name}.toc").is_file():
+        note = changelog_line(before, after) or "Refreshed the stats of mobs already in the database."
+        version = bump(addon, note, datetime.date.fromtimestamp(now).isoformat())
+        out(f"GanderData is now {version}: {note}")
+    if changed:
+        addon.mkdir(parents=True, exist_ok=True)
+        lua_path.write_text(to_lua(data, version), encoding="utf-8", newline="\n")
+    else:
+        out("nothing new for GanderData.")
     return data
 
 
+def default_sources():
+    logs, saved = [], []
+    for folder, game in FOLDERS.items():
+        logs.append(GAME_DIR / folder / "Logs")
+        for path in sorted((GAME_DIR / folder / "WTF" / "Account").glob("*/SavedVariables/Gander.lua")):
+            saved.append((game, path))
+    return logs, saved
+
+
 def main(argv=None):
-    p = argparse.ArgumentParser(description="Import combat logs into Gander's abilities list.")
+    p = argparse.ArgumentParser(description="Import combat logs and saved stats into GanderData.")
     p.add_argument("--logs", action="append", help="a Logs folder to read (repeatable)")
+    p.add_argument("--saved", action="append", metavar="GAME=FILE",
+                   help="a saved Gander database to read (repeatable)")
     p.add_argument("--keep", action="store_true", help="don't delete logs after importing them")
     p.add_argument("--dry-run", action="store_true", help="change nothing; just report")
+    p.add_argument("--no-bump", action="store_true", help="don't give GanderData a new version")
     args = p.parse_args(argv)
-    run(args.logs or DEFAULT_LOGS, keep=args.keep, dry_run=args.dry_run)
+    logs, saved = default_sources()
+    if args.logs or args.saved:
+        logs = args.logs or []
+        saved = []
+        for item in args.saved or []:
+            game, _, path = item.partition("=")
+            if game not in FOLDERS.values() or not path:
+                p.error(f"--saved wants GAME=FILE with GAME one of {sorted(FOLDERS.values())}, not {item!r}")
+            saved.append((game, pathlib.Path(path)))
+    run(logs, saved, keep=args.keep, dry_run=args.dry_run, bump_version=not args.no_bump)
     return 0
 
 

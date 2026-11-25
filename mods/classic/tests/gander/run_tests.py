@@ -280,16 +280,28 @@ function probing()
   return function() local o = table.concat(out, " / "); out = {}; return o end
 end
 
--- The list of what mobs cast that ships with the addon (Abilities.lua puts
--- it in the addon's private table). The game knows some spell names itself.
-NS = { abilities = {
-  forever = {
-    instances = { [48] = 12, [36] = 95 },   -- minutes logged: Blackfathom Deeps, The Deadmines
-    spells = { [8399] = "Sleep (list)", [9999] = "Listed Only", "S1", "S2", "S3", "S4", "S5", "S6", "S7" },
-    mobs = { [4832] = { 8399, 9999 }, [777] = { 1, 2, 3, 4, 5, 6, 7 }, [12902] = { 12167, 12168, 744 } },
-  },
-  classic = { instances = {}, spells = {}, mobs = { [4798] = { 744 } } },
-} }
+-- GanderData, the database addon. It isn't installed unless a scenario calls
+-- withData(): what mobs cast, and stats players have seen. The game knows
+-- some spell names itself.
+GanderData = nil
+function withData()
+  GanderData = {
+    version = "1.0.7",
+    forever = {
+      instances = { [48] = 12, [36] = 95 },   -- minutes logged: Blackfathom Deeps, The Deadmines
+      spells = { [8399] = "Sleep (list)", [9999] = "Listed Only", "S1", "S2", "S3", "S4", "S5", "S6", "S7" },
+      names = { [4832] = "Twilight Lord Kelris", [777] = "Caster", [12902] = "Lorgus Jett", [9100] = "Database Boar" },
+      casts = { [4832] = { 8399, 9999 }, [777] = { 1, 2, 3, 4, 5, 6, 7 }, [12902] = { 12167, 12168, 744 } },
+      stats = {
+        -- Seen three days ago by whoever fed the database.
+        [9100] = { [12] = { at = clock - 3 * 86400,
+                            v = { spd = 1.5, armor = 300, n = "Database Boar", ty = "Beast", z = "Durotar" } } },
+      },
+    },
+    classic = { instances = {}, spells = {}, names = { [4798] = "Fallenroot Shadowstalker" },
+                casts = { [4798] = { 744 } }, stats = {} },
+  }
+end
 function GetBuildInfo() return "1.0", "1", "today", forever and 16001 or 11509 end
 KELRIS = function() return mob(4832, { name = "Twilight Lord Kelris", level = 27, def = 140, speed = 2 }) end
 
@@ -334,7 +346,7 @@ function login(saved)
   GanderDB = saved
   events, timers, categories, subcategories, postCalls = {}, {}, {}, {}, {}
   GameTooltip.hooks = {}
-  assert(loadstring(ADDON_SRC, "Gander.lua"))("Gander", NS)
+  assert(loadstring(ADDON_SRC, "Gander.lua"))("Gander", {})
   fire("ADDON_LOADED", "Gander")
   fire("PLAYER_LOGIN")
 end
@@ -1139,8 +1151,123 @@ SCENARIOS = {
   panel().orderButton:Click()
   ok(opened == 78, "opened " .. tostring(opened))
 ''',
+# ---- the database addon ----
+"stats from the database show when the game hides them, marked as such": r'''
+  withData()
+  login(nil)
+  units.mouseover = mob(9100, { name = "Database Boar", level = 12, hidden = true })
+  local o = hover("mouseover")
+  ok(o:find("Armor: 300 (database)", 1, true) and o:find("Attack speed: 1.5 (database)", 1, true), o)
+  advance(30)
+  ok(not list(sent):find("2:Q:9100"), "asked other players about a mob the database covers: " .. list(sent))
+''',
+"a live reading beats the database": r'''
+  withData()
+  login(nil)
+  units.mouseover = mob(9100, { name = "Database Boar", level = 12, speed = 3 })
+  local o = hover("mouseover")
+  ok(o:find("Attack speed: 3.0", 1, true) and not o:find("Attack speed: 3.0 (", 1, true), o)
+  ok(o:find("Armor: 300 (database)", 1, true), "the database didn't fill in what the game doesn't send: " .. o)
+''',
+"your own sighting beats the database when it's newer, and loses when it's older": r'''
+  withData()
+  login(nil)
+  known(9100, 12, { spd = 2.5 }, 10 * 86400)       -- ten days ago: before the database's sighting
+  units.mouseover = mob(9100, { name = "Database Boar", level = 12, hidden = true })
+  ok(hover("mouseover"):find("Attack speed: 1.5 (database)", 1, true), hover("mouseover"))
+  known(9100, 12, { spd = 2.5 }, 3600)             -- an hour ago
+  local o = hover("mouseover")
+  ok(o:find("Attack speed: 2.5 (seen", 1, true), o)
+  ok(o:find("Armor: 300 (database)", 1, true), "lost what only the database has: " .. o)
+''',
+"what another player told you beats the database when it's newer": r'''
+  withData()
+  loginNoChannel()
+  grouped = true
+  hear("2:M:9100:12:spd=4", "Bob-Whitemane", "PARTY")
+  units.mouseover = mob(9100, { name = "Database Boar", level = 12, hidden = true })
+  ok(hover("mouseover"):find("Attack speed: 4.0 (from Bob)", 1, true), hover("mouseover"))
+''',
+"database stats that don't change with level help at other levels": r'''
+  withData()
+  login(nil)
+  units.mouseover = mob(9100, { name = "Database Boar", level = 13, hidden = true })
+  local o = hover("mouseover")
+  ok(o:find("Attack speed: 1.5 (database)", 1, true), o)
+  ok(not o:find("Armor"), "used armor from another level: " .. o)
+''',
+"switching remembered values off hides the database's too": r'''
+  withData()
+  login({ remembered = false })
+  units.mouseover = mob(9100, { name = "Database Boar", level = 12, hidden = true })
+  ok(not hover("mouseover"):find("database"), hover("mouseover"))
+''',
+"the bestiary lists the database's mobs along with yours": r'''
+  withData()
+  login(nil)
+  sampleMobs()
+  cmd("")
+  local w = GanderBestiary
+  ok(w.count:GetText() == "7 mobs", w.count:GetText())
+  w.filters.database:Click()
+  ok(w.count:GetText() == "4 of 7 mobs", w.count:GetText())
+  ok(w.rows[1].name:GetText() == "Caster" and w.rows[2].name:GetText() == "Database Boar", w.rows[1].name:GetText())
+  ok(w.rows[2].level:GetText() == "12" and w.rows[2].kind:GetText() == "Beast" and w.rows[2].zone:GetText() == "Durotar",
+     "a database mob's row: " .. w.rows[2].level:GetText() .. " " .. w.rows[2].kind:GetText())
+  ok(w.rows[4].name:GetText() == "Twilight Lord Kelris" and not w.rows[5]:IsShown(), "the rest of the list")
+  w.filters.seen:Click()
+  ok(w.count:GetText() == "2 of 7 mobs", "Seen by me includes database mobs: " .. w.count:GetText())
+  w.filters.heard:Click()
+  ok(w.count:GetText() == "1 of 7 mobs", "Heard includes database mobs: " .. w.count:GetText())
+''',
+"a database mob's page shows its stats and where they came from": r'''
+  withData()
+  login(nil)
+  cmd("")
+  local w = GanderBestiary
+  w.rows[2]:Click()
+  local d = plain(w.detail:GetText())
+  ok(d:find("Database Boar  (id 9100)", 1, true) and d:find("Beast", 1, true) and d:find("Durotar", 1, true), d)
+  ok(d:find("Level 12 - from the database, seen ", 1, true), d)
+  ok(d:find("Armor 300", 1, true) and d:find("Attack speed 1.5", 1, true), d)
+  w.rows[1]:Click()
+  d = plain(w.detail:GetText())
+  ok(d:find("Caster  (id 777)", 1, true) and d:find("Casts: S1, S2", 1, true), "a mob known only for what it casts: " .. d)
+''',
+"a mob you've seen that is also in the database is listed once, with both": r'''
+  withData()
+  login(nil)
+  units.mouseover = mob(9100, { name = "Database Boar", level = 12, speed = 3 }); hover("mouseover")
+  cmd("")
+  local w = GanderBestiary
+  ok(w.count:GetText() == "4 mobs", w.count:GetText())
+  w.filters.seen:Click()
+  ok(w.count:GetText() == "1 of 4 mobs" and w.rows[1].name:GetText() == "Database Boar", w.count:GetText())
+  w.rows[1]:Click()
+  local d = plain(w.detail:GetText())
+  ok(d:find("Level 12 - seen ", 1, true) and d:find("Level 12 - from the database, seen ", 1, true), d)
+''',
+"the settings page says what the database adds": r'''
+  withData()
+  login(nil)
+  sampleMobs()
+  panel():Show()
+  local t = panel().count:GetText()
+  ok(t:find("Remembering 3 mobs", 1, true) and t:find("GanderData 1.0.7", 1, true) and t:find("4 mobs", 1, true), t)
+''',
+"without GanderData the settings page says it isn't installed, and the bestiary has no Database list": r'''
+  login(nil)
+  sampleMobs()
+  panel():Show()
+  ok(panel().count:GetText():find("GanderData isn't installed", 1, true), panel().count:GetText())
+  cmd("")
+  ok(GanderBestiary.count:GetText() == "3 mobs", GanderBestiary.count:GetText())
+  GanderBestiary.filters.database:Click()
+  ok(GanderBestiary.count:GetText() == "0 of 3 mobs", GanderBestiary.count:GetText())
+''',
 # ---- what mobs cast ----
-"the tooltip lists what a mob casts, from the list that ships with Gander": r'''
+"the tooltip lists what a mob casts, from the GanderData addon": r'''
+  withData()
   login(nil)
   units.mouseover = KELRIS()
   local o = hover("mouseover")
@@ -1149,6 +1276,7 @@ SCENARIOS = {
   ok(not hover("mouseover"):find("Casts"), "a mob that isn't on the list got a Casts line")
 ''',
 "a long list is cut short on the tooltip, and a spell isn't named twice": r'''
+  withData()
   login(nil)
   units.mouseover = mob(777, { name = "Caster", level = 10 })
   ok(hover("mouseover"):find("Casts: S1, S2, S3, S4, S5 and 2 more", 1, true), hover("mouseover"))
@@ -1156,11 +1284,13 @@ SCENARIOS = {
   ok(hover("mouseover"):find("Casts: Lightning Bolt, Poison", 1, true), "two ranks of a spell: " .. hover("mouseover"))
 ''',
 "a mob the game won't identify gets no Casts line": r'''
+  withData()
   login(nil)
   units.mouseover = mob(4832, { name = "Twilight Lord Kelris", level = 27, noid = true })
   ok(not hover("mouseover"):find("Casts"), hover("mouseover"))
 ''',
 "Classic Era and Forever each have their own list": r'''
+  withData()
   classicEra()
   login(nil)
   units.mouseover = mob(4798, { name = "Fallenroot Shadowstalker", level = 24 })
@@ -1169,6 +1299,7 @@ SCENARIOS = {
   ok(not hover("mouseover"):find("Casts"), "used Forever's list on Classic Era: " .. hover("mouseover"))
 ''',
 "the Casts line can be moved and hidden like the others": r'''
+  withData()
   login({ order = { "casts", "defense" } })
   units.mouseover = KELRIS()
   ok(hover("mouseover") == "Casts: Sleep, Listed Only | Defense: 140 | Attack speed: 2.0", hover("mouseover"))
@@ -1179,16 +1310,19 @@ SCENARIOS = {
   ok(GanderDB.lines.casts == false, "the tick didn't switch it off")
   ok(hover("mouseover") == "Defense: 140 | Attack speed: 2.0", hover("mouseover"))
 ''',
-"without the list Gander works as before": r'''
-  NS = nil
+"without GanderData, Gander works as before": r'''
   login(nil)
   units.mouseover = KELRIS()
   ok(hover("mouseover") == "Defense: 140 | Attack speed: 2.0", hover("mouseover"))
-  NS = { abilities = "broken" }
+  GanderData = { forever = "broken" }
+  login(nil)
+  ok(hover("mouseover") == "Defense: 140 | Attack speed: 2.0", hover("mouseover"))
+  GanderData = "not a table"
   login(nil)
   ok(hover("mouseover") == "Defense: 140 | Attack speed: 2.0", hover("mouseover"))
 ''',
 "the bestiary shows everything a mob casts": r'''
+  withData()
   login(nil)
   units.mouseover = KELRIS(); hover("mouseover")
   units.mouseover = mob(777, { name = "Caster", level = 10, speed = 3 }); hover("mouseover")
@@ -1202,6 +1336,7 @@ SCENARIOS = {
 
 # ---- the mob's id ----
 "the tooltip shows the mob's id, last unless it's moved": r'''
+  withData()
   login(nil)
   fullTooltip = true
   ok(GanderDB.lines.id == true, "off by default")
@@ -1275,6 +1410,7 @@ SCENARIOS = {
   ok(logging == true, "switched off logging the player started")
 ''',
 "an instance with plenty logged already isn't logged again": r'''
+  withData()
   login({ autolog = true })
   enter({ id = 36, name = "The Deadmines", kind = "party" })
   ok(logging == false, "logged an instance the list already covers")
@@ -1311,6 +1447,7 @@ SCENARIOS = {
   ok(enter(nil) == "", "said it again on the next loading screen")
 ''',
 "with the open world ticked, logging carries on through dungeons": r'''
+  withData()
   login({ autolog = true, autologWorld = true })
   enter(nil)
   ok(enter(BFD) == "" and logging == true, "something changed on entering a dungeon")
@@ -1783,7 +1920,7 @@ SCENARIOS = {
 "/gander says so if loading failed": r'''
   login(nil)
   events = {}
-  assert(loadstring(ADDON_SRC, "Gander.lua"))("Gander", NS)
+  assert(loadstring(ADDON_SRC, "Gander.lua"))("Gander", {})
   ok(cmd("help"):find("didn't finish loading"), cmd("help"))
 ''',
 }

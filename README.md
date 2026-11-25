@@ -7,6 +7,7 @@ World of Warcraft addons, released to CurseForge from this repository.
 | [Bushel](mods/classic/Bushel) | Classic Era, Forever | Counts the herbs, ore and skins you gather by type, shown in tooltips |
 | [Downcast](mods/classic/Downcast) | Classic Era | Lets macros cast the best rank of a buff or HoT that can land on a low-level player |
 | [Gander](mods/classic/Gander) | Classic Era, Forever | Shows a mob's stats on its tooltip, remembers them in a bestiary for when the game hides them, and shares them with other players |
+| [GanderData](mods/classic/GanderData) | Classic Era, Forever | The database Gander reads: what each mob casts and its stats, gathered by players. Optional |
 | [Hawker](mods/classic/Hawker) | Classic Era, Forever | Keeps a list of advert lines and says a random one with `/hawk` |
 | [Hopscotch](mods/classic/Hopscotch) | Classic Era, Forever | Counts every hop off the ground, for each character and the whole account |
 | [Huzzah](mods/classic/Huzzah) | Classic Era, Forever | Emotes and sends a message when your group, guild, a stranger nearby or you level up |
@@ -41,22 +42,31 @@ python mods/classic/tools/run_tests.py Hawker   # one addon
 
 The addon tests run the real Lua against a small fake of the WoW API. They run on every push to `main`.
 
-## Gander's list of what mobs cast
+## GanderData: Gander's database
 
-Addons can't see which spell a mob is casting in a Forever dungeon, but the
-game's combat log file has it. Play with combat logging on (`/combatlog`, or
-Gander's "log combat in dungeons" setting), then:
+GanderData is a separate, optional addon holding what each mob casts and the
+stats players have seen. Gander reads it when it's installed. It is generated,
+never edited by hand:
 
 ```
-python mods/classic/tools/gander_import.py            # import new logs, then delete them
+python mods/classic/tools/gander_import.py            # import, bump GanderData's version, delete the logs
 python mods/classic/tools/gander_import.py --keep     # import, leave the log files alone
 python mods/classic/tools/gander_import.py --dry-run  # only report
 ```
 
-It keeps one kind of fact, "this hostile mob used this spell", in
-`mods/classic/data/gander_abilities.json`, and rewrites
-`mods/classic/Gander/Abilities.lua` for the addon. Player names never leave the
-log. The new list reaches other players with the next Gander release.
+The importer reads two things from the game folders:
+
+- **Combat logs.** Addons can't see which spell a mob casts on Forever, but the
+  game's combat log file has it. Play with logging on (`/combatlog`, or Gander's
+  "log combat" setting). It keeps one kind of fact: "this hostile mob used this
+  spell".
+- **Gander's saved database.** The stats you saw yourself. What Gander only
+  heard from other players is left out.
+
+No player or account name is written anywhere. Everything imported so far is in
+`mods/classic/data/gander_data.json`; `mods/classic/GanderData/GanderData.lua`
+is the same data for the game. When an import changes the data, GanderData gets
+the next patch version and a changelog line, ready to release with its tag.
 
 ## Releasing
 

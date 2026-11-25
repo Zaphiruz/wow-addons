@@ -1,7 +1,7 @@
 -- Gander: shows a mob's stats on its tooltip. It reads whatever the game
 -- reveals about the mob, remembers it for when the game hides it, and shares
 -- what it learns with other players running Gander.
-local ADDON, ns = ...
+local ADDON = ...
 
 local db              -- GanderDB
 local panel, category
@@ -198,6 +198,42 @@ end
 ---------------------------------------------------------------------------
 local queueSend, askAbout  -- set below, in Sharing
 
+-- GanderData, the database addon, when it's installed: what mobs cast, and
+-- stats other players have seen. It's a separate addon so its data can be
+-- updated without a new Gander; Gander works without it. Each game has its
+-- own part. Its stats have the shape of our own sightings, { at, v }, by
+-- mob and level, and count as a third source after "seen" and "heard".
+local GAME = (select(4, GetBuildInfo()) or 0) >= 16000 and "forever" or "classic"
+local shipped = { instances = {}, spells = {}, names = {}, casts = {}, stats = {} }
+local shippedVersion      -- nil when GanderData isn't installed
+if type(GanderData) == "table" then
+  shippedVersion = type(GanderData.version) == "string" and GanderData.version or "?"
+  local part = GanderData[GAME]
+  for key in pairs(shipped) do
+    if type(part) == "table" and type(part[key]) == "table" then shipped[key] = part[key] end
+  end
+end
+local NOTHING = {}
+
+-- The database's sightings of a mob, by level.
+local function baseOf(id)
+  local levels = id and shipped.stats[id]
+  if type(levels) ~= "table" then return NOTHING end
+  for _, rec in pairs(levels) do rec.base = true end  -- so its source can be told
+  return levels
+end
+
+-- How many mobs the database knows something about.
+local function countShipped()
+  local ids, n = {}, 0
+  for _, list in ipairs({ shipped.stats, shipped.casts }) do
+    for id in pairs(list) do
+      if not ids[id] then ids[id], n = true, n + 1 end
+    end
+  end
+  return n
+end
+
 local function ruleDefense(level)
   if level and level > 0 then return level * 5 end
 end
@@ -242,38 +278,40 @@ local function newestWith(records, key)
   return best
 end
 
--- Of our record and a heard one, the more recently seen that has this field.
-local function newer(ours, theirs, key)
-  local a = ours and ours.v[key] ~= nil
-  local b = theirs and theirs.v[key] ~= nil
-  if a and b then return theirs.at > ours.at and theirs or ours end
-  return (a and ours) or (b and theirs) or nil
+-- Of our record, a heard one and the database's, the most recently seen that
+-- has this field. On a tie the earlier of those wins.
+local function newer(key, ours, theirs, base)
+  local best
+  if ours and ours.v[key] ~= nil then best = ours end
+  if theirs and theirs.v[key] ~= nil and (not best or theirs.at > best.at) then best = theirs end
+  if base and base.v[key] ~= nil and (not best or base.at > best.at) then best = base end
+  return best
 end
 
 -- What is remembered for this mob at this level: field -> { value, record }.
--- The most recently seen value wins, ours or heard. Fields that don't change
--- with level can also come from another level.
+-- The most recently seen value wins: ours, heard, or the database's. Fields
+-- that don't change with level can also come from another level.
 local function recall(id, level)
   local found = {}
-  local mob = id and db.mobs[id]
-  if not mob then return found end
-  local seen, heard = mob.lv or {}, mob.heard or {}
+  local mob = id and db.mobs[id] or NOTHING
+  local seen, heard, base = mob.lv or NOTHING, mob.heard or NOTHING, baseOf(id)
+  if mob == NOTHING and base == NOTHING then return found end
   for key, spec in pairs(FIELD) do
-    local rec = level and newer(seen[level], heard[level], key) or nil
+    local rec = level and newer(key, seen[level], heard[level], base[level]) or nil
     if not rec and not spec.perLevel then
-      rec = newer(newestWith(seen, key), newestWith(heard, key), key)
+      rec = newer(key, newestWith(seen, key), newestWith(heard, key), newestWith(base, key))
     end
     if rec then found[key] = { rec.v[key], rec } end
   end
   return found
 end
 
--- Are any stats remembered for this mob at this level, ours or heard?
+-- Are any stats known for this mob at this level: ours, heard or the database's?
 local function knows(id, level)
-  local mob = db.mobs[id]
-  if not mob then return false end
+  local mob = db.mobs[id] or NOTHING
   local seen, heard = mob.lv and mob.lv[level], mob.heard and mob.heard[level]
-  return (seen and hasStats(seen.v)) or (heard and hasStats(heard.v)) or false
+  local base = baseOf(id)[level]
+  return (seen and hasStats(seen.v)) or (heard and hasStats(heard.v)) or (base and hasStats(base.v)) or false
 end
 
 ---------------------------------------------------------------------------
@@ -297,14 +335,10 @@ local function range(lo, hi) return commas(lo) .. " - " .. commas(hi or lo) end
 ---------------------------------------------------------------------------
 -- What mobs cast
 --
--- An addon can't learn this in game on Forever: in a dungeon fight the game
--- hides which spell a mob is casting. So the list ships with the addon, in
--- Abilities.lua, built from combat log files by tools/gander_import.py.
--- Each game has its own list.
+-- An addon can't learn this in game on Forever: the game hides which spell
+-- a mob is casting. So the list comes with the GanderData addon, built from
+-- combat log files by tools/gander_import.py.
 ---------------------------------------------------------------------------
-local GAME = (select(4, GetBuildInfo()) or 0) >= 16000 and "forever" or "classic"
-local shipped = type(ns) == "table" and type(ns.abilities) == "table" and ns.abilities[GAME]
-if type(shipped) ~= "table" then shipped = {} end
 local CASTS_ON_TOOLTIP = 5   -- spells named on a tooltip before "and 2 more"
 
 -- A spell's name: the game's own (in the player's language), or else the
@@ -317,7 +351,7 @@ local function spellName(id)
     name = call("GetSpellInfo", id)
   end
   if isSecret(name) or type(name) ~= "string" or name == "" then
-    name = type(shipped.spells) == "table" and shipped.spells[id]
+    name = shipped.spells[id]
   end
   if type(name) ~= "string" or name == "" then name = "Spell #" .. id end
   return name
@@ -326,7 +360,7 @@ end
 -- "Sleep, Mind Blast" for a mob on the list. Ranks of one spell are named
 -- once. With a limit, the rest are counted: "... and 2 more".
 local function castsText(id, limit)
-  local spells = id and type(shipped.mobs) == "table" and shipped.mobs[id]
+  local spells = id and shipped.casts[id]
   if type(spells) ~= "table" then return end
   local names, listed = {}, {}
   for _, spell in ipairs(spells) do
@@ -383,6 +417,7 @@ for _, line in ipairs(LINES) do LINE[line.key] = line end
 local LABEL, VALUE, GREY = "|cffffd100", "|cffffffff", "|cff999999"
 
 local function source(rec)
+  if rec.base then return "database" end
   if rec.by then return "from " .. rec.by end
   return "seen " .. tonumber(date("%d", rec.at)) .. " " .. date("%b", rec.at)
 end
@@ -869,7 +904,7 @@ local function checkLogging()
   local wanted = false
   if db.autolog and dungeon then
     wanted = true
-    if type(shipped.instances) == "table" and (shipped.instances[instanceID] or 0) >= AUTOLOG_ENOUGH then
+    if (shipped.instances[instanceID] or 0) >= AUTOLOG_ENOUGH then
       dbg("not logging %s: the list already has plenty from here", name)
       wanted = false
     end
@@ -952,7 +987,15 @@ local function refreshPanel()
   panel.checks.autologWorld:SetChecked(db.autologWorld)
   drawOrder()
   local n = countMobs()
-  panel.count:SetText(format("Remembering %s %s.", commas(n), n == 1 and "mob" or "mobs"))
+  local text = format("Remembering %s %s.", commas(n), n == 1 and "mob" or "mobs")
+  if shippedVersion then
+    local known = countShipped()
+    text = text .. format(" The database (GanderData %s) knows %s %s.", shippedVersion, commas(known),
+                          known == 1 and "mob" or "mobs")
+  else
+    text = text .. " GanderData isn't installed: it adds what mobs cast, and stats for mobs you haven't seen."
+  end
+  panel.count:SetText(text)
 end
 
 local function addCheck(key, label, x, y, onClick)
@@ -1112,6 +1155,8 @@ local function buildPanel()
 
   panel.count = panel:CreateFontString(nil, "ARTWORK", "GameFontDisableSmall")
   panel.count:SetPoint("TOPLEFT", 20, -366)
+  panel.count:SetWidth(580)
+  panel.count:SetJustifyH("LEFT")
 
   buildOrderPage()
   panel:SetScript("OnShow", refreshPanel)
@@ -1130,7 +1175,8 @@ end
 ---------------------------------------------------------------------------
 local ROWS = 10           -- mobs visible at once
 local WHEEL_STEP = 3      -- rows per notch of the mouse wheel
-local SHOW = { { "all", "All" }, { "seen", "Seen by me" }, { "heard", "Heard" } }
+local SHOW = { { "all", "All", 64 }, { "seen", "Seen by me", 92 }, { "heard", "Heard", 64 },
+               { "database", "Database", 80 } }
 local bestiary
 local showing, searching, offset, selected = "all", "", 0, nil
 
@@ -1138,16 +1184,18 @@ local function openSettings()
   openPage(category, "the settings window isn't available here.")
 end
 
--- The newest value of one field for a mob, from any level, ours or heard.
-local function info(mob, key)
-  local rec = newer(newestWith(mob.lv or {}, key), newestWith(mob.heard or {}, key), key)
+-- The newest value of one field for a mob, from any level: ours, heard, or
+-- the database's sightings (base).
+local function info(mob, key, base)
+  local rec = newer(key, newestWith(mob.lv or NOTHING, key), newestWith(mob.heard or NOTHING, key),
+                    newestWith(base, key))
   return rec and rec.v[key]
 end
 
 -- "30", "30-32" or "??" for the levels a mob is known at.
-local function levelText(mob)
+local function levelText(mob, base)
   local lo, hi
-  for _, records in ipairs({ mob.lv or {}, mob.heard or {} }) do
+  for _, records in ipairs({ mob.lv or NOTHING, mob.heard or NOTHING, base }) do
     for level in pairs(records) do
       if level > 0 then
         lo = math.min(lo or level, level)
@@ -1159,16 +1207,22 @@ local function levelText(mob)
   return lo == hi and tostring(lo) or (lo .. "-" .. hi)
 end
 
--- Every remembered mob as a list entry, named ones first by name.
+-- Every known mob as a list entry, named ones first by name: the ones
+-- Gander remembers, and the ones only the database knows.
 local function allEntries()
-  local list = {}
-  for id, mob in pairs(db.mobs) do
-    local name, rank = info(mob, "n"), info(mob, "rk")
-    local seen = next(mob.lv or {}) ~= nil
+  local list, ids = {}, {}
+  for id in pairs(db.mobs) do ids[id] = true end
+  for id in pairs(shipped.stats) do ids[id] = true end
+  for id in pairs(shipped.casts) do ids[id] = true end
+  for id in pairs(ids) do
+    local mob, base = db.mobs[id] or NOTHING, baseOf(id)
+    local name, rank = info(mob, "n", base) or shipped.names[id], info(mob, "rk", base)
+    local seen = next(mob.lv or NOTHING) ~= nil
     list[#list + 1] = {
-      id = id, mob = mob, named = name ~= nil, seen = seen,
+      id = id, named = name ~= nil, seen = seen, heard = not seen and db.mobs[id] ~= nil,
+      base = base ~= NOTHING or shipped.casts[id] ~= nil,
       name = (name or ("Mob #" .. id)) .. (rank and RANK[rank] and (" (" .. RANK[rank] .. ")") or ""),
-      level = levelText(mob), kind = info(mob, "ty") or "", zone = info(mob, "z") or "",
+      level = levelText(mob, base), kind = info(mob, "ty", base) or "", zone = info(mob, "z", base) or "",
     }
   end
   table.sort(list, function(a, b)
@@ -1181,7 +1235,8 @@ end
 
 local function matches(entry)
   if showing == "seen" and not entry.seen then return false end
-  if showing == "heard" and entry.seen then return false end
+  if showing == "heard" and not entry.heard then return false end
+  if showing == "database" and not entry.base then return false end
   if searching == "" then return true end
   local haystack = (entry.name .. "\n" .. entry.zone .. "\n" .. entry.kind .. "\n" .. entry.id):lower()
   return haystack:find(searching:lower(), 1, true) ~= nil
@@ -1210,21 +1265,24 @@ end
 
 -- Everything known about one mob, as text for the lower pane.
 local function detailText(id)
+  local base = baseOf(id)
   local mob = id and db.mobs[id]
+  if not mob and id and (base ~= NOTHING or shipped.casts[id]) then mob = NOTHING end  -- only the database knows it
   if not mob then return GREY .. "Click a mob to see everything known about it.|r" end
   local out = {}
-  local rank = info(mob, "rk")
-  out[#out + 1] = LABEL .. (info(mob, "n") or ("Mob #" .. id)) .. "|r" .. GREY .. "  (id " .. id .. ")|r"
+  local rank = info(mob, "rk", base)
+  local name = info(mob, "n", base) or shipped.names[id] or ("Mob #" .. id)
+  out[#out + 1] = LABEL .. name .. "|r" .. GREY .. "  (id " .. id .. ")|r"
   local about = {}
-  local kind, family = info(mob, "ty"), info(mob, "fam")
+  local kind, family, zone = info(mob, "ty", base), info(mob, "fam", base), info(mob, "z", base)
   if kind or family then about[#about + 1] = (kind or "") .. ((kind and family) and ", " or "") .. (family or "") end
   if rank and RANK[rank] then about[#about + 1] = RANK[rank] end
-  if info(mob, "z") then about[#about + 1] = info(mob, "z") end
+  if zone then about[#about + 1] = zone end
   if #about > 0 then out[#out + 1] = table.concat(about, "  ·  ") end
   local casts = castsText(id)
   if casts then out[#out + 1] = LABEL .. "Casts:|r " .. VALUE .. casts .. "|r" end
   local levels = {}
-  for _, records in ipairs({ mob.lv or {}, mob.heard or {} }) do
+  for _, records in ipairs({ mob.lv or NOTHING, mob.heard or NOTHING, base }) do
     for level in pairs(records) do levels[level] = true end
   end
   local sorted = {}
@@ -1242,6 +1300,11 @@ local function detailText(id)
       out[#out + 1] = " "
       out[#out + 1] = LABEL .. title .. " - from " .. heard.by .. ", " .. when(heard.at) .. "|r"
       out[#out + 1] = statsLine(level, heard)
+    end
+    if base[level] then
+      out[#out + 1] = " "
+      out[#out + 1] = LABEL .. title .. " - from the database, seen " .. when(base[level].at) .. "|r"
+      out[#out + 1] = statsLine(level, base[level])
     end
   end
   return table.concat(out, "\n")
@@ -1283,7 +1346,7 @@ end
 local function buildBestiary()
   bestiary = CreateFrame("Frame", "GanderBestiary", UIParent, "BasicFrameTemplateWithInset")
   bestiary:Hide()
-  bestiary:SetSize(560, 540)
+  bestiary:SetSize(640, 540)
   bestiary:SetPoint("CENTER")
   bestiary:SetFrameStrata("HIGH")
   bestiary:SetClampedToScreen(true)
@@ -1314,7 +1377,7 @@ local function buildBestiary()
   local x = 232
   for _, f in ipairs(SHOW) do
     local b = CreateFrame("Button", nil, bestiary, "UIPanelButtonTemplate")
-    b:SetSize(f[1] == "seen" and 92 or 64, 22)
+    b:SetSize(f[3], 22)
     b:SetPoint("TOPLEFT", x, -31)
     b:SetText(f[2])
     b:SetScript("OnClick", function()
@@ -1322,7 +1385,7 @@ local function buildBestiary()
       drawBestiary()
     end)
     bestiary.filters[f[1]] = b
-    x = x + (f[1] == "seen" and 96 or 68)
+    x = x + f[3] + 4
   end
   bestiary.settings = CreateFrame("Button", nil, bestiary, "UIPanelButtonTemplate")
   bestiary.settings:SetSize(76, 22)
@@ -1342,7 +1405,7 @@ local function buildBestiary()
   -- The list: fixed rows, moved through with the mouse wheel.
   bestiary.list = CreateFrame("Frame", nil, bestiary)
   bestiary.list:SetPoint("TOPLEFT", 12, -80)
-  bestiary.list:SetSize(536, ROWS * 20)
+  bestiary.list:SetSize(616, ROWS * 20)
   bestiary.list:EnableMouseWheel(true)
   bestiary.list:SetScript("OnMouseWheel", function(_, delta)
     offset = offset - delta * WHEEL_STEP
@@ -1351,7 +1414,7 @@ local function buildBestiary()
   bestiary.rows = {}
   for i = 1, ROWS do
     local row = CreateFrame("Button", nil, bestiary.list)
-    row:SetSize(536, 20)
+    row:SetSize(616, 20)
     row:SetPoint("TOPLEFT", 0, -(i - 1) * 20)
     row:SetHighlightTexture("Interface\\QuestFrame\\UI-QuestTitleHighlight", "ADD")
     row.picked = row:CreateTexture(nil, "BACKGROUND")
@@ -1365,7 +1428,7 @@ local function buildBestiary()
       row[key]:SetJustifyH("LEFT")
     end
     row.name:SetWidth(252)
-    row.zone:SetWidth(126)
+    row.zone:SetWidth(206)
     row:SetScript("OnClick", function(self)
       selected = self.id
       drawBestiary()
@@ -1378,11 +1441,11 @@ local function buildBestiary()
   scroll:SetPoint("TOPLEFT", 16, -(80 + ROWS * 20 + 12))
   scroll:SetPoint("BOTTOMRIGHT", -34, 12)
   bestiary.child = CreateFrame("Frame", nil, scroll)
-  bestiary.child:SetSize(500, 10)
+  bestiary.child:SetSize(580, 10)
   scroll:SetScrollChild(bestiary.child)
   bestiary.detail = bestiary.child:CreateFontString(nil, "ARTWORK", "GameFontHighlight")
   bestiary.detail:SetPoint("TOPLEFT")
-  bestiary.detail:SetWidth(500)
+  bestiary.detail:SetWidth(580)
   bestiary.detail:SetJustifyH("LEFT")
   bestiary.detail:SetJustifyV("TOP")
   bestiary.detail:SetSpacing(3)
@@ -1472,7 +1535,7 @@ end
 -- Commands
 ---------------------------------------------------------------------------
 local HELP = {
-  "/gander  -  open the bestiary: every mob Gander remembers",
+  "/gander  -  open the bestiary: every mob Gander remembers or its database knows",
   "/gander settings  -  choose which lines show, and how sharing works",
   "/gander debug  -  print what the game says about your target, what Gander learns, sends and hears, and the mob casts and control effects it sees",
   "/gander help  -  this list",

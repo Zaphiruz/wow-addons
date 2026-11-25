@@ -1,5 +1,13 @@
 # Gander changelog
 
+## 0.9.0 (2026-11-24)
+
+- Gander's data now lives in its own addon, GanderData, so it can grow without waiting for a new Gander. Install GanderData alongside Gander to get it. Gander still works without it, exactly as before: it learns what you see and shares with other players.
+- With GanderData installed, tooltips show its stats (in grey, marked "database") for mobs the game is hiding and you haven't seen. Anything you or another player saw more recently still wins, and a live reading always does.
+- The "Casts:" line now comes from GanderData. Without it there is no Casts line on World of Warcraft: Forever, because the game doesn't let addons see what a mob casts.
+- The bestiary lists the database's mobs along with yours, with a new "Database" button to show just those. The window is a little wider to fit it.
+- The settings page says how many mobs the database knows, or that GanderData isn't installed.
+
 ## 0.8.2 (2026-11-24)
 
 - New "ID:" line on mob tooltips, showing the mob's creature ID. It has its own row on the Stat order page ("Mob ID"), so you can move it or untick it to hide it.
