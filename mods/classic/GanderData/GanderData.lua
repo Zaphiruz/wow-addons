@@ -692,14 +692,14 @@ GanderData = {
       },
       [3236] = {
         [19] = { at = 1795575412, v = { class = "WARRIOR", n = "Barrens Kodo", run = 8, spd = 3, ty = "Beast", z = "The Barrens" } },
-        [20] = { at = 1795576012, v = { class = "WARRIOR", n = "Barrens Kodo", run = 8, spd = 3, ty = "Beast", z = "The Barrens" } },
+        [20] = { at = 1795576024, v = { class = "WARRIOR", n = "Barrens Kodo", run = 8, spd = 3, ty = "Beast", z = "The Barrens" } },
       },
       [3238] = {
         [22] = { at = 1795396923, v = { class = "WARRIOR", n = "Stormhide", run = 8, spd = 2, ty = "Beast", z = "The Barrens" } },
       },
       [3239] = {
-        [20] = { at = 1795575605, v = { class = "WARRIOR", n = "Thunderhead", run = 8, spd = 2, ty = "Beast", z = "The Barrens" } },
-        [21] = { at = 1795576013, v = { class = "WARRIOR", n = "Thunderhead", run = 8, spd = 2, ty = "Beast", z = "The Barrens" } },
+        [20] = { at = 1795576578, v = { class = "WARRIOR", n = "Thunderhead", run = 8, spd = 2, ty = "Beast", z = "The Barrens" } },
+        [21] = { at = 1795576067, v = { class = "WARRIOR", n = "Thunderhead", run = 8, spd = 2, ty = "Beast", z = "The Barrens" } },
       },
       [3240] = {
         [18] = { at = 1795575352, v = { class = "WARRIOR", n = "Stormsnout", run = 8, spd = 2, ty = "Beast", z = "The Barrens" } },
@@ -754,16 +754,16 @@ GanderData = {
         [14] = { at = 1795575159, v = { class = "PALADIN", n = "Kolkar Stormer", run = 8, spd = 2, ty = "Humanoid", z = "The Barrens" } },
       },
       [3296] = {
-        [55] = { at = 1795574728, v = { armor = 3292, class = "WARRIOR", dmax = 249.39, dmin = 188.07, n = "Orgrimmar Grunt", run = 8, spd = 2, ty = "Humanoid", z = "Orgrimmar" } },
+        [55] = { at = 1795614736, v = { armor = 3292, class = "WARRIOR", dmax = 249.39, dmin = 188.07, n = "Orgrimmar Grunt", run = 8, spd = 2, ty = "Humanoid", z = "Orgrimmar" } },
       },
       [3309] = {
-        [45] = { at = 1795574732, v = { armor = 2742, class = "WARRIOR", dmax = 100.32, dmin = 75.65, n = "Karus", run = 8, spd = 2, ty = "Humanoid", z = "Orgrimmar" } },
+        [45] = { at = 1795614507, v = { armor = 2742, class = "WARRIOR", dmax = 100.32, dmin = 75.65, n = "Karus", run = 8, spd = 2, ty = "Humanoid", z = "Orgrimmar" } },
       },
       [3310] = {
-        [55] = { at = 1795574791, v = { armor = 3292, class = "WARRIOR", dmax = 436.44, dmin = 329.12, n = "Doras", rk = "ELITE", run = 8, spd = 2, ty = "Humanoid", z = "Orgrimmar" } },
+        [55] = { at = 1795614730, v = { armor = 3292, class = "WARRIOR", dmax = 436.44, dmin = 329.12, n = "Doras", rk = "ELITE", run = 8, spd = 2, ty = "Humanoid", z = "Orgrimmar" } },
       },
       [3320] = {
-        [45] = { at = 1795574024, v = { armor = 2742, class = "WARRIOR", dmax = 100.32, dmin = 75.65, n = "Soran", run = 8, spd = 2, ty = "Humanoid", z = "Orgrimmar" } },
+        [45] = { at = 1795614499, v = { armor = 2742, class = "WARRIOR", dmax = 100.32, dmin = 75.65, n = "Soran", run = 8, spd = 2, ty = "Humanoid", z = "Orgrimmar" } },
       },
       [3338] = {
         [60] = { at = 1795575039, v = { class = "WARRIOR", n = "Sergra Darkthorn", rk = "ELITE", run = 8, spd = 2, ty = "Humanoid", z = "The Barrens" } },
@@ -852,7 +852,7 @@ GanderData = {
         [14] = { at = 1795575028, v = { class = "WARRIOR", n = "Tari'qa", run = 8, spd = 2, ty = "Humanoid", z = "The Barrens" } },
       },
       [3501] = {
-        [40] = { at = 1795575384, v = { class = "WARRIOR", n = "Horde Guard", run = 8, spd = 2, ty = "Humanoid", z = "The Barrens" } },
+        [40] = { at = 1795576873, v = { class = "WARRIOR", n = "Horde Guard", run = 8, spd = 2, ty = "Humanoid", z = "The Barrens" } },
       },
       [3527] = {
         [27] = { at = 1795564923, v = { class = "WARRIOR", n = "Healing Stream Totem", run = 7, spd = 2, ty = "Totem", z = "Blackfathom Deeps" } },
