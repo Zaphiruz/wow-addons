@@ -212,6 +212,7 @@ function widget(kind, name, parent, template)
   function w:CreateFontString(n) return widget("FontString", n, self) end
   function w:CreateTexture(n) return widget("Texture", n, self) end
   function w:Click(button)
+    if not self.enabled then return end
     if self.kind == "CheckButton" then self.checked = not self.checked end
     if self.scripts.OnClick then self.scripts.OnClick(self, button or "LeftButton") end
   end
@@ -391,6 +392,11 @@ end
 resting = false
 function IsResting() return resting end
 function GetLocale() return "enUS" end
+-- The player clicks into a box, as they do to copy from it.
+function clickInto(box)
+  local gained = box:GetScript("OnEditFocusGained")
+  if gained then gained(box) end
+end
 -- How many of the printed lines are the reminder.
 function reminders()
   local n = 0
@@ -1087,7 +1093,8 @@ SCENARIOS = {
      "sent what was only heard, or somebody's name: " .. block)
   ok(not block:find('"n":', 1, true), "the name belongs to the mob, not the sighting: " .. block)
   ok(w.summary:GetText():find("2 sightings", 1, true), w.summary:GetText())
-  ok(w.sent:IsEnabled(), "I sent it should be clickable")
+  clickInto(w.data)
+  ok(w.sent:IsEnabled(), "I sent it should be clickable once the block was clicked into")
   CHECK_BLOCK, CHECK_MOBS = block, "681,1108"
 ''',
 "Classic Era says which game the block is from": r'''
@@ -1111,6 +1118,7 @@ SCENARIOS = {
   cmd("send")
   local w = GanderSend
   out = {}
+  clickInto(w.data)
   w.sent:Click()
   ok(list(out):find("2 sightings", 1, true), "didn't say what was marked: " .. list(out))
   ok(not w:IsShown(), "nothing is left, so the window should close")
@@ -1130,6 +1138,7 @@ SCENARIOS = {
   local block = w.data:GetText()
   ok(w.summary:GetText():find("2 sightings", 1, true), w.summary:GetText())
   ok(block:find('"681"', 1, true) and block:find('"3100"', 1, true) and not block:find('"1108"', 1, true), block)
+  clickInto(w.data)
   ok(w.sent:IsEnabled(), "I sent it should be clickable again")
 ''',
 "what was sent stays sent after a reload": r'''
@@ -1173,6 +1182,7 @@ SCENARIOS = {
     ok(#block > 0 and #block <= 30000, "a part of " .. #block .. " characters")
     for _ in block:gmatch('"name":') do sent = sent + 1 end
     parts = parts + 1
+    clickInto(w.data)
     w.sent:Click()
     if parts == 1 then
       ok(w:IsShown() and not w.summary:GetText():find("600 sightings", 1, true),
@@ -1181,6 +1191,59 @@ SCENARIOS = {
   end
   ok(parts >= 2 and parts < 20, parts .. " parts")
   ok(sent == 600, sent .. " mobs sent in all")
+''',
+"pages are numbered, and the button waits until the block was clicked into": r'''
+  login(nil)
+  for id = 1, 600 do
+    known(1000 + id, 20, { spd = 2, armor = 500 + id, n = "Mob Number " .. id, ty = "Humanoid", z = "The Barrens" })
+  end
+  cmd("send")
+  local w = GanderSend
+  local total = tonumber(w.summary:GetText():match("Page 1 of (%d+)"))
+  ok(total and total >= 2, "doesn't say which page this is: " .. w.summary:GetText())
+  ok(w.sent:GetText() == "I sent page 1", w.sent:GetText())
+  local first = w.data:GetText()
+  ok(not w.sent:IsEnabled(), "the button should wait until the block was clicked into")
+  w.sent:Click()
+  ok(w.data:GetText() == first, "a click on the sleeping button moved on to the next part")
+  clickInto(w.data)
+  ok(w.sent:IsEnabled(), "clicking into the box should wake the button")
+  out = {}
+  w.sent:Click()
+  ok(w.summary:GetText():find("Page 2 of " .. total, 1, true), w.summary:GetText())
+  ok(w.sent:GetText() == "I sent page 2", w.sent:GetText())
+  ok(w.data:GetText() ~= first and #w.data:GetText() > 0, "the next part should be a new block")
+  ok(not w.sent:IsEnabled(), "a second click straight away mustn't mark the next part")
+  ok(list(out):find("Page 2 of " .. total, 1, true) and list(out):find("new block", 1, true),
+     "chat should say there is another part: " .. list(out))
+  w.sent:Click(); w.sent:Click()
+  ok(w.summary:GetText():find("Page 2 of " .. total, 1, true), "clicked through a part: " .. w.summary:GetText())
+''',
+"one block has no page number, and its button waits too": r'''
+  login(nil)
+  sampleMobs()
+  cmd("send")
+  local w = GanderSend
+  ok(not w.summary:GetText():find("Page", 1, true) and w.sent:GetText() == "I sent it", w.summary:GetText())
+  ok(not w.sent:IsEnabled(), "the button should wait until the block was clicked into")
+  w.sent:Click()
+  ok(w:IsShown() and #w.data:GetText() > 0, "marked without the block being copied")
+''',
+"/gander send again offers everything again": r'''
+  login(nil)
+  sampleMobs()
+  cmd("send")
+  local w = GanderSend
+  clickInto(w.data); w.sent:Click()
+  cmd("send")
+  ok(w.data:GetText() == "", "should have nothing left: " .. w.data:GetText())
+  local o = cmd("send again")
+  ok(o:find("offered again", 1, true), o)
+  ok(w:IsShown() and w.summary:GetText():find("2 sightings", 1, true), w.summary:GetText())
+  ok(w.data:GetText():find('"681"', 1, true) and w.data:GetText():find('"1108"', 1, true), w.data:GetText())
+  ok(cmd("help"):find("/gander send again", 1, true), cmd("help"))
+  o = cmd("send banana")
+  ok(o:find("banana", 1, true) and o:find("/gander help", 1, true), o)
 ''',
 "the reminder is off until it's ticked": r'''
   login(nil)
@@ -1232,7 +1295,7 @@ SCENARIOS = {
 "sending starts the wait over": r'''
   login({ remind = true, sendPlayed = 5 * 3600 })
   units.mouseover = BOAR(); hover("mouseover")
-  cmd("send"); GanderSend.sent:Click()
+  cmd("send"); clickInto(GanderSend.data); GanderSend.sent:Click()
   ok(GanderDB.sendPlayed == 0, tostring(GanderDB.sendPlayed))
 ''',
 "the settings page has the reminder tick and a Send button": r'''

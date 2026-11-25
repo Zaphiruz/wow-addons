@@ -958,6 +958,8 @@ local BLOCK_SIZE = 30000        -- characters in one block; a GitHub issue holds
 local REMIND_AFTER = 4 * 3600   -- seconds of play between reminders
 local REMIND_TICK = 60          -- seconds between counts of play time
 local sendWindow, sendBlock
+local sendPage = 1        -- which page of this sitting is in the window
+local sendArmed = false   -- has the player clicked into this page's block?
 local clockRunning = false
 
 local function jsonString(text)
@@ -1005,22 +1007,24 @@ local function mobBlock(id, mob)
                 table.concat(levels, ",")), records
 end
 
--- The next block to send: its text, the records in it, and how many
--- sightings are waiting in all.
+-- The next block to send: its text, the records in it, how many sightings
+-- are waiting in all, and how many blocks ("pages") they need.
 local function buildBlock()
-  local pieces, records, size, waiting = {}, {}, 0, 0
+  local pieces, records, waiting = {}, {}, 0
+  local pages, used = 0, 0
   for _, id in ipairs(sortedKeys(db.mobs, "number")) do
     local mob = db.mobs[id]
     local text, found
     if type(mob) == "table" and type(mob.lv) == "table" then text, found = mobBlock(id, mob) end
     if text then
       waiting = waiting + #found
-      if size == 0 or size + #text + 1 <= BLOCK_SIZE - 100 then
+      if pages == 0 or used + #text + 1 > BLOCK_SIZE - 100 then
+        pages, used = pages + 1, 0
+      end
+      used = used + #text + 1
+      if pages == 1 then
         pieces[#pieces + 1] = text
-        size = size + #text + 1
         for _, item in ipairs(found) do records[#records + 1] = item end
-      else
-        size = BLOCK_SIZE  -- full: the rest wait for the next block, in order
       end
     end
   end
@@ -1029,7 +1033,7 @@ local function buildBlock()
     text = format('{"format":1,"game":"%s","locale":%s,"mobs":{%s}}', GAME, jsonString(GetLocale() or "enUS"),
                   table.concat(pieces, ","))
   end
-  return { text = text, records = records, waiting = waiting }
+  return { text = text, records = records, waiting = waiting, pages = pages }
 end
 
 local function sameValues(a, b)
@@ -1077,20 +1081,35 @@ local function copyBox(box)
   box:SetScript("OnEscapePressed", function(self) self:ClearFocus() end)
 end
 
+-- "I sent it" only works once the player has clicked into this page's
+-- block, so a second click can't mark a page that was never copied.
+local function armSend(on)
+  sendArmed = on
+  sendWindow.sent:SetEnabled(on and #sendBlock.records > 0)
+end
+
 local function drawSend()
   sendBlock = buildBlock()
   local here, waiting = #sendBlock.records, sendBlock.waiting
+  local pages = sendPage - 1 + sendBlock.pages   -- sent this sitting, plus what is left
+  local title, button = "Gander: send to the GanderData database", "I sent it"
   if here == 0 then
     sendWindow.summary:SetText("Nothing new to send. Everything you've seen has already been sent.")
-  elseif here < waiting then
-    sendWindow.summary:SetText(format("You have %s the database hasn't had from you. This block holds %s of them: "
-      .. "the next one comes up when you say this one is sent.", sightings(waiting), commas(here)))
+  elseif pages > 1 then
+    sendWindow.summary:SetText(format("|cff40ff40Page %d of %d.|r You have %s left to send, too many for one block. "
+      .. "Each page is a new block: copy it, send it, click the button below, and the next page comes up.",
+      sendPage, pages, sightings(waiting)))
+    title = format("%s (page %d/%d)", title, sendPage, pages)
+    button = format("I sent page %d", sendPage)
   else
     sendWindow.summary:SetText(format("You have %s the database hasn't had from you.", sightings(here)))
   end
+  if type(sendWindow.TitleText) == "table" then sendWindow.TitleText:SetText(title) end
+  sendWindow.sent:SetText(button)
   fill(sendWindow.url, SEND_URL)
   fill(sendWindow.data, sendBlock.text)
-  sendWindow.sent:SetEnabled(here > 0)
+  sendWindow.data:ClearFocus()   -- so the next click into it counts as a new one
+  armSend(false)
 end
 
 local function buildSend()
@@ -1106,7 +1125,6 @@ local function buildSend()
   w:RegisterForDrag("LeftButton")
   w:SetScript("OnDragStart", w.StartMoving)
   w:SetScript("OnDragStop", w.StopMovingOrSizing)
-  if type(w.TitleText) == "table" then w.TitleText:SetText("Gander: send to the GanderData database") end
   tinsert(UISpecialFrames, "GanderSend")  -- Escape closes it
 
   local function line(text, y, font)
@@ -1138,23 +1156,36 @@ local function buildSend()
   w.data:SetFontObject("ChatFontNormal")
   w.data:SetWidth(456)
   copyBox(w.data)
+  w.data:SetScript("OnEditFocusGained", function(self)
+    self:HighlightText()
+    armSend(true)
+  end)
+  w.data:SetScript("OnMouseDown", function() armSend(true) end)
   scroll:SetScrollChild(w.data)
   scroll:EnableMouse(true)
   scroll:SetScript("OnMouseDown", function() w.data:SetFocus() end)
   local last = w:CreateFontString(nil, "ARTWORK", "GameFontNormal")
   last:SetPoint("BOTTOMLEFT", 16, 56)
-  last:SetText("3. Tell Gander, so these aren't sent twice.")
+  last:SetWidth(488)
+  last:SetJustifyH("LEFT")
+  last:SetText("3. Tell Gander, so these aren't sent twice. The button wakes up once you've clicked in the box.")
 
   w.sent = CreateFrame("Button", nil, w, "UIPanelButtonTemplate")
-  w.sent:SetSize(120, 24)
+  w.sent:SetSize(140, 24)
   w.sent:SetPoint("BOTTOMLEFT", 16, 20)
-  w.sent:SetText("I sent it")
   w.sent:SetScript("OnClick", function()
+    if not sendArmed then return end
     local n = markSent(sendBlock)
     db.sendPlayed = 0
-    say("marked %s as sent. Thank you!", sightings(n))
+    sendPage = sendPage + 1
     drawSend()
-    if #sendBlock.records == 0 then w:Hide() end
+    if #sendBlock.records == 0 then
+      say("marked %s as sent. Thank you!", sightings(n))
+      w:Hide()
+    else
+      say("marked page %d as sent (%s). Page %d of %d is in the window now: it's a new block, so copy and send "
+          .. "it too.", sendPage - 1, sightings(n), sendPage, sendPage - 1 + sendBlock.pages)
+    end
   end)
   w.later = CreateFrame("Button", nil, w, "UIPanelButtonTemplate")
   w.later:SetSize(120, 24)
@@ -1163,8 +1194,20 @@ local function buildSend()
   w.later:SetScript("OnClick", function() w:Hide() end)
 end
 
-function openSend()
+-- Open the window at the first page of whatever is waiting. With "again",
+-- everything ever seen is offered once more: for a page that was marked as
+-- sent but never was.
+function openSend(again)
+  if again == "again" then
+    for _, mob in pairs(db.mobs) do
+      for _, rec in pairs(type(mob) == "table" and type(mob.lv) == "table" and mob.lv or NOTHING) do
+        if type(rec) == "table" then rec.sent = nil end
+      end
+    end
+    say("everything you've seen will be offered again. Sending something twice does no harm.")
+  end
   if not sendWindow then buildSend() end
+  sendPage = 1
   drawSend()
   sendWindow:Show()
 end
@@ -1425,7 +1468,7 @@ local function buildPanel()
   panel.sendButton:SetSize(180, 22)
   panel.sendButton:SetPoint("TOPLEFT", 150, -354)
   panel.sendButton:SetText("Send to the database...")
-  panel.sendButton:SetScript("OnClick", openSend)
+  panel.sendButton:SetScript("OnClick", function() openSend() end)
   panel.orderButton = CreateFrame("Button", nil, panel, "UIPanelButtonTemplate")
   panel.orderButton:SetSize(120, 22)
   panel.orderButton:SetPoint("TOPLEFT", 20, -354)
@@ -1819,6 +1862,7 @@ local HELP = {
   "/gander  -  open the bestiary: every mob Gander remembers or its database knows",
   "/gander settings  -  choose which lines show, and how sharing works",
   "/gander send  -  give what you've seen to the GanderData database, for every player",
+  "/gander send again  -  offer everything again, if a page was marked as sent by mistake",
   "/gander debug  -  print what the game says about your target, what Gander learns, sends and hears, and the mob casts and control effects it sees",
   "/gander help  -  this list",
 }
@@ -2061,13 +2105,13 @@ SlashCmdList.GANDER = function(msg)
     say("didn't finish loading. Try /reload, and check for errors.")
     return
   end
-  local word = strtrim(msg or ""):match("^(%S*)"):lower()
+  local word, rest = strtrim(msg or ""):lower():match("^(%S*)%s*(.-)$")
   if word == "" then
     toggleBestiary()
   elseif word == "settings" then
     openSettings()
-  elseif word == "send" then
-    openSend()
+  elseif word == "send" and (rest == "" or rest == "again") then
+    openSend(rest)
   elseif word == "debug" then
     debugging = not debugging
     say("debug %s.", debugging and "on" or "off")
@@ -2079,7 +2123,7 @@ SlashCmdList.GANDER = function(msg)
   elseif word == "help" then
     for _, line in ipairs(HELP) do say(line) end
   else
-    say("no command called %s. Type /gander help for commands.", word)
+    say("no command called %s. Type /gander help for commands.", strtrim(word .. " " .. rest))
   end
 end
 

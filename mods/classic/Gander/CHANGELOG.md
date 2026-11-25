@@ -1,5 +1,11 @@
 # Gander changelog
 
+## 0.10.1 (2026-11-25)
+
+- When there is too much to send in one go, the send window now says so plainly: "Page 1 of 3" in the window and on its title bar, and the button reads "I sent page 1". Each page is a new block to copy and send.
+- The "I sent it" button now waits until you've clicked into the block, so a second click can't mark a page you never copied.
+- New: `/gander send again` offers everything again, for when a page was marked as sent by mistake. Sending something twice does no harm.
+
 ## 0.10.0 (2026-11-25)
 
 - New: `/gander send` (or the "Send to the database..." button in the settings) opens a window that turns what you've seen into a block of text. Paste it on the page the window names and it's checked and added to GanderData, for every player.
