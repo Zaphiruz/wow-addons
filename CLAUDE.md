@@ -53,8 +53,9 @@ and release commands for people; this file is how we work on it.
   screen but code can't read what it says.
 - The combat log *file* on Forever is complete, even in a dungeon: `/combatlog`
   writes `Logs\WoWCombatLog-<date>.txt` with mob GUIDs, names, spell IDs and
-  spell names (seen in Blackfathom Deeps). The game writes it late, so it can
-  sit at 0 bytes for minutes. Addons can't read it; a script outside the game
+  spell names (seen in Blackfathom Deeps). The game writes it in batches
+  about five minutes apart (seen twice); until then the file is 0 bytes, and
+  neither `/reload` nor switching logging off forces a write. Addons can't read it; a script outside the game
   can. `LoggingCombat(true)` from `/run` switched it on in a dungeon without
   an error, and Gander 0.8.0 switches it on from `PLAYER_ENTERING_WORLD` when
   entering a dungeon (seen working in game), so no key press is needed.

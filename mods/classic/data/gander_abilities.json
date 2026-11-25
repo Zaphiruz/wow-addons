@@ -36,6 +36,17 @@
       }
      }
     },
+    "3239": {
+     "name": "Thunderhead",
+     "spells": {
+      "5401": {
+       "at": "2026-11-24",
+       "build": "1.60.1",
+       "n": 10,
+       "spawns": 2
+      }
+     }
+    },
     "4798": {
      "name": "Fallenroot Shadowstalker",
      "spells": {
@@ -232,6 +243,7 @@
     "3490": "Frenzied Rage",
     "3604": "Tendon Rip",
     "3815": "Poison Cloud",
+    "5401": "Lizard Bolt",
     "6063": "Heal",
     "6205": "Curse of Weakness",
     "6533": "Net",

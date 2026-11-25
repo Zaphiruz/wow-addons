@@ -1,5 +1,10 @@
 # Gander changelog
 
+## 0.8.2 (2026-11-24)
+
+- New "ID:" line on mob tooltips, showing the mob's creature ID. It has its own row on the Stat order page ("Mob ID"), so you can move it or untick it to hide it.
+- The list of what mobs cast grew: Thunderhead in the Barrens, the first open-world mob on it.
+
 ## 0.8.1 (2026-11-24)
 
 - New option under the combat logging setting: "Also in the open world". With both ticked, Gander keeps combat logging on outside dungeons too, so open-world mobs can join the list of what mobs cast. It's off by default and logs every fight until you untick it. Battlegrounds are never logged.

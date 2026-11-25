@@ -35,12 +35,12 @@ end
 ---------------------------------------------------------------------------
 -- The tooltip lines, in the order shown. Each can be switched off.
 local LINE_KEYS = { "defense", "armor", "resist", "health", "power", "speed", "damage", "ap", "ranged",
-                    "stats", "run", "class", "family", "casts" }
+                    "stats", "run", "class", "family", "casts", "id" }
 local LINE_LABEL = {
   defense = "Defense", armor = "Armor", resist = "Resistances", health = "Health", power = "Mana / power",
   speed = "Attack speed", damage = "Damage", ap = "Attack power", ranged = "Ranged attack",
   stats = "Strength, agility and other stats", run = "Run speed", class = "Class", family = "Family",
-  casts = "What it casts",
+  casts = "What it casts", id = "Mob ID",
 }
 
 local function loadSettings()
@@ -404,6 +404,10 @@ local function linesFor(v, id, level)
     if lineKey == "casts" then
       local casts = db.lines.casts and castsText(id, CASTS_ON_TOOLTIP)
       if casts then lines[#lines + 1] = LABEL .. "Casts:|r " .. VALUE .. casts .. "|r" end
+    elseif lineKey == "id" then
+      -- The creature ID: the number the game, this addon's lists and
+      -- database sites all know the mob by.
+      if db.lines.id and id then lines[#lines + 1] = LABEL .. "ID:|r " .. VALUE .. id .. "|r" end
     elseif db.lines[line.key] then
       if firstOf(line.fields, live) then
         local label, value = line.text(live)

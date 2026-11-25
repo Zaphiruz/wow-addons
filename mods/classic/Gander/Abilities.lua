@@ -12,6 +12,7 @@ ns.abilities = {
       [3490] = "Frenzied Rage",
       [3604] = "Tendon Rip",
       [3815] = "Poison Cloud",
+      [5401] = "Lizard Bolt",
       [6063] = "Heal",
       [6205] = "Curse of Weakness",
       [6533] = "Net",
@@ -33,6 +34,7 @@ ns.abilities = {
       [15531] = "Frost Nova",
     },
     mobs = {
+      [3239] = { 5401 },  -- Thunderhead
       [4798] = { 6205 },  -- Fallenroot Shadowstalker
       [4805] = { 12544 },  -- Blackfathom Sea Witch
       [4813] = { 9613, 7645 },  -- Twilight Shadowmage

@@ -237,6 +237,8 @@ TooltipDataProcessor = { AddTooltipPostCall = function(kind, fn)
   postCalls[kind] = postCalls[kind] or {}; table.insert(postCalls[kind], fn) end }
 function plain(s) return (s:gsub("|c%x%x%x%x%x%x%x%x", ""):gsub("|r", "")) end
 -- Mouse over a unit: returns the lines the addon added, joined with " | ".
+-- The mob ID line is only included when fullTooltip is set.
+fullTooltip = false
 function hover(u)
   GameTooltip:ClearLines()
   GameTooltip.unit = u
@@ -248,7 +250,10 @@ function hover(u)
     GameTooltip:RunHooks("OnTooltipSetUnit")
   end
   local t = {}
-  for i = 3, #GameTooltip.lines do t[#t+1] = plain(GameTooltip.lines[i]) end
+  for i = 3, #GameTooltip.lines do
+    local text = plain(GameTooltip.lines[i])
+    if fullTooltip or not text:find("^ID: ") then t[#t+1] = text end
+  end
   return table.concat(t, " | ")
 end
 -- Classic Era: the old tooltip hooks, and no UnitDefenseSkill.
@@ -341,7 +346,7 @@ function panel() return categories[1].frame end
 function loginNoChannel() login({ channel = false }) end
 function check(key) return panel().checks[key] end
 function orderPage() return subcategories[1].frame end
-DEFAULT_ORDER = "defense armor resist health power speed damage ap ranged stats run class family casts"
+DEFAULT_ORDER = "defense armor resist health power speed damage ap ranged stats run class family casts id"
 function orderText() return table.concat(GanderDB.order, " ") end
 -- Drag the line in row `from` and drop it on row `to` of the Stat order page.
 function dragRow(from, to)
@@ -456,7 +461,8 @@ SCENARIOS = {
   local t = hover("mouseover")
   ok(t == "Defense: 45 | Attack speed: 2.0", t)
   GameTooltip:RunHooks("OnTooltipSetUnit")  -- the game can set a unit twice
-  ok(#GameTooltip.lines == 4, "added twice: " .. #GameTooltip.lines)
+  -- The game's two lines, then Defense, Attack speed and the mob's ID.
+  ok(#GameTooltip.lines == 5, "added twice: " .. #GameTooltip.lines)
 ''',
 "a skull-level mob has no worked-out defense": r'''
   classicEra()
@@ -1044,7 +1050,7 @@ SCENARIOS = {
   login(nil)
   ok(orderText() == DEFAULT_ORDER, orderText())
   login({ order = { "speed", "defense", "bogus", "speed", 7 } })
-  ok(orderText() == "speed defense armor resist health power damage ap ranged stats run class family casts", orderText())
+  ok(orderText() == "speed defense armor resist health power damage ap ranged stats run class family casts id", orderText())
 ''',
 "tooltip lines follow the chosen order": r'''
   login({ order = { "speed", "defense" } })
@@ -1064,9 +1070,9 @@ SCENARIOS = {
   ok(#subcategories == 1 and subcategories[1].name == "Stat order" and subcategories[1].parent == categories[1], "not registered under Gander")
   local page = orderPage()
   page:Show()
-  ok(#page.rows == 14, "rows: " .. #page.rows)
+  ok(#page.rows == 15, "rows: " .. #page.rows)
   ok(page.rows[1].label:GetText() == "Defense" and page.rows[6].label:GetText() == "Attack speed", page.rows[1].label:GetText())
-  ok(page.rows[1].number:GetText() == "1." and page.rows[14].number:GetText() == "14.", "numbered")
+  ok(page.rows[1].number:GetText() == "1." and page.rows[15].number:GetText() == "15.", "numbered")
   ok(page.rows[1].check:GetChecked() == true, "ticked")
   ok(not page.marker:IsShown(), "the drop marker shows before any drag")
 ''',
@@ -1075,19 +1081,19 @@ SCENARIOS = {
   local page = orderPage()
   page:Show()
   dragRow(6, 1)                               -- Attack speed to the top
-  ok(orderText() == "speed defense armor resist health power damage ap ranged stats run class family casts", orderText())
+  ok(orderText() == "speed defense armor resist health power damage ap ranged stats run class family casts id", orderText())
   ok(page.rows[1].label:GetText() == "Attack speed" and page.rows[2].label:GetText() == "Defense", "the page redraws")
   units.mouseover = BOAR()
   ok(hover("mouseover") == "Attack speed: 2.0 | Defense: 45", hover("mouseover"))
   dragRow(1, 3)                               -- and down to third
   ok(table.concat(GanderDB.order, " ", 1, 3) == "defense armor speed", orderText())
   dragRow(3, 99)                              -- dropped below the list: last
-  ok(GanderDB.order[14] == "speed", orderText())
-  dragRow(14, -5)                             -- dropped above the list: first
+  ok(GanderDB.order[15] == "speed", orderText())
+  dragRow(15, -5)                             -- dropped above the list: first
   ok(GanderDB.order[1] == "speed", orderText())
   local before = orderText()
   dragRow(4, 4)                               -- dropped where it was
-  ok(orderText() == before and #GanderDB.order == 14, orderText())
+  ok(orderText() == before and #GanderDB.order == 15, orderText())
   local saved = GanderDB
   login(saved)
   ok(orderText() == before, "the order is kept across logins: " .. orderText())
@@ -1194,6 +1200,44 @@ SCENARIOS = {
   ok(d:find("Casts: S1, S2, S3, S4, S5, S6, S7", 1, true), d)
 ''',
 
+# ---- the mob's id ----
+"the tooltip shows the mob's id, last unless it's moved": r'''
+  login(nil)
+  fullTooltip = true
+  ok(GanderDB.lines.id == true, "off by default")
+  units.mouseover = BOAR()
+  ok(hover("mouseover") == "Defense: 45 | Attack speed: 2.0 | ID: 3100", hover("mouseover"))
+  units.mouseover = KELRIS()
+  ok(hover("mouseover") == "Defense: 140 | Attack speed: 2.0 | Casts: Sleep, Listed Only | ID: 4832", hover("mouseover"))
+  login({ order = { "id", "defense" } })
+  units.mouseover = BOAR()
+  ok(hover("mouseover") == "ID: 3100 | Defense: 45 | Attack speed: 2.0", hover("mouseover"))
+''',
+"a mob the game won't identify gets no ID line": r'''
+  login(nil)
+  fullTooltip = true
+  units.mouseover = mob(3100, { name = "Elder Mottled Boar", level = 9, speed = 2, noid = true })
+  ok(not hover("mouseover"):find("ID"), hover("mouseover"))
+''',
+"the ID line has a row on the Stat order page and can be hidden": r'''
+  login(nil)
+  fullTooltip = true
+  local page = orderPage()
+  page:Show()
+  ok(page.rows[15].label:GetText() == "Mob ID", page.rows[15].label:GetText())
+  check("id"):Click()
+  ok(GanderDB.lines.id == false, "the tick didn't switch it off")
+  units.mouseover = BOAR()
+  ok(hover("mouseover") == "Defense: 45 | Attack speed: 2.0", hover("mouseover"))
+''',
+"the bestiary still lists a mob's stats with the ID line in the order": r'''
+  login({ order = { "id", "casts", "speed", "defense" } })
+  sampleMobs()
+  cmd("")
+  GanderBestiary.rows[3]:Click()
+  local d = plain(GanderBestiary.detail:GetText())
+  ok(d:find("Attack speed 1.3.-Defense 150"), d)
+''',
 # ---- combat logging in dungeons ----
 "combat logging in dungeons is off until switched on": r'''
   login(nil)
