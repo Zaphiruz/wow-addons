@@ -2,4 +2,5 @@
 ## Title: GanderData
 ## Notes: The database for the Gander addon: what each mob casts, and its stats, gathered by players. Gander works without it and knows more with it.
 ## Version: 1.0.0
+## X-Curse-Project-ID: 1829672
 GanderData.lua
