@@ -135,11 +135,164 @@
    "received": "2026-11-25",
    "sender": "de816eabacc0",
    "spells": {}
+  },
+  {
+   "game": "forever",
+   "instances": {},
+   "mobs": {
+    "4343": {
+     "levels": {
+      "37": {
+       "at": 1795615228,
+       "v": {
+        "class": "WARRIOR",
+        "fam": "Crocolisk",
+        "run": 8,
+        "spd": 2,
+        "ty": "Beast",
+        "z": "Dustwallow Marsh"
+       }
+      }
+     },
+     "name": "Drywallow Snapper",
+     "spells": {}
+    },
+    "4355": {
+     "levels": {
+      "38": {
+       "at": 1795615230,
+       "v": {
+        "class": "WARRIOR",
+        "fam": "Raptor",
+        "run": 8,
+        "spd": 2,
+        "ty": "Beast",
+        "z": "Dustwallow Marsh"
+       }
+      }
+     },
+     "name": "Bloodfen Scytheclaw",
+     "spells": {}
+    },
+    "4388": {
+     "levels": {
+      "39": {
+       "at": 1795615321,
+       "v": {
+        "class": "WARRIOR",
+        "run": 8,
+        "spd": 2,
+        "ty": "Beast",
+        "z": "Dustwallow Marsh"
+       }
+      },
+      "41": {
+       "at": 1795615264,
+       "v": {
+        "class": "WARRIOR",
+        "run": 8,
+        "spd": 2,
+        "ty": "Beast",
+        "z": "Dustwallow Marsh"
+       }
+      }
+     },
+     "name": "Young Murk Thresher",
+     "spells": {}
+    },
+    "4398": {
+     "levels": {
+      "39": {
+       "at": 1795615401,
+       "v": {
+        "class": "WARRIOR",
+        "fam": "Turtle",
+        "run": 8,
+        "spd": 2,
+        "ty": "Beast",
+        "z": "Dustwallow Marsh"
+       }
+      }
+     },
+     "name": "Mudrock Burrower",
+     "spells": {}
+    },
+    "4401": {
+     "levels": {
+      "39": {
+       "at": 1795615309,
+       "v": {
+        "class": "WARRIOR",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Dustwallow Marsh"
+       }
+      },
+      "40": {
+       "at": 1795615338,
+       "v": {
+        "class": "WARRIOR",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Dustwallow Marsh"
+       }
+      }
+     },
+     "name": "Muckshell Clacker",
+     "spells": {}
+    },
+    "4402": {
+     "levels": {
+      "40": {
+       "at": 1795615315,
+       "v": {
+        "class": "WARRIOR",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Dustwallow Marsh"
+       }
+      },
+      "41": {
+       "at": 1795615422,
+       "v": {
+        "class": "WARRIOR",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Dustwallow Marsh"
+       }
+      }
+     },
+     "name": "Muckshell Snapclaw",
+     "spells": {}
+    },
+    "6145": {
+     "levels": {
+      "1": {
+       "at": 1795615309,
+       "v": {
+        "class": "WARRIOR",
+        "ty": "Critter",
+        "z": "Dustwallow Marsh"
+       }
+      }
+     },
+     "name": "School of Fish",
+     "spells": {}
+    }
+   },
+   "received": "2026-11-25",
+   "sender": "de816eabacc0",
+   "spells": {}
   }
  ],
  "seen": [
   "6aeebeba80aca3df",
-  "d546a197f4d54166"
+  "d546a197f4d54166",
+  "452003bc23db7324"
  ],
  "version": 1
 }
