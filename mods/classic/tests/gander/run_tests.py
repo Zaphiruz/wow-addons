@@ -260,7 +260,8 @@ function classicEra()
 end
 
 -- Spells, and what the game says about debuffs and control effects.
-spells = { [133] = "Fireball", [6253] = "Backhand", [744] = "Poison", [700] = "Sleep" }
+spells = { [133] = "Fireball", [6253] = "Backhand", [744] = "Poison", [700] = "Sleep", [8399] = "Sleep",
+           [12167] = "Lightning Bolt", [12168] = "Lightning Bolt" }
 C_Spell = { GetSpellName = function(id) return spells[id] end }
 controls, auras = {}, {}   -- controls[unit][index], auras[unit][auraInstanceID]
 C_LossOfControl = { GetActiveLossOfControlDataByUnit = function(u, i) return controls[u] and controls[u][i] end }
@@ -273,6 +274,32 @@ function probing()
   out = {}
   return function() local o = table.concat(out, " / "); out = {}; return o end
 end
+
+-- The list of what mobs cast that ships with the addon (Abilities.lua puts
+-- it in the addon's private table). The game knows some spell names itself.
+NS = { abilities = {
+  forever = {
+    instances = { [48] = 12, [36] = 95 },   -- minutes logged: Blackfathom Deeps, The Deadmines
+    spells = { [8399] = "Sleep (list)", [9999] = "Listed Only", "S1", "S2", "S3", "S4", "S5", "S6", "S7" },
+    mobs = { [4832] = { 8399, 9999 }, [777] = { 1, 2, 3, 4, 5, 6, 7 }, [12902] = { 12167, 12168, 744 } },
+  },
+  classic = { instances = {}, spells = {}, mobs = { [4798] = { 744 } } },
+} }
+function GetBuildInfo() return "1.0", "1", "today", forever and 16001 or 11509 end
+KELRIS = function() return mob(4832, { name = "Twilight Lord Kelris", level = 27, def = 140, speed = 2 }) end
+
+-- Combat logging to a file, and which instance you're in.
+logging, loggingAllowed = false, true
+function LoggingCombat(v) if v ~= nil and loggingAllowed then logging = v end return logging end
+instance = nil
+BFD = { id = 48, name = "Blackfathom Deeps", kind = "party" }
+function IsInInstance() if instance then return true, instance.kind end return false, "none" end
+function GetInstanceInfo()
+  if instance then return instance.name, instance.kind, 1, "Normal", 5, 0, false, instance.id end
+  return "Kalimdor", "none", 0, "", 0, 0, false, 1
+end
+-- Walk into an instance (or out, with nil).
+function enter(i) instance = i; out = {}; fire("PLAYER_ENTERING_WORLD"); return table.concat(out, " / ") end
 
 -- The game's settings window.
 categories, subcategories, opened = {}, {}, nil
@@ -302,7 +329,7 @@ function login(saved)
   GanderDB = saved
   events, timers, categories, subcategories, postCalls = {}, {}, {}, {}, {}
   GameTooltip.hooks = {}
-  assert(loadstring(ADDON_SRC, "Gander.lua"))("Gander")
+  assert(loadstring(ADDON_SRC, "Gander.lua"))("Gander", NS)
   fire("ADDON_LOADED", "Gander")
   fire("PLAYER_LOGIN")
 end
@@ -314,7 +341,7 @@ function panel() return categories[1].frame end
 function loginNoChannel() login({ channel = false }) end
 function check(key) return panel().checks[key] end
 function orderPage() return subcategories[1].frame end
-DEFAULT_ORDER = "defense armor resist health power speed damage ap ranged stats run class family"
+DEFAULT_ORDER = "defense armor resist health power speed damage ap ranged stats run class family casts"
 function orderText() return table.concat(GanderDB.order, " ") end
 -- Drag the line in row `from` and drop it on row `to` of the Stat order page.
 function dragRow(from, to)
@@ -1017,7 +1044,7 @@ SCENARIOS = {
   login(nil)
   ok(orderText() == DEFAULT_ORDER, orderText())
   login({ order = { "speed", "defense", "bogus", "speed", 7 } })
-  ok(orderText() == "speed defense armor resist health power damage ap ranged stats run class family", orderText())
+  ok(orderText() == "speed defense armor resist health power damage ap ranged stats run class family casts", orderText())
 ''',
 "tooltip lines follow the chosen order": r'''
   login({ order = { "speed", "defense" } })
@@ -1037,9 +1064,9 @@ SCENARIOS = {
   ok(#subcategories == 1 and subcategories[1].name == "Stat order" and subcategories[1].parent == categories[1], "not registered under Gander")
   local page = orderPage()
   page:Show()
-  ok(#page.rows == 13, "rows: " .. #page.rows)
+  ok(#page.rows == 14, "rows: " .. #page.rows)
   ok(page.rows[1].label:GetText() == "Defense" and page.rows[6].label:GetText() == "Attack speed", page.rows[1].label:GetText())
-  ok(page.rows[1].number:GetText() == "1." and page.rows[13].number:GetText() == "13.", "numbered")
+  ok(page.rows[1].number:GetText() == "1." and page.rows[14].number:GetText() == "14.", "numbered")
   ok(page.rows[1].check:GetChecked() == true, "ticked")
   ok(not page.marker:IsShown(), "the drop marker shows before any drag")
 ''',
@@ -1048,19 +1075,19 @@ SCENARIOS = {
   local page = orderPage()
   page:Show()
   dragRow(6, 1)                               -- Attack speed to the top
-  ok(orderText() == "speed defense armor resist health power damage ap ranged stats run class family", orderText())
+  ok(orderText() == "speed defense armor resist health power damage ap ranged stats run class family casts", orderText())
   ok(page.rows[1].label:GetText() == "Attack speed" and page.rows[2].label:GetText() == "Defense", "the page redraws")
   units.mouseover = BOAR()
   ok(hover("mouseover") == "Attack speed: 2.0 | Defense: 45", hover("mouseover"))
   dragRow(1, 3)                               -- and down to third
   ok(table.concat(GanderDB.order, " ", 1, 3) == "defense armor speed", orderText())
   dragRow(3, 99)                              -- dropped below the list: last
-  ok(GanderDB.order[13] == "speed", orderText())
-  dragRow(13, -5)                             -- dropped above the list: first
+  ok(GanderDB.order[14] == "speed", orderText())
+  dragRow(14, -5)                             -- dropped above the list: first
   ok(GanderDB.order[1] == "speed", orderText())
   local before = orderText()
   dragRow(4, 4)                               -- dropped where it was
-  ok(orderText() == before and #GanderDB.order == 13, orderText())
+  ok(orderText() == before and #GanderDB.order == 14, orderText())
   local saved = GanderDB
   login(saved)
   ok(orderText() == before, "the order is kept across logins: " .. orderText())
@@ -1105,6 +1132,136 @@ SCENARIOS = {
   panel():Show()
   panel().orderButton:Click()
   ok(opened == 78, "opened " .. tostring(opened))
+''',
+# ---- what mobs cast ----
+"the tooltip lists what a mob casts, from the list that ships with Gander": r'''
+  login(nil)
+  units.mouseover = KELRIS()
+  local o = hover("mouseover")
+  ok(o == "Defense: 140 | Attack speed: 2.0 | Casts: Sleep, Listed Only", o)
+  units.mouseover = BOAR()
+  ok(not hover("mouseover"):find("Casts"), "a mob that isn't on the list got a Casts line")
+''',
+"a long list is cut short on the tooltip, and a spell isn't named twice": r'''
+  login(nil)
+  units.mouseover = mob(777, { name = "Caster", level = 10 })
+  ok(hover("mouseover"):find("Casts: S1, S2, S3, S4, S5 and 2 more", 1, true), hover("mouseover"))
+  units.mouseover = mob(12902, { name = "Lorgus Jett", level = 26 })
+  ok(hover("mouseover"):find("Casts: Lightning Bolt, Poison", 1, true), "two ranks of a spell: " .. hover("mouseover"))
+''',
+"a mob the game won't identify gets no Casts line": r'''
+  login(nil)
+  units.mouseover = mob(4832, { name = "Twilight Lord Kelris", level = 27, noid = true })
+  ok(not hover("mouseover"):find("Casts"), hover("mouseover"))
+''',
+"Classic Era and Forever each have their own list": r'''
+  classicEra()
+  login(nil)
+  units.mouseover = mob(4798, { name = "Fallenroot Shadowstalker", level = 24 })
+  ok(hover("mouseover"):find("Casts: Poison", 1, true), hover("mouseover"))
+  units.mouseover = KELRIS()
+  ok(not hover("mouseover"):find("Casts"), "used Forever's list on Classic Era: " .. hover("mouseover"))
+''',
+"the Casts line can be moved and hidden like the others": r'''
+  login({ order = { "casts", "defense" } })
+  units.mouseover = KELRIS()
+  ok(hover("mouseover") == "Casts: Sleep, Listed Only | Defense: 140 | Attack speed: 2.0", hover("mouseover"))
+  local page = orderPage()
+  page:Show()
+  ok(page.rows[1].label:GetText() == "What it casts", page.rows[1].label:GetText())
+  check("casts"):Click()
+  ok(GanderDB.lines.casts == false, "the tick didn't switch it off")
+  ok(hover("mouseover") == "Defense: 140 | Attack speed: 2.0", hover("mouseover"))
+''',
+"without the list Gander works as before": r'''
+  NS = nil
+  login(nil)
+  units.mouseover = KELRIS()
+  ok(hover("mouseover") == "Defense: 140 | Attack speed: 2.0", hover("mouseover"))
+  NS = { abilities = "broken" }
+  login(nil)
+  ok(hover("mouseover") == "Defense: 140 | Attack speed: 2.0", hover("mouseover"))
+''',
+"the bestiary shows everything a mob casts": r'''
+  login(nil)
+  units.mouseover = KELRIS(); hover("mouseover")
+  units.mouseover = mob(777, { name = "Caster", level = 10, speed = 3 }); hover("mouseover")
+  cmd("")
+  GanderBestiary.search:SetText("Caster")
+  GanderBestiary.search:GetScript("OnTextChanged")(GanderBestiary.search)
+  GanderBestiary.rows[1]:Click()
+  local d = plain(GanderBestiary.detail:GetText())
+  ok(d:find("Casts: S1, S2, S3, S4, S5, S6, S7", 1, true), d)
+''',
+
+# ---- combat logging in dungeons ----
+"combat logging in dungeons is off until switched on": r'''
+  login(nil)
+  ok(GanderDB.autolog == false, "on by default")
+  enter(BFD)
+  ok(logging == false, "logged without being asked")
+  panel():Show()
+  ok(check("autolog"):GetChecked() == false, "the setting shows as on")
+''',
+"switched on, a dungeon is logged and logging stops on the way out": r'''
+  login({ autolog = true })
+  local o = enter(BFD)
+  ok(logging == true, "not logging in the dungeon")
+  ok(o:find("logging combat") and o:find("Blackfathom Deeps"), "doesn't say so: " .. o)
+  ok(enter(BFD) == "", "said it again: " .. table.concat(out, " / "))
+  o = enter(nil)
+  ok(logging == false, "still logging outside")
+  ok(o:find("off again"), o)
+  ok(enter(nil) == "" and logging == false, "something happened on the next loading screen")
+''',
+"raids are logged; battlegrounds and the open world are not": r'''
+  login({ autolog = true })
+  enter({ id = 409, name = "Molten Core", kind = "raid" })
+  ok(logging == true, "raid not logged")
+  enter({ id = 489, name = "Warsong Gulch", kind = "pvp" })
+  ok(logging == false, "battleground logged")
+  enter(nil)
+  ok(logging == false, "open world logged")
+''',
+"logging you switched on yourself is left alone": r'''
+  login({ autolog = true })
+  logging = true
+  ok(enter(BFD) == "", "spoke up about logging it didn't start")
+  enter(nil)
+  ok(logging == true, "switched off logging the player started")
+''',
+"an instance with plenty logged already isn't logged again": r'''
+  login({ autolog = true })
+  enter({ id = 36, name = "The Deadmines", kind = "party" })
+  ok(logging == false, "logged an instance the list already covers")
+  enter(BFD)
+  ok(logging == true, "didn't log one it has little from")
+''',
+"a reload inside the dungeon doesn't leave logging on afterwards": r'''
+  login({ autolog = true })
+  enter(BFD)
+  local saved = GanderDB
+  login(saved)
+  ok(enter(BFD) == "" and logging == true, "the reload changed something")
+  enter(nil)
+  ok(logging == false, "left logging on after a reload")
+''',
+"the setting takes effect at once inside a dungeon": r'''
+  login(nil)
+  enter(BFD)
+  panel():Show()
+  check("autolog"):Click()
+  ok(GanderDB.autolog == true and logging == true, "ticking it didn't start logging")
+  check("autolog"):Click()
+  ok(GanderDB.autolog == false and logging == false, "unticking it didn't stop logging")
+''',
+"if the game won't switch logging on, Gander says so": r'''
+  login({ autolog = true })
+  loggingAllowed = false
+  local o = enter(BFD)
+  ok(o:find("couldn't switch combat logging on"), o)
+  o = enter(nil)
+  ok(o == "", "claimed to switch off logging it never started: " .. o)
 ''',
 # ---- the ability probe ----
 "debug prints a mob's casts, once each": r'''
@@ -1540,7 +1697,7 @@ SCENARIOS = {
 "/gander says so if loading failed": r'''
   login(nil)
   events = {}
-  assert(loadstring(ADDON_SRC, "Gander.lua"))("Gander")
+  assert(loadstring(ADDON_SRC, "Gander.lua"))("Gander", NS)
   ok(cmd("help"):find("didn't finish loading"), cmd("help"))
 ''',
 }

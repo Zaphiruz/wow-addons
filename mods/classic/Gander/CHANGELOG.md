@@ -1,5 +1,11 @@
 # Gander changelog
 
+## 0.8.0 (2026-11-24)
+
+- New "Casts:" line on mob tooltips and in the bestiary, naming the spells a mob is known to use. The list ships with Gander and will grow with each release. It starts with Blackfathom Deeps on World of Warcraft: Forever.
+- The line has its own row on the Stat order page ("What it casts"), so you can move it or untick it to hide it.
+- New setting, off by default: "Log combat to a file in dungeons and raids". With it on, Gander switches the game's combat logging on when you enter a dungeon or raid and off when you leave. Those log files are where the list of spells comes from. Gander never touches logging you switched on yourself.
+
 ## 0.7.2 (2026-11-24)
 
 - /gander debug now also prints the mob casts, new debuffs on you and control effects (stuns, disarms and the like) that the game reports while it's on. This is a test for a possible future feature, remembering what each mob can do. Nothing is saved or shared yet.

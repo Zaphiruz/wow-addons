@@ -41,6 +41,23 @@ python mods/classic/tools/run_tests.py Hawker   # one addon
 
 The addon tests run the real Lua against a small fake of the WoW API. They run on every push to `main`.
 
+## Gander's list of what mobs cast
+
+Addons can't see which spell a mob is casting in a Forever dungeon, but the
+game's combat log file has it. Play with combat logging on (`/combatlog`, or
+Gander's "log combat in dungeons" setting), then:
+
+```
+python mods/classic/tools/gander_import.py            # import new logs, then delete them
+python mods/classic/tools/gander_import.py --keep     # import, leave the log files alone
+python mods/classic/tools/gander_import.py --dry-run  # only report
+```
+
+It keeps one kind of fact, "this hostile mob used this spell", in
+`mods/classic/data/gander_abilities.json`, and rewrites
+`mods/classic/Gander/Abilities.lua` for the addon. Player names never leave the
+log. The new list reaches other players with the next Gander release.
+
 ## Releasing
 
 1. Bump `## Version:` in the addon's `.toc`.

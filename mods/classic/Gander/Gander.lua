@@ -1,7 +1,7 @@
 -- Gander: shows a mob's stats on its tooltip. It reads whatever the game
 -- reveals about the mob, remembers it for when the game hides it, and shares
 -- what it learns with other players running Gander.
-local ADDON = ...
+local ADDON, ns = ...
 
 local db              -- GanderDB
 local panel, category
@@ -35,11 +35,12 @@ end
 ---------------------------------------------------------------------------
 -- The tooltip lines, in the order shown. Each can be switched off.
 local LINE_KEYS = { "defense", "armor", "resist", "health", "power", "speed", "damage", "ap", "ranged",
-                    "stats", "run", "class", "family" }
+                    "stats", "run", "class", "family", "casts" }
 local LINE_LABEL = {
   defense = "Defense", armor = "Armor", resist = "Resistances", health = "Health", power = "Mana / power",
   speed = "Attack speed", damage = "Damage", ap = "Attack power", ranged = "Ranged attack",
   stats = "Strength, agility and other stats", run = "Run speed", class = "Class", family = "Family",
+  casts = "What it casts",
 }
 
 local function loadSettings()
@@ -53,6 +54,7 @@ local function loadSettings()
     if type(db.lines[key]) ~= "boolean" then db.lines[key] = true end
   end
   if type(db.mobs) ~= "table" then db.mobs = {} end
+  if type(db.autolog) ~= "boolean" then db.autolog = false end
   -- The order the lines are shown in: what's saved and still valid, then
   -- any line it doesn't mention, in the usual order.
   local order, placed = {}, {}
@@ -291,6 +293,55 @@ end
 
 local function range(lo, hi) return commas(lo) .. " - " .. commas(hi or lo) end
 
+---------------------------------------------------------------------------
+-- What mobs cast
+--
+-- An addon can't learn this in game on Forever: in a dungeon fight the game
+-- hides which spell a mob is casting. So the list ships with the addon, in
+-- Abilities.lua, built from combat log files by tools/gander_import.py.
+-- Each game has its own list.
+---------------------------------------------------------------------------
+local GAME = (select(4, GetBuildInfo()) or 0) >= 16000 and "forever" or "classic"
+local shipped = type(ns) == "table" and type(ns.abilities) == "table" and ns.abilities[GAME]
+if type(shipped) ~= "table" then shipped = {} end
+local CASTS_ON_TOOLTIP = 5   -- spells named on a tooltip before "and 2 more"
+
+-- A spell's name: the game's own (in the player's language), or else the
+-- English one in the list.
+local function spellName(id)
+  local name
+  if C_Spell and C_Spell.GetSpellName then
+    name = results(pcall(C_Spell.GetSpellName, id))
+  else
+    name = call("GetSpellInfo", id)
+  end
+  if isSecret(name) or type(name) ~= "string" or name == "" then
+    name = type(shipped.spells) == "table" and shipped.spells[id]
+  end
+  if type(name) ~= "string" or name == "" then name = "Spell #" .. id end
+  return name
+end
+
+-- "Sleep, Mind Blast" for a mob on the list. Ranks of one spell are named
+-- once. With a limit, the rest are counted: "... and 2 more".
+local function castsText(id, limit)
+  local spells = id and type(shipped.mobs) == "table" and shipped.mobs[id]
+  if type(spells) ~= "table" then return end
+  local names, listed = {}, {}
+  for _, spell in ipairs(spells) do
+    local name = spellName(spell)
+    if not listed[name] then
+      listed[name] = true
+      names[#names + 1] = name
+    end
+  end
+  if #names == 0 then return end
+  if limit and #names > limit then
+    return table.concat(names, ", ", 1, limit) .. " and " .. (#names - limit) .. " more"
+  end
+  return table.concat(names, ", ")
+end
+
 -- Each line: its setting key, the fields that make it appear (any one is
 -- enough), and how to write it from get(field).
 local LINES = {
@@ -349,7 +400,10 @@ local function linesFor(v, id, level)
   local function kept(key) return mem[key] and mem[key][1] end
   for _, lineKey in ipairs(db.order) do
     local line = LINE[lineKey]
-    if db.lines[line.key] then
+    if lineKey == "casts" then
+      local casts = db.lines.casts and castsText(id, CASTS_ON_TOOLTIP)
+      if casts then lines[#lines + 1] = LABEL .. "Casts:|r " .. VALUE .. casts .. "|r" end
+    elseif db.lines[line.key] then
       if firstOf(line.fields, live) then
         local label, value = line.text(live)
         lines[#lines + 1] = LABEL .. label .. ":|r " .. VALUE .. value .. "|r"
@@ -780,6 +834,52 @@ local function onAddonMessage(prefix, text, channel, sender)
 end
 
 ---------------------------------------------------------------------------
+-- Combat logging in dungeons
+--
+-- The game can write its combat log to a file (Logs\WoWCombatLog...), and
+-- that file is where the list of what mobs cast comes from. With the setting
+-- on, Gander switches that logging on inside a dungeon or raid and off again
+-- on the way out. It doesn't bother once the list has plenty from an
+-- instance, and it never touches logging the player switched on themselves:
+-- GanderDB.logging is set only while logging that Gander started is running.
+---------------------------------------------------------------------------
+local AUTOLOG_ENOUGH = 90   -- minutes of logged fighting after which an instance is covered
+
+local function isLogging()
+  local on = call("LoggingCombat")
+  return not isSecret(on) and on and true or false
+end
+
+local function checkLogging()
+  if not db then return end
+  local inside, kind = call("IsInInstance")
+  local name, _, _, _, _, _, _, instanceID = call("GetInstanceInfo")
+  if isSecret(inside) or isSecret(kind) or isSecret(instanceID) then return end
+  if isSecret(name) or type(name) ~= "string" then name = "this instance" end
+  local wanted = db.autolog and inside and (kind == "party" or kind == "raid") or false
+  if wanted and type(shipped.instances) == "table" and (shipped.instances[instanceID] or 0) >= AUTOLOG_ENOUGH then
+    dbg("not logging %s: the list already has plenty from here", name)
+    wanted = false
+  end
+  if wanted then
+    if isLogging() then return end
+    call("LoggingCombat", true)
+    if isLogging() then
+      db.logging = true
+      say("logging combat in %s to a file, to learn what its mobs cast. It stops when you leave.", name)
+    else
+      say("couldn't switch combat logging on here.")
+    end
+  elseif db.logging then
+    db.logging = nil
+    if isLogging() then
+      call("LoggingCombat", false)
+      say("combat logging is off again.")
+    end
+  end
+end
+
+---------------------------------------------------------------------------
 -- Settings panel (Options > AddOns > Gander)
 ---------------------------------------------------------------------------
 local function countMobs()
@@ -829,6 +929,7 @@ local function refreshPanel()
     panel.checks[key]:SetChecked(db[key])
   end
   panel.checks.minimap:SetChecked(not db.minimap.hide)
+  panel.checks.autolog:SetChecked(db.autolog)
   drawOrder()
   local n = countMobs()
   panel.count:SetText(format("Remembering %s %s.", commas(n), n == 1 and "mob" or "mobs"))
@@ -966,19 +1067,25 @@ local function buildPanel()
     updateMinimapButton()
   end)
 
+  addCheck("autolog", "Log combat to a file in dungeons and raids, to learn what their mobs cast", 16, -232,
+           function(on)
+             db.autolog = on
+             checkLogging()
+           end)
+
   local note = panel:CreateFontString(nil, "ARTWORK", "GameFontHighlight")
-  note:SetPoint("TOPLEFT", 20, -248)
+  note:SetPoint("TOPLEFT", 20, -276)
   note:SetText("Which lines show, and in what order, is on its own page:")
   panel.orderButton = CreateFrame("Button", nil, panel, "UIPanelButtonTemplate")
   panel.orderButton:SetSize(120, 22)
-  panel.orderButton:SetPoint("TOPLEFT", 20, -270)
+  panel.orderButton:SetPoint("TOPLEFT", 20, -298)
   panel.orderButton:SetText("Stat order...")
   panel.orderButton:SetScript("OnClick", function()
     openPage(orderCategory, "the Stat order page isn't available here.")
   end)
 
   panel.count = panel:CreateFontString(nil, "ARTWORK", "GameFontDisableSmall")
-  panel.count:SetPoint("TOPLEFT", 20, -310)
+  panel.count:SetPoint("TOPLEFT", 20, -338)
 
   buildOrderPage()
   panel:SetScript("OnShow", refreshPanel)
@@ -1062,7 +1169,7 @@ local function statsLine(level, rec)
   local function get(key) return rec.v[key] end
   for _, lineKey in ipairs(db.order) do
     local line = LINE[lineKey]
-    if line.key ~= "family" then
+    if line and line.key ~= "family" then
       if firstOf(line.fields, get) then
         local label, value = line.text(get)
         parts[#parts + 1] = label .. " " .. value
@@ -1088,6 +1195,8 @@ local function detailText(id)
   if rank and RANK[rank] then about[#about + 1] = RANK[rank] end
   if info(mob, "z") then about[#about + 1] = info(mob, "z") end
   if #about > 0 then out[#out + 1] = table.concat(about, "  ·  ") end
+  local casts = castsText(id)
+  if casts then out[#out + 1] = LABEL .. "Casts:|r " .. VALUE .. casts .. "|r" end
   local levels = {}
   for _, records in ipairs({ mob.lv or {}, mob.heard or {} }) do
     for level in pairs(records) do levels[level] = true end
@@ -1606,7 +1715,7 @@ end
 ---------------------------------------------------------------------------
 local events = CreateFrame("Frame")
 for _, e in ipairs({ "ADDON_LOADED", "PLAYER_LOGIN", "PLAYER_TARGET_CHANGED", "CHAT_MSG_ADDON",
-                     "PLAYER_REGEN_ENABLED" }) do
+                     "PLAYER_REGEN_ENABLED", "PLAYER_ENTERING_WORLD" }) do
   pcall(events.RegisterEvent, events, e)
 end
 events:SetScript("OnEvent", function(_, event, arg1, ...)
@@ -1632,5 +1741,7 @@ events:SetScript("OnEvent", function(_, event, arg1, ...)
     pcall(onAddonMessage, arg1, ...)
   elseif event == "PLAYER_REGEN_ENABLED" then
     fightEnded()
+  elseif event == "PLAYER_ENTERING_WORLD" then
+    pcall(checkLogging)
   end
 end)

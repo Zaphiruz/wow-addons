@@ -42,6 +42,20 @@ and release commands for people; this file is how we work on it.
 - For mobs, Forever sends `UnitDefenseSkill` (level x 5) and `UnitAttackSpeed`.
   `UnitArmor`, `UnitResistance`, `UnitDamage` and `UnitAttackPower` return 0
   for them (tested on 1.60.1). Zero means "not sent", not a real zero.
+- In a dungeon fight on Forever (Blackfathom Deeps trash, 1.60.1), the
+  `UNIT_SPELLCAST_*` events fire for nameplate units but the mob's name, GUID
+  and the spell ID are all secret, and so is the `C_LossOfControl` data for a
+  disarm on the player. Addons can't learn what dungeon mobs cast there. The
+  open world is untested.
+- Forever's Combat Log chat tab is fed by `COMBAT_LOG_MESSAGE`, whose text is
+  a `|K`-protected string (from Blizzard's source, not tested): it draws on
+  screen but code can't read what it says.
+- The combat log *file* on Forever is complete, even in a dungeon: `/combatlog`
+  writes `Logs\WoWCombatLog-<date>.txt` with mob GUIDs, names, spell IDs and
+  spell names (seen in Blackfathom Deeps). The game writes it late, so it can
+  sit at 0 bytes for minutes. Addons can't read it; a script outside the game
+  can. `LoggingCombat(true)` from `/run` switched it on in a dungeon without
+  an error, so an addon can toggle it (not yet tried from an event handler).
 - Forever character names can have a surname ("Elicia Antikleia"), and the
   sender of an addon message is written that way. Don't spot yourself by
   comparing names: use the GUID, or for your own addon messages coming back,
@@ -128,6 +142,18 @@ confirmations (`ConfirmBindOnUse`) and Logout in Downcast and Hawker 0.2.0.
 - The jump key calls `JumpOrAscendStart` on press and `AscendStop` on release;
   `hooksecurefunc` on both is safe. A real hop is `IsFalling()` turning true
   just after a press.
+
+## Gander's abilities list
+
+- `mods/classic/Gander/Abilities.lua` is generated: never edit it by hand. Run
+  `python mods/classic/tools/gander_import.py` to read new combat logs from both
+  games' `Logs` folders into `mods/classic/data/gander_abilities.json` and
+  rewrite it. The importer deletes each log it has finished unless `--keep` is
+  given; ask before running it without `--keep`.
+- The list is per game (`forever`, `classic`) and only ever grows: a later log
+  adds spells and counts, it never removes one.
+- It reaches players only through a Gander release, so an import worth
+  shipping gets a version bump like any other change.
 
 ## Releasing
 

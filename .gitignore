@@ -5,5 +5,8 @@ __pycache__/
 *.pyc
 .env
 
+# Gander's log importer: how far into each kept combat log this PC has read
+mods/classic/data/gander_import_state.json
+
 # Brainstorm mockups
 .superpowers/
