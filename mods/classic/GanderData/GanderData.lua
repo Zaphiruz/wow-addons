@@ -1074,22 +1074,22 @@ GanderData = {
         [38] = { at = 1795388577, v = { class = "WARRIOR", n = "Grunt Mojka", run = 8, spd = 2, ty = "Humanoid", z = "Orgrimmar" } },
       },
       [5606] = {
-        [12] = { at = 1795559671, v = { class = "WARRIOR", n = "Goma", run = 8, spd = 2, ty = "Humanoid", z = "Orgrimmar" } },
+        [12] = { at = 1795614462, v = { class = "WARRIOR", n = "Goma", run = 8, spd = 2, ty = "Humanoid", z = "Orgrimmar" } },
       },
       [5609] = {
-        [14] = { at = 1795559671, v = { class = "WARRIOR", n = "Zazo", run = 8, spd = 2, ty = "Humanoid", z = "Orgrimmar" } },
+        [14] = { at = 1795614659, v = { class = "WARRIOR", n = "Zazo", run = 8, spd = 2, ty = "Humanoid", z = "Orgrimmar" } },
       },
       [5610] = {
         [12] = { at = 1795439018, v = { class = "WARRIOR", n = "Kozish", run = 8, spd = 2, ty = "Humanoid", z = "Orgrimmar" } },
       },
       [5611] = {
-        [13] = { at = 1795396560, v = { class = "WARRIOR", n = "Barkeep Morag", run = 8, spd = 2, ty = "Humanoid", z = "Orgrimmar" } },
+        [13] = { at = 1795614665, v = { class = "WARRIOR", n = "Barkeep Morag", run = 8, spd = 2, ty = "Humanoid", z = "Orgrimmar" } },
       },
       [5613] = {
-        [11] = { at = 1795559555, v = { class = "WARRIOR", n = "Doyo'da", run = 8, spd = 2, ty = "Humanoid", z = "Orgrimmar" } },
+        [11] = { at = 1795614461, v = { class = "WARRIOR", n = "Doyo'da", run = 8, spd = 2, ty = "Humanoid", z = "Orgrimmar" } },
       },
       [5614] = {
-        [25] = { at = 1795559561, v = { class = "WARRIOR", n = "Sarok", run = 8, spd = 2, ty = "Humanoid", z = "Orgrimmar" } },
+        [25] = { at = 1795614361, v = { class = "WARRIOR", n = "Sarok", run = 8, spd = 2, ty = "Humanoid", z = "Orgrimmar" } },
       },
       [5774] = {
         [2] = { at = 1795573656, v = { class = "WARRIOR", n = "Riding Wolf", run = 9.7, spd = 2, ty = "Beast", z = "Tanaris" } },
@@ -1126,7 +1126,7 @@ GanderData = {
         [30] = { at = 1795375054, v = { armor = 1212, class = "WARRIOR", dmax = 56.32, dmin = 42.45, run = 8, spd = 2 } },
       },
       [6466] = {
-        [12] = { at = 1795559666, v = { class = "WARRIOR", n = "Gamon", run = 8, spd = 2, ty = "Humanoid", z = "Orgrimmar" } },
+        [12] = { at = 1795614662, v = { class = "WARRIOR", n = "Gamon", run = 8, spd = 2, ty = "Humanoid", z = "Orgrimmar" } },
       },
       [6491] = {
         [60] = { at = 1795376057, v = { armor = 3566, class = "WARRIOR", dmax = 137.86, dmin = 103.95, n = "Spirit Healer", run = 7, spd = 2, ty = "Humanoid", z = "The Barrens" } },
@@ -1138,7 +1138,7 @@ GanderData = {
         [46] = { at = 1795394148, v = { class = "WARRIOR", n = "Innkeeper Skindle", run = 8, spd = 1, ty = "Humanoid", z = "Stranglethorn Vale" } },
       },
       [6929] = {
-        [30] = { at = 1795559666, v = { armor = 1212, class = "WARRIOR", dmax = 56.32, dmin = 42.45, n = "Innkeeper Gryshka", run = 8, spd = 2, ty = "Humanoid", z = "Orgrimmar" } },
+        [30] = { at = 1795614360, v = { armor = 1212, class = "WARRIOR", dmax = 56.32, dmin = 42.45, n = "Innkeeper Gryshka", run = 8, spd = 2, ty = "Humanoid", z = "Orgrimmar" } },
       },
       [7332] = {
         [34] = { at = 1795376379, v = { class = "WARRIOR", n = "Withered Spearhide", rk = "ELITE", run = 8, spd = 2, ty = "Undead", z = "Razorfen Downs" } },
@@ -1221,7 +1221,7 @@ GanderData = {
         [50] = { at = 1795399686, v = { class = "WARRIOR", n = "Auctioneer Beardo", run = 8, spd = 2, ty = "Humanoid", z = "Tanaris" } },
       },
       [8673] = {
-        [50] = { at = 1795559629, v = { class = "WARRIOR", n = "Auctioneer Thathung", run = 8, spd = 2, ty = "Humanoid", z = "Orgrimmar" } },
+        [50] = { at = 1795614228, v = { class = "WARRIOR", n = "Auctioneer Thathung", run = 8, spd = 2, ty = "Humanoid", z = "Orgrimmar" } },
       },
       [8724] = {
         [50] = { at = 1795564032, v = { class = "WARRIOR", n = "Auctioneer Wabang", run = 8, spd = 2, ty = "Humanoid", z = "Orgrimmar" } },
@@ -1257,10 +1257,10 @@ GanderData = {
         [53] = { at = 1795573873, v = { class = "WARRIOR", n = "Yorba Screwspigot", run = 8, spd = 2, ty = "Humanoid", z = "Tanaris" } },
       },
       [9856] = {
-        [50] = { at = 1795574430, v = { class = "WARRIOR", n = "Auctioneer Grimful", run = 8, spd = 2, ty = "Humanoid", z = "Orgrimmar" } },
+        [50] = { at = 1795614163, v = { class = "WARRIOR", n = "Auctioneer Grimful", run = 8, spd = 2, ty = "Humanoid", z = "Orgrimmar" } },
       },
       [9983] = {
-        [30] = { at = 1795376700, v = { class = "WARRIOR", n = "Kelsuwa", run = 8, spd = 2, ty = "Humanoid", z = "The Barrens" } },
+        [30] = { at = 1795576816, v = { class = "WARRIOR", n = "Kelsuwa", run = 8, spd = 2, ty = "Humanoid", z = "The Barrens" } },
       },
       [9985] = {
         [30] = { at = 1795573570, v = { class = "WARRIOR", n = "Laziphus", run = 8, spd = 2, ty = "Humanoid", z = "Tanaris" } },
@@ -1272,7 +1272,7 @@ GanderData = {
         [28] = { at = 1795396990, v = { class = "WARRIOR", n = "Elu", run = 8, spd = 2, ty = "Humanoid", z = "Thousand Needles" } },
       },
       [10378] = {
-        [55] = { at = 1795376729, v = { armor = 3292, class = "WARRIOR", dmax = 436.44, dmin = 329.12, n = "Omusa Thunderhorn", rk = "ELITE", run = 8, spd = 2, ty = "Humanoid", z = "The Barrens" } },
+        [55] = { at = 1795576896, v = { armor = 3292, class = "WARRIOR", dmax = 436.44, dmin = 329.12, n = "Omusa Thunderhorn", rk = "ELITE", run = 8, spd = 2, ty = "Humanoid", z = "The Barrens" } },
       },
       [10380] = {
         [15] = { at = 1795375066, v = { class = "WARRIOR", run = 8, spd = 2 } },
@@ -1315,6 +1315,9 @@ GanderData = {
       },
       [11117] = {
         [30] = { at = 1795398679, v = { class = "WARRIOR", n = "Awenasa", run = 8, spd = 2, ty = "Humanoid", z = "Thousand Needles" } },
+      },
+      [11562] = {
+        [33] = { at = 1795610660, v = { class = "PALADIN", n = "Drysnap Crawler", run = 8, spd = 2, ty = "Humanoid" } },
       },
       [11756] = {
         [35] = { at = 1795573651, v = { armor = 707, class = "MAGE", dmax = 47.05, dmin = 35.46, n = "Quinn", run = 8, spd = 2, ty = "Humanoid", z = "Tanaris" } },
