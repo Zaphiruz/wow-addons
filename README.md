@@ -68,6 +68,40 @@ No player or account name is written anywhere. Everything imported so far is in
 is the same data for the game. When an import changes the data, GanderData gets
 the next patch version and a changelog line, ready to release with its tag.
 
+### Data from other players
+
+Players can send what their Gander has learned with the "Send Gander data"
+issue form. The **Gander data** workflow checks each submission with
+`mods/classic/tools/gander_submit.py` and sorts every fact in it:
+
+- **It passes the checks** (a sane value, nothing in the database says
+  otherwise): merged by the workflow, through a pull request it opens and
+  merges itself.
+- **A machine can't judge it** (a name the database doesn't have, or a value
+  that differs from the database): it waits in `mods/classic/data/gander_held.json`
+  and shows on one pull request, "Held Gander data". It goes in when a second
+  sender reports the same thing, or when the repository owner approves that
+  pull request. The owner can also comment `approve m3273 s5401`,
+  `approve zones`, `approve words` or `drop ...` on it. Nobody else's approval
+  or comment does anything, and what waits 90 days is forgotten.
+- **Broken or impossible:** left out, and the sender is told.
+
+A merge is not a release. The **GanderData release** workflow runs once a day
+and gives whatever was merged one new patch version. Nothing records who sent
+what: a sender is only a scrambled marker, used to tell two senders apart.
+
+A submission is one JSON block, shaped like one game's part of
+`gander_data.json`:
+
+```json
+{"format": 1, "game": "forever", "locale": "enUS",
+ "mobs": {"3238": {"name": "Stormhide",
+                   "levels": {"22": {"at": 1795396923, "v": {"spd": 2, "ty": "Beast"}}},
+                   "spells": {"5401": {"n": 4, "spawns": 2, "at": "2026-11-24", "build": "1.60.1"}}}},
+ "spells": {"5401": "Lizard Bolt"},
+ "instances": {"48": {"minutes": 24.7, "name": "Blackfathom Deeps"}}}
+```
+
 ## Releasing
 
 1. Bump `## Version:` in the addon's `.toc`.

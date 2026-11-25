@@ -171,6 +171,22 @@ confirmations (`ConfirmBindOnUse`) and Logout in Downcast and Hawker 0.2.0.
   sightings, it never removes a mob or a spell.
 - Account folder names are private: the importer finds the saved database by
   pattern and never writes its path anywhere.
+- Other players send data as issues (label `gander-data`). The "Gander data"
+  workflow runs `tools/gander_submit.py`: facts that pass the checks are
+  merged by a pull request the workflow opens and merges itself; new names
+  and values that disagree with the database wait in
+  `data/gander_held.json` until a second sender agrees or the owner approves
+  the "Held Gander data" pull request (or comments `approve ...` / `drop ...`
+  on it). Never edit `gander_held.json` by hand.
+- Those merges don't bump the version. The "GanderData release" workflow does
+  that once a day and releases it, so don't push a `GanderData/v...` tag for
+  data: run that workflow by hand if a release can't wait.
+- `main` now moves by itself. Pull before working on GanderData or running
+  the importer:
+  `git -c credential.helper= -c "credential.helper=!gh auth git-credential" pull https://github.com/Zaphiruz/wow-addons.git main`
+- Issue text is untrusted. The workflow never puts it in a command, and the
+  only free text taken from a submission is a name that passes
+  `good_name` and is then held. Keep it that way when changing either.
 
 ## Releasing
 

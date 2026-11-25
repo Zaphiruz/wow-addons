@@ -5,11 +5,20 @@
 #   4. uploads it to CurseForge (needs the CF_API_TOKEN repository secret
 #      and "## X-Curse-Project-ID:" in the addon's .toc)
 #   5. creates a GitHub release with the zip attached
+#
+# gander-release.yml calls this with a tag it made itself, because a tag
+# pushed by a workflow doesn't start another workflow.
 name: Release
 
 on:
   push:
     tags: ["*/v*"]
+  workflow_call:
+    inputs:
+      tag:
+        description: The tag to release, like GanderData/v1.0.1
+        type: string
+        required: true
 
 permissions:
   contents: write
@@ -19,8 +28,11 @@ jobs:
     runs-on: ubuntu-latest
     env:
       TOOLS: mods/classic/tools
+      TAG: ${{ inputs.tag || github.ref_name }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.tag && format('refs/tags/{0}', inputs.tag) || github.ref }}
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
@@ -28,8 +40,6 @@ jobs:
 
       - name: Read tag
         id: tag
-        env:
-          TAG: ${{ github.ref_name }}
         run: |
           read -r addon version < <(python "$TOOLS/release.py" tag "$TAG")
           echo "addon=$addon" >> "$GITHUB_OUTPUT"
@@ -42,7 +52,6 @@ jobs:
         id: manual
         env:
           GH_TOKEN: ${{ github.token }}
-          TAG: ${{ github.ref_name }}
         run: |
           if gh release view "$TAG" > /dev/null 2>&1; then
             echo "skip=true" >> "$GITHUB_OUTPUT"
@@ -68,7 +77,6 @@ jobs:
         if: steps.manual.outputs.skip != 'true'
         env:
           GH_TOKEN: ${{ github.token }}
-          TAG: ${{ github.ref_name }}
           ADDON: ${{ steps.tag.outputs.addon }}
           VERSION: ${{ steps.tag.outputs.version }}
         run: |

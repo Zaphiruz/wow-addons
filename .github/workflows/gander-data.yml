@@ -1,0 +1,228 @@
+# Takes in Gander data that players send as issues (label "gander-data"):
+#   1. checks every open submission with mods/classic/tools/gander_submit.py
+#   2. merges what passed, through a pull request it opens and merges itself
+#   3. answers each issue and closes it
+#   4. keeps one pull request, "Held Gander data", for what a machine can't
+#      judge. The repository owner approving it adds everything on its list;
+#      the owner can also comment "approve ..." or "drop ..." on it.
+# Nobody else's approval or comment does anything.
+#
+# A merge here is not a release: gander-release.yml does that once a day.
+#
+# Needs the repository setting "Allow GitHub Actions to create and approve
+# pull requests" (Settings, Actions, General). To pause all of this, disable
+# this workflow in the Actions tab.
+#
+# Text from issues is never put into a command: it is saved to a file and
+# read by the Python tool.
+name: Gander data
+
+on:
+  issues:
+    types: [opened, reopened]
+  issue_comment:
+    types: [created]
+  pull_request_review:
+    types: [submitted]
+  # A push to the database by a person (the importer, run by hand) rebuilds
+  # the held pull request on top of it. Merges made by this workflow don't
+  # start it again.
+  push:
+    branches: [main]
+    paths: ["mods/classic/data/gander_data.json"]
+  workflow_dispatch:
+
+# One run at a time. A run handles every open submission, so one that was
+# waiting and got replaced by a newer run loses nothing.
+concurrency:
+  group: gander-data
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+jobs:
+  intake:
+    if: >-
+      github.event_name == 'workflow_dispatch' || github.event_name == 'push' ||
+      (github.event_name == 'issues' && contains(github.event.issue.labels.*.name, 'gander-data')) ||
+      (github.event_name == 'issue_comment' && github.event.issue.pull_request &&
+       github.event.comment.user.login == github.repository_owner &&
+       contains(github.event.issue.labels.*.name, 'gander-held')) ||
+      (github.event_name == 'pull_request_review' && github.event.review.state == 'approved' &&
+       github.event.review.user.login == github.repository_owner &&
+       github.event.pull_request.head.ref == 'gander-data/held' &&
+       github.event.pull_request.head.repo.full_name == github.repository)
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
+      REPO: ${{ github.repository }}
+      OWNER: ${{ github.repository_owner }}
+      TOOLS: mods/classic/tools
+      HELD_BRANCH: gander-data/held
+      FILES: mods/classic/data/gander_data.json mods/classic/data/gander_held.json mods/classic/GanderData/GanderData.lua
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install lupa
+
+      - name: Gather the submissions and the owner's comments
+        id: gather
+        env:
+          EVENT: ${{ github.event_name }}
+          REVIEWED: ${{ github.event.review.commit_id }}
+        run: |
+          out="$RUNNER_TEMP/gd"
+          mkdir -p "$out"
+          gh api "repos/$REPO/issues?labels=gander-data&state=open&sort=created&direction=asc&per_page=20" > "$out/issues.json"
+          held=$(gh pr list --head "$HELD_BRANCH" --state open --json number --jq '.[0].number // empty')
+          echo "held=$held" >> "$GITHUB_OUTPUT"
+          echo '[]' > "$out/comments.json"
+          if [ -n "$held" ]; then
+            since=$(date -u -d '14 days ago' +%Y-%m-%dT%H:%M:%SZ)
+            gh api "repos/$REPO/issues/$held/comments?since=$since&per_page=100" > "$out/comments.json"
+          fi
+          # An approval is for the list as it was in the commit the owner
+          # looked at. That commit's message carries a hash of the list.
+          if [ "$EVENT" = pull_request_review ]; then
+            message=$(gh api "repos/$REPO/commits/$REVIEWED" --jq .commit.message || true)
+            hash=$(printf '%s\n' "$message" | sed -n 's/^Held-Hash: //p' | tail -1 | tr -cd 'a-f0-9')
+            echo "approve=${hash:-none}" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Check the data
+        id: check
+        env:
+          APPROVE: ${{ steps.gather.outputs.approve }}
+        run: |
+          out="$RUNNER_TEMP/gd"
+          args=()
+          if [ -n "$APPROVE" ]; then args+=(--approve-hash "$APPROVE"); fi
+          python "$TOOLS/gander_submit.py" run --issues "$out/issues.json" --comments "$out/comments.json" \
+            --owner "$OWNER" --out "$out" "${args[@]}"
+          echo "changed=$(jq -r .changed "$out/result.json")" >> "$GITHUB_OUTPUT"
+          echo "approved=$(jq -r .approved "$out/result.json")" >> "$GITHUB_OUTPUT"
+          echo "stale=$(jq -r .stale "$out/result.json")" >> "$GITHUB_OUTPUT"
+
+      - name: Test
+        if: steps.check.outputs.changed == 'true'
+        run: python "$TOOLS/run_tests.py"
+
+      - name: Open the pull request and merge it
+        if: steps.check.outputs.changed == 'true'
+        env:
+          HELD: ${{ steps.gather.outputs.held }}
+          APPROVED: ${{ steps.check.outputs.approved }}
+        run: |
+          out="$RUNNER_TEMP/gd"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          title=$(jq -r .title "$out/result.json")
+          # An approved held list is merged through its own pull request, so
+          # the one the owner approved is the one that shows as merged.
+          if [ "$APPROVED" = true ] && [ -n "$HELD" ]; then
+            branch="$HELD_BRANCH"
+            pr="$HELD"
+          else
+            branch="gander-data/run-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+            pr=""
+          fi
+          git checkout -q -B "$branch"
+          git add -- $FILES
+          git commit -q -m "$title"
+          git push -q --force origin "$branch"
+          if [ -n "$pr" ]; then
+            gh pr edit "$pr" --title "$title" --body-file "$out/pr_body.md"
+          else
+            url=$(gh pr create --base main --head "$branch" --title "$title" --body-file "$out/pr_body.md")
+            pr="${url##*/}"
+          fi
+          merged=false
+          for attempt in 1 2 3 4 5; do
+            if gh pr merge "$pr" --squash --subject "$title (#$pr)" --body ""; then merged=true; break; fi
+            sleep 6   # GitHub may still be working out whether it can merge
+          done
+          [ "$merged" = true ]
+          git push -q origin --delete "$branch" || true
+
+      - name: Answer the submissions and comments
+        env:
+          HELD: ${{ steps.gather.outputs.held }}
+          STALE: ${{ steps.check.outputs.stale }}
+        run: |
+          out="$RUNNER_TEMP/gd"
+          for n in $(jq -r '.issues[] | select(.reason == "completed") | .number' "$out/result.json"); do
+            gh issue comment "$n" --body-file "$out/issue-$n.md"
+            gh issue close "$n" --reason completed
+          done
+          for n in $(jq -r '.issues[] | select(.reason != "completed") | .number' "$out/result.json"); do
+            gh issue comment "$n" --body-file "$out/issue-$n.md"
+            gh issue close "$n" --reason "not planned"
+          done
+          for id in $(jq -r '.commands[]' "$out/result.json"); do
+            gh pr comment "$HELD" --body-file "$out/command-$id.md"
+            gh api -X POST "repos/$REPO/issues/comments/$id/reactions" -f content=+1 > /dev/null
+          done
+          if [ "$STALE" = true ] && [ -n "$HELD" ]; then
+            gh pr comment "$HELD" --body "The list changed after the version you approved, so nothing was added. Have another look and approve it again."
+          fi
+
+      - name: Refresh the held pull request
+        run: |
+          out="$RUNNER_TEMP/gd"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git reset -q --hard
+          git fetch -q origin main
+          git checkout -q --detach origin/main
+          python "$TOOLS/gander_submit.py" held --out "$out"
+          count=$(jq -r .count "$out/held.json")
+          title=$(jq -r .title "$out/held.json")
+          hash=$(jq -r .hash "$out/held.json")
+          held=$(gh pr list --head "$HELD_BRANCH" --state open --json number --jq '.[0].number // empty')
+          if [ "$count" = 0 ] || [ "$(jq -r .changed "$out/held.json")" != true ]; then
+            if [ -n "$held" ]; then
+              gh pr close "$held" --comment "Nothing is waiting any more."
+              git push -q origin --delete "$HELD_BRANCH" || true
+            fi
+            exit 0
+          fi
+          git checkout -q -B "$HELD_BRANCH"
+          git add -- $FILES
+          git commit -q -m "$title" -m "Held-Hash: $hash"
+          git push -q --force origin "$HELD_BRANCH"
+          if [ -n "$held" ]; then
+            gh pr edit "$held" --title "$title" --body-file "$out/held.md"
+          else
+            gh pr create --base main --head "$HELD_BRANCH" --title "$title" --body-file "$out/held.md" --label gander-held
+            gh pr edit "$HELD_BRANCH" --add-reviewer "$OWNER" || true
+          fi
+
+      # A failed run would otherwise be tried again by every later run, and
+      # nobody would hear about it: failure emails go to whoever opened the
+      # issue. So set its submissions aside and tell the owner.
+      - name: Say that the run failed
+        if: failure()
+        run: |
+          out="$RUNNER_TEMP/gd"
+          for n in $(jq -r '.issues[].number' "$out/result.json" 2> /dev/null); do
+            gh issue edit "$n" --add-label gander-stuck || true
+          done
+          run="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
+          open=$(gh issue list --state open --search "\"Gander data: a run failed\" in:title" --json number --jq '.[0].number // empty')
+          if [ -n "$open" ]; then
+            gh issue comment "$open" --body "Another run failed: $run"
+          else
+            {
+              echo "The run that takes in Gander data failed: $run"
+              echo
+              echo "Its submissions have the label gander-stuck and are left alone until that label is removed. After fixing the cause, remove the label and run the Gander data workflow by hand."
+            } > "$out/failed.md"
+            gh issue create --title "Gander data: a run failed" --assignee "$OWNER" --body-file "$out/failed.md"
+          fi

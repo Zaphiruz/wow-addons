@@ -5,6 +5,9 @@ Usage: python gander_import.py              import everything new, then delete t
        python gander_import.py --dry-run    show what an import would do; change nothing
        python gander_import.py --no-bump    don't give GanderData a new version
        python gander_import.py --logs DIR   read combat logs from DIR (repeatable)
+       python gander_import.py --release-since OLD_JSON
+                                            import nothing: give data merged from players'
+                                            submissions (gander_submit.py) the next version
        python gander_import.py --saved GAME=FILE
                                             read a saved Gander database (repeatable);
                                             GAME is forever or classic
@@ -405,6 +408,18 @@ def bump(addon, note, today):
     return version
 
 
+def prepare_release(old_path, data_path=DATA, addon=ADDON, today=None):
+    """Give GanderData its next version for data that was merged without one
+    (see gander_submit.py). old_path is the database as last released, for
+    the changelog line. Returns the new version."""
+    old = load_json(pathlib.Path(old_path), empty_data())
+    data = load_json(pathlib.Path(data_path), empty_data())
+    note = changelog_line(counts(old), counts(data)) or "Refreshed the stats of mobs already in the database."
+    version = bump(addon, note, today or datetime.date.today().isoformat())
+    (addon / f"{addon.name}.lua").write_text(to_lua(data, version), encoding="utf-8", newline="\n")
+    return version
+
+
 def current_version(addon):
     toc = addon / f"{addon.name}.toc"
     m = toc.is_file() and re.search(r"^## Version:\s*(\S+)", toc.read_text(encoding="utf-8"), re.M)
@@ -499,7 +514,13 @@ def main(argv=None):
     p.add_argument("--keep", action="store_true", help="don't delete logs after importing them")
     p.add_argument("--dry-run", action="store_true", help="change nothing; just report")
     p.add_argument("--no-bump", action="store_true", help="don't give GanderData a new version")
+    p.add_argument("--release-since", metavar="OLD_JSON",
+                   help="import nothing: give the data merged since OLD_JSON (the database as last "
+                        "released) the next version, and print it")
     args = p.parse_args(argv)
+    if args.release_since:
+        print(prepare_release(args.release_since))
+        return 0
     logs, saved = default_sources()
     if args.logs or args.saved:
         logs = args.logs or []

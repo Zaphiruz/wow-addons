@@ -1,0 +1,76 @@
+# Releases GanderData at most once a day.
+#
+# Data from players is merged into main as it arrives (gander-data.yml)
+# without a new version, so players aren't sent an update for every
+# submission. This gives whatever was merged since the last release one new
+# patch version and a changelog line, then releases it like any other addon.
+#
+# A version that is already in the .toc but was never released (the importer
+# bumps it when it is run by hand) is released as it is.
+name: GanderData release
+
+on:
+  schedule:
+    - cron: "17 9 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: gander-release
+  cancel-in-progress: false
+
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    outputs:
+      tag: ${{ steps.plan.outputs.tag }}
+    env:
+      ADDON: mods/classic/GanderData
+      DATA: mods/classic/data/gander_data.json
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Give new data a version
+        id: plan
+        run: |
+          version=$(sed -n 's/^## Version: *//p' "$ADDON/GanderData.toc" | tr -d '\r' | head -1)
+          tag="GanderData/v$version"
+          if git rev-parse -q --verify "refs/tags/$tag" > /dev/null; then
+            if git diff --quiet "refs/tags/$tag" HEAD -- "$ADDON/GanderData.lua"; then
+              echo "::notice::Nothing new since $tag."
+              exit 0
+            fi
+            git show "refs/tags/$tag:$DATA" > "$RUNNER_TEMP/released.json"
+            version=$(python mods/classic/tools/gander_import.py --release-since "$RUNNER_TEMP/released.json")
+            tag="GanderData/v$version"
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add -- "$ADDON"
+            git commit -q -m "GanderData $version: new data"
+            pushed=false
+            for attempt in 1 2 3; do
+              if git push -q origin HEAD:main; then pushed=true; break; fi
+              git pull -q --rebase origin main   # more data was merged meanwhile
+            done
+            [ "$pushed" = true ]
+          fi
+          git tag "$tag"
+          git push -q origin "refs/tags/$tag"
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+
+  # A tag pushed by a workflow doesn't start the Release workflow, so call it.
+  release:
+    needs: prepare
+    if: needs.prepare.outputs.tag != ''
+    uses: ./.github/workflows/release.yml
+    with:
+      tag: ${{ needs.prepare.outputs.tag }}
+    secrets: inherit

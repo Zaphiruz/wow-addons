@@ -1,0 +1,19 @@
+name: Send Gander data
+description: Share what your Gander addon has learned about mobs, for the GanderData database.
+title: "Gander data"
+labels: ["gander-data"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Paste the data block that Gander made for you, whole, and submit.
+
+        It is checked automatically, and you get a comment here saying what was added. The block has mob stats and what mobs cast: no character, realm or account names. Your GitHub name shows on this issue, as on any issue, but isn't written into the database.
+  - type: textarea
+    id: data
+    attributes:
+      label: Data
+      description: The block starts with { and ends with }.
+      render: text
+    validations:
+      required: true
