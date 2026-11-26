@@ -1411,6 +1411,7 @@ GanderData = {
         [39] = { at = 1795666585, v = { armor = 1849, class = "WARRIOR", dmax = 72.04, dmin = 54.31, n = "Kin'weelay", run = 8, spd = 2, ty = "Humanoid", z = "Stranglethorn Vale" } },
       },
       [2523] = {
+        [13] = { at = 1795706279, v = { class = "WARRIOR", n = "Searing Totem", run = 7, spd = 2, ty = "Totem", z = "Zephras Isle" } },
         [42] = { at = 1795560166, v = { class = "WARRIOR", n = "Searing Totem", run = 7, spd = 2, ty = "Totem", z = "Stranglethorn Vale" } },
       },
       [2542] = {
