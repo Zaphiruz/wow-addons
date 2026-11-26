@@ -2,6 +2,10 @@
  "games": {
   "forever": {
    "instances": {
+    "189": {
+     "minutes": 31.17,
+     "name": "Scarlet Monastery"
+    },
     "33": {
      "minutes": 52.786,
      "name": "Shadowfang Keep"
@@ -39,6 +43,23 @@
       }
      },
      "name": "Brackenwall Enforcer",
+     "spells": {}
+    },
+    "10049": {
+     "levels": {
+      "30": {
+       "at": 1795663106,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Hekkru",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Swamp of Sorrows"
+       }
+      }
+     },
+     "name": "Hekkru",
      "spells": {}
     },
     "10060": {
@@ -309,6 +330,24 @@
      "name": "Thalia Amberhide",
      "spells": {}
     },
+    "1082": {
+     "levels": {
+      "38": {
+       "at": 1795662830,
+       "v": {
+        "class": "WARRIOR",
+        "fam": "Crocolisk",
+        "n": "Sawtooth Crocolisk",
+        "run": 8,
+        "spd": 2,
+        "ty": "Beast",
+        "z": "Swamp of Sorrows"
+       }
+      }
+     },
+     "name": "Sawtooth Crocolisk",
+     "spells": {}
+    },
     "1085": {
      "levels": {
       "34": {
@@ -337,6 +376,54 @@
       }
      },
      "name": "Elder Stranglethorn Tiger",
+     "spells": {}
+    },
+    "1087": {
+     "levels": {
+      "41": {
+       "at": 1795662679,
+       "v": {
+        "class": "WARRIOR",
+        "fam": "Crocolisk",
+        "n": "Sawtooth Snapper",
+        "run": 8,
+        "spd": 2,
+        "ty": "Beast",
+        "z": "Swamp of Sorrows"
+       }
+      },
+      "42": {
+       "at": 1795662682,
+       "v": {
+        "class": "WARRIOR",
+        "fam": "Crocolisk",
+        "n": "Sawtooth Snapper",
+        "run": 8,
+        "spd": 2,
+        "ty": "Beast",
+        "z": "Swamp of Sorrows"
+       }
+      }
+     },
+     "name": "Sawtooth Snapper",
+     "spells": {}
+    },
+    "1088": {
+     "levels": {
+      "44": {
+       "at": 1795662390,
+       "v": {
+        "class": "WARRIOR",
+        "fam": "Crab",
+        "n": "Monstrous Crawler",
+        "run": 8,
+        "spd": 2,
+        "ty": "Beast",
+        "z": "Swamp of Sorrows"
+       }
+      }
+     },
+     "name": "Monstrous Crawler",
      "spells": {}
     },
     "10880": {
@@ -1129,6 +1216,26 @@
      "name": "Snurk Bucksquick",
      "spells": {}
     },
+    "12137": {
+     "levels": {
+      "45": {
+       "at": 1795666630,
+       "v": {
+        "armor": 2742,
+        "class": "WARRIOR",
+        "dmax": 50.16,
+        "dmin": 37.82,
+        "n": "Squibby Overspeck",
+        "run": 8,
+        "spd": 1,
+        "ty": "Humanoid",
+        "z": "Stranglethorn Vale"
+       }
+      }
+     },
+     "name": "Squibby Overspeck",
+     "spells": {}
+    },
     "12296": {
      "levels": {
       "3": {
@@ -1487,6 +1594,26 @@
      "name": "Brawn",
      "spells": {}
     },
+    "1386": {
+     "levels": {
+      "53": {
+       "at": 1795662906,
+       "v": {
+        "armor": 3183,
+        "class": "WARRIOR",
+        "dmax": 119.43,
+        "dmin": 90.05,
+        "n": "Rogvar",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Swamp of Sorrows"
+       }
+      }
+     },
+     "name": "Rogvar",
+     "spells": {}
+    },
     "1387": {
      "levels": {
       "55": {
@@ -1555,6 +1682,34 @@
       }
      },
      "name": "",
+     "spells": {}
+    },
+    "14356": {
+     "levels": {
+      "39": {
+       "at": 1795662743,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Sawfin Frenzy",
+        "run": 8,
+        "spd": 0.9,
+        "ty": "Beast",
+        "z": "Swamp of Sorrows"
+       }
+      },
+      "40": {
+       "at": 1795662771,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Sawfin Frenzy",
+        "run": 8,
+        "spd": 0.9,
+        "ty": "Beast",
+        "z": "Swamp of Sorrows"
+       }
+      }
+     },
+     "name": "Sawfin Frenzy",
      "spells": {}
     },
     "14373": {
@@ -1652,6 +1807,64 @@
      "name": "Overlord Runthak",
      "spells": {}
     },
+    "14403": {
+     "levels": {
+      "60": {
+       "at": 1795667477,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Seeker Nahr",
+        "rk": "ELITE",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Undercity"
+       }
+      }
+     },
+     "name": "Seeker Nahr",
+     "spells": {}
+    },
+    "1442": {
+     "levels": {
+      "60": {
+       "at": 1795662913,
+       "v": {
+        "armor": 3566,
+        "class": "WARRIOR",
+        "dmax": 137.86,
+        "dmin": 103.95,
+        "n": "Helgrum the Swift",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Swamp of Sorrows"
+       }
+      }
+     },
+     "name": "Helgrum the Swift",
+     "spells": {}
+    },
+    "1443": {
+     "levels": {
+      "60": {
+       "at": 1795662916,
+       "v": {
+        "armor": 3566,
+        "class": "WARRIOR",
+        "dmax": 137.86,
+        "dmin": 103.95,
+        "n": "Fel'zerul",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Swamp of Sorrows"
+       }
+      }
+     },
+     "name": "Fel'zerul",
+     "spells": {}
+    },
     "14567": {
      "levels": {
       "52": {
@@ -1693,6 +1906,23 @@
      "name": "High Overlord Saurfang",
      "spells": {}
     },
+    "14726": {
+     "levels": {
+      "35": {
+       "at": 1795700247,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Rashona Straglash",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Orgrimmar"
+       }
+      }
+     },
+     "name": "Rashona Straglash",
+     "spells": {}
+    },
     "14743": {
      "levels": {
       "50": {
@@ -1728,6 +1958,23 @@
       }
      },
      "name": "Peon",
+     "spells": {}
+    },
+    "1495": {
+     "levels": {
+      "22": {
+       "at": 1795697497,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Deathguard Linnea",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Tirisfal Glades"
+       }
+      }
+     },
+     "name": "Deathguard Linnea",
      "spells": {}
     },
     "14990": {
@@ -1974,6 +2221,23 @@
      "name": "Cursed Darkhound",
      "spells": {}
     },
+    "1549": {
+     "levels": {
+      "9": {
+       "at": 1795697639,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Ravenous Darkhound",
+        "run": 6,
+        "spd": 2,
+        "ty": "Demon",
+        "z": "Tirisfal Glades"
+       }
+      }
+     },
+     "name": "Ravenous Darkhound",
+     "spells": {}
+    },
     "1553": {
      "levels": {
       "6": {
@@ -2032,7 +2296,14 @@
       }
      },
      "name": "Vampiric Duskbat",
-     "spells": {}
+     "spells": {
+      "3242": {
+       "at": "2026-11-26",
+       "build": "1.60.1",
+       "n": 2,
+       "spawns": 1
+      }
+     }
     },
     "15677": {
      "levels": {
@@ -2066,6 +2337,23 @@
       }
      },
      "name": "Auctioneer O'reely",
+     "spells": {}
+    },
+    "15682": {
+     "levels": {
+      "50": {
+       "at": 1795697200,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Auctioneer Cain",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Undercity"
+       }
+      }
+     },
+     "name": "Auctioneer Cain",
      "spells": {}
     },
     "16014": {
@@ -2339,6 +2627,26 @@
      "name": "Moonrage Darkrunner",
      "spells": {}
     },
+    "1775": {
+     "levels": {
+      "60": {
+       "at": 1795662998,
+       "v": {
+        "armor": 3566,
+        "class": "WARRIOR",
+        "dmax": 137.86,
+        "dmin": 103.95,
+        "n": "Zun'dartha",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Swamp of Sorrows"
+       }
+      }
+     },
+     "name": "Zun'dartha",
+     "spells": {}
+    },
     "1778": {
      "levels": {
       "11": {
@@ -2421,6 +2729,24 @@
       }
      },
      "name": "Giant Grizzled Bear",
+     "spells": {}
+    },
+    "1863": {
+     "levels": {
+      "21": {
+       "at": 1795699978,
+       "v": {
+        "class": "PALADIN",
+        "fam": "Succubus",
+        "n": "Bronevere",
+        "run": 8,
+        "spd": 1.74,
+        "ty": "Demon",
+        "z": "Orgrimmar"
+       }
+      }
+     },
+     "name": "Bronevere",
      "spells": {}
     },
     "1865": {
@@ -2855,6 +3181,40 @@
       }
      },
      "name": "Giant Foreststrider",
+     "spells": {}
+    },
+    "2458": {
+     "levels": {
+      "45": {
+       "at": 1795697273,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Randolph Montague",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Undercity"
+       }
+      }
+     },
+     "name": "Randolph Montague",
+     "spells": {}
+    },
+    "2459": {
+     "levels": {
+      "45": {
+       "at": 1795697276,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Mortimer Montague",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Undercity"
+       }
+      }
+     },
+     "name": "Mortimer Montague",
      "spells": {}
     },
     "2464": {
@@ -3761,6 +4121,21 @@
      "name": "Catelyn the Blade",
      "spells": {}
     },
+    "254560": {
+     "levels": {
+      "39": {
+       "at": 1795661693,
+       "v": {
+        "class": "MAGE",
+        "n": "Twilight Shadowmancer",
+        "ty": "Humanoid",
+        "z": "Riverglades"
+       }
+      }
+     },
+     "name": "Twilight Shadowmancer",
+     "spells": {}
+    },
     "255002": {
      "levels": {
       "6": {
@@ -3781,6 +4156,24 @@
      "name": "Ryff",
      "spells": {}
     },
+    "255851": {
+     "levels": {
+      "38": {
+       "at": 1795661450,
+       "v": {
+        "class": "WARRIOR",
+        "fam": "Boar",
+        "n": "Mature Paletusk",
+        "run": 8,
+        "spd": 2,
+        "ty": "Beast",
+        "z": "Riverglades"
+       }
+      }
+     },
+     "name": "Mature Paletusk",
+     "spells": {}
+    },
     "255979": {
      "levels": {
       "10": {
@@ -3796,6 +4189,41 @@
       }
      },
      "name": "Thendal Grove Ranger",
+     "spells": {}
+    },
+    "255993": {
+     "levels": {
+      "55": {
+       "at": 1795661485,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Grakna",
+        "rk": "ELITE",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Riverglades"
+       }
+      }
+     },
+     "name": "Grakna",
+     "spells": {}
+    },
+    "255996": {
+     "levels": {
+      "55": {
+       "at": 1795661508,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Rog'mar Grunt",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Riverglades"
+       }
+      }
+     },
+     "name": "Rog'mar Grunt",
      "spells": {}
     },
     "256386": {
@@ -3816,6 +4244,126 @@
       }
      },
      "name": "Dokimi",
+     "spells": {}
+    },
+    "256389": {
+     "levels": {
+      "30": {
+       "at": 1795661191,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Tamelyn Aldridge",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Redridge Mountains"
+       }
+      }
+     },
+     "name": "Tamelyn Aldridge",
+     "spells": {}
+    },
+    "256655": {
+     "levels": {
+      "38": {
+       "at": 1795661503,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Gorg",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Riverglades"
+       }
+      }
+     },
+     "name": "Gorg",
+     "spells": {}
+    },
+    "256795": {
+     "levels": {
+      "43": {
+       "at": 1795661428,
+       "v": {
+        "class": "ROGUE",
+        "n": "Twilight Fanatic",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Riverglades"
+       }
+      }
+     },
+     "name": "Twilight Fanatic",
+     "spells": {}
+    },
+    "256798": {
+     "levels": {
+      "37": {
+       "at": 1795661694,
+       "v": {
+        "class": "PALADIN",
+        "n": "Twilight Neophyte",
+        "ty": "Humanoid",
+        "z": "Riverglades"
+       }
+      },
+      "38": {
+       "at": 1795661692,
+       "v": {
+        "class": "PALADIN",
+        "n": "Twilight Neophyte",
+        "ty": "Humanoid",
+        "z": "Riverglades"
+       }
+      }
+     },
+     "name": "Twilight Neophyte",
+     "spells": {}
+    },
+    "256799": {
+     "levels": {
+      "43": {
+       "at": 1795661776,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Twilight Champion",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Riverglades"
+       }
+      },
+      "44": {
+       "at": 1795661818,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Twilight Champion",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Riverglades"
+       }
+      }
+     },
+     "name": "Twilight Champion",
+     "spells": {}
+    },
+    "256952": {
+     "levels": {
+      "39": {
+       "at": 1795661614,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Twilight Raider",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Riverglades"
+       }
+      }
+     },
+     "name": "Twilight Raider",
      "spells": {}
     },
     "257551": {
@@ -3858,6 +4406,24 @@
      "name": "Halaan Hawk-Eye",
      "spells": {}
     },
+    "258331": {
+     "levels": {
+      "36": {
+       "at": 1795661892,
+       "v": {
+        "class": "WARRIOR",
+        "fam": "Boar",
+        "n": "Young Paletusk",
+        "run": 8,
+        "spd": 2,
+        "ty": "Beast",
+        "z": "Riverglades"
+       }
+      }
+     },
+     "name": "Young Paletusk",
+     "spells": {}
+    },
     "258463": {
      "levels": {
       "35": {
@@ -3873,6 +4439,99 @@
       }
      },
      "name": "Darah",
+     "spells": {}
+    },
+    "258686": {
+     "levels": {
+      "46": {
+       "at": 1795661816,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Farholde Lookout",
+        "run": 10,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Riverglades"
+       }
+      }
+     },
+     "name": "Farholde Lookout",
+     "spells": {}
+    },
+    "259046": {
+     "levels": {
+      "38": {
+       "at": 1795661637,
+       "v": {
+        "class": "WARRIOR",
+        "fam": "Crocolisk",
+        "n": "Freshwater Crocolisk",
+        "run": 8,
+        "spd": 2,
+        "ty": "Beast",
+        "z": "Riverglades"
+       }
+      }
+     },
+     "name": "Freshwater Crocolisk",
+     "spells": {}
+    },
+    "259052": {
+     "levels": {
+      "38": {
+       "at": 1795661589,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Rog'mar Poacher",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Riverglades"
+       }
+      },
+      "39": {
+       "at": 1795661589,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Rog'mar Poacher",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Riverglades"
+       }
+      }
+     },
+     "name": "Rog'mar Poacher",
+     "spells": {}
+    },
+    "259269": {
+     "levels": {
+      "38": {
+       "at": 1795661907,
+       "v": {
+        "class": "WARRIOR",
+        "fam": "Carrion Bird",
+        "n": "High Plains Buzzard",
+        "run": 8,
+        "spd": 2,
+        "ty": "Beast",
+        "z": "Riverglades"
+       }
+      },
+      "39": {
+       "at": 1795661847,
+       "v": {
+        "class": "WARRIOR",
+        "fam": "Carrion Bird",
+        "n": "High Plains Buzzard",
+        "run": 8,
+        "spd": 2,
+        "ty": "Beast",
+        "z": "Riverglades"
+       }
+      }
+     },
+     "name": "High Plains Buzzard",
      "spells": {}
     },
     "2594": {
@@ -3932,6 +4591,23 @@
      "name": "Musical Gustjumper",
      "spells": {}
     },
+    "260343": {
+     "levels": {
+      "38": {
+       "at": 1795661515,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Maka",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Riverglades"
+       }
+      }
+     },
+     "name": "Maka",
+     "spells": {}
+    },
     "260405": {
      "levels": {
       "45": {
@@ -3964,6 +4640,23 @@
       }
      },
      "name": "Venture Co. Agent",
+     "spells": {}
+    },
+    "261313": {
+     "levels": {
+      "36": {
+       "at": 1795661520,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Naluk",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Riverglades"
+       }
+      }
+     },
+     "name": "Naluk",
      "spells": {}
     },
     "262397": {
@@ -4036,6 +4729,24 @@
       }
      },
      "name": "Myriaal Mistwake",
+     "spells": {}
+    },
+    "263343": {
+     "levels": {
+      "37": {
+       "at": 1795661583,
+       "v": {
+        "class": "WARRIOR",
+        "fam": "Carrion Bird",
+        "n": "Low Plains Buzzard",
+        "run": 8,
+        "spd": 2,
+        "ty": "Beast",
+        "z": "Riverglades"
+       }
+      }
+     },
+     "name": "Low Plains Buzzard",
      "spells": {}
     },
     "2635": {
@@ -4299,6 +5010,40 @@
      "name": "Stormheart",
      "spells": {}
     },
+    "271867": {
+     "levels": {
+      "41": {
+       "at": 1795662821,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Pachimari",
+        "run": 8,
+        "spd": 2,
+        "ty": "Non-combat Pet",
+        "z": "Swamp of Sorrows"
+       }
+      }
+     },
+     "name": "Pachimari",
+     "spells": {}
+    },
+    "271913": {
+     "levels": {
+      "29": {
+       "at": 1795664913,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Plagued Cockroach",
+        "run": 8,
+        "spd": 2,
+        "ty": "Non-combat Pet",
+        "z": "Orgrimmar"
+       }
+      }
+     },
+     "name": "Plagued Cockroach",
+     "spells": {}
+    },
     "271929": {
      "levels": {
       "1": {
@@ -4477,6 +5222,24 @@
      "name": "Panda Cub",
      "spells": {}
     },
+    "2729": {
+     "levels": {
+      "40": {
+       "at": 1795661384,
+       "v": {
+        "class": "WARRIOR",
+        "fam": "Wolf",
+        "n": "Elder Crag Coyote",
+        "run": 8,
+        "spd": 2,
+        "ty": "Beast",
+        "z": "Badlands"
+       }
+      }
+     },
+     "name": "Elder Crag Coyote",
+     "spells": {}
+    },
     "274334": {
      "levels": {
       "57": {
@@ -4492,6 +5255,23 @@
       }
      },
      "name": "Tallstrider Hatchling",
+     "spells": {}
+    },
+    "274911": {
+     "levels": {
+      "40": {
+       "at": 1795665395,
+       "v": {
+        "class": "PALADIN",
+        "n": "Eshka P'ari",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Stranglethorn Vale"
+       }
+      }
+     },
+     "name": "Eshka P'ari",
      "spells": {}
     },
     "274931": {
@@ -4536,6 +5316,24 @@
      "name": "Unknown",
      "spells": {}
     },
+    "276020": {
+     "levels": {},
+     "name": "Riptear",
+     "spells": {
+      "1319792": {
+       "at": "2026-11-26",
+       "build": "1.60.1",
+       "n": 1,
+       "spawns": 1
+      },
+      "8599": {
+       "at": "2026-11-26",
+       "build": "1.60.1",
+       "n": 2,
+       "spawns": 1
+      }
+     }
+    },
     "277059": {
      "levels": {
       "32": {
@@ -4569,6 +5367,36 @@
       }
      },
      "name": "Foothills Duskbat",
+     "spells": {}
+    },
+    "2831": {
+     "levels": {
+      "39": {
+       "at": 1795661341,
+       "v": {
+        "class": "WARRIOR",
+        "fam": "Carrion Bird",
+        "n": "Giant Buzzard",
+        "run": 8,
+        "spd": 2,
+        "ty": "Beast",
+        "z": "Badlands"
+       }
+      },
+      "41": {
+       "at": 1795661340,
+       "v": {
+        "class": "WARRIOR",
+        "fam": "Carrion Bird",
+        "n": "Giant Buzzard",
+        "run": 8,
+        "spd": 2,
+        "ty": "Beast",
+        "z": "Badlands"
+       }
+      }
+     },
+     "name": "Giant Buzzard",
      "spells": {}
     },
     "2832": {
@@ -4657,6 +5485,23 @@
       }
      },
      "name": "Qixdi Goodstitch",
+     "spells": {}
+    },
+    "2856": {
+     "levels": {
+      "40": {
+       "at": 1795666584,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Angrun",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Stranglethorn Vale"
+       }
+      }
+     },
+     "name": "Angrun",
      "spells": {}
     },
     "2858": {
@@ -4804,6 +5649,23 @@
        "spawns": 2
       }
      }
+    },
+    "3149": {
+     "levels": {
+      "45": {
+       "at": 1795665381,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Nez'raz",
+        "run": 10,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Stranglethorn Vale"
+       }
+      }
+     },
+     "name": "Nez'raz",
+     "spells": {}
     },
     "3197": {
      "levels": {},
@@ -5403,10 +6265,10 @@
       "45": {
        "at": 1795700439,
        "v": {
-        "armor": 3005,
+        "armor": 2742,
         "class": "WARRIOR",
-        "dmax": 100.47,
-        "dmin": 75.79,
+        "dmax": 100.32,
+        "dmin": 75.65,
         "n": "Soran",
         "r2": 14,
         "r3": 14,
@@ -5901,6 +6763,23 @@
      "name": "Lakota'mani",
      "spells": {}
     },
+    "3476": {
+     "levels": {
+      "27": {
+       "at": 1795664388,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Isha Awak",
+        "run": 8,
+        "spd": 2,
+        "ty": "Beast",
+        "z": "The Barrens"
+       }
+      }
+     },
+     "name": "Isha Awak",
+     "spells": {}
+    },
     "3477": {
      "levels": {
       "18": {
@@ -6001,6 +6880,40 @@
       }
      },
      "name": "Healing Stream Totem",
+     "spells": {}
+    },
+    "3549": {
+     "levels": {
+      "25": {
+       "at": 1795697497,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Shelene Rhobart",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Tirisfal Glades"
+       }
+      }
+     },
+     "name": "Shelene Rhobart",
+     "spells": {}
+    },
+    "3550": {
+     "levels": {
+      "15": {
+       "at": 1795697500,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Martine Tramblay",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Tirisfal Glades"
+       }
+      }
+     },
+     "name": "Martine Tramblay",
      "spells": {}
     },
     "3573": {
@@ -6658,6 +7571,30 @@
      "name": "Wrathtail Priestess",
      "spells": {}
     },
+    "3975": {
+     "levels": {},
+     "name": "Herod",
+     "spells": {
+      "22540": {
+       "at": "2026-11-26",
+       "build": "1.60.1",
+       "n": 5,
+       "spawns": 1
+      },
+      "8269": {
+       "at": "2026-11-26",
+       "build": "1.60.1",
+       "n": 2,
+       "spawns": 1
+      },
+      "8989": {
+       "at": "2026-11-26",
+       "build": "1.60.1",
+       "n": 8,
+       "spawns": 1
+      }
+     }
+    },
     "4075": {
      "levels": {
       "1": {
@@ -7201,6 +8138,211 @@
       }
      }
     },
+    "4280": {
+     "levels": {
+      "30": {
+       "at": 1795697700,
+       "v": {
+        "class": "PALADIN",
+        "n": "Scarlet Preserver",
+        "rk": "ELITE",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Tirisfal Glades"
+       }
+      }
+     },
+     "name": "Scarlet Preserver",
+     "spells": {}
+    },
+    "4281": {
+     "levels": {},
+     "name": "Scarlet Scout",
+     "spells": {
+      "6660": {
+       "at": "2026-11-26",
+       "build": "1.60.1",
+       "n": 2,
+       "spawns": 1
+      }
+     }
+    },
+    "4283": {
+     "levels": {
+      "30": {
+       "at": 1795697726,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Scarlet Sentry",
+        "rk": "ELITE",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Tirisfal Glades"
+       }
+      }
+     },
+     "name": "Scarlet Sentry",
+     "spells": {}
+    },
+    "4284": {
+     "levels": {
+      "31": {
+       "at": 1795697935,
+       "v": {
+        "class": "PALADIN",
+        "n": "Scarlet Augur",
+        "rk": "ELITE",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Tirisfal Glades"
+       }
+      }
+     },
+     "name": "Scarlet Augur",
+     "spells": {
+      "9613": {
+       "at": "2026-11-26",
+       "build": "1.60.1",
+       "n": 30,
+       "spawns": 2
+      }
+     }
+    },
+    "4285": {
+     "levels": {},
+     "name": "Scarlet Disciple",
+     "spells": {
+      "9734": {
+       "at": "2026-11-26",
+       "build": "1.60.1",
+       "n": 13,
+       "spawns": 1
+      }
+     }
+    },
+    "4286": {
+     "levels": {},
+     "name": "Scarlet Soldier",
+     "spells": {
+      "3639": {
+       "at": "2026-11-26",
+       "build": "1.60.1",
+       "n": 108,
+       "spawns": 16
+      }
+     }
+    },
+    "4289": {
+     "levels": {},
+     "name": "Scarlet Evoker",
+     "spells": {
+      "1314281": {
+       "at": "2026-11-26",
+       "build": "1.60.1",
+       "n": 10,
+       "spawns": 3
+      },
+      "2601": {
+       "at": "2026-11-26",
+       "build": "1.60.1",
+       "n": 12,
+       "spawns": 4
+      },
+      "8422": {
+       "at": "2026-11-26",
+       "build": "1.60.1",
+       "n": 9,
+       "spawns": 3
+      },
+      "9053": {
+       "at": "2026-11-26",
+       "build": "1.60.1",
+       "n": 19,
+       "spawns": 4
+      }
+     }
+    },
+    "4290": {
+     "levels": {},
+     "name": "Scarlet Guardsman",
+     "spells": {
+      "1324558": {
+       "at": "2026-11-26",
+       "build": "1.60.1",
+       "n": 12,
+       "spawns": 9
+      },
+      "676": {
+       "at": "2026-11-26",
+       "build": "1.60.1",
+       "n": 24,
+       "spawns": 9
+      },
+      "7164": {
+       "at": "2026-11-26",
+       "build": "1.60.1",
+       "n": 20,
+       "spawns": 9
+      }
+     }
+    },
+    "4292": {
+     "levels": {},
+     "name": "Scarlet Protector",
+     "spells": {
+      "3472": {
+       "at": "2026-11-26",
+       "build": "1.60.1",
+       "n": 56,
+       "spawns": 10
+      },
+      "8258": {
+       "at": "2026-11-26",
+       "build": "1.60.1",
+       "n": 55,
+       "spawns": 7
+      }
+     }
+    },
+    "4295": {
+     "levels": {},
+     "name": "Scarlet Myrmidon",
+     "spells": {
+      "8269": {
+       "at": "2026-11-26",
+       "build": "1.60.1",
+       "n": 34,
+       "spawns": 16
+      }
+     }
+    },
+    "4298": {
+     "levels": {},
+     "name": "Scarlet Defender",
+     "spells": {
+      "11972": {
+       "at": "2026-11-26",
+       "build": "1.60.1",
+       "n": 51,
+       "spawns": 10
+      },
+      "3639": {
+       "at": "2026-11-26",
+       "build": "1.60.1",
+       "n": 88,
+       "spawns": 10
+      },
+      "7164": {
+       "at": "2026-11-26",
+       "build": "1.60.1",
+       "n": 24,
+       "spawns": 10
+      }
+     }
+    },
     "4311": {
      "levels": {
       "30": {
@@ -7689,6 +8831,24 @@
      "name": "Murkgill Warrior",
      "spells": {}
     },
+    "4500": {
+     "levels": {
+      "45": {
+       "at": 1795664482,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Overlord Mok'Morokk",
+        "rk": "ELITE",
+        "run": 8,
+        "spd": 3,
+        "ty": "Humanoid",
+        "z": "Dustwallow Marsh"
+       }
+      }
+     },
+     "name": "Overlord Mok'Morokk",
+     "spells": {}
+    },
     "4548": {
      "levels": {
       "30": {
@@ -7705,6 +8865,80 @@
       }
      },
      "name": "Steelsnap",
+     "spells": {}
+    },
+    "4550": {
+     "levels": {
+      "45": {
+       "at": 1795697273,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Ophelia Montague",
+        "run": 8,
+        "spd": 2,
+        "ty": "Undead",
+        "z": "Undercity"
+       }
+      }
+     },
+     "name": "Ophelia Montague",
+     "spells": {}
+    },
+    "4554": {
+     "levels": {
+      "30": {
+       "at": 1795697284,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Tawny Grisette",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Undercity"
+       }
+      }
+     },
+     "name": "Tawny Grisette",
+     "spells": {}
+    },
+    "4594": {
+     "levels": {
+      "50": {
+       "at": 1795667511,
+       "v": {
+        "armor": 3018,
+        "class": "WARRIOR",
+        "dmax": 112.2,
+        "dmin": 84.61,
+        "n": "Angela Curthas",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Undercity"
+       }
+      }
+     },
+     "name": "Angela Curthas",
+     "spells": {}
+    },
+    "4607": {
+     "levels": {
+      "40": {
+       "at": 1795667548,
+       "v": {
+        "armor": 1980,
+        "class": "WARRIOR",
+        "dmax": 74.32,
+        "dmin": 56.02,
+        "n": "Father Lankester",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Undercity"
+       }
+      }
+     },
+     "name": "Father Lankester",
      "spells": {}
     },
     "4624": {
@@ -7751,6 +8985,23 @@
       }
      },
      "name": "Wharfmaster Lozgil",
+     "spells": {}
+    },
+    "464": {
+     "levels": {
+      "30": {
+       "at": 1795661191,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Guard Parker",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Redridge Mountains"
+       }
+      }
+     },
+     "name": "Guard Parker",
      "spells": {}
     },
     "4646": {
@@ -8438,6 +9689,40 @@
      "name": "Krak",
      "spells": {}
     },
+    "4884": {
+     "levels": {
+      "43": {
+       "at": 1795664484,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Zulrg",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Dustwallow Marsh"
+       }
+      }
+     },
+     "name": "Zulrg",
+     "spells": {}
+    },
+    "4926": {
+     "levels": {
+      "40": {
+       "at": 1795664482,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Krog",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Dustwallow Marsh"
+       }
+      }
+     },
+     "name": "Krog",
+     "spells": {}
+    },
     "4978": {
      "name": "Aku'mai Servant",
      "spells": {
@@ -8654,6 +9939,26 @@
      "name": "Krinkle Goodsteel",
      "spells": {}
     },
+    "5416": {
+     "levels": {
+      "40": {
+       "at": 1795662881,
+       "v": {
+        "armor": 1980,
+        "class": "WARRIOR",
+        "dmax": 74.32,
+        "dmin": 56.02,
+        "n": "Infiltrator Marksen",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Swamp of Sorrows"
+       }
+      }
+     },
+     "name": "Infiltrator Marksen",
+     "spells": {}
+    },
     "5419": {
      "levels": {
       "43": {
@@ -8762,6 +10067,58 @@
       }
      },
      "name": "Sea Spray",
+     "spells": {}
+    },
+    "547": {
+     "levels": {
+      "17": {
+       "at": 1795661231,
+       "v": {
+        "class": "WARRIOR",
+        "fam": "Boar",
+        "n": "Great Goretusk",
+        "run": 8,
+        "spd": 2,
+        "ty": "Beast",
+        "z": "Redridge Mountains"
+       }
+      }
+     },
+     "name": "Great Goretusk",
+     "spells": {}
+    },
+    "5546": {
+     "levels": {
+      "55": {
+       "at": 1795662877,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Grunt Zuul",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Swamp of Sorrows"
+       }
+      }
+     },
+     "name": "Grunt Zuul",
+     "spells": {}
+    },
+    "5547": {
+     "levels": {
+      "55": {
+       "at": 1795662878,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Grunt Tharlak",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Swamp of Sorrows"
+       }
+      }
+     },
+     "name": "Grunt Tharlak",
      "spells": {}
     },
     "5594": {
@@ -8917,6 +10274,128 @@
      "name": "Sarok",
      "spells": {}
     },
+    "5624": {
+     "levels": {
+      "55": {
+       "at": 1795667575,
+       "v": {
+        "armor": 3292,
+        "class": "WARRIOR",
+        "dmax": 124.7,
+        "dmin": 94.04,
+        "n": "Undercity Guardian",
+        "run": 8,
+        "spd": 2,
+        "ty": "Undead",
+        "z": "Undercity"
+       }
+      }
+     },
+     "name": "Undercity Guardian",
+     "spells": {}
+    },
+    "5658": {
+     "levels": {
+      "20": {
+       "at": 1795667311,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Chloe Curthas",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Undercity"
+       }
+      }
+     },
+     "name": "Chloe Curthas",
+     "spells": {}
+    },
+    "5659": {
+     "levels": {
+      "20": {
+       "at": 1795667310,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Andrew Hartwell",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Undercity"
+       }
+      }
+     },
+     "name": "Andrew Hartwell",
+     "spells": {}
+    },
+    "5660": {
+     "levels": {
+      "20": {
+       "at": 1795667311,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Riley Walker",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Undercity"
+       }
+      }
+     },
+     "name": "Riley Walker",
+     "spells": {}
+    },
+    "5661": {
+     "levels": {
+      "20": {
+       "at": 1795667495,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Brother Malach",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Undercity"
+       }
+      }
+     },
+     "name": "Brother Malach",
+     "spells": {}
+    },
+    "5669": {
+     "levels": {
+      "20": {
+       "at": 1795667612,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Helena Atwood",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Undercity"
+       }
+      }
+     },
+     "name": "Helena Atwood",
+     "spells": {}
+    },
+    "5679": {
+     "levels": {
+      "30": {
+       "at": 1795667438,
+       "v": {
+        "class": "MAGE",
+        "n": "Lysta Bancroft",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Undercity"
+       }
+      }
+     },
+     "name": "Lysta Bancroft",
+     "spells": {}
+    },
     "5757": {
      "levels": {
       "19": {
@@ -9058,6 +10537,23 @@
      "name": "Marcus Bel",
      "spells": {}
     },
+    "5819": {
+     "levels": {
+      "30": {
+       "at": 1795667605,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Mirelle Tremayne",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Undercity"
+       }
+      }
+     },
+     "name": "Mirelle Tremayne",
+     "spells": {}
+    },
     "5835": {
      "levels": {},
      "name": "Foreman Grills",
@@ -9149,6 +10645,78 @@
      "name": "Stoneskin Totem III",
      "spells": {}
     },
+    "5921": {
+     "levels": {
+      "34": {
+       "at": 1795665775,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Strength of Earth Totem II",
+        "run": 7,
+        "spd": 2,
+        "ty": "Totem",
+        "z": "Stranglethorn Vale"
+       }
+      }
+     },
+     "name": "Strength of Earth Totem II",
+     "spells": {}
+    },
+    "5951": {
+     "levels": {
+      "1": {
+       "at": 1795664275,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Hare",
+        "run": 6,
+        "spd": 2,
+        "ty": "Critter",
+        "z": "Durotar"
+       }
+      }
+     },
+     "name": "Hare",
+     "spells": {}
+    },
+    "6020": {
+     "levels": {
+      "18": {
+       "at": 1795664387,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Slimeshell Makrura",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "The Barrens"
+       }
+      }
+     },
+     "name": "Slimeshell Makrura",
+     "spells": {}
+    },
+    "6026": {
+     "levels": {
+      "55": {
+       "at": 1795663106,
+       "v": {
+        "armor": 3292,
+        "class": "WARRIOR",
+        "dmax": 436.44,
+        "dmin": 329.12,
+        "n": "Breyk",
+        "rk": "ELITE",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Swamp of Sorrows"
+       }
+      }
+     },
+     "name": "Breyk",
+     "spells": {}
+    },
     "6112": {
      "levels": {
       "37": {
@@ -9205,6 +10773,23 @@
        "spawns": 1
       }
      }
+    },
+    "6289": {
+     "levels": {
+      "13": {
+       "at": 1795697496,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Rand Rhobart",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Tirisfal Glades"
+       }
+      }
+     },
+     "name": "Rand Rhobart",
+     "spells": {}
     },
     "6387": {
      "levels": {
@@ -9588,6 +11173,26 @@
      "name": "Innkeeper Gryshka",
      "spells": {}
     },
+    "6930": {
+     "levels": {
+      "30": {
+       "at": 1795662994,
+       "v": {
+        "armor": 1212,
+        "class": "WARRIOR",
+        "dmax": 56.32,
+        "dmin": 42.45,
+        "n": "Innkeeper Karakul",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Swamp of Sorrows"
+       }
+      }
+     },
+     "name": "Innkeeper Karakul",
+     "spells": {}
+    },
     "694": {
      "levels": {
       "33": {
@@ -9782,6 +11387,23 @@
      "name": "Sir S. J. Erlgadin",
      "spells": {}
     },
+    "721": {
+     "levels": {
+      "1": {
+       "at": 1795661925,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Rabbit",
+        "run": 6,
+        "spd": 2,
+        "ty": "Critter",
+        "z": "Riverglades"
+       }
+      }
+     },
+     "name": "Rabbit",
+     "spells": {}
+    },
     "729": {
      "levels": {
       "37": {
@@ -9965,6 +11587,77 @@
      "name": "Spigot Operator Luglunket",
      "spells": {}
     },
+    "743": {
+     "levels": {
+      "42": {
+       "at": 1795662799,
+       "v": {
+        "class": "PALADIN",
+        "n": "Wyrmkin Dreamwalker",
+        "run": 8,
+        "spd": 2,
+        "ty": "Dragonkin",
+        "z": "Swamp of Sorrows"
+       }
+      },
+      "43": {
+       "at": 1795662780,
+       "v": {
+        "class": "PALADIN",
+        "n": "Wyrmkin Dreamwalker",
+        "ty": "Dragonkin",
+        "z": "Swamp of Sorrows"
+       }
+      }
+     },
+     "name": "Wyrmkin Dreamwalker",
+     "spells": {}
+    },
+    "744": {
+     "levels": {
+      "42": {
+       "at": 1795662695,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Green Scalebane",
+        "run": 8,
+        "spd": 2,
+        "ty": "Dragonkin",
+        "z": "Swamp of Sorrows"
+       }
+      },
+      "43": {
+       "at": 1795662687,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Green Scalebane",
+        "run": 8,
+        "spd": 2,
+        "ty": "Dragonkin",
+        "z": "Swamp of Sorrows"
+       }
+      }
+     },
+     "name": "Green Scalebane",
+     "spells": {}
+    },
+    "745": {
+     "levels": {
+      "43": {
+       "at": 1795662685,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Scalebane Captain",
+        "run": 8,
+        "spd": 2,
+        "ty": "Dragonkin",
+        "z": "Swamp of Sorrows"
+       }
+      }
+     },
+     "name": "Scalebane Captain",
+     "spells": {}
+    },
     "7485": {
      "levels": {
       "40": {
@@ -9980,6 +11673,23 @@
       }
      },
      "name": "Nargatt",
+     "spells": {}
+    },
+    "7545": {
+     "levels": {
+      "39": {
+       "at": 1795700444,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Emerald Whelpling",
+        "run": 8,
+        "spd": 2,
+        "ty": "Non-combat Pet",
+        "z": "Orgrimmar"
+       }
+      }
+     },
+     "name": "Emerald Whelpling",
      "spells": {}
     },
     "7564": {
@@ -10034,6 +11744,63 @@
       }
      },
      "name": "Sprinkle",
+     "spells": {}
+    },
+    "7623": {
+     "levels": {
+      "60": {
+       "at": 1795662914,
+       "v": {
+        "armor": 3566,
+        "class": "WARRIOR",
+        "dmax": 137.86,
+        "dmin": 103.95,
+        "n": "Dispatch Commander Ruag",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Swamp of Sorrows"
+       }
+      }
+     },
+     "name": "Dispatch Commander Ruag",
+     "spells": {}
+    },
+    "7643": {
+     "levels": {
+      "45": {
+       "at": 1795662980,
+       "v": {
+        "armor": 2742,
+        "class": "WARRIOR",
+        "dmax": 100.32,
+        "dmin": 75.65,
+        "n": "Bengor",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Swamp of Sorrows"
+       }
+      }
+     },
+     "name": "Bengor",
+     "spells": {}
+    },
+    "766": {
+     "levels": {
+      "41": {
+       "at": 1795662811,
+       "v": {
+        "class": "PALADIN",
+        "n": "Tangled Horror",
+        "run": 8,
+        "spd": 2,
+        "ty": "Elemental",
+        "z": "Swamp of Sorrows"
+       }
+      }
+     },
+     "name": "Tangled Horror",
      "spells": {}
     },
     "772": {
@@ -10612,6 +12379,23 @@
      "name": "Worb Strongstitch",
      "spells": {}
     },
+    "8177": {
+     "levels": {
+      "45": {
+       "at": 1795662947,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Rartar",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Swamp of Sorrows"
+       }
+      }
+     },
+     "name": "Rartar",
+     "spells": {}
+    },
     "856": {
      "levels": {
       "33": {
@@ -10628,6 +12412,86 @@
       }
      },
      "name": "Young Lashtail Raptor",
+     "spells": {}
+    },
+    "858": {
+     "levels": {
+      "37": {
+       "at": 1795663113,
+       "v": {
+        "class": "WARRIOR",
+        "fam": "Spider",
+        "n": "Sorrow Spinner",
+        "run": 8,
+        "spd": 2,
+        "ty": "Beast",
+        "z": "Swamp of Sorrows"
+       }
+      }
+     },
+     "name": "Sorrow Spinner",
+     "spells": {}
+    },
+    "862": {
+     "levels": {
+      "37": {
+       "at": 1795662650,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Stonard Explorer",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Swamp of Sorrows"
+       }
+      },
+      "38": {
+       "at": 1795662812,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Stonard Explorer",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Swamp of Sorrows"
+       }
+      }
+     },
+     "name": "Stonard Explorer",
+     "spells": {}
+    },
+    "864": {
+     "levels": {
+      "50": {
+       "at": 1795663085,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Stonard Orc",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Swamp of Sorrows"
+       }
+      }
+     },
+     "name": "Stonard Orc",
+     "spells": {}
+    },
+    "866": {
+     "levels": {
+      "55": {
+       "at": 1795662845,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Stonard Grunt",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Swamp of Sorrows"
+       }
+      }
+     },
+     "name": "Stonard Grunt",
      "spells": {}
     },
     "8661": {
@@ -10761,6 +12625,36 @@
       }
      },
      "name": "Venture Co. Lumberjack",
+     "spells": {}
+    },
+    "922": {
+     "levels": {
+      "40": {
+       "at": 1795662637,
+       "v": {
+        "class": "WARRIOR",
+        "fam": "Crab",
+        "n": "Silt Crawler",
+        "run": 8,
+        "spd": 2,
+        "ty": "Beast",
+        "z": "Swamp of Sorrows"
+       }
+      },
+      "41": {
+       "at": 1795662643,
+       "v": {
+        "class": "WARRIOR",
+        "fam": "Crab",
+        "n": "Silt Crawler",
+        "run": 8,
+        "spd": 2,
+        "ty": "Beast",
+        "z": "Swamp of Sorrows"
+       }
+      }
+     },
+     "name": "Silt Crawler",
      "spells": {}
     },
     "937": {
@@ -11025,6 +12919,57 @@
      "name": "Yorba Screwspigot",
      "spells": {}
     },
+    "982": {
+     "levels": {
+      "45": {
+       "at": 1795663093,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Thultash",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Swamp of Sorrows"
+       }
+      }
+     },
+     "name": "Thultash",
+     "spells": {}
+    },
+    "983": {
+     "levels": {
+      "45": {
+       "at": 1795662929,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Thultazor",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Swamp of Sorrows"
+       }
+      }
+     },
+     "name": "Thultazor",
+     "spells": {}
+    },
+    "984": {
+     "levels": {
+      "45": {
+       "at": 1795662879,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Thralosh",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Swamp of Sorrows"
+       }
+      }
+     },
+     "name": "Thralosh",
+     "spells": {}
+    },
     "9856": {
      "levels": {
       "50": {
@@ -11040,6 +12985,55 @@
       }
      },
      "name": "Auctioneer Grimful",
+     "spells": {}
+    },
+    "986": {
+     "levels": {
+      "50": {
+       "at": 1795662845,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Haromm",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Swamp of Sorrows"
+       }
+      }
+     },
+     "name": "Haromm",
+     "spells": {}
+    },
+    "989": {
+     "levels": {
+      "50": {
+       "at": 1795662957,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Banalash",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Swamp of Sorrows"
+       }
+      }
+     },
+     "name": "Banalash",
+     "spells": {}
+    },
+    "9936": {
+     "levels": {
+      "41": {
+       "at": 1795661669,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Corrupted Kitten",
+        "ty": "Non-combat Pet",
+        "z": "Riverglades"
+       }
+      }
+     },
+     "name": "Corrupted Kitten",
      "spells": {}
     },
     "9983": {
@@ -11097,6 +13091,7 @@
    "spells": {
     "1026": "Holy Light",
     "10722": "Silithid Swarm",
+    "11972": "Shield Bash",
     "12167": "Lightning Bolt",
     "122": "Frost Nova",
     "12544": "Frost Armor",
@@ -11105,7 +13100,10 @@
     "12746": "Summon Voidwalker",
     "1303308": "Entangling Roots",
     "1303309": "Venom Spit",
+    "1314281": "Flamestrike",
+    "1319792": "Aura of Rot",
     "1324515": "Hammer of Justice",
+    "1324558": "Disarm",
     "13322": "Frostbolt",
     "134": "Fire Shield",
     "13443": "Rend",
@@ -11116,13 +13114,18 @@
     "19030": "Bear Form",
     "20791": "Shadow Bolt",
     "21335": "Thorns",
+    "22540": "Cleave",
     "25771": "Forbearance",
+    "2601": "Fire Shield III",
     "2609": "Shock",
+    "3242": "Ravage",
     "3264": "Blood Howl",
     "3391": "Thrash",
     "3429": "Plague Mind",
+    "3472": "Holy Light",
     "3490": "Frenzied Rage",
     "3604": "Tendon Rip",
+    "3639": "Improved Blocking",
     "3815": "Poison Cloud",
     "5262": "Fanatic Blade",
     "5401": "Lizard Bolt",
@@ -11139,6 +13142,7 @@
     "6607": "Lash",
     "6660": "Shoot",
     "6713": "Disarm",
+    "676": "Disarm",
     "6958": "Blood Leech",
     "7": "Suicide",
     "7054": "Forsaken Skills",
@@ -11172,15 +13176,22 @@
     "8052": "Flame Shock",
     "8056": "Frost Shock",
     "8140": "Befuddlement",
+    "8258": "Devotion Aura",
+    "8269": "Enrage",
     "8362": "Renew",
     "8382": "Leech Poison",
     "8391": "Ravage",
     "8398": "Frostbolt Volley",
     "8399": "Sleep",
+    "8422": "Flamestrike",
+    "8599": "Enrage",
     "865": "Frost Nova",
+    "8989": "Whirlwind",
+    "9053": "Fireball",
     "9532": "Lightning Bolt",
     "9613": "Shadow Bolt",
-    "970": "Shadow Word: Pain"
+    "970": "Shadow Word: Pain",
+    "9734": "Holy Smite"
    }
   }
  },
