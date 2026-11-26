@@ -10,3 +10,9 @@ mods/classic/data/gander_import_state.json
 
 # Brainstorm mockups
 .superpowers/
+
+# wrangler files
+.wrangler
+.dev.vars*
+!.dev.vars.example
+!.env.example
