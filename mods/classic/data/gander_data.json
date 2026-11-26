@@ -1589,9 +1589,12 @@
     "13842": {
      "levels": {
       "60": {
-       "at": 1795388570,
+       "at": 1795701572,
        "v": {
+        "armor": 3566,
         "class": "WARRIOR",
+        "dmax": 137.86,
+        "dmin": 103.95,
         "n": "Frostwolf Ambassador Rokhstrom",
         "run": 8,
         "spd": 2,
@@ -5044,6 +5047,17 @@
         "z": "Orgrimmar"
        }
       },
+      "22": {
+       "at": 1795701837,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Prairie Wolf Pup",
+        "run": 8,
+        "spd": 2,
+        "ty": "Non-combat Pet",
+        "z": "Durotar"
+       }
+      },
       "33": {
        "at": 1795666461,
        "v": {
@@ -5199,6 +5213,17 @@
     },
     "272328": {
      "levels": {
+      "12": {
+       "at": 1795701600,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Mini Diablo",
+        "run": 8,
+        "spd": 2,
+        "ty": "Non-combat Pet",
+        "z": "Orgrimmar"
+       }
+      },
       "32": {
        "at": 1795566820,
        "v": {
@@ -7133,9 +7158,12 @@
     "3624": {
      "levels": {
       "40": {
-       "at": 1795660674,
+       "at": 1795705112,
        "v": {
+        "armor": 1980,
         "class": "WARRIOR",
+        "dmax": 74.32,
+        "dmin": 56.02,
         "n": "Zudd",
         "run": 8,
         "spd": 2,
@@ -10888,6 +10916,17 @@
         "ty": "Totem",
         "z": "Blackfathom Deeps"
        }
+      },
+      "34": {
+       "at": 1795702358,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Stoneskin Totem III",
+        "run": 7,
+        "spd": 2,
+        "ty": "Totem",
+        "z": "Stranglethorn Vale"
+       }
       }
      },
      "name": "Stoneskin Totem III",
@@ -10895,6 +10934,17 @@
     },
     "5921": {
      "levels": {
+      "31": {
+       "at": 1795702042,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Strength of Earth Totem II",
+        "run": 7,
+        "spd": 2,
+        "ty": "Totem",
+        "z": "Durotar"
+       }
+      },
       "34": {
        "at": 1795665775,
        "v": {
@@ -11784,12 +11834,25 @@
     "736": {
      "levels": {
       "32": {
-       "at": 1795374665,
+       "at": 1795703376,
        "v": {
         "class": "WARRIOR",
         "fam": "Cat",
         "run": 10,
-        "spd": 1.3
+        "spd": 1.3,
+        "ty": "Beast",
+        "z": "Stranglethorn Vale"
+       }
+      },
+      "33": {
+       "at": 1795703310,
+       "v": {
+        "class": "WARRIOR",
+        "fam": "Cat",
+        "run": 10,
+        "spd": 1.3,
+        "ty": "Beast",
+        "z": "Stranglethorn Vale"
        }
       }
      },
