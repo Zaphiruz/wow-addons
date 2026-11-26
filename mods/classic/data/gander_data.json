@@ -450,6 +450,23 @@
      "name": "Warcaller Gorlach",
      "spells": {}
     },
+    "1094": {
+     "levels": {
+      "34": {
+       "at": 1795702644,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Venture Co. Miner",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Stranglethorn Vale"
+       }
+      }
+     },
+     "name": "Venture Co. Miner",
+     "spells": {}
+    },
     "10941": {
      "levels": {
       "31": {
@@ -465,6 +482,23 @@
       }
      },
      "name": "Wizlo Bearingshiner",
+     "spells": {}
+    },
+    "1095": {
+     "levels": {
+      "36": {
+       "at": 1795702640,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Venture Co. Workboss",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Stranglethorn Vale"
+       }
+      }
+     },
+     "name": "Venture Co. Workboss",
      "spells": {}
     },
     "1096": {
@@ -10870,6 +10904,34 @@
       }
      }
     },
+    "588": {
+     "levels": {
+      "34": {
+       "at": 1795703089,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Bloodscalp Scout",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Stranglethorn Vale"
+       }
+      },
+      "35": {
+       "at": 1795703091,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Bloodscalp Scout",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Stranglethorn Vale"
+       }
+      }
+     },
+     "name": "Bloodscalp Scout",
+     "spells": {}
+    },
     "5907": {
      "levels": {
       "15": {
@@ -10958,6 +11020,32 @@
       }
      },
      "name": "Strength of Earth Totem II",
+     "spells": {}
+    },
+    "595": {
+     "levels": {
+      "34": {
+       "at": 1795703083,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Bloodscalp Hunter",
+        "ty": "Humanoid",
+        "z": "Stranglethorn Vale"
+       }
+      },
+      "35": {
+       "at": 1795703082,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Bloodscalp Hunter",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Stranglethorn Vale"
+       }
+      }
+     },
+     "name": "Bloodscalp Hunter",
      "spells": {}
     },
     "5951": {
@@ -11228,6 +11316,34 @@
      "name": "Skullsplitter Warrior",
      "spells": {}
     },
+    "671": {
+     "levels": {
+      "36": {
+       "at": 1795703030,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Bloodscalp Headhunter",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Stranglethorn Vale"
+       }
+      },
+      "37": {
+       "at": 1795702937,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Bloodscalp Headhunter",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Stranglethorn Vale"
+       }
+      }
+     },
+     "name": "Bloodscalp Headhunter",
+     "spells": {}
+    },
     "6726": {
      "levels": {
       "55": {
@@ -11384,6 +11500,36 @@
       }
      },
      "name": "Shadowmaw Panther",
+     "spells": {}
+    },
+    "685": {
+     "levels": {
+      "33": {
+       "at": 1795702821,
+       "v": {
+        "class": "WARRIOR",
+        "fam": "Raptor",
+        "n": "Stranglethorn Raptor",
+        "run": 8,
+        "spd": 2,
+        "ty": "Beast",
+        "z": "Stranglethorn Vale"
+       }
+      },
+      "34": {
+       "at": 1795702699,
+       "v": {
+        "class": "WARRIOR",
+        "fam": "Raptor",
+        "n": "Stranglethorn Raptor",
+        "run": 8,
+        "spd": 2,
+        "ty": "Beast",
+        "z": "Stranglethorn Vale"
+       }
+      }
+     },
+     "name": "Stranglethorn Raptor",
      "spells": {}
     },
     "686": {
@@ -11585,6 +11731,90 @@
        "spawns": 20
       }
      }
+    },
+    "698": {
+     "levels": {
+      "34": {
+       "at": 1795702987,
+       "v": {
+        "class": "WARRIOR",
+        "fam": "Cat",
+        "n": "Bloodscalp Tiger",
+        "run": 8,
+        "spd": 2,
+        "ty": "Beast",
+        "z": "Stranglethorn Vale"
+       }
+      },
+      "35": {
+       "at": 1795703061,
+       "v": {
+        "class": "WARRIOR",
+        "fam": "Cat",
+        "n": "Bloodscalp Tiger",
+        "ty": "Beast",
+        "z": "Stranglethorn Vale"
+       }
+      }
+     },
+     "name": "Bloodscalp Tiger",
+     "spells": {}
+    },
+    "699": {
+     "levels": {
+      "34": {
+       "at": 1795703111,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Bloodscalp Beastmaster",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Stranglethorn Vale"
+       }
+      },
+      "35": {
+       "at": 1795702858,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Bloodscalp Beastmaster",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Stranglethorn Vale"
+       }
+      }
+     },
+     "name": "Bloodscalp Beastmaster",
+     "spells": {}
+    },
+    "701": {
+     "levels": {
+      "34": {
+       "at": 1795703082,
+       "v": {
+        "class": "PALADIN",
+        "n": "Bloodscalp Mystic",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Stranglethorn Vale"
+       }
+      },
+      "35": {
+       "at": 1795703061,
+       "v": {
+        "class": "PALADIN",
+        "n": "Bloodscalp Mystic",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Stranglethorn Vale"
+       }
+      }
+     },
+     "name": "Bloodscalp Mystic",
+     "spells": {}
     },
     "702": {
      "levels": {
@@ -11856,7 +12086,7 @@
        }
       }
      },
-     "name": "",
+     "name": "Panther",
      "spells": {}
     },
     "7366": {
@@ -12782,6 +13012,24 @@
      "name": "Rartar",
      "spells": {}
     },
+    "855": {
+     "levels": {
+      "31": {
+       "at": 1795702811,
+       "v": {
+        "class": "WARRIOR",
+        "fam": "Raptor",
+        "n": "Young Stranglethorn Raptor",
+        "run": 8,
+        "spd": 2,
+        "ty": "Beast",
+        "z": "Stranglethorn Vale"
+       }
+      }
+     },
+     "name": "Young Stranglethorn Raptor",
+     "spells": {}
+    },
     "856": {
      "levels": {
       "33": {
@@ -13007,6 +13255,23 @@
        "spawns": 2
       }
      }
+    },
+    "920": {
+     "levels": {
+      "30": {
+       "at": 1795705188,
+       "v": {
+        "class": "PALADIN",
+        "n": "Nightbane Tainted One",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Duskwood"
+       }
+      }
+     },
+     "name": "Nightbane Tainted One",
+     "spells": {}
     },
     "921": {
      "levels": {
