@@ -1,5 +1,9 @@
 # GanderData changelog
 
+## 1.0.2 (2026-11-26)
+
+- Forever: stats for 128 more mobs.
+
 ## 1.0.1 (2026-11-25)
 
 - Forever: stats for 2 more mobs.
