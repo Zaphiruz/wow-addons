@@ -580,12 +580,9 @@
       window.addEventListener(name, function (event) { event.preventDefault(); });
     });
     $("pick-files").addEventListener("click", function () { $("files").click(); });
-    $("pick-folder").addEventListener("click", function () { $("folder").click(); });
-    ["files", "folder"].forEach(function (id) {
-      $(id).addEventListener("change", function () {
-        addFiles(this.files);
-        this.value = "";
-      });
+    $("files").addEventListener("change", function () {
+      addFiles(this.files);
+      this.value = "";
     });
     $("not-english").addEventListener("change", renderBlocks);
     $("stats-box").addEventListener("input", function () {

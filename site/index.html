@@ -30,12 +30,15 @@
     <div id="drop" class="drop">
       <p>Drop your <code>Logs</code> folder or log files here</p>
       <p class="buttons">
-        <button type="button" id="pick-files">Choose files</button>
-        <button type="button" id="pick-folder">Choose folder</button>
+        <button type="button" id="pick-files">Choose combat logs</button>
       </p>
-      <input type="file" id="files" multiple accept=".txt,text/plain" hidden>
-      <input type="file" id="folder" webkitdirectory hidden>
+      <!-- .txt only: in the Logs folder that is exactly the combat logs. There is
+           no "choose a folder" button on purpose: the browser then asks to "upload"
+           every file in the folder, the game's other logs included. -->
+      <input type="file" id="files" multiple accept=".txt" hidden>
     </div>
+    <p class="hint">With the button: go to the <code>Logs</code> folder, press Ctrl+A and Open. The window
+      shows only combat logs. The game keeps its other logs in that folder too; this page never opens those.</p>
     <p class="hint">The folder is <code>World of Warcraft\_forever_\Logs</code> for Forever and
       <code>World of Warcraft\_classic_era_\Logs</code> for Classic Era. The game only writes a log while logging
       is on: tick it in Gander's settings, or type <code>/combatlog</code>.</p>
