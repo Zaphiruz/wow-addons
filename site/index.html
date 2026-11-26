@@ -17,9 +17,11 @@
 
   <section id="stats" hidden>
     <h2>Stats from Gander</h2>
-    <p>Type <code>/gander send</code> in game, copy the block it shows, and paste it here.</p>
+    <p>Type <code>/gander send</code> in game, copy the block it shows, and paste it here.
+      It is sent as soon as you paste it.</p>
     <textarea id="stats-box" class="paste" spellcheck="false" aria-label="The block from /gander send"
               placeholder='{"format":1,"game":"forever","mobs":{ ...'></textarea>
+    <p id="paste-note" class="status good" role="status" aria-live="polite"></p>
     <p id="stats-note" class="status" role="status" aria-live="polite"></p>
   </section>
 

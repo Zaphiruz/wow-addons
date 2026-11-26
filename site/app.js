@@ -16,6 +16,8 @@
   var blocks = [];                   // what there is to send: { text, title, copied, delivered }
   var busy = false;                  // reading logs
   var sending = false;
+  var pasting = false;               // a pasted block is on its way
+  var sentPages = [];                // the blocks from Gander sent in this visit
 
   function $(id) { return document.getElementById(id); }
 
@@ -159,7 +161,7 @@
   // is something else.
   function statsBlock() {
     var text = $("stats-box").value.trim();
-    if (!SEND_URL || !text) return "";
+    if (!SEND_URL || !text || pasting) return "";
     try {
       var sub = JSON.parse(text);
       if (sub && sub.format === 1 && /^(forever|classic)$/.test(sub.game) && typeof sub.mobs === "object") return text;
@@ -295,6 +297,7 @@
     items = [];
     blocks = [];
     $("stats-box").value = "";
+    $("paste-note").textContent = "";
     render();
     if (hadLogs && kept) {
       message += " This browser will skip those logs next time, so you can drop the whole folder again after " +
@@ -337,7 +340,10 @@
       chain = chain.then(function () {
         count += 1;
         $("go-note").textContent = "Sending " + count + " of " + todo.length + "...";
-        return post(block.text).then(function () { block.delivered = true; });
+        return post(block.text).then(function () {
+          block.delivered = true;
+          if (block.stats) sentPages.push(block.text);
+        });
       });
     });
     chain.then(function () {
@@ -355,6 +361,42 @@
   }
 
   // ---- choosing and dropping ----
+  // ---- a pasted block goes at once ----
+  // One paste for each page of /gander send, with nothing to press in
+  // between. If it can't be sent, the block stays in the box and the Send
+  // button below takes over.
+  function sendPasted() {
+    var text = statsBlock();
+    $("paste-note").textContent = "";
+    if (!text || sending) { renderBlocks(); return Promise.resolve(); }
+    var next = ' Click "I sent it" in Gander, and if it shows another page, paste that one here.';
+    if (sentPages.indexOf(text) !== -1) {
+      $("stats-box").value = "";
+      renderBlocks();
+      $("paste-note").textContent = "You already sent that page." + next;
+      return Promise.resolve();
+    }
+    sending = true;
+    pasting = true;
+    $("go").disabled = true;
+    renderBlocks();
+    $("paste-note").textContent = "Sending...";
+    function done(message) {
+      sending = false;
+      pasting = false;
+      $("go").disabled = false;
+      renderBlocks();
+      $("paste-note").textContent = message;
+    }
+    return post(text).then(function () {
+      sentPages.push(text);
+      if ($("stats-box").value.trim() === text) $("stats-box").value = "";
+      done((sentPages.length > 1 ? "Sent: that makes " + sentPages.length + " pages. Thank you." : "Sent. Thank you.") + next);
+    }, function (error) {
+      done(error.message + " Your block is still in the box: press Send below to try again.");
+    });
+  }
+
   function entryFiles(entry, depth) {
     if (entry.isFile) {
       if (!LOG_NAME.test(entry.name)) return Promise.resolve([]);
@@ -428,7 +470,16 @@
     $("not-english").addEventListener("change", renderBlocks);
     $("stats-box").addEventListener("input", function () {
       $("thanks").hidden = true;
+      $("paste-note").textContent = "";
       renderBlocks();
+    });
+    $("stats-box").addEventListener("paste", function (event) {
+      var text = event.clipboardData && event.clipboardData.getData("text");
+      if (!SEND_URL || !text) return;   // let the browser paste as usual
+      event.preventDefault();
+      this.value = text;                // a paste replaces what was in the box
+      $("thanks").hidden = true;
+      sendPasted();
     });
     $("go").addEventListener("click", sendAll);
     $("sent").addEventListener("click", function () { finish("Thank you."); });
@@ -440,7 +491,7 @@
     });
   }
 
-  window.GanderPage = { addFiles: addFiles };
+  window.GanderPage = { addFiles: addFiles, sendPasted: sendPasted };
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", start);
   else start();
 })();
