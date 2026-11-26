@@ -390,6 +390,14 @@ def changelog_line(before, after):
     return " ".join(parts) or None
 
 
+def utc_day(now=None):
+    """The date a version is given, in UTC: the release workflow's clock, so
+    versions made here and there are dated in order."""
+    if now is None:
+        return datetime.datetime.now(datetime.timezone.utc).date().isoformat()
+    return datetime.datetime.fromtimestamp(now, datetime.timezone.utc).date().isoformat()
+
+
 def bump(addon, note, today):
     """Give GanderData the next patch version and a changelog entry. Returns the version."""
     toc = addon / f"{addon.name}.toc"
@@ -415,7 +423,7 @@ def prepare_release(old_path, data_path=DATA, addon=ADDON, today=None):
     old = load_json(pathlib.Path(old_path), empty_data())
     data = load_json(pathlib.Path(data_path), empty_data())
     note = changelog_line(counts(old), counts(data)) or "Refreshed the stats of mobs already in the database."
-    version = bump(addon, note, today or datetime.date.today().isoformat())
+    version = bump(addon, note, today or utc_day())
     (addon / f"{addon.name}.lua").write_text(to_lua(data, version), encoding="utf-8", newline="\n")
     return version
 
@@ -487,7 +495,7 @@ def run(log_dirs, saved=(), data_path=DATA, state_path=STATE, addon=ADDON, keep=
     save_json(state_path, state)
     if changed and bump_version and (addon / f"{addon.name}.toc").is_file():
         note = changelog_line(before, after) or "Refreshed the stats of mobs already in the database."
-        version = bump(addon, note, datetime.date.fromtimestamp(now).isoformat())
+        version = bump(addon, note, utc_day(now))
         out(f"GanderData is now {version}: {note}")
     if changed:
         addon.mkdir(parents=True, exist_ok=True)

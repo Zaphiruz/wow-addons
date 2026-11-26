@@ -1,4 +1,5 @@
 """Tests for tools/gander_import.py. Run: python -m unittest discover -s mods/classic/tests/tools"""
+import datetime
 import json
 import os
 import pathlib
@@ -111,7 +112,8 @@ class ImportTest(unittest.TestCase):
 
     def run_import(self, saved=(), dirs=None, **kw):
         self.out = []
-        return gander_import.run(dirs or [self.logs], saved, self.data, self.state, self.addon, now=NOW,
+        kw.setdefault("now", NOW)
+        return gander_import.run(dirs or [self.logs], saved, self.data, self.state, self.addon,
                                  out=self.out.append, **kw)
 
     def load_lua(self):
@@ -345,6 +347,18 @@ class ImportTest(unittest.TestCase):
         self.run_import()
         self.run_import()
         self.assertIn("## Version: 1.0.1\n", (self.addon / "GanderData.toc").read_text(encoding="utf-8"))
+
+    def test_a_version_is_dated_in_utc_like_the_release_workflow(self):
+        # The daily release runs on a UTC machine. An evening import in America is
+        # already the next day there, and must not be dated before that release.
+        self.release("1.0.0")
+        self.write(fight())
+        evening = datetime.datetime(2026, 11, 26, 2, 0, tzinfo=datetime.timezone.utc).timestamp()
+        self.run_import(now=evening)
+        log = (self.addon / "CHANGELOG.md").read_text(encoding="utf-8")
+        self.assertIn("## 1.0.1 (2026-11-26)", log)
+        self.assertEqual(gander_import.utc_day(evening), "2026-11-26")
+        self.assertRegex(gander_import.utc_day(), "^20[0-9][0-9]-[0-9][0-9]-[0-9][0-9]$")
 
     def test_no_bump_writes_the_data_under_the_current_version(self):
         self.release("1.0.0")
