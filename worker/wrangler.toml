@@ -1,0 +1,11 @@
+# The Cloudflare Worker that files what the page (site/) sends as issues.
+# Deploy it from this folder with: npx wrangler deploy
+# Its two secrets are not in this file. See README.md.
+name = "gander-data"
+main = "gander-worker.mjs"
+compatibility_date = "2025-01-01"
+workers_dev = true
+
+[vars]
+REPO = "Zaphiruz/wow-addons"
+ALLOWED_ORIGIN = "https://zaphiruz.github.io"

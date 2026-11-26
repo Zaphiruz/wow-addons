@@ -116,8 +116,14 @@ has sent (and how far into each), so dropping the whole folder again is fine.
   `mods/classic/tests/tools/test_gander_site.py` (they need Node.js) read the
   same logs with both and compare.
 - The **Site** workflow publishes `site/` with GitHub Pages when it changes.
-- For now the page hands the player the block to paste into the issue form.
-  Sending without a GitHub account is the next step.
+- The page is at https://zaphiruz.github.io/wow-addons/.
+- `worker/` is a small Cloudflare Worker that files what the page sends as
+  issues, so players don't need a GitHub account. It rebuilds each block from
+  the fields the database has, so no free text reaches an issue, stamps it
+  with a scrambled sender, and caps how much can be sent in a day.
+  `worker/README.md` has the one-time setup.
+- Until the Worker's address is in `site/config.js`, the page hands the player
+  blocks to paste into the issue form instead. That way stays as the fallback.
 
 ## Releasing
 

@@ -198,6 +198,16 @@ confirmations (`ConfirmBindOnUse`) and Logout in Downcast and Hawker 0.2.0.
   change the two readers together. `test_gander_site.py` reads the same logs
   with both and runs every block through `gander_submit.validate`. It needs
   Node.js (`node`), and is skipped without it.
+- `worker/gander-worker.mjs` is the Cloudflare Worker the page sends to. It
+  files each block as a `gander-data` issue with the owner's token, which is
+  why `sender_of` believes a `sender` stamp only on the owner's own issues.
+  Its `tidy()` must keep every field `gander_submit.validate` accepts and
+  nothing with free text: `test_gander_worker.py` sends sample blocks through
+  both and compares. A new field in the format goes in all three places
+  (Gander's `buildBlock` or the page, `tidy()`, `validate`).
+- The Worker's token and salt are Cloudflare secrets the owner sets with
+  `npx wrangler secret put`. Never ask for them or write them anywhere. The
+  owner deploys it (`worker/README.md`); its address goes in `site/config.js`.
 - Try the page with the `gander-site` preview (`python -m http.server` on
   `site/`). Text from a log goes on the page with `textContent`, never as HTML.
 - Chrome and Edge won't let a page keep a folder under `Program Files`

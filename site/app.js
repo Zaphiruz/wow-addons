@@ -1,9 +1,10 @@
-// The page: takes the combat logs a player chooses, reads them with
-// gander-log.js, shows what was found and hands over the blocks to send.
-// Text from a log is only ever put on the page as text, never as HTML.
+// The page: takes the block Gander made and the combat logs a player
+// chooses, reads the logs with gander-log.js, shows what was found and sends
+// it. Text from a log is only ever put on the page as text, never as HTML.
 (function () {
   "use strict";
 
+  var SEND_URL = window.GANDER_SEND_URL || "";   // the Worker; empty means "send by hand"
   var FORM = "https://github.com/Zaphiruz/wow-addons/issues/new?template=gander-data.yml";
   var STORE = "gander-logs-v1";      // which logs this browser has sent, and how far into each
   var REMEMBERED = 300;              // logs to remember at most
@@ -12,8 +13,9 @@
   var DEPTH = 4;                     // folders deep to look in a dropped folder
 
   var items = [];                    // the logs chosen in this visit
-  var copied = [];                   // which blocks have been copied
-  var busy = false;
+  var blocks = [];                   // what there is to send: { text, title, copied, delivered }
+  var busy = false;                  // reading logs
+  var sending = false;
 
   function $(id) { return document.getElementById(id); }
 
@@ -99,7 +101,7 @@
   }
 
   function addFiles(files) {
-    if (busy) return Promise.resolve();
+    if (busy || sending) return Promise.resolve();
     var saved = load();
     var fresh = [];
     Array.prototype.forEach.call(files, function (file) {
@@ -123,7 +125,7 @@
     });
     if (!fresh.length) {
       $("status").textContent = files.length
-        ? "No new combat logs in what you chose. They are named WoWCombatLog-(date).txt."
+        ? "No combat logs in what you chose. They are named WoWCombatLog-(date).txt."
         : "";
       return Promise.resolve();
     }
@@ -152,8 +154,21 @@
     });
   }
 
+  // ---- the block pasted from Gander ----
+  // The pasted text if it is a block, "" if the box is empty, null if it
+  // is something else.
+  function statsBlock() {
+    var text = $("stats-box").value.trim();
+    if (!SEND_URL || !text) return "";
+    try {
+      var sub = JSON.parse(text);
+      if (sub && sub.format === 1 && /^(forever|classic)$/.test(sub.game) && typeof sub.mobs === "object") return text;
+    } catch (e) { /* not a block */ }
+    return null;
+  }
+
   // ---- showing ----
-  function toSend() {
+  function fromLogs() {
     var data = GanderLog.newData();
     items.forEach(function (item) { if (item.status === "new") GanderLog.merge(data, item.data); });
     return data;
@@ -173,37 +188,60 @@
   }
 
   function renderBlocks() {
-    var data = toSend();
-    var blocks = busy ? [] : GanderLog.blocks(data, { english: !$("not-english").checked });
-    var holder = $("blocks");
-    holder.textContent = "";
-    copied = blocks.map(function () { return false; });
+    var data = fromLogs();
+    var logBlocks = busy ? [] : GanderLog.blocks(data, { english: !$("not-english").checked });
+    var stats = statsBlock();
+    $("stats-note").textContent = stats === null
+      ? "That doesn't look like the block from /gander send. Copy all of it, from { to }."
+      : "";
+
+    var old = {};
+    blocks.forEach(function (block) { old[block.text] = block; });
+    blocks = [];
+    if (stats) blocks.push({ text: stats, title: "Stats from Gander", stats: true });
+    logBlocks.forEach(function (text, i) {
+      blocks.push({ text: text, title: logBlocks.length > 1
+        ? "Combat logs, block " + (i + 1) + " of " + logBlocks.length : "Combat logs" });
+    });
+    blocks.forEach(function (block) {
+      if (old[block.text]) { block.copied = old[block.text].copied; block.delivered = old[block.text].delivered; }
+    });
+
     $("send").hidden = !blocks.length;
     if (!blocks.length) return;
 
-    var mobs = 0, runs = 0;
+    var mobs = 0, runs = 0, parts = [];
     GanderLog.summary(data).forEach(function (game) { mobs += game.mobs; runs += game.instances.length; });
-    $("total").textContent = "Found: casts for " + some(mobs, "mob", "mobs") +
-      (runs ? ", and time in " + some(runs, "dungeon", "dungeons") : "") +
-      ". That makes " + some(blocks.length, "block", "blocks") + " to send.";
+    if (stats) parts.push("your stats from Gander");
+    if (logBlocks.length) {
+      parts.push("casts for " + some(mobs, "mob", "mobs") + (runs ? " and time in " + some(runs, "dungeon", "dungeons") : ""));
+    }
+    $("total").textContent = "Ready to send: " + parts.join(", and ") + ". That is " +
+      some(blocks.length, "block", "blocks") + ".";
 
-    blocks.forEach(function (text, i) {
+    $("auto").hidden = !SEND_URL;
+    $("manual").open = !SEND_URL || $("manual").open;
+    $("manual-title").textContent = SEND_URL ? "See exactly what will be sent, or send it by hand" : "Send by hand";
+
+    var holder = $("blocks");
+    holder.textContent = "";
+    blocks.forEach(function (block, i) {
       var card = el("div", "block");
-      card.appendChild(el("h3", "", blocks.length > 1 ? "Block " + (i + 1) + " of " + blocks.length : "Your block"));
+      card.appendChild(el("h3", "", block.title));
       var box = el("textarea");
       box.readOnly = true;
-      box.value = text;
-      box.setAttribute("aria-label", "Block " + (i + 1) + ": exactly what will be sent");
+      box.value = block.text;
+      box.setAttribute("aria-label", block.title + ": exactly what will be sent");
       card.appendChild(box);
       var row = el("p", "buttons");
       var copy = el("button", "", "Copy");
       copy.type = "button";
-      var done = el("span", "done", "");
+      var done = el("span", "done", block.delivered ? "Sent." : "");
       copy.addEventListener("click", function () {
         copyText(box).then(function (ok) {
           done.textContent = ok ? "Copied. Now paste it into the form." : "Select the text and copy it yourself.";
-          copied[i] = true;
-          $("sent").disabled = copied.indexOf(false) !== -1;
+          blocks[i].copied = true;
+          wake();
         });
       });
       var link = el("a", "", "Open the GitHub form");
@@ -216,7 +254,12 @@
       card.appendChild(row);
       holder.appendChild(card);
     });
-    $("sent").disabled = true;
+    wake();
+  }
+
+  // "I sent it" only works once every block has been copied.
+  function wake() {
+    $("sent").disabled = blocks.some(function (block) { return !block.copied && !block.delivered; });
   }
 
   function copyText(box) {
@@ -238,8 +281,8 @@
     }
   }
 
-  // The player says the blocks are sent: remember how far each log was read.
-  function markSent() {
+  // Everything is sent: remember how far each log was read, and start over.
+  function finish(message) {
     var saved = load();
     var now = Date.now();
     items.forEach(function (item) {
@@ -247,14 +290,68 @@
         saved[item.file.name] = { offset: item.end, ctx: item.ctx, at: now };
       }
     });
+    var hadLogs = items.some(function (item) { return item.status === "new"; });
     var kept = save(saved);
     items = [];
+    blocks = [];
+    $("stats-box").value = "";
     render();
-    $("thanks").hidden = false;
-    if (!kept) {
-      $("thanks").textContent = "Thank you. This browser couldn't remember which logs were sent, so it will " +
-        "offer them again next time. Sending something twice does no harm.";
+    if (hadLogs && kept) {
+      message += " This browser will skip those logs next time, so you can drop the whole folder again after " +
+        "your next session.";
+    } else if (hadLogs) {
+      message += " This browser couldn't remember which logs were sent, so it will offer them again next time. " +
+        "Sending something twice does no harm.";
     }
+    $("thanks").textContent = message;
+    $("thanks").hidden = false;
+  }
+
+  // ---- sending by itself ----
+  function post(text) {
+    return fetch(SEND_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ block: text }),
+    }).then(function (response) {
+      return response.json().then(function (answer) {
+        if (response.ok && answer && answer.ok) return;
+        throw new Error(answer && answer.error ? answer.error : "The database didn't take it. Try again in a few minutes.");
+      }, function () {
+        throw new Error("The database didn't answer properly. Try again in a few minutes.");
+      });
+    }, function () {
+      throw new Error("Couldn't reach the database. Check your connection and try again.");
+    });
+  }
+
+  function sendAll() {
+    if (sending || busy || !blocks.length) return;
+    sending = true;
+    $("go").disabled = true;
+    var todo = blocks.filter(function (block) { return !block.delivered; });
+    var hadStats = blocks.some(function (block) { return block.stats; });
+    var count = 0;
+    var chain = Promise.resolve();
+    todo.forEach(function (block) {
+      chain = chain.then(function () {
+        count += 1;
+        $("go-note").textContent = "Sending " + count + " of " + todo.length + "...";
+        return post(block.text).then(function () { block.delivered = true; });
+      });
+    });
+    chain.then(function () {
+      sending = false;
+      $("go").disabled = false;
+      $("go-note").textContent = "";
+      finish("Sent. Thank you." + (hadStats
+        ? " Click \"I sent it\" in Gander, and if it shows another page, paste that one here too." : ""));
+    }, function (error) {
+      sending = false;
+      $("go").disabled = false;
+      $("go-note").textContent = error.message + (count > 1 ? " The blocks before this one did arrive." : "");
+      renderBlocks();
+    });
   }
 
   // ---- choosing and dropping ----
@@ -296,6 +393,7 @@
   }
 
   function start() {
+    $("stats").hidden = !SEND_URL;
     var drop = $("drop");
     ["dragenter", "dragover"].forEach(function (name) {
       drop.addEventListener(name, function (event) {
@@ -328,7 +426,12 @@
       });
     });
     $("not-english").addEventListener("change", renderBlocks);
-    $("sent").addEventListener("click", markSent);
+    $("stats-box").addEventListener("input", function () {
+      $("thanks").hidden = true;
+      renderBlocks();
+    });
+    $("go").addEventListener("click", sendAll);
+    $("sent").addEventListener("click", function () { finish("Thank you."); });
     $("forget").addEventListener("click", function () {
       try { localStorage.removeItem(STORE); } catch (e) { /* nothing was kept */ }
       items = [];
