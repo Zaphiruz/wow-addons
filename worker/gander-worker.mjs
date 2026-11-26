@@ -37,6 +37,10 @@ const KEY = /^[a-z][a-z0-9]{0,7}$/;
 const DATE = /^\d{4}-\d{2}-\d{2}$/;
 const BUILD = /^\d{1,3}\.\d{1,3}\.\d{1,3}$/;
 const LOCALE = /^[A-Za-z]{2,8}$/;
+const LOG_ID = /^[0-9a-f]{16}$/;
+const MAX_LOGS = 300;        // combat logs one block may be from
+const MAX_PARTS = 50;        // blocks one send may be split into
+const MAX_BYTES = 2 ** 40;   // no combat log is a terabyte
 // Plain words, as gander_submit.py's good_name: letters, digits, spaces and a
 // little punctuation. Nothing that could be a link, a mention or formatting.
 const WORDS = /^[\p{L}\p{N} '\-.,":()!]+$/u;
@@ -104,7 +108,40 @@ export function tidy(sub) {
     if (goodName(entry.name, 40)) out.instances[id].name = entry.name;
   }
   if (!Object.keys(out.mobs).length && !Object.keys(out.instances).length) return null;
+  if ("logs" in sub) {
+    const record = tidyLogs(sub);
+    if (!record) return null;
+    Object.assign(out, record);
+  }
   return out;
+}
+
+function isWhole(value, low, high) {
+  return Number.isInteger(value) && value >= low && value <= high;
+}
+
+// Which combat logs a block came from, and which bytes of each: the checker
+// uses it to count no part of a log twice. A record that isn't right refuses
+// the whole block, as gander_submit.py's clean_logs does: passing the block
+// on without it would let the same casts be counted again.
+function tidyLogs(sub) {
+  if (!isObject(sub.logs)) return null;
+  const spans = Object.entries(sub.logs);
+  if (!spans.length || spans.length > MAX_LOGS) return null;
+  const logs = {};
+  for (const [id, span] of spans) {
+    if (!LOG_ID.test(id) || !Array.isArray(span) || span.length !== 2 ||
+        !isWhole(span[0], 0, MAX_BYTES) || !isWhole(span[1], 1, MAX_BYTES) || span[0] >= span[1]) return null;
+    logs[id] = [span[0], span[1]];
+  }
+  const record = { logs };
+  for (const key of ["part", "parts"]) {
+    if (!(key in sub)) continue;
+    if (!isWhole(sub[key], 1, MAX_PARTS)) return null;
+    record[key] = sub[key];
+  }
+  if ((record.part || 1) > (record.parts || 1)) return null;
+  return record;
 }
 
 // A sender's network address, scrambled with the secret salt.
@@ -197,7 +234,10 @@ export default {
       if (request.method === "OPTIONS") return new Response(null, { status: 204, headers: headersFor(env) });
       if (request.method === "POST") return await submit(request, env);
       if (request.method === "GET") {
-        return answer(env, 200, { ok: true, service: "gander-data", ready: Boolean(env.GITHUB_TOKEN && env.SENDER_SALT && env.REPO) });
+        // "logs" says this version passes on the record of combat logs.
+        return answer(env, 200, {
+          ok: true, service: "gander-data", ready: Boolean(env.GITHUB_TOKEN && env.SENDER_SALT && env.REPO), logs: true,
+        });
       }
       return refuse(env, 405, "Send submissions with POST.");
     } catch (e) {

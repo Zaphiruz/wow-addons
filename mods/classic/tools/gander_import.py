@@ -40,6 +40,7 @@ deleted on a later run.
 import argparse
 import csv
 import datetime
+import hashlib
 import json
 import pathlib
 import re
@@ -49,6 +50,9 @@ import time
 ROOT = pathlib.Path(__file__).resolve().parent.parent  # mods/classic
 DATA = ROOT / "data" / "gander_data.json"
 STATE = ROOT / "data" / "gander_import_state.json"
+LOGS = ROOT / "data" / "gander_logs.json"
+LOGS_KEPT = 5000      # combat logs the record remembers
+BATCH_DAYS = 14       # how long a send in several blocks is remembered
 ADDON = ROOT / "GanderData"
 GAME_DIR = pathlib.Path(r"D:\Battle.net\Games\World of Warcraft")
 # Game folder -> the name Gander uses for that game.
@@ -77,6 +81,39 @@ LINE = re.compile(r"^(\d+)/(\d+)(?:/(\d+))? (\d+):(\d+):(\d+)\.(\d+)\S*  (.*)$")
 
 def empty_data():
     return {"version": 2, "games": {}}
+
+
+# ---- the record of combat logs ----
+# Casts are added up, so a part of a combat log must be counted once only,
+# whoever reads it: this importer, or the page a player sends from (site/).
+# The record (data/gander_logs.json) says how many bytes of each log the
+# database has had. A log is known by a scramble of its first line, which
+# holds a time and the game's version and nothing about the player.
+def new_logs():
+    return {"version": 1, "logs": {}, "batches": {}}
+
+
+def log_id(first_line):
+    """The name the record knows a log by, from its first line (bytes)."""
+    return hashlib.sha256(first_line.rstrip(b"\r\n")).hexdigest()[:16]
+
+
+def log_read_to(logs, ident):
+    """How many bytes of a log the database has had."""
+    return logs["logs"].get(ident, {}).get("to", 0)
+
+
+def note_log(logs, ident, to, day, keep=None):
+    """Remember that a log has been read up to a byte. The record never moves
+    back, and forgets the logs it heard about longest ago."""
+    if to <= log_read_to(logs, ident):
+        return
+    logs["logs"][ident] = {"to": to, "at": day}
+    keep = LOGS_KEPT if keep is None else keep
+    if len(logs["logs"]) > keep:
+        oldest = sorted(logs["logs"], key=lambda key: (logs["logs"][key]["at"], key))
+        for key in oldest[:len(logs["logs"]) - keep]:
+            del logs["logs"][key]
 
 
 def game_data(data, game):
@@ -435,8 +472,10 @@ def current_version(addon):
 
 
 def run(log_dirs, saved=(), data_path=DATA, state_path=STATE, addon=ADDON, keep=False, dry_run=False,
-        bump_version=True, now=None, out=print):
+        bump_version=True, now=None, out=print, logs_path=LOGS):
     now = time.time() if now is None else now
+    record = load_json(logs_path, new_logs())
+    record_before = json.dumps(record, sort_keys=True)
     data = load_json(data_path, empty_data())
     data["version"] = 2
     before = counts(data)
@@ -453,12 +492,29 @@ def run(log_dirs, saved=(), data_path=DATA, state_path=STATE, addon=ADDON, keep=
             raw = log.read_bytes()
             if offset > len(raw):
                 offset, seen = 0, {}  # a different file under an old name
+            mtime = log.stat().st_mtime
+            year = datetime.date.fromtimestamp(mtime).year
+            ctx = dict(seen.get("ctx", {}))
+            # The record says how much of this log the database has had,
+            # from here or from the page. Past what this importer has read
+            # itself, walk to that point without counting, to know which
+            # dungeon the log is in by then.
+            ident = log_id(raw[:raw.find(b"\n")]) if b"\n" in raw else None
+            had = min(log_read_to(record, ident), len(raw)) if ident else 0
+            skipped = max(had - offset, 0)
+            if skipped:
+                walker = Reader(empty_data(), ctx, year)
+                walker.feed(raw[offset:had].decode("utf-8", errors="replace").splitlines())
+                ctx, offset = walker.ctx, had
             fresh = raw[offset:]
             fresh = fresh[:fresh.rfind(b"\n") + 1]  # whole lines only
-            mtime = log.stat().st_mtime
-            reader = Reader(data, dict(seen.get("ctx", {})), datetime.date.fromtimestamp(mtime).year)
+            reader = Reader(data, ctx, year)
             reader.feed(fresh.decode("utf-8", errors="replace").splitlines())
+            if ident:
+                note_log(record, ident, offset + len(fresh), utc_day(now))
             note = f"{reader.lines} lines, {reader.new_mobs} new mobs, {reader.new_spells} new abilities"
+            if skipped:
+                note += f" ({size(skipped)} of it was already in the database)"
             in_use = now - mtime < IN_USE
             if keep or in_use or dry_run:
                 state[key] = {"offset": offset + len(fresh), "ctx": reader.ctx}
@@ -493,6 +549,8 @@ def run(log_dirs, saved=(), data_path=DATA, state_path=STATE, addon=ADDON, keep=
         return data
     save_json(data_path, data)
     save_json(state_path, state)
+    if json.dumps(record, sort_keys=True) != record_before:
+        save_json(logs_path, record)
     if changed and bump_version and (addon / f"{addon.name}.toc").is_file():
         note = changelog_line(before, after) or "Refreshed the stats of mobs already in the database."
         version = bump(addon, note, utc_day(now))

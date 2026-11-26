@@ -483,11 +483,130 @@ class Intake(unittest.TestCase):
         self.assertNotIn("without review", r["body"])
 
 
+LOG_A, LOG_B = "a" * 16, "b" * 16
+
+
+def cast(n):
+    """A block's worth of casts for a mob and spell the database already has (4 so far)."""
+    return {"3238": {"spells": {"5401": {"n": n, "spawns": 1, "at": "2026-11-25"}}}}
+
+
+class LogRecord(unittest.TestCase):
+    """Casts are added up, so a part of a combat log must only be counted
+    once, whoever sends it. The record says how far each log has been read."""
+
+    def setUp(self):
+        self.data = base()
+        self.held = gs.new_held()
+        self.logs = gander_import.new_logs()
+
+    def go(self, *issues):
+        return gs.process(self.data, self.held, list(issues), [], "owner", NOW, logs=self.logs)
+
+    def casts(self):
+        return self.data["games"]["forever"]["mobs"]["3238"]["spells"]["5401"]["n"]
+
+    def test_a_block_from_a_log_is_taken_and_the_record_says_how_far_it_was_read(self):
+        r = self.go(issue(1, sub(cast(3), logs={LOG_A: [0, 5000]})))
+        self.assertEqual(self.casts(), 7)
+        self.assertEqual(self.logs["logs"][LOG_A], {"to": 5000, "at": "2026-11-25"})
+        self.assertEqual(r["issues"][0]["reason"], "completed")
+
+    def test_the_same_part_of_a_log_is_not_counted_again_whoever_sends_it(self):
+        self.go(issue(1, sub(cast(3), logs={LOG_A: [0, 5000]})))
+        r = self.go(issue(2, sub(cast(3), logs={LOG_A: [0, 5000]}), user=200))
+        self.assertEqual(self.casts(), 7)
+        self.assertIn("already has", r["issues"][0]["comment"])
+        self.assertEqual(r["issues"][0]["reason"], "completed")
+        self.assertEqual(self.held["pending"], [])
+
+    def test_an_overlap_refuses_the_whole_block(self):
+        self.go(issue(1, sub(cast(3), logs={LOG_A: [0, 5000]})))
+        self.go(issue(2, sub(cast(2), logs={LOG_A: [4000, 9000], LOG_B: [0, 100]})))
+        self.assertEqual(self.casts(), 7)
+        self.assertEqual(self.logs["logs"][LOG_A]["to"], 5000)
+        self.assertNotIn(LOG_B, self.logs["logs"], "a refused block mustn't move the record")
+
+    def test_the_next_part_of_a_log_is_taken_and_so_is_one_after_a_gap(self):
+        self.go(issue(1, sub(cast(3), logs={LOG_A: [0, 5000]})))
+        self.go(issue(2, sub(cast(2), logs={LOG_A: [5000, 9000]})))
+        self.assertEqual(self.casts(), 9)
+        self.go(issue(3, sub(cast(1), logs={LOG_A: [9500, 9900]})))
+        self.assertEqual(self.casts(), 10)
+        self.assertEqual(self.logs["logs"][LOG_A]["to"], 9900)
+
+    def test_a_send_in_several_blocks_is_all_taken_but_no_block_twice(self):
+        logs = {LOG_A: [0, 5000], LOG_B: [100, 300]}
+        self.go(issue(1, sub(cast(3), logs=logs, part=1, parts=2)))
+        self.go(issue(2, sub(cast(2), logs=logs, part=2, parts=2)))
+        self.assertEqual(self.casts(), 9)
+        r = self.go(issue(3, sub(cast(5), logs=logs, part=2, parts=2)))
+        self.assertEqual(self.casts(), 9, "the second block was counted twice")
+        self.assertIn("already has", r["issues"][0]["comment"])
+        self.assertEqual(self.logs["logs"][LOG_B]["to"], 300)
+
+    def test_two_blocks_in_one_run(self):
+        self.go(issue(1, sub(cast(3), logs={LOG_A: [0, 5000]})), issue(2, sub(cast(2), logs={LOG_A: [0, 5000]}), user=200))
+        self.assertEqual(self.casts(), 7)
+
+    def test_stats_from_gander_need_no_log(self):
+        self.go(issue(1, sub({"3238": {"levels": {"22": seen(armor=950)}}})))
+        self.assertEqual(self.data["games"]["forever"]["mobs"]["3238"]["levels"]["22"]["v"]["armor"], 950)
+        self.assertEqual(self.logs["logs"], {})
+
+    def test_casts_without_a_log_are_still_taken(self):
+        # An older copy of the page, or a Worker that hasn't been deployed
+        # again yet, sends no record. Its casts count as they always did.
+        self.go(issue(1, sub(cast(3))))
+        self.assertEqual(self.casts(), 7)
+
+    def test_a_damaged_log_record_refuses_the_block(self):
+        bad = [{"xyz": [0, 5]}, {LOG_A: [5, 5]}, {LOG_A: [-1, 5]}, {LOG_A: [0, 2 ** 60]}, {LOG_A: "0-5"},
+               {LOG_A: [0, 5, 9]}, {LOG_A: [0.5, 5]}, {LOG_A: [True, 5]}, "everything", {}]
+        for number, logs in enumerate(bad, 1):
+            r = self.go(issue(number, sub(cast(3), logs=logs)))
+            self.assertEqual(r["issues"][0]["reason"], "not planned", logs)
+        for number, more in enumerate([{"part": 0}, {"part": 3, "parts": 2}, {"parts": 99}, {"part": "1"}], 50):
+            r = self.go(issue(number, sub(cast(3), logs={LOG_A: [0, 5]}, **more)))
+            self.assertEqual(r["issues"][0]["reason"], "not planned", more)
+        self.assertEqual(self.casts(), 4)
+        self.assertEqual(self.logs["logs"], {})
+
+    def test_what_waits_for_approval_still_counts_as_read(self):
+        new_mob = {"3273": {"name": "Kolkar Stormer", "spells": {"5401": {"n": 2, "spawns": 1, "at": "2026-11-25"}}}}
+        self.go(issue(1, sub(new_mob, logs={LOG_A: [0, 5000]})))
+        self.assertEqual(self.logs["logs"][LOG_A]["to"], 5000)
+        self.assertEqual(len(self.held["pending"]), 1)
+        self.assertNotIn("logs", self.held["pending"][0], "the waiting list has no use for the record")
+        self.assertNotIn("part", self.held["pending"][0])
+
+    def test_checking_keeps_the_record(self):
+        clean, _, _ = gs.validate(sub(cast(3), logs={LOG_A: [0, 5000]}, part=1, parts=2), NOW)
+        self.assertEqual(clean["logs"], {LOG_A: [0, 5000]})
+        self.assertEqual((clean["part"], clean["parts"]), (1, 2))
+        clean, _, _ = gs.validate(sub(cast(3)), NOW)
+        self.assertNotIn("logs", clean)
+
+    def test_the_record_forgets_the_logs_it_heard_about_longest_ago(self):
+        for day, ident in (("2026-11-01", "1" * 16), ("2026-11-03", "3" * 16), ("2026-11-02", "2" * 16)):
+            self.logs["logs"][ident] = {"to": 10, "at": day}
+        gander_import.note_log(self.logs, LOG_A, 5000, "2026-11-25", keep=3)
+        self.assertEqual(sorted(self.logs["logs"]), sorted(["2" * 16, "3" * 16, LOG_A]))
+
+    def test_the_record_never_moves_back(self):
+        gander_import.note_log(self.logs, LOG_A, 5000, "2026-11-25")
+        gander_import.note_log(self.logs, LOG_A, 3000, "2026-11-26")
+        self.assertEqual(self.logs["logs"][LOG_A], {"to": 5000, "at": "2026-11-25"})
+        self.assertEqual(gander_import.log_read_to(self.logs, LOG_A), 5000)
+        self.assertEqual(gander_import.log_read_to(self.logs, LOG_B), 0)
+
+
 class CommandLine(unittest.TestCase):
     def setUp(self):
         self.tmp = tempfile.TemporaryDirectory()
         root = pathlib.Path(self.tmp.name)
         self.data, self.held, self.addon, self.out = root / "data.json", root / "held.json", root / "GanderData", root / "out"
+        self.logs = root / "logs.json"
         self.addon.mkdir()
         (self.addon / "GanderData.toc").write_text("## Title: GanderData\n## Version: 1.0.3\nGanderData.lua\n", encoding="utf-8")
         (self.addon / "CHANGELOG.md").write_text("# GanderData changelog\n\n## 1.0.3 (2026-11-24)\n\n- Earlier.\n", encoding="utf-8")
@@ -500,7 +619,8 @@ class CommandLine(unittest.TestCase):
         self.tmp.cleanup()
 
     def paths(self):
-        return ["--data", str(self.data), "--held-file", str(self.held), "--addon", str(self.addon), "--out", str(self.out)]
+        return ["--data", str(self.data), "--held-file", str(self.held), "--logs-file", str(self.logs),
+                "--addon", str(self.addon), "--out", str(self.out)]
 
     def run_tool(self, issues=(), comments=(), *more):
         self.issues.write_text(json.dumps(list(issues)), encoding="utf-8")
@@ -509,6 +629,16 @@ class CommandLine(unittest.TestCase):
                         "--now", str(NOW), *more, *self.paths()])
         self.assertEqual(code, 0)
         return json.loads((self.out / "result.json").read_text(encoding="utf-8"))
+
+    def test_a_run_saves_the_record_of_logs(self):
+        r = self.run_tool([issue(1, sub(cast(3), logs={LOG_A: [0, 5000]}))])
+        self.assertTrue(r["changed"])
+        saved = json.loads(self.logs.read_text(encoding="utf-8"))
+        self.assertEqual(saved["logs"][LOG_A]["to"], 5000)
+        # The record is read back on the next run: the same part isn't counted again.
+        self.run_tool([issue(2, sub(cast(3), logs={LOG_A: [0, 5000]}), user=200)])
+        data = json.loads(self.data.read_text(encoding="utf-8"))
+        self.assertEqual(data["games"]["forever"]["mobs"]["3238"]["spells"]["5401"]["n"], 7)
 
     def test_a_run_writes_the_database_the_addon_file_and_the_replies(self):
         r = self.run_tool([issue(1, sub({"3238": {"levels": {"22": seen(armor=950)}}})), issue(2, sub(STORMER)),

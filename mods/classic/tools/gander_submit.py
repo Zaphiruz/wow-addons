@@ -54,6 +54,10 @@ MAX_MOBS = 5000
 MAX_CASTS = 1000           # times one submission may say a mob used a spell
 MAX_MINUTES = 600          # of fighting in one instance, from one submission
 MAX_ISSUES = 20            # submissions handled in one run
+MAX_LOGS = 300             # combat logs one block may be from
+MAX_PARTS = 50             # blocks one send may be split into
+MAX_BYTES = 2 ** 40        # no combat log is a terabyte
+LOG_ID = re.compile(r"^[0-9a-f]{16}$")
 FIRST_DAY = datetime.date(2026, 1, 1)   # Gander didn't exist before this
 HELD_DAYS = 90
 REMEMBERED = 500           # submissions remembered, to spot the same one sent twice
@@ -262,7 +266,64 @@ def validate(sub, now):
     clean = {"game": game, "mobs": mobs, "spells": spell_names, "instances": instances}
     if not facts(clean):
         raise Rejected("nothing in it could be used")
+    if "logs" in sub:
+        clean.update(clean_logs(sub))
     return clean, dropped, english
+
+
+def whole(value, low, high):
+    """value if it is a whole number in range (and not true or false), else None."""
+    return value if type(value) is int and low <= value <= high else None
+
+
+def clean_logs(sub):
+    """The combat logs a block says it came from: which bytes of each, and
+    which block of the send this is. A record that can't be trusted refuses
+    the whole block: without it the same casts could be counted twice."""
+    damaged = Rejected("its record of which combat logs it came from is damaged. Reload the page and send it again")
+    logs = sub["logs"]
+    if not isinstance(logs, dict) or not logs or len(logs) > MAX_LOGS:
+        raise damaged
+    out = {}
+    for ident, span in logs.items():
+        if (not LOG_ID.match(ident) or not isinstance(span, list) or len(span) != 2
+                or whole(span[0], 0, MAX_BYTES) is None or whole(span[1], 1, MAX_BYTES) is None
+                or span[0] >= span[1]):
+            raise damaged
+        out[ident] = [span[0], span[1]]
+    parts = whole(sub.get("parts", 1), 1, MAX_PARTS)
+    part = whole(sub.get("part", 1), 1, MAX_PARTS)
+    if parts is None or part is None or part > parts:
+        raise damaged
+    return {"logs": out, "part": part, "parts": parts}
+
+
+def take_logs(record, clean, day):
+    """Whether a block's casts are new to the database, going by the record
+    of combat logs. If they are, the record moves on. A send in several
+    blocks is one read of its logs: each block of it is taken once."""
+    spans = clean.get("logs")
+    if not spans:
+        return True
+    batch = scramble(json.dumps(spans, sort_keys=True) + f"/{clean['parts']}", 16)
+    known = record["batches"].get(batch)
+    if known:
+        if clean["part"] in known["parts"]:
+            return False
+        known["parts"] = sorted(known["parts"] + [clean["part"]])
+        return True
+    if any(start < gi.log_read_to(record, ident) for ident, (start, _) in spans.items()):
+        return False
+    for ident, (_, end) in spans.items():
+        gi.note_log(record, ident, end, day)
+    if clean["parts"] > 1:
+        record["batches"][batch] = {"parts": [clean["part"]], "at": day}
+    return True
+
+
+def forget_batches(record, today):
+    cutoff = (today - datetime.timedelta(days=gi.BATCH_DAYS)).isoformat()
+    record["batches"] = {key: batch for key, batch in record["batches"].items() if batch["at"] >= cutoff}
 
 
 def facts(payload):
@@ -605,10 +666,13 @@ def sender_of(issue, sub):
     return scramble(f"gander-sender:gh:{(issue.get('user') or {}).get('id')}", 12)
 
 
-def process(data, held, issues, comments, owner, now, approve_hash=None):
+def process(data, held, issues, comments, owner, now, approve_hash=None, logs=None):
     """Handle an approval of the held pull request, the owner's comments on
-    it, and the open submissions. Changes data and held; returns what to say."""
+    it, and the open submissions. Changes data, held and the record of combat
+    logs; returns what to say."""
     today = datetime.datetime.fromtimestamp(now, datetime.timezone.utc).date()
+    logs = gi.new_logs() if logs is None else logs
+    forget_batches(logs, today)
     before = gi.counts(data)
     result = {"issues": [], "commands": [], "approved": False, "stale": False}
     did = []
@@ -670,6 +734,13 @@ def process(data, held, issues, comments, owner, now, approve_hash=None):
                 "Thanks! This exact data was already sent in, so there was nothing new to add.\n")})
             continue
         held["seen"] = (held["seen"] + [mark])[-REMEMBERED:]
+        if not take_logs(logs, clean, today.isoformat()):
+            result["issues"].append({"number": issue["number"], "reason": "completed", "comment": (
+                "Thanks! The database already has this part of these combat logs, so nothing was added. "
+                "That happens when the same log is sent from two places, or twice within a few minutes.\n")})
+            continue
+        for key in ("logs", "part", "parts"):
+            clean.pop(key, None)
         payload = {**clean, "sender": sender, "received": today.isoformat()}
         taken.append((issue["number"], payload, facts(payload), dropped, english))
         held["pending"].append(payload)
@@ -698,11 +769,15 @@ def process(data, held, issues, comments, owner, now, approve_hash=None):
 
 
 # -------------------------------------------------------------- command line
-def write_tree(data, held, data_path, held_path, addon, before):
-    """Save whichever of the database and the held list changed. Returns whether anything did."""
-    data_before, held_before = before
+def write_tree(data, held, data_path, held_path, addon, before, logs=None, logs_path=None):
+    """Save whichever of the database, the held list and the record of combat
+    logs changed. Returns whether anything did."""
+    data_before, held_before, logs_before = before
     data_changed = json.dumps(data, sort_keys=True) != data_before
     held_changed = json.dumps(held, sort_keys=True) != held_before
+    if logs is not None and json.dumps(logs, sort_keys=True) != logs_before:
+        gi.save_json(logs_path, logs)
+        held_changed = True
     if data_changed:
         gi.save_json(data_path, data)
         lua = addon / f"{addon.name}.lua"
@@ -727,12 +802,14 @@ def main(argv=None):
     p.add_argument("--now", type=float, help="the time, for tests")
     p.add_argument("--data", type=pathlib.Path, default=gi.DATA)
     p.add_argument("--held-file", type=pathlib.Path, default=HELD)
+    p.add_argument("--logs-file", type=pathlib.Path, default=gi.LOGS)
     p.add_argument("--addon", type=pathlib.Path, default=gi.ADDON)
     args = p.parse_args(argv)
     args.out.mkdir(parents=True, exist_ok=True)
     data = gi.load_json(args.data, gi.empty_data())
     held = gi.load_json(args.held_file, new_held())
-    before = (json.dumps(data, sort_keys=True), json.dumps(held, sort_keys=True))
+    logs = gi.load_json(args.logs_file, gi.new_logs())
+    before = (json.dumps(data, sort_keys=True), json.dumps(held, sort_keys=True), json.dumps(logs, sort_keys=True))
 
     if args.command == "held":
         text, total = render_held(data, held)
@@ -746,14 +823,14 @@ def main(argv=None):
 
     issues = json.loads(args.issues.read_text(encoding="utf-8")) if args.issues else []
     comments = json.loads(args.comments.read_text(encoding="utf-8")) if args.comments else []
-    result = process(data, held, issues, comments, args.owner, args.now or time.time(), args.approve_hash)
+    result = process(data, held, issues, comments, args.owner, args.now or time.time(), args.approve_hash, logs)
     for issue in result["issues"]:
         write(args.out / f"issue-{issue['number']}.md", issue.pop("comment"))
     for command in result["commands"]:
         write(args.out / f"command-{command['id']}.md", command.pop("reply"))
     result["commands"] = [command["id"] for command in result["commands"]]
     write(args.out / "pr_body.md", result.pop("body"))
-    result["changed"] = write_tree(data, held, args.data, args.held_file, args.addon, before)
+    result["changed"] = write_tree(data, held, args.data, args.held_file, args.addon, before, logs, args.logs_file)
     write(args.out / "result.json", json.dumps(result) + "\n")
     print(f"{result['title']}: {len(result['issues'])} issues answered, "
           f"{'files changed' if result['changed'] else 'nothing to merge'}")

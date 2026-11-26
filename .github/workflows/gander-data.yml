@@ -62,7 +62,7 @@ jobs:
       OWNER: ${{ github.repository_owner }}
       TOOLS: mods/classic/tools
       HELD_BRANCH: gander-data/held
-      FILES: mods/classic/data/gander_data.json mods/classic/data/gander_held.json mods/classic/GanderData/GanderData.lua
+      FILES: mods/classic/data/gander_data.json mods/classic/data/gander_held.json mods/classic/data/gander_logs.json mods/classic/GanderData/GanderData.lua
     steps:
       - uses: actions/checkout@v4
         with:

@@ -31,6 +31,25 @@
     return { games: {} };
   }
 
+  // ---- the record of logs ----
+  // The database keeps a record of how many bytes of each combat log it has
+  // had (data/gander_logs.json), so that no part of a log is counted twice.
+  // A log is known there by a scramble of its first line, which holds a time
+  // and the game's version and nothing about the player. This is
+  // gander_import.py's log_id: bytes is the start of the file. The answer
+  // comes later (a Promise): the name, or null if the first line isn't whole.
+  function logId(bytes) {
+    var end = bytes.indexOf(10);
+    if (end < 0) return Promise.resolve(null);
+    while (end > 0 && (bytes[end - 1] === 13 || bytes[end - 1] === 10)) end -= 1;
+    var subtle = (typeof crypto !== "undefined" && crypto.subtle) || require("crypto").webcrypto.subtle;
+    return subtle.digest("SHA-256", bytes.slice(0, end)).then(function (hash) {
+      var out = "";
+      new Uint8Array(hash).slice(0, 8).forEach(function (byte) { out += (byte < 16 ? "0" : "") + byte.toString(16); });
+      return out;
+    });
+  }
+
   function gameData(data, game) {
     if (!Object.prototype.hasOwnProperty.call(data.games, game)) {
       data.games[game] = { instances: {}, spells: {}, mobs: {} };
@@ -280,6 +299,11 @@
   // checks, each no longer than options.size characters. Names are left out
   // when the game isn't in English (options.english === false), because the
   // database keeps English names only.
+  //
+  // options.logs says which logs the data came from, for each game:
+  // { forever: { "<log id>": [first byte, byte after the last] } }. Every
+  // block of a game carries its record, and when there are several they are
+  // numbered ("part" of "parts"): together they are one read of those logs.
   function blocks(data, options) {
     options = options || {};
     var size = options.size || BLOCK_SIZE, english = options.english !== false;
@@ -288,16 +312,19 @@
       if (!Object.prototype.hasOwnProperty.call(data.games, game)) return;
       var g = data.games[game];
       var block = null, length = 0;
+      var made = [];
+      var record = options.logs && options.logs[game];
+      if (record && !Object.keys(record).length) record = null;
+      // Room for the record and the numbering, which go in at the end.
+      var spare = record ? JSON.stringify(record).length + 40 : 0;
 
       function start() {
         block = { format: FORMAT, game: game, mobs: {}, spells: {}, instances: {} };
         if (!english) block.locale = "other";
-        length = JSON.stringify(block).length;
+        length = JSON.stringify(block).length + spare;
       }
       function close() {
-        if (block && (Object.keys(block.mobs).length || Object.keys(block.instances).length)) {
-          out.push(JSON.stringify(block));
-        }
+        if (block && (Object.keys(block.mobs).length || Object.keys(block.instances).length)) made.push(block);
         block = null;
       }
 
@@ -306,7 +333,7 @@
         block.instances[key] = { minutes: g.instances[key].minutes };
         if (english && g.instances[key].name) block.instances[key].name = g.instances[key].name;
       });
-      length = JSON.stringify(block).length;
+      length = JSON.stringify(block).length + spare;
 
       casters(g).forEach(function (mob) {
         var entry = { spells: {} }, names = {}, extra = 0;
@@ -336,6 +363,16 @@
         length += extra;
       });
       close();
+      made.forEach(function (one, i) {
+        if (record) {
+          one.logs = record;
+          if (made.length > 1) {
+            one.part = i + 1;
+            one.parts = made.length;
+          }
+        }
+        out.push(JSON.stringify(one));
+      });
     });
     return out;
   }
@@ -349,5 +386,6 @@
     summary: summary,
     blocks: blocks,
     fields: fields,
+    logId: logId,
   };
 });

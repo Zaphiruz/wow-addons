@@ -132,6 +132,31 @@ test("tidy keeps a good block whole", () => {
     { format: 1, game: "classic", mobs: {}, spells: {}, instances: { "389": { minutes: 3 } } });
 });
 
+test("tidy keeps the record of which combat logs a block came from", () => {
+  const logs = { "0123456789abcdef": [0, 5000], "fedcba9876543210": [120, 121] };
+  assert.deepEqual(tidy({ ...BLOCK, logs }), { ...BLOCK, logs });
+  assert.deepEqual(tidy({ ...BLOCK, logs, part: 2, parts: 3 }), { ...BLOCK, logs, part: 2, parts: 3 });
+  assert.equal("logs" in tidy(BLOCK), false);
+  assert.equal("part" in tidy({ ...BLOCK, part: 2, parts: 3 }), false, "a part means nothing without logs");
+});
+
+test("a damaged record of logs refuses the whole block", () => {
+  // Dropping only the record would let the same casts be counted twice.
+  const id = "0123456789abcdef";
+  const bad = [
+    {}, "everything", [[0, 5]], { xyz: [0, 5] }, { [id.toUpperCase()]: [0, 5] }, { [id]: [5, 5] }, { [id]: [-1, 5] },
+    { [id]: [0, 2 ** 41] }, { [id]: "0-5" }, { [id]: [0, 5, 9] }, { [id]: [0.5, 5] }, { [id]: [true, 5] },
+    { [id]: [0, "<b>5</b>"] },
+  ];
+  for (const logs of bad) assert.equal(tidy({ ...BLOCK, logs }), null, JSON.stringify(logs));
+  for (const more of [{ part: 0 }, { part: 3, parts: 2 }, { parts: 99 }, { part: "1" }, { parts: 1.5 }]) {
+    assert.equal(tidy({ ...BLOCK, logs: { [id]: [0, 5] }, ...more }), null, JSON.stringify(more));
+  }
+  const many = {};
+  for (let i = 0; i < 301; i++) many[i.toString(16).padStart(16, "0")] = [0, 5];
+  assert.equal(tidy({ ...BLOCK, logs: many }), null, "too many logs");
+});
+
 test("what isn't a block is refused, and GitHub never hears of it", async () => {
   const cases = [
     [{ block: "not json" }, 400],
@@ -172,9 +197,9 @@ test("the browser's question before sending is answered", async () => {
 
 test("a look at the address says whether it is set up", async () => {
   const up = await worker.fetch(new Request("https://worker.example/"), ENV);
-  assert.deepEqual(await up.json(), { ok: true, service: "gander-data", ready: true });
+  assert.deepEqual(await up.json(), { ok: true, service: "gander-data", ready: true, logs: true });
   const down = await worker.fetch(new Request("https://worker.example/"), { REPO: "Someone/some-repo" });
-  assert.deepEqual(await down.json(), { ok: true, service: "gander-data", ready: false });
+  assert.deepEqual(await down.json(), { ok: true, service: "gander-data", ready: false, logs: true });
 });
 
 test("without its secrets it says so and files nothing", async () => {

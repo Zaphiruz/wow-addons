@@ -238,6 +238,66 @@ class SiteReader(unittest.TestCase):
             instances += len(clean["instances"])
         self.assertEqual((len(mobs), len(spells), instances), (400, 400, 1))
 
+    # ---- the record of logs, shared with the importer ----
+    def test_a_log_gets_the_same_name_as_the_importer_gives_it(self):
+        firsts = [HEADER, classic()[0], "x", HEADER + " and more", "Ünïcödé 日本"]
+        starts = [first + "\r\nthe next line\r\n" for first in firsts] + [HEADER + "\nunix line ends\n"]
+        page = self.by_page([], starts=starts + ["a file with no line end"])
+        want = [gander_import.log_id(first.encode("utf-8")) for first in firsts + [HEADER]]
+        self.assertEqual(page["ids"], want + [None])
+        self.assertEqual(want[0], want[-1], "the line ending is not part of the name")
+
+    def test_blocks_say_which_logs_they_came_from(self):
+        a, b, c = "a" * 16, "b" * 16, "c" * 16
+        record = {"forever": {a: [0, 5000], b: [120, 900]}, "classic": {c: [0, 77]}}
+        page = self.by_page([[fight()], [awkward()], [classic()]], record=record)
+        seen = {}
+        for text in page["blocks"]:
+            block = json.loads(text)
+            clean, _, _ = gs.validate(block, NOW)
+            seen[clean["game"]] = clean["logs"]
+            self.assertNotIn("part", block, "one block needs no number")
+            self.assertEqual((clean["part"], clean["parts"]), (1, 1))
+        self.assertEqual(seen, record)
+
+    def test_a_send_split_into_blocks_numbers_them(self):
+        record = {"forever": {"a" * 16: [0, 5000]}}
+        page = self.by_page([[crowd()]], size=6000, record=record)
+        total = len(page["blocks"])
+        self.assertGreater(total, 5)
+        parts = []
+        for text in page["blocks"]:
+            self.assertLessEqual(len(text), 6000)
+            clean, _, _ = gs.validate(json.loads(text), NOW)
+            self.assertEqual(clean["logs"], record["forever"])
+            self.assertEqual(clean["parts"], total)
+            parts.append(clean["part"])
+        self.assertEqual(parts, list(range(1, total + 1)))
+
+    def test_a_split_send_is_counted_once_by_the_intake(self):
+        # Every block of it is taken; the same send again is not.
+        record = {"forever": {"a" * 16: [0, 5000]}}
+        page = self.by_page([[crowd()]], size=6000, record=record)
+        data, held, logs = gander_import.empty_data(), gs.new_held(), gander_import.new_logs()
+
+        def send(start, user):
+            issues = [{"number": start + i, "body": "### Data\n\n```text\n" + text + "\n```\n",
+                       "user": {"id": user, "login": f"user{user}"}, "author_association": "NONE",
+                       "labels": [{"name": "gander-data"}]} for i, text in enumerate(page["blocks"])]
+            for at in range(0, len(issues), gs.MAX_ISSUES):
+                gs.process(data, held, issues[at:at + gs.MAX_ISSUES], [], "owner", NOW, logs=logs)
+
+        send(1, 100)
+        waiting = sum(len(mob["spells"]) for payload in held["pending"] for mob in payload["mobs"].values())
+        self.assertEqual(waiting, 400, "every block of the send should be taken")
+        send(1000, 200)
+        waiting = sum(len(mob["spells"]) for payload in held["pending"] for mob in payload["mobs"].values())
+        self.assertEqual(waiting, 400, "the same logs from someone else were taken again")
+
+    def test_without_a_record_a_block_has_none(self):
+        page = self.by_page([[fight()]], record={"classic": {"c" * 16: [0, 77]}})
+        self.assertNotIn("logs", json.loads(page["blocks"][0]))
+
     def test_a_game_that_isnt_in_english_sends_no_names(self):
         page = self.by_page([[fight()]], english=False)
         text = page["blocks"][0]

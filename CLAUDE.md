@@ -172,12 +172,19 @@ confirmations (`ConfirmBindOnUse`) and Logout in Downcast and Hawker 0.2.0.
 - The game keeps its current log file open until the client exits, even after
   logging is switched off, so that file can't be deleted while the game runs.
   The importer remembers how far it read and deletes it on a later run.
-- The page (`site/`) and the importer each remember what they have read,
-  separately: the browser's `localStorage` and `gander_import_state.json`. A
-  log that goes through both is counted twice. Before importing a log the
-  owner already sent from the page, set its `offset` in the state file to
-  where the page stopped, after checking that reading that part gives exactly
-  the casts in the issue. Then check the counts didn't change.
+- Casts are added up, so no part of a combat log may be counted twice.
+  `data/gander_logs.json` is the record of how many bytes of each log the
+  database has had. A log is known by `log_id`: a scramble of its first line
+  (a time and the game's version, nothing about the player). The importer
+  starts each log where the record stops and moves the record on; the page
+  fetches the record, does the same, and puts `logs` (log id to first and
+  last byte) in each block; `gander_submit.py` refuses a block that overlaps
+  the record. Never edit that file by hand, and commit it with every import.
+- A send split into several blocks numbers them (`part` of `parts`): together
+  they are one read of their logs, and each is taken once.
+- A block with casts and no `logs` is still taken, for older copies of the
+  page. The page only trusts the record over its own `localStorage` when the
+  Worker says it passes `logs` on (`"logs": true` on a GET).
 - Data only ever grows: a later import adds spells, counts and newer
   sightings, it never removes a mob or a spell.
 - Account folder names are private: the importer finds the saved database by

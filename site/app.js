@@ -19,6 +19,16 @@
   var pasting = false;               // a pasted block is on its way
   var sentPages = [];                // the blocks from Gander sent in this visit
 
+  // The database's record of how far each combat log has been read, by
+  // anyone. It is what stops a log being counted twice.
+  var LOGS_URL = window.GANDER_LOGS_URL || "";
+  var FRESH = 3600 * 1000;           // how long this browser's own note of a send is believed over the record
+  var MAX_LOGS = 250;                // logs in one send (the checker takes 300 in a block)
+  // Does what we send reach the checker with its record of logs? By hand it
+  // does. Through the Worker, only if the Worker says it passes it on.
+  var knowsLogs = !SEND_URL;
+  var asked = null;
+
   function $(id) { return document.getElementById(id); }
 
   function el(tag, className, text) {
@@ -51,42 +61,123 @@
     }
   }
 
-  // ---- reading ----
-  // Read a log from where this browser stopped last time. Whole lines only:
-  // the game may still be writing the last one.
-  function readLog(item) {
-    var file = item.file;
-    var data = GanderLog.newData();
-    var reader = new GanderLog.Reader(data, item.ctx, new Date(file.lastModified || Date.now()).getFullYear());
-    var decoder = new TextDecoder("utf-8");
-    var position = item.start;
-    item.end = item.start;
+  // ---- what the database has had ----
+  function askWorker() {
+    if (!asked) {
+      asked = !SEND_URL ? Promise.resolve() : fetch(SEND_URL).then(function (response) {
+        return response.json();
+      }).then(function (answer) {
+        knowsLogs = !!(answer && answer.logs);
+      }, function () { /* an older Worker, or none: carry on without */ });
+    }
+    return asked;
+  }
 
+  // The record, or null if it can't be had just now.
+  function fetchRecord() {
+    if (!LOGS_URL) return Promise.resolve(null);
+    return fetch(LOGS_URL, { cache: "no-store" }).then(function (response) {
+      return response.ok ? response.json() : null;
+    }).then(function (record) {
+      return record && record.logs && typeof record.logs === "object" ? record : null;
+    }, function () {
+      return null;
+    });
+  }
+
+  // ---- reading ----
+  // Feed a reader the bytes of a file from one place to another, a piece at
+  // a time. Gives the place after the last whole line.
+  function scan(file, from, to, reader, doing) {
+    var decoder = new TextDecoder("utf-8");
+    var position = from, last = from;
     function next() {
-      if (position >= file.size) {
-        reader.finish();
-        item.data = data;
-        item.ctx = reader.ctx;
-        item.lines = reader.lines;
-        return Promise.resolve();
-      }
-      return file.slice(position, position + CHUNK).arrayBuffer().then(function (buffer) {
+      if (position >= to) return Promise.resolve(last);
+      return file.slice(position, Math.min(position + CHUNK, to)).arrayBuffer().then(function (buffer) {
         var bytes = new Uint8Array(buffer);
+        if (!bytes.length) return last;   // the file is shorter than it said
         var newline = bytes.lastIndexOf(10);
-        if (newline !== -1) item.end = position + newline + 1;
+        if (newline !== -1) last = position + newline + 1;
         position += bytes.length;
         reader.feedText(decoder.decode(bytes, { stream: true }));
-        $("status").textContent = "Reading " + file.name + ": " +
-          Math.round(100 * Math.min(position, file.size) / Math.max(file.size, 1)) + "%";
+        $("status").textContent = doing + " " + file.name + ": " +
+          Math.round(100 * Math.min(position, to) / Math.max(to, 1)) + "%";
         return next();
       });
     }
     return next();
   }
 
+  // Work out where to start reading a log: after what the database has had.
+  //
+  // The record is the truth about that, whoever sent it and from where. This
+  // browser's own note of what it sent is believed over the record only for
+  // a while after a send, while the record catches up; after that, a note
+  // that is ahead of the record means the send never arrived, and the log is
+  // read again from where the record stops.
+  function place(item, record) {
+    var file = item.file, mine = item.mine;
+    return file.slice(0, 4096).arrayBuffer().then(function (buffer) {
+      return GanderLog.logId(new Uint8Array(buffer));
+    }).then(function (id) {
+      item.id = id;
+      var local = mine ? mine.offset : 0;
+      var entry = id && record && Object.prototype.hasOwnProperty.call(record.logs, id) ? record.logs[id] : null;
+      var had = entry && typeof entry.to === "number" && entry.to > 0 ? Math.min(entry.to, file.size) : 0;
+      var fresh = !!mine && Date.now() - (mine.at || 0) < FRESH;
+      item.start = record && knowsLogs && !fresh ? had : Math.max(local, had);
+      // Which dungeon the log is in by then is known from this browser's
+      // note, if the note is from before that place. If not, walk there.
+      if (local <= item.start) {
+        item.walkFrom = local;
+        item.ctx = (mine && mine.ctx) || {};
+      } else {
+        item.walkFrom = 0;
+        item.ctx = {};
+      }
+      var twin = id && items.filter(function (other) {
+        return other !== item && other.id === id && other.status !== "bad";
+      })[0];
+      if (twin) {
+        item.status = "skip";
+        item.what = "The same log as " + twin.file.name;
+        item.done = true;
+      } else if (item.start > 0 && item.start >= file.size) {
+        item.status = "skip";
+        item.what = had >= file.size ? "The database already has this log" : "Already sent from this browser";
+        item.done = true;
+      }
+    });
+  }
+
+  // Read a log from where it should start. Whole lines only: the game may
+  // still be writing the last one.
+  function readLog(item) {
+    var file = item.file;
+    var year = new Date(file.lastModified || Date.now()).getFullYear();
+    var walked = Promise.resolve(item.ctx);
+    if (item.walkFrom < item.start) {
+      var walker = new GanderLog.Reader(GanderLog.newData(), item.ctx, year);
+      walked = scan(file, item.walkFrom, item.start, walker, "Finding the place in").then(function () {
+        return walker.ctx;
+      });
+    }
+    return walked.then(function (ctx) {
+      var data = GanderLog.newData();
+      var reader = new GanderLog.Reader(data, ctx, year);
+      return scan(file, item.start, file.size, reader, "Reading").then(function (last) {
+        reader.finish();
+        item.end = last;
+        item.data = data;
+        item.ctx = reader.ctx;
+        item.lines = reader.lines;
+      });
+    });
+  }
+
   function describe(item) {
     var found = GanderLog.summary(item.data);
-    if (item.lines === 0) return ["bad", "This isn't a combat log"];
+    if (item.lines === 0) return item.start ? ["skip", "Nothing new in it since last time"] : ["bad", "This isn't a combat log"];
     if (!item.ctx.game || !/^(forever|classic)$/.test(item.ctx.game)) {
       return ["bad", "Not a Classic Era or Forever log"];
     }
@@ -99,7 +190,22 @@
       if (!game.instances.length) parts.push(item.ctx.instance_name || "Open world");
       parts.push(game.mobs ? "casts for " + some(game.mobs, "mob", "mobs") : "no casts");
     });
-    return ["new", (item.start ? "New since last time: " : "") + parts.join(" · ")];
+    return ["new", (item.start ? "New since last time: " : "") + parts.join(" \u00b7 ")];
+  }
+
+  // One send holds so many logs. The rest wait for the next one.
+  function holdBack() {
+    var count = {};
+    items.forEach(function (item) {
+      if (item.status !== "new") return;
+      var game = item.ctx.game;
+      count[game] = (count[game] || 0) + 1;
+      if (count[game] > MAX_LOGS) {
+        item.status = "skip";
+        item.what = "Next time: " + MAX_LOGS + " logs go in one send. Drop the folder again after this one";
+        item.done = true;
+      }
+    });
   }
 
   function addFiles(files) {
@@ -112,16 +218,8 @@
       // Chosen again in the same visit: it may have grown, so look at it afresh.
       items = items.filter(function (item) { return item.file.name !== file.name; });
       var before = saved[file.name];
-      var item = { file: file, start: 0, ctx: {}, status: "wait", what: "Waiting" };
-      if (before && typeof before.offset === "number" && before.offset <= file.size) {
-        item.start = before.offset;
-        item.ctx = before.ctx || {};
-      }
-      if (item.start > 0 && item.start === file.size) {
-        item.status = "skip";
-        item.what = "Already sent from this browser";
-        item.done = true;
-      }
+      var item = { file: file, start: 0, ctx: {}, status: "wait", what: "Waiting", mine: null };
+      if (before && typeof before.offset === "number" && before.offset <= file.size) item.mine = before;
       items.push(item);
       fresh.push(item);
     });
@@ -135,23 +233,31 @@
     busy = true;
     $("thanks").hidden = true;
     render();
-    var chain = Promise.resolve();
+    $("status").textContent = "Asking the database which logs it has...";
+    var record = null;
+    var chain = askWorker().then(fetchRecord).then(function (found) { record = found; });
     fresh.forEach(function (item) {
-      if (item.done) return;
-      chain = chain.then(function () { return readLog(item); }).then(function () {
-        var result = describe(item);
-        item.status = result[0];
-        item.what = result[1];
-        render();
-      }, function () {
+      chain = chain.then(function () {
+        return place(item, record);
+      }).then(function () {
+        if (item.done) return render();
+        return readLog(item).then(function () {
+          var result = describe(item);
+          item.status = result[0];
+          item.what = result[1];
+          render();
+        });
+      }).then(null, function () {
         item.status = "bad";
         item.what = "Couldn't read this file";
         render();
       });
     });
     return chain.then(function () {
+      holdBack();
       busy = false;
-      $("status").textContent = "";
+      $("status").textContent = record || !LOGS_URL ? "" :
+        "Couldn't ask the database which logs it has, so this went by what this browser remembers.";
       render();
     });
   }
@@ -176,6 +282,19 @@
     return data;
   }
 
+  // Which bytes of which logs the data is from, for each game: it goes in
+  // the blocks, and the database's record moves on by it.
+  function spans() {
+    var out = {};
+    items.forEach(function (item) {
+      if (item.status !== "new" || !item.id || !(item.end > item.start)) return;
+      var game = item.ctx.game;
+      out[game] = out[game] || {};
+      out[game][item.id] = [item.start, item.end];
+    });
+    return out;
+  }
+
   function render() {
     var list = $("list");
     list.textContent = "";
@@ -191,7 +310,7 @@
 
   function renderBlocks() {
     var data = fromLogs();
-    var logBlocks = busy ? [] : GanderLog.blocks(data, { english: !$("not-english").checked });
+    var logBlocks = busy ? [] : GanderLog.blocks(data, { english: !$("not-english").checked, logs: spans() });
     var stats = statsBlock();
     $("stats-note").textContent = stats === null
       ? "That doesn't look like the block from /gander send. Copy all of it, from { to }."
@@ -436,6 +555,7 @@
 
   function start() {
     $("stats").hidden = !SEND_URL;
+    askWorker();
     var drop = $("drop");
     ["dragenter", "dragover"].forEach(function (name) {
       drop.addEventListener(name, function (event) {

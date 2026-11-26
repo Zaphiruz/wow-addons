@@ -58,7 +58,8 @@ class Worker(unittest.TestCase):
     def blocks(self):
         """The page's blocks from sample logs, and a block of stats as Gander makes it."""
         job = {"logs": [{"pieces": ["\r\n".join(log) + "\r\n"], "year": 2026}
-                        for log in (site.fight(), site.awkward(), site.classic())]}
+                        for log in (site.fight(), site.awkward(), site.classic())],
+               "record": {"forever": {"a" * 16: [0, 5000], "b" * 16: [120, 900]}, "classic": {"c" * 16: [0, 77]}}}
         done = subprocess.run([NODE, str(site.DRIVER)], input=json.dumps(job), capture_output=True, text=True,
                               encoding="utf-8")
         self.assertEqual(done.returncode, 0, done.stderr)
@@ -73,6 +74,14 @@ class Worker(unittest.TestCase):
             self.assertEqual(want[1], 0, "the sample block itself should be clean")
             sub = gs.parse_body(filed["body"])
             self.assertEqual(gs.validate(sub, NOW), want)
+        self.assertEqual(["logs" in gs.validate(json.loads(text), NOW)[0] for text in blocks], [True, True, False],
+                         "the page's blocks should carry the record of logs through the Worker")
+
+    def test_a_block_with_a_damaged_record_of_logs_is_refused_by_both(self):
+        block = {**STATS, "logs": {"a" * 16: [5, 5]}}
+        with self.assertRaises(gs.Rejected):
+            gs.validate(block, NOW)
+        self.assertEqual(self.file([json.dumps(block)])[0]["status"], 400)
 
     def test_the_stamp_the_worker_adds_is_believed_only_on_the_owners_issues(self):
         filed = self.file(self.blocks()[-1:])[0]

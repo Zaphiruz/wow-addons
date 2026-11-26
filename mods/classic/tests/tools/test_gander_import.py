@@ -85,6 +85,7 @@ class ImportTest(unittest.TestCase):
         self.logs.mkdir(parents=True)
         self.data = self.root / "data" / "gander_data.json"
         self.state = self.root / "data" / "state.json"
+        self.record = self.root / "data" / "logs.json"
         self.addon = self.root / "GanderData"
         self.lua = self.addon / "GanderData.lua"
         self.saved = self.root / "Gander.lua"
@@ -113,8 +114,20 @@ class ImportTest(unittest.TestCase):
     def run_import(self, saved=(), dirs=None, **kw):
         self.out = []
         kw.setdefault("now", NOW)
+        kw.setdefault("logs_path", self.record)
         return gander_import.run(dirs or [self.logs], saved, self.data, self.state, self.addon,
                                  out=self.out.append, **kw)
+
+    def read_to(self):
+        """How far the record says the test log has been read."""
+        record = json.loads(self.record.read_text(encoding="utf-8"))
+        return gander_import.log_read_to(record, gander_import.log_id(HEADER.encode("utf-8")))
+
+    def note(self, to):
+        """Have the record say someone else (the page) read the test log up to a byte."""
+        record = gander_import.new_logs()
+        gander_import.note_log(record, gander_import.log_id(HEADER.encode("utf-8")), to, "2026-11-24")
+        gander_import.save_json(self.record, record)
 
     def load_lua(self):
         from lupa import lua51
@@ -163,6 +176,64 @@ class ImportTest(unittest.TestCase):
         self.assertEqual(sorted(data["instances"]), ["48"])
         self.assertAlmostEqual(data["instances"]["48"]["minutes"], 86 / 60, places=2)
         self.assertEqual(data["mobs"]["4832"]["spells"]["8399"]["n"], 4)  # the casts still count
+
+    # ---- the record of logs, shared with the page ----
+    def test_a_log_is_known_by_its_first_line(self):
+        ident = gander_import.log_id(HEADER.encode("utf-8"))
+        self.assertRegex(ident, "^[0-9a-f]{16}$")
+        self.assertEqual(ident, gander_import.log_id((HEADER + "\r\n").encode("utf-8")))
+        self.assertNotEqual(ident, gander_import.log_id(ZONE.encode("utf-8")))
+
+    def test_the_record_says_how_far_a_log_was_read(self):
+        path = self.write(fight())
+        self.run_import(keep=True)
+        self.assertEqual(self.read_to(), path.stat().st_size)
+
+    def test_a_deleted_log_stays_in_the_record(self):
+        path = self.write(fight())
+        size = path.stat().st_size
+        self.run_import()
+        self.assertFalse(path.exists())
+        self.assertEqual(self.read_to(), size, "a copy of it could still be sent from the page")
+
+    def test_a_log_the_page_already_sent_is_not_counted_again(self):
+        path = self.write(fight())
+        self.note(path.stat().st_size)
+        data = self.run_import(keep=True)
+        self.assertEqual(data["games"], {}, "counted a log the database already had")
+        self.assertIn("already in the database", self.out[0])
+
+    def test_a_log_the_page_sent_part_of_is_read_from_there(self):
+        path = self.write(fight())
+        start = len(("\n".join(fight()[:4]) + "\n").encode("utf-8"))   # the header, the zone and two casts
+        self.note(start)
+        game = self.run_import(keep=True)["games"]["forever"]
+        self.assertEqual(game["mobs"]["4798"]["spells"]["6205"]["n"], 1, "should count only what came after")
+        self.assertEqual(game["mobs"]["4832"]["spells"]["8399"]["n"], 2)
+        self.assertIn("48", game["instances"], "lost track of the dungeon named in the part it skipped")
+        self.assertEqual(self.read_to(), path.stat().st_size)
+
+    def test_logs_imported_before_there_was_a_record_are_noted(self):
+        path = self.write(fight())
+        self.run_import(keep=True)
+        self.record.unlink()
+        self.run_import(keep=True)
+        self.assertEqual(self.read_to(), path.stat().st_size)
+
+    def test_a_dry_run_leaves_the_record_alone(self):
+        self.write(fight())
+        self.run_import(dry_run=True)
+        self.assertFalse(self.record.exists())
+
+    def test_a_record_longer_than_the_log_means_all_of_it_was_read(self):
+        path = self.write(fight())
+        self.note(path.stat().st_size + 5000)
+        self.assertEqual(self.run_import(keep=True)["games"], {})
+
+    def test_a_log_without_a_whole_first_line_is_left_for_later(self):
+        (self.logs / "WoWCombatLog-1.txt").write_bytes(HEADER[:40].encode("utf-8"))
+        self.run_import(keep=True)
+        self.assertFalse(self.record.exists() and json.loads(self.record.read_text(encoding="utf-8"))["logs"])
 
     def test_an_imported_log_is_deleted(self):
         path = self.write(fight())

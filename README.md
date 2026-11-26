@@ -108,8 +108,15 @@ What mobs cast is only in the combat log file, which an addon can't read. The
 page in `site/` reads it instead, in the player's browser: they drop their
 `Logs` folder on it, and it makes the same kind of block from what hostile mobs
 cast and how long each dungeon took. The log never leaves their computer, and
-no player's name is taken from it. The page remembers which logs that browser
-has sent (and how far into each), so dropping the whole folder again is fine.
+no player's name is taken from it.
+
+Casts are added up, so no part of a log may be counted twice.
+`mods/classic/data/gander_logs.json` is the record of how many bytes of each
+log the database has had, whoever sent it: the page and `gander_import.py`
+both start a log where the record stops, and the intake refuses a block that
+overlaps it. So dropping the whole folder again is always fine. A log is
+known there by a scramble of its first line, which holds a time and the
+game's version and nothing about the player.
 
 - `site/gander-log.js` is the reader. It is `gander_import.py`'s log reader
   written again for the browser, and the tests in
