@@ -1,0 +1,52 @@
+name: Site
+
+# Publishes the site/ folder with GitHub Pages: the page players send combat
+# log data from. Pages has to be switched on once, in the repository's
+# settings (Pages, Source: GitHub Actions). Until then this does nothing.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - site/**
+      - .github/workflows/pages.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - name: Is Pages switched on?
+        id: pages
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+        run: |
+          if gh api "repos/$REPO/pages" --silent 2>/dev/null; then
+            echo "on=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "::notice::GitHub Pages isn't switched on for this repository, so nothing was published."
+          fi
+      - uses: actions/checkout@v4
+        if: steps.pages.outputs.on == 'true'
+      - uses: actions/configure-pages@v5
+        if: steps.pages.outputs.on == 'true'
+      - uses: actions/upload-pages-artifact@v3
+        if: steps.pages.outputs.on == 'true'
+        with:
+          path: site
+      - uses: actions/deploy-pages@v4
+        if: steps.pages.outputs.on == 'true'
+        id: deploy

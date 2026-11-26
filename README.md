@@ -102,6 +102,23 @@ A submission is one JSON block, shaped like one game's part of
  "instances": {"48": {"minutes": 24.7, "name": "Blackfathom Deeps"}}}
 ```
 
+### Combat logs from other players
+
+What mobs cast is only in the combat log file, which an addon can't read. The
+page in `site/` reads it instead, in the player's browser: they drop their
+`Logs` folder on it, and it makes the same kind of block from what hostile mobs
+cast and how long each dungeon took. The log never leaves their computer, and
+no player's name is taken from it. The page remembers which logs that browser
+has sent (and how far into each), so dropping the whole folder again is fine.
+
+- `site/gander-log.js` is the reader. It is `gander_import.py`'s log reader
+  written again for the browser, and the tests in
+  `mods/classic/tests/tools/test_gander_site.py` (they need Node.js) read the
+  same logs with both and compare.
+- The **Site** workflow publishes `site/` with GitHub Pages when it changes.
+- For now the page hands the player the block to paste into the issue form.
+  Sending without a GitHub account is the next step.
+
 ## Releasing
 
 1. Bump `## Version:` in the addon's `.toc`.

@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Send to GanderData</title>
+  <meta name="description" content="Send what mobs cast, from your World of Warcraft combat logs, to the GanderData database.">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main>
+  <h1>Send to the GanderData database</h1>
+  <p class="lead">GanderData is the shared database behind the Gander addon: what each mob casts, and its stats.
+    This page reads your combat logs and sends what mobs cast in them.</p>
+  <p class="promise"><strong>Your logs stay on this computer.</strong> The page reads them here, in your browser.
+    Only mob names, spell names, counts and the time spent in each dungeon are sent. No player's name is.</p>
+
+  <section>
+    <h2>1. Choose your combat logs</h2>
+    <div id="drop" class="drop">
+      <p>Drop your <code>Logs</code> folder or log files here</p>
+      <p class="buttons">
+        <button type="button" id="pick-files">Choose files</button>
+        <button type="button" id="pick-folder">Choose folder</button>
+      </p>
+      <input type="file" id="files" multiple accept=".txt,text/plain" hidden>
+      <input type="file" id="folder" webkitdirectory hidden>
+    </div>
+    <p class="hint">The folder is <code>World of Warcraft\_forever_\Logs</code> for Forever and
+      <code>World of Warcraft\_classic_era_\Logs</code> for Classic Era. The game only writes a log while logging
+      is on: tick it in Gander's settings, or type <code>/combatlog</code>.</p>
+    <p class="hint"><label><input type="checkbox" id="not-english"> My game isn't in English (names are left out:
+      the database keeps English names)</label></p>
+    <ul id="list" class="list" hidden></ul>
+    <p id="status" class="status" role="status" aria-live="polite"></p>
+  </section>
+
+  <section id="send" hidden>
+    <h2>2. Send</h2>
+    <p id="total" class="total"></p>
+    <p>Sending needs a GitHub account for now. For each block: copy it, open the form, paste it into the
+      <strong>Data</strong> box and submit.</p>
+    <div id="blocks"></div>
+    <p class="buttons">
+      <button type="button" id="sent" class="primary" disabled>I sent it</button>
+      <span id="sent-hint" class="hint">Wakes up once every block has been copied.</span>
+    </p>
+  </section>
+
+  <p id="thanks" class="thanks" hidden>Thank you. This browser will skip those logs next time, so you can drop the
+    whole folder again after your next session.</p>
+
+  <footer>
+    <p><a href="https://github.com/Zaphiruz/wow-addons">How the database works, and its source</a> ·
+      <button type="button" id="forget" class="link">Forget which logs this browser has sent</button></p>
+  </footer>
+</main>
+<script src="gander-log.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

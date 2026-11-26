@@ -192,6 +192,18 @@ confirmations (`ConfirmBindOnUse`) and Logout in Downcast and Hawker 0.2.0.
 - Gander's `/gander send` window makes the submission block in Lua
   (`buildBlock`). Its format and `gander_submit.py`'s checks must change
   together: Gander's tests run each block through `gander_submit.validate`.
+- `site/` is the page players send combat log data from, published by the
+  "Site" workflow with GitHub Pages. `site/gander-log.js` reads a log exactly
+  as `gander_import.py`'s `Reader` does and makes submission blocks from it:
+  change the two readers together. `test_gander_site.py` reads the same logs
+  with both and runs every block through `gander_submit.validate`. It needs
+  Node.js (`node`), and is skipped without it.
+- Try the page with the `gander-site` preview (`python -m http.server` on
+  `site/`). Text from a log goes on the page with `textContent`, never as HTML.
+- Chrome and Edge won't let a page keep a folder under `Program Files`
+  (`showDirectoryPicker` and stored handles are blocked there), which is where
+  the game installs by default. So the page takes dropped or chosen files and
+  remembers what it sent in `localStorage` instead.
 - Issue text is untrusted. The workflow never puts it in a command, and the
   only free text taken from a submission is a name that passes
   `good_name` and is then held. Keep it that way when changing either.
