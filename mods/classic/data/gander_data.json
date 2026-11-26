@@ -2220,6 +2220,17 @@
     },
     "1537": {
      "levels": {
+      "8": {
+       "at": 1795710229,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Scarlet Zealot",
+        "run": 6,
+        "spd": 3,
+        "ty": "Humanoid",
+        "z": "Tirisfal Glades"
+       }
+      },
       "9": {
        "at": 1795642639,
        "v": {
@@ -4219,6 +4230,17 @@
         "z": "Zephras Isle"
        }
       },
+      "20": {
+       "at": 1795708821,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Searing Totem",
+        "run": 7,
+        "spd": 2,
+        "ty": "Totem",
+        "z": "Orgrimmar"
+       }
+      },
       "42": {
        "at": 1795560166,
        "v": {
@@ -6171,6 +6193,17 @@
         "z": "Orgrimmar"
        }
       },
+      "16": {
+       "at": 1795717556,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Mini Diablo",
+        "run": 8,
+        "spd": 2,
+        "ty": "Non-combat Pet",
+        "z": "Orgrimmar"
+       }
+      },
       "32": {
        "at": 1795566820,
        "v": {
@@ -6230,6 +6263,17 @@
         "spd": 2,
         "ty": "Non-combat Pet",
         "z": "Orgrimmar"
+       }
+      },
+      "14": {
+       "at": 1795710650,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Zergling",
+        "run": 8,
+        "spd": 2,
+        "ty": "Non-combat Pet",
+        "z": "Undercity"
        }
       },
       "20": {
@@ -6458,6 +6502,17 @@
         "class": "WARRIOR",
         "run": 8,
         "spd": 2
+       }
+      },
+      "37": {
+       "at": 1795710948,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Unknown",
+        "run": 8,
+        "spd": 2,
+        "ty": "Non-combat Pet",
+        "z": "Tirisfal Glades"
        }
       }
      },
@@ -6757,7 +6812,20 @@
      "spells": {}
     },
     "3123": {
-     "levels": {},
+     "levels": {
+      "10": {
+       "at": 1795709350,
+       "v": {
+        "class": "WARRIOR",
+        "fam": "Raptor",
+        "n": "Bloodtalon Scythemaw",
+        "run": 6,
+        "spd": 2,
+        "ty": "Beast",
+        "z": "Durotar"
+       }
+      }
+     },
      "name": "Bloodtalon Scythemaw",
      "spells": {
       "6268": {
@@ -6863,7 +6931,30 @@
      "spells": {}
     },
     "3197": {
-     "levels": {},
+     "levels": {
+      "10": {
+       "at": 1795709877,
+       "v": {
+        "class": "PALADIN",
+        "n": "Burning Blade Fanatic",
+        "run": 6,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Durotar"
+       }
+      },
+      "9": {
+       "at": 1795709926,
+       "v": {
+        "class": "PALADIN",
+        "n": "Burning Blade Fanatic",
+        "run": 6,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Durotar"
+       }
+      }
+     },
      "name": "Burning Blade Fanatic",
      "spells": {
       "5262": {
@@ -6875,7 +6966,30 @@
      }
     },
     "3198": {
-     "levels": {},
+     "levels": {
+      "10": {
+       "at": 1795709821,
+       "v": {
+        "class": "MAGE",
+        "n": "Burning Blade Apprentice",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Durotar"
+       }
+      },
+      "11": {
+       "at": 1795709835,
+       "v": {
+        "class": "MAGE",
+        "n": "Burning Blade Apprentice",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Durotar"
+       }
+      }
+     },
      "name": "Burning Blade Apprentice",
      "spells": {
       "12746": {
@@ -7157,6 +7271,18 @@
     },
     "3246": {
      "levels": {
+      "12": {
+       "at": 1795708625,
+       "v": {
+        "class": "WARRIOR",
+        "fam": "Tallstrider",
+        "n": "Fleeting Plainstrider",
+        "run": 10,
+        "spd": 2,
+        "ty": "Beast",
+        "z": "The Barrens"
+       }
+      },
       "13": {
        "at": 1795573238,
        "v": {
@@ -7318,6 +7444,18 @@
      "levels": {
       "13": {
        "at": 1795575123,
+       "v": {
+        "class": "WARRIOR",
+        "fam": "Raptor",
+        "n": "Sunscale Screecher",
+        "run": 8,
+        "spd": 2,
+        "ty": "Beast",
+        "z": "The Barrens"
+       }
+      },
+      "14": {
+       "at": 1795718605,
        "v": {
         "class": "WARRIOR",
         "fam": "Raptor",
@@ -14780,6 +14918,17 @@
         "spd": 2,
         "ty": "Non-combat Pet",
         "z": "Orgrimmar"
+       }
+      },
+      "56": {
+       "at": 1795710188,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Sprite Darter Hatchling",
+        "run": 8,
+        "spd": 2,
+        "ty": "Non-combat Pet",
+        "z": "Tirisfal Glades"
        }
       }
      },
