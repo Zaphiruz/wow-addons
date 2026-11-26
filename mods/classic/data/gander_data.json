@@ -4073,6 +4073,17 @@
     },
     "2523": {
      "levels": {
+      "13": {
+       "at": 1795706279,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Searing Totem",
+        "run": 7,
+        "spd": 2,
+        "ty": "Totem",
+        "z": "Zephras Isle"
+       }
+      },
       "42": {
        "at": 1795560166,
        "v": {
