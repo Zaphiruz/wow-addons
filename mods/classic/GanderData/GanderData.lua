@@ -1280,6 +1280,7 @@ GanderData = {
         [30] = { at = 1795397324, v = { armor = 1212, class = "WARRIOR", dmax = 56.32, dmin = 42.45, n = "Rau Cliffrunner", run = 8, spd = 2, ty = "Humanoid", z = "Thousand Needles" } },
       },
       [4725] = {
+        [37] = { at = 1795649976, v = { class = "WARRIOR", fam = "Tallstrider", n = "Crazed Sandstrider", run = 8, spd = 2, ty = "Beast", z = "Desolace" } },
         [38] = { at = 1795610681, v = { class = "WARRIOR", fam = "Tallstrider", n = "Crazed Sandstrider", run = 8, spd = 2, ty = "Beast", z = "Desolace" } },
         [39] = { at = 1795577427, v = { class = "WARRIOR", fam = "Tallstrider", n = "Crazed Sandstrider", run = 8, spd = 2, ty = "Beast", z = "Desolace" } },
       },
@@ -1353,6 +1354,7 @@ GanderData = {
         [41] = { at = 1795399451, v = { class = "WARRIOR", fam = "Hyena", n = "Starving Blisterpaw", run = 8, spd = 2, ty = "Beast", z = "Tanaris" } },
       },
       [5462] = {
+        [47] = { at = 1795650087, v = { class = "WARRIOR", n = "Sea Spray", run = 8, spd = 2, ty = "Elemental", z = "Feralas" } },
         [48] = { at = 1795610787, v = { class = "WARRIOR", n = "Sea Spray", run = 8, spd = 2, ty = "Elemental", z = "Feralas" } },
       },
       [5594] = {
@@ -1672,6 +1674,7 @@ GanderData = {
       },
       [11562] = {
         [33] = { at = 1795610660, v = { class = "PALADIN", n = "Drysnap Crawler", run = 8, spd = 2, ty = "Humanoid", z = "Desolace" } },
+        [34] = { at = 1795649957, v = { class = "PALADIN", n = "Drysnap Crawler", run = 8, spd = 2, ty = "Humanoid", z = "Desolace" } },
       },
       [11563] = {
         [35] = { at = 1795610351, v = { class = "WARRIOR", n = "Drysnap Pincer", run = 8, spd = 2, ty = "Humanoid", z = "Desolace" } },
@@ -1989,8 +1992,10 @@ GanderData = {
       [272328] = {
         [9] = { at = 1795438843, v = { class = "WARRIOR", n = "Mini Diablo", run = 8, spd = 2, ty = "Non-combat Pet", z = "Orgrimmar" } },
         [32] = { at = 1795566820, v = { class = "WARRIOR", n = "Mini Diablo", run = 8, spd = 2, ty = "Non-combat Pet", z = "Ashenvale" } },
+        [54] = { at = 1795659999, v = { class = "WARRIOR", n = "Mini Diablo", run = 8, spd = 2, ty = "Non-combat Pet", z = "Orgrimmar" } },
       },
       [272329] = {
+        [10] = { at = 1795659991, v = { class = "WARRIOR", n = "Zergling", run = 8, spd = 2, ty = "Non-combat Pet", z = "Orgrimmar" } },
         [11] = { at = 1795574267, v = { class = "WARRIOR", n = "Zergling", run = 8, spd = 2, ty = "Non-combat Pet", z = "Orgrimmar" } },
         [20] = { at = 1795396617, v = { class = "WARRIOR", n = "Zergling", run = 8, spd = 2, ty = "Non-combat Pet", z = "Orgrimmar" } },
         [30] = { at = 1795439387, v = { class = "WARRIOR", n = "Zergling", run = 8, spd = 2, ty = "Non-combat Pet", z = "Orgrimmar" } },
