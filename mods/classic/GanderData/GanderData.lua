@@ -971,7 +971,8 @@ GanderData = {
         [37] = { at = 1795394783, v = { class = "WARRIOR", fam = "Cat", n = "Sin'Dall", run = 8, spd = 1.3, ty = "Beast", z = "Stranglethorn Vale" } },
       },
       [736] = {
-        [32] = { at = 1795374665, v = { class = "WARRIOR", fam = "Cat", run = 10, spd = 1.3 } },
+        [32] = { at = 1795703376, v = { class = "WARRIOR", fam = "Cat", run = 10, spd = 1.3, ty = "Beast", z = "Stranglethorn Vale" } },
+        [33] = { at = 1795703310, v = { class = "WARRIOR", fam = "Cat", run = 10, spd = 1.3, ty = "Beast", z = "Stranglethorn Vale" } },
       },
       [737] = {
         [35] = { at = 1795394183, v = { armor = 1387, class = "WARRIOR", dmax = 64.44, dmin = 48.58, n = "Kebok", run = 8, spd = 2, ty = "Humanoid", z = "Stranglethorn Vale" } },
@@ -1574,7 +1575,7 @@ GanderData = {
         [37] = { at = 1795374582, v = { class = "WARRIOR", run = 7, spd = 2 } },
       },
       [3624] = {
-        [40] = { at = 1795660674, v = { class = "WARRIOR", n = "Zudd", run = 8, spd = 2, ty = "Humanoid", z = "Stranglethorn Vale" } },
+        [40] = { at = 1795705112, v = { armor = 1980, class = "WARRIOR", dmax = 74.32, dmin = 56.02, n = "Zudd", run = 8, spd = 2, ty = "Humanoid", z = "Stranglethorn Vale" } },
       },
       [3689] = {
         [42] = { at = 1795398054, v = { class = "WARRIOR", n = "Laer Stepperunner", run = 8, spd = 2, ty = "Humanoid", z = "Thousand Needles" } },
@@ -2024,8 +2025,10 @@ GanderData = {
       },
       [5920] = {
         [27] = { at = 1795567509, v = { class = "WARRIOR", n = "Stoneskin Totem III", run = 7, spd = 2, ty = "Totem", z = "Blackfathom Deeps" } },
+        [34] = { at = 1795702358, v = { class = "WARRIOR", n = "Stoneskin Totem III", run = 7, spd = 2, ty = "Totem", z = "Stranglethorn Vale" } },
       },
       [5921] = {
+        [31] = { at = 1795702042, v = { class = "WARRIOR", n = "Strength of Earth Totem II", run = 7, spd = 2, ty = "Totem", z = "Durotar" } },
         [34] = { at = 1795665775, v = { class = "WARRIOR", n = "Strength of Earth Totem II", run = 7, spd = 2, ty = "Totem", z = "Stranglethorn Vale" } },
       },
       [5951] = {
@@ -2442,7 +2445,7 @@ GanderData = {
         [43] = { at = 1795614997, v = { class = "WARRIOR", n = "Balai Lok'Wein", run = 8, spd = 2, ty = "Humanoid", z = "Dustwallow Marsh" } },
       },
       [13842] = {
-        [60] = { at = 1795388570, v = { class = "WARRIOR", n = "Frostwolf Ambassador Rokhstrom", run = 8, spd = 2, ty = "Humanoid", z = "Orgrimmar" } },
+        [60] = { at = 1795701572, v = { armor = 3566, class = "WARRIOR", dmax = 137.86, dmin = 103.95, n = "Frostwolf Ambassador Rokhstrom", run = 8, spd = 2, ty = "Humanoid", z = "Orgrimmar" } },
       },
       [14123] = {
         [42] = { at = 1795573854, v = { class = "WARRIOR", fam = "Turtle", n = "Steeljaw Snapper", run = 8, spd = 2, ty = "Beast", z = "Tanaris" } },
@@ -2737,6 +2740,7 @@ GanderData = {
       },
       [268707] = {
         [21] = { at = 1795523962, v = { class = "WARRIOR", n = "Prairie Wolf Pup", run = 8, spd = 2, ty = "Non-combat Pet", z = "Orgrimmar" } },
+        [22] = { at = 1795701837, v = { class = "WARRIOR", n = "Prairie Wolf Pup", run = 8, spd = 2, ty = "Non-combat Pet", z = "Durotar" } },
         [33] = { at = 1795666461, v = { class = "WARRIOR", n = "Prairie Wolf Pup", run = 8, spd = 2, ty = "Non-combat Pet", z = "Stranglethorn Vale" } },
         [36] = { at = 1795564078, v = { class = "WARRIOR", n = "Prairie Wolf Pup", run = 8, spd = 2, ty = "Non-combat Pet", z = "Orgrimmar" } },
       },
@@ -2759,6 +2763,7 @@ GanderData = {
       },
       [272328] = {
         [9] = { at = 1795438843, v = { class = "WARRIOR", n = "Mini Diablo", run = 8, spd = 2, ty = "Non-combat Pet", z = "Orgrimmar" } },
+        [12] = { at = 1795701600, v = { class = "WARRIOR", n = "Mini Diablo", run = 8, spd = 2, ty = "Non-combat Pet", z = "Orgrimmar" } },
         [32] = { at = 1795566820, v = { class = "WARRIOR", n = "Mini Diablo", run = 8, spd = 2, ty = "Non-combat Pet", z = "Ashenvale" } },
         [54] = { at = 1795659999, v = { class = "WARRIOR", n = "Mini Diablo", run = 8, spd = 2, ty = "Non-combat Pet", z = "Orgrimmar" } },
       },
