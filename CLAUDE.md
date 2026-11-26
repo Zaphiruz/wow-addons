@@ -221,6 +221,12 @@ confirmations (`ConfirmBindOnUse`) and Logout in Downcast and Hawker 0.2.0.
 - The Worker's token and salt are Cloudflare secrets the owner sets with
   `npx wrangler secret put`. Never ask for them or write them anywhere. The
   owner deploys it (`worker/README.md`); its address goes in `site/config.js`.
+- Check the live Worker with a GET only (it answers with its state, and
+  `"logs": true` once it passes the record of logs on). A POST that gets
+  through files a real issue under the owner's name, and the intake merges it
+  within a minute: a probe meant to be refused once went in as data, because
+  the new version wasn't live at every location yet. Try refusals against the
+  Worker's tests or a local stand-in, never the live address.
 - Try the page with the `gander-site` preview (`python -m http.server` on
   `site/`). Text from a log goes on the page with `textContent`, never as HTML.
 - Chrome and Edge won't let a page keep a folder under `Program Files`
