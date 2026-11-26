@@ -3,6 +3,11 @@ name: Site
 # Publishes the site/ folder with GitHub Pages: the page players send combat
 # log data from. Pages has to be switched on once, in the repository's
 # settings (Pages, Source: GitHub Actions). Until then this does nothing.
+#
+# Packing the folder and publishing it are two jobs on purpose. In one job,
+# the publish step sometimes asked for the packed folder a moment before
+# GitHub had finished storing it, and failed with "No artifacts named
+# github-pages were found".
 
 on:
   push:
@@ -22,11 +27,10 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  deploy:
+  pack:
     runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deploy.outputs.page_url }}
+    outputs:
+      on: ${{ steps.pages.outputs.on }}
     steps:
       - name: Is Pages switched on?
         id: pages
@@ -47,6 +51,14 @@ jobs:
         if: steps.pages.outputs.on == 'true'
         with:
           path: site
+
+  deploy:
+    needs: pack
+    if: needs.pack.outputs.on == 'true'
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
       - uses: actions/deploy-pages@v4
-        if: steps.pages.outputs.on == 'true'
         id: deploy
