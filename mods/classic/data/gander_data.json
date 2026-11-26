@@ -414,6 +414,26 @@
      "name": "Mistvale Gorilla",
      "spells": {}
     },
+    "11098": {
+     "levels": {
+      "55": {
+       "at": 1795650187,
+       "v": {
+        "armor": 3292,
+        "class": "WARRIOR",
+        "dmax": 124.7,
+        "dmin": 94.04,
+        "n": "Hahrana Ironhide",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Feralas"
+       }
+      }
+     },
+     "name": "Hahrana Ironhide",
+     "spells": {}
+    },
     "11105": {
      "levels": {
       "30": {
@@ -1505,6 +1525,24 @@
      "name": "Scout Stronghand",
      "spells": {}
     },
+    "14376": {
+     "levels": {
+      "60": {
+       "at": 1795648228,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Scout Manslayer",
+        "rk": "ELITE",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Orgrimmar"
+       }
+      }
+     },
+     "name": "Scout Manslayer",
+     "spells": {}
+    },
     "14377": {
      "levels": {
       "60": {
@@ -1620,6 +1658,26 @@
       }
      },
      "name": "Peon",
+     "spells": {}
+    },
+    "14990": {
+     "levels": {
+      "40": {
+       "at": 1795648271,
+       "v": {
+        "armor": 1980,
+        "class": "WARRIOR",
+        "dmax": 74.32,
+        "dmin": 56.02,
+        "n": "Defilers Emissary",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Orgrimmar"
+       }
+      }
+     },
+     "name": "Defilers Emissary",
      "spells": {}
     },
     "15076": {
@@ -2397,6 +2455,23 @@
      "name": "Dalaran Watcher",
      "spells": {}
     },
+    "1889": {
+     "levels": {
+      "20": {
+       "at": 1795643756,
+       "v": {
+        "class": "MAGE",
+        "n": "Dalaran Wizard",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Silverpine Forest"
+       }
+      }
+     },
+     "name": "Dalaran Wizard",
+     "spells": {}
+    },
     "1912": {
      "levels": {
       "14": {
@@ -2412,6 +2487,64 @@
       }
      },
      "name": "Dalaran Protector",
+     "spells": {}
+    },
+    "1923": {
+     "levels": {
+      "16": {
+       "at": 1795643858,
+       "v": {
+        "class": "WARRIOR",
+        "fam": "Wolf",
+        "n": "Bloodsnout Worg",
+        "run": 8,
+        "spd": 2,
+        "ty": "Beast",
+        "z": "Silverpine Forest"
+       }
+      },
+      "17": {
+       "at": 1795643654,
+       "v": {
+        "class": "WARRIOR",
+        "fam": "Wolf",
+        "n": "Bloodsnout Worg",
+        "run": 8,
+        "spd": 2,
+        "ty": "Beast",
+        "z": "Silverpine Forest"
+       }
+      }
+     },
+     "name": "Bloodsnout Worg",
+     "spells": {}
+    },
+    "1924": {
+     "levels": {
+      "15": {
+       "at": 1795643858,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Moonrage Bloodhowler",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Silverpine Forest"
+       }
+      },
+      "16": {
+       "at": 1795643656,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Moonrage Bloodhowler",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Silverpine Forest"
+       }
+      }
+     },
+     "name": "Moonrage Bloodhowler",
      "spells": {}
     },
     "1934": {
@@ -3364,6 +3497,23 @@
      "name": "Searing Totem",
      "spells": {}
     },
+    "253524": {
+     "levels": {
+      "42": {
+       "at": 1795649384,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Bristleback Nomad",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Shen'dralas"
+       }
+      }
+     },
+     "name": "Bristleback Nomad",
+     "spells": {}
+    },
     "253525": {
      "levels": {},
      "name": "Bristleback Thornweaver",
@@ -3375,6 +3525,41 @@
        "spawns": 5
       }
      }
+    },
+    "253526": {
+     "levels": {
+      "43": {
+       "at": 1795649386,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Bristleback Skullcrusher",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Shen'dralas"
+       }
+      }
+     },
+     "name": "Bristleback Skullcrusher",
+     "spells": {}
+    },
+    "253529": {
+     "levels": {
+      "42": {
+       "at": 1795649380,
+       "v": {
+        "class": "WARRIOR",
+        "fam": "Boar",
+        "n": "Bristleback Snortsnout",
+        "run": 8,
+        "spd": 2,
+        "ty": "Beast",
+        "z": "Shen'dralas"
+       }
+      }
+     },
+     "name": "Bristleback Snortsnout",
+     "spells": {}
     },
     "2542": {
      "levels": {
@@ -3491,6 +3676,23 @@
       }
      },
      "name": "Halaan Hawk-Eye",
+     "spells": {}
+    },
+    "258463": {
+     "levels": {
+      "35": {
+       "at": 1795648311,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Darah",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Orgrimmar"
+       }
+      }
+     },
+     "name": "Darah",
      "spells": {}
     },
     "2594": {
@@ -4027,6 +4229,23 @@
       }
      },
      "name": "Panda Cub",
+     "spells": {}
+    },
+    "274334": {
+     "levels": {
+      "57": {
+       "at": 1795648227,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Tallstrider Hatchling",
+        "run": 8,
+        "spd": 2,
+        "ty": "Non-combat Pet",
+        "z": "Orgrimmar"
+       }
+      }
+     },
+     "name": "Tallstrider Hatchling",
      "spells": {}
     },
     "274931": {
@@ -4832,6 +5051,23 @@
      "name": "Doras",
      "spells": {}
     },
+    "3315": {
+     "levels": {
+      "30": {
+       "at": 1795648414,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Tor'phan",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Orgrimmar"
+       }
+      }
+     },
+     "name": "Tor'phan",
+     "spells": {}
+    },
     "3320": {
      "levels": {
       "45": {
@@ -4941,6 +5177,23 @@
       }
      },
      "name": "Magenius",
+     "spells": {}
+    },
+    "3364": {
+     "levels": {
+      "30": {
+       "at": 1795648542,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Borya",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Orgrimmar"
+       }
+      }
+     },
+     "name": "Borya",
      "spells": {}
     },
     "3367": {
@@ -5366,6 +5619,23 @@
       }
      },
      "name": "Tari'qa",
+     "spells": {}
+    },
+    "3500": {
+     "levels": {
+      "52": {
+       "at": 1795650211,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Tarhus",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Feralas"
+       }
+      }
+     },
+     "name": "Tarhus",
      "spells": {}
     },
     "3501": {
@@ -6746,6 +7016,40 @@
      "name": "Wharfmaster Lozgil",
      "spells": {}
     },
+    "4646": {
+     "levels": {
+      "33": {
+       "at": 1795649979,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Gelkis Outrunner",
+        "run": 10,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Desolace"
+       }
+      }
+     },
+     "name": "Gelkis Outrunner",
+     "spells": {}
+    },
+    "4647": {
+     "levels": {
+      "32": {
+       "at": 1795649986,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Gelkis Scout",
+        "run": 10,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Desolace"
+       }
+      }
+     },
+     "name": "Gelkis Scout",
+     "spells": {}
+    },
     "4651": {
      "levels": {
       "35": {
@@ -6778,6 +7082,24 @@
       }
      },
      "name": "Gelkis Rumbler",
+     "spells": {}
+    },
+    "4688": {
+     "levels": {
+      "33": {
+       "at": 1795649451,
+       "v": {
+        "class": "WARRIOR",
+        "fam": "Hyena",
+        "n": "Bonepaw Hyena",
+        "run": 8,
+        "spd": 2,
+        "ty": "Beast",
+        "z": "Desolace"
+       }
+      }
+     },
+     "name": "Bonepaw Hyena",
      "spells": {}
     },
     "4694": {
@@ -6905,6 +7227,34 @@
       }
      },
      "name": "Crazed Sandstrider",
+     "spells": {}
+    },
+    "4726": {
+     "levels": {
+      "33": {
+       "at": 1795649451,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Raging Thunder Lizard",
+        "run": 8,
+        "spd": 2,
+        "ty": "Beast",
+        "z": "Desolace"
+       }
+      },
+      "34": {
+       "at": 1795649442,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Raging Thunder Lizard",
+        "run": 8,
+        "spd": 2,
+        "ty": "Beast",
+        "z": "Desolace"
+       }
+      }
+     },
+     "name": "Raging Thunder Lizard",
      "spells": {}
     },
     "4727": {
@@ -7422,6 +7772,36 @@
      "name": "Grizzled Ironfur Bear",
      "spells": {}
     },
+    "5274": {
+     "levels": {
+      "48": {
+       "at": 1795650055,
+       "v": {
+        "class": "WARRIOR",
+        "fam": "Bear",
+        "n": "Ironfur Patriarch",
+        "run": 8,
+        "spd": 2,
+        "ty": "Beast",
+        "z": "Feralas"
+       }
+      },
+      "49": {
+       "at": 1795650057,
+       "v": {
+        "class": "WARRIOR",
+        "fam": "Bear",
+        "n": "Ironfur Patriarch",
+        "run": 8,
+        "spd": 2,
+        "ty": "Beast",
+        "z": "Feralas"
+       }
+      }
+     },
+     "name": "Ironfur Patriarch",
+     "spells": {}
+    },
     "5278": {
      "levels": {
       "44": {
@@ -7437,6 +7817,54 @@
       }
      },
      "name": "Sprite Darter",
+     "spells": {}
+    },
+    "5288": {
+     "levels": {
+      "47": {
+       "at": 1795650056,
+       "v": {
+        "class": "WARRIOR",
+        "fam": "Wolf",
+        "n": "Rabid Longtooth",
+        "run": 8,
+        "spd": 2,
+        "ty": "Beast",
+        "z": "Feralas"
+       }
+      }
+     },
+     "name": "Rabid Longtooth",
+     "spells": {}
+    },
+    "5308": {
+     "levels": {
+      "45": {
+       "at": 1795650078,
+       "v": {
+        "class": "WARRIOR",
+        "fam": "Wind Serpent",
+        "n": "Rogue Vale Screecher",
+        "run": 10,
+        "spd": 2,
+        "ty": "Beast",
+        "z": "Feralas"
+       }
+      },
+      "46": {
+       "at": 1795650077,
+       "v": {
+        "class": "WARRIOR",
+        "fam": "Wind Serpent",
+        "n": "Rogue Vale Screecher",
+        "run": 10,
+        "spd": 2,
+        "ty": "Beast",
+        "z": "Feralas"
+       }
+      }
+     },
+     "name": "Rogue Vale Screecher",
      "spells": {}
     },
     "5411": {
@@ -7522,6 +7950,23 @@
       }
      },
      "name": "Starving Blisterpaw",
+     "spells": {}
+    },
+    "5461": {
+     "levels": {
+      "48": {
+       "at": 1795650084,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Sea Elemental",
+        "run": 8,
+        "spd": 2,
+        "ty": "Elemental",
+        "z": "Feralas"
+       }
+      }
+     },
+     "name": "Sea Elemental",
      "spells": {}
     },
     "5462": {
@@ -7720,6 +8165,23 @@
       }
      },
      "name": "Lilly",
+     "spells": {}
+    },
+    "5758": {
+     "levels": {
+      "18": {
+       "at": 1795643656,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Leo Sarn",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Silverpine Forest"
+       }
+      }
+     },
+     "name": "Leo Sarn",
      "spells": {}
     },
     "5774": {
@@ -9021,6 +9483,26 @@
      "name": "Scooty",
      "spells": {}
     },
+    "7854": {
+     "levels": {
+      "49": {
+       "at": 1795650201,
+       "v": {
+        "armor": 2963,
+        "class": "WARRIOR",
+        "dmax": 109.53,
+        "dmin": 82.59,
+        "n": "Jangdor Swiftstrider",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Feralas"
+       }
+      }
+     },
+     "name": "Jangdor Swiftstrider",
+     "spells": {}
+    },
     "7873": {
      "levels": {
       "33": {
@@ -9229,6 +9711,40 @@
      "name": "Loorana",
      "spells": {}
     },
+    "8144": {
+     "levels": {
+      "51": {
+       "at": 1795650189,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Kulleg Stonehorn",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Feralas"
+       }
+      }
+     },
+     "name": "Kulleg Stonehorn",
+     "spells": {}
+    },
+    "8145": {
+     "levels": {
+      "50": {
+       "at": 1795650191,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Sheendra Tallgrass",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Feralas"
+       }
+      }
+     },
+     "name": "Sheendra Tallgrass",
+     "spells": {}
+    },
     "8146": {
      "levels": {
       "50": {
@@ -9278,6 +9794,23 @@
       }
      },
      "name": "Bronk",
+     "spells": {}
+    },
+    "8159": {
+     "levels": {
+      "50": {
+       "at": 1795650201,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Worb Strongstitch",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Feralas"
+       }
+      }
+     },
+     "name": "Worb Strongstitch",
      "spells": {}
     },
     "856": {
@@ -9731,6 +10264,23 @@
       }
      },
      "name": "Laziphus",
+     "spells": {}
+    },
+    "9986": {
+     "levels": {
+      "30": {
+       "at": 1795650166,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Shyrka Wolfrunner",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Feralas"
+       }
+      }
+     },
+     "name": "Shyrka Wolfrunner",
      "spells": {}
     }
    },
