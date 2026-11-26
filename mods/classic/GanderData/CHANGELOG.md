@@ -1,5 +1,9 @@
 # GanderData changelog
 
+## 1.0.4 (2026-11-26)
+
+- Forever: what 77 more mobs cast and stats for 226 more mobs.
+
 ## 1.0.3 (2026-11-26)
 
 - Forever: what 50 more mobs cast and stats for 2 more mobs.
