@@ -194,6 +194,346 @@
    "received": "2026-11-25",
    "sender": "de816eabacc0",
    "spells": {}
+  },
+  {
+   "game": "forever",
+   "instances": {},
+   "mobs": {
+    "11098": {
+     "levels": {
+      "55": {
+       "at": 1795650187,
+       "v": {
+        "armor": 3292,
+        "class": "WARRIOR",
+        "dmax": 124.7,
+        "dmin": 94.04,
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Feralas"
+       }
+      }
+     },
+     "name": "Hahrana Ironhide",
+     "spells": {}
+    },
+    "253524": {
+     "levels": {
+      "42": {
+       "at": 1795649384,
+       "v": {
+        "class": "WARRIOR",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Shen'dralas"
+       }
+      }
+     },
+     "name": "Bristleback Nomad",
+     "spells": {}
+    },
+    "253526": {
+     "levels": {
+      "43": {
+       "at": 1795649386,
+       "v": {
+        "class": "WARRIOR",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Shen'dralas"
+       }
+      }
+     },
+     "name": "Bristleback Skullcrusher",
+     "spells": {}
+    },
+    "253529": {
+     "levels": {
+      "42": {
+       "at": 1795649380,
+       "v": {
+        "class": "WARRIOR",
+        "fam": "Boar",
+        "run": 8,
+        "spd": 2,
+        "ty": "Beast",
+        "z": "Shen'dralas"
+       }
+      }
+     },
+     "name": "Bristleback Snortsnout",
+     "spells": {}
+    },
+    "3500": {
+     "levels": {
+      "52": {
+       "at": 1795650211,
+       "v": {
+        "class": "WARRIOR",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Feralas"
+       }
+      }
+     },
+     "name": "Tarhus",
+     "spells": {}
+    },
+    "4646": {
+     "levels": {
+      "33": {
+       "at": 1795649979,
+       "v": {
+        "class": "WARRIOR",
+        "run": 10,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Desolace"
+       }
+      }
+     },
+     "name": "Gelkis Outrunner",
+     "spells": {}
+    },
+    "4647": {
+     "levels": {
+      "32": {
+       "at": 1795649986,
+       "v": {
+        "class": "WARRIOR",
+        "run": 10,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Desolace"
+       }
+      }
+     },
+     "name": "Gelkis Scout",
+     "spells": {}
+    },
+    "4688": {
+     "levels": {
+      "33": {
+       "at": 1795649451,
+       "v": {
+        "class": "WARRIOR",
+        "fam": "Hyena",
+        "run": 8,
+        "spd": 2,
+        "ty": "Beast",
+        "z": "Desolace"
+       }
+      }
+     },
+     "name": "Bonepaw Hyena",
+     "spells": {}
+    },
+    "4726": {
+     "levels": {
+      "33": {
+       "at": 1795649451,
+       "v": {
+        "class": "WARRIOR",
+        "run": 8,
+        "spd": 2,
+        "ty": "Beast",
+        "z": "Desolace"
+       }
+      },
+      "34": {
+       "at": 1795649442,
+       "v": {
+        "class": "WARRIOR",
+        "run": 8,
+        "spd": 2,
+        "ty": "Beast",
+        "z": "Desolace"
+       }
+      }
+     },
+     "name": "Raging Thunder Lizard",
+     "spells": {}
+    },
+    "5274": {
+     "levels": {
+      "48": {
+       "at": 1795650055,
+       "v": {
+        "class": "WARRIOR",
+        "fam": "Bear",
+        "run": 8,
+        "spd": 2,
+        "ty": "Beast",
+        "z": "Feralas"
+       }
+      },
+      "49": {
+       "at": 1795650057,
+       "v": {
+        "class": "WARRIOR",
+        "fam": "Bear",
+        "run": 8,
+        "spd": 2,
+        "ty": "Beast",
+        "z": "Feralas"
+       }
+      }
+     },
+     "name": "Ironfur Patriarch",
+     "spells": {}
+    },
+    "5288": {
+     "levels": {
+      "47": {
+       "at": 1795650056,
+       "v": {
+        "class": "WARRIOR",
+        "fam": "Wolf",
+        "run": 8,
+        "spd": 2,
+        "ty": "Beast",
+        "z": "Feralas"
+       }
+      }
+     },
+     "name": "Rabid Longtooth",
+     "spells": {}
+    },
+    "5308": {
+     "levels": {
+      "45": {
+       "at": 1795650078,
+       "v": {
+        "class": "WARRIOR",
+        "fam": "Wind Serpent",
+        "run": 10,
+        "spd": 2,
+        "ty": "Beast",
+        "z": "Feralas"
+       }
+      },
+      "46": {
+       "at": 1795650077,
+       "v": {
+        "class": "WARRIOR",
+        "fam": "Wind Serpent",
+        "run": 10,
+        "spd": 2,
+        "ty": "Beast",
+        "z": "Feralas"
+       }
+      }
+     },
+     "name": "Rogue Vale Screecher",
+     "spells": {}
+    },
+    "5461": {
+     "levels": {
+      "48": {
+       "at": 1795650084,
+       "v": {
+        "class": "WARRIOR",
+        "run": 8,
+        "spd": 2,
+        "ty": "Elemental",
+        "z": "Feralas"
+       }
+      }
+     },
+     "name": "Sea Elemental",
+     "spells": {}
+    },
+    "7854": {
+     "levels": {
+      "49": {
+       "at": 1795650201,
+       "v": {
+        "armor": 2963,
+        "class": "WARRIOR",
+        "dmax": 109.53,
+        "dmin": 82.59,
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Feralas"
+       }
+      }
+     },
+     "name": "Jangdor Swiftstrider",
+     "spells": {}
+    },
+    "8144": {
+     "levels": {
+      "51": {
+       "at": 1795650189,
+       "v": {
+        "class": "WARRIOR",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Feralas"
+       }
+      }
+     },
+     "name": "Kulleg Stonehorn",
+     "spells": {}
+    },
+    "8145": {
+     "levels": {
+      "50": {
+       "at": 1795650191,
+       "v": {
+        "class": "WARRIOR",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Feralas"
+       }
+      }
+     },
+     "name": "Sheendra Tallgrass",
+     "spells": {}
+    },
+    "8159": {
+     "levels": {
+      "50": {
+       "at": 1795650201,
+       "v": {
+        "class": "WARRIOR",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Feralas"
+       }
+      }
+     },
+     "name": "Worb Strongstitch",
+     "spells": {}
+    },
+    "9986": {
+     "levels": {
+      "30": {
+       "at": 1795650166,
+       "v": {
+        "class": "WARRIOR",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Feralas"
+       }
+      }
+     },
+     "name": "Shyrka Wolfrunner",
+     "spells": {}
+    }
+   },
+   "received": "2026-11-26",
+   "sender": "de816eabacc0",
+   "spells": {}
   }
  ],
  "seen": [
@@ -203,7 +543,8 @@
   "1fe4b1532bdff8d9",
   "296a19a469b0c0d4",
   "4bc6332fc1f8afbe",
-  "9cfa4fc62c3353f1"
+  "9cfa4fc62c3353f1",
+  "6b978fd76e327d7d"
  ],
  "version": 1
 }
