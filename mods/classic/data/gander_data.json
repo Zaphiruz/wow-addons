@@ -296,7 +296,7 @@
     "1064": {
      "levels": {
       "55": {
-       "at": 1795666565,
+       "at": 1795704979,
        "v": {
         "class": "WARRIOR",
         "n": "Grom'gol Grunt",
@@ -351,7 +351,7 @@
     "1085": {
      "levels": {
       "34": {
-       "at": 1795666146,
+       "at": 1795702271,
        "v": {
         "class": "WARRIOR",
         "fam": "Cat",
@@ -363,7 +363,7 @@
        }
       },
       "35": {
-       "at": 1795560925,
+       "at": 1795702364,
        "v": {
         "class": "WARRIOR",
         "fam": "Cat",
@@ -376,7 +376,14 @@
       }
      },
      "name": "Elder Stranglethorn Tiger",
-     "spells": {}
+     "spells": {
+      "13443": {
+       "at": "2026-11-26",
+       "build": "1.60.1",
+       "n": 7,
+       "spawns": 4
+      }
+     }
     },
     "1087": {
      "levels": {
@@ -450,6 +457,23 @@
      "name": "Warcaller Gorlach",
      "spells": {}
     },
+    "1094": {
+     "levels": {
+      "34": {
+       "at": 1795702644,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Venture Co. Miner",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Stranglethorn Vale"
+       }
+      }
+     },
+     "name": "Venture Co. Miner",
+     "spells": {}
+    },
     "10941": {
      "levels": {
       "31": {
@@ -465,6 +489,23 @@
       }
      },
      "name": "Wizlo Bearingshiner",
+     "spells": {}
+    },
+    "1095": {
+     "levels": {
+      "36": {
+       "at": 1795702640,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Venture Co. Workboss",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Stranglethorn Vale"
+       }
+      }
+     },
+     "name": "Venture Co. Workboss",
      "spells": {}
     },
     "1096": {
@@ -714,7 +755,7 @@
     "1146": {
      "levels": {
       "40": {
-       "at": 1795660688,
+       "at": 1795702115,
        "v": {
         "class": "WARRIOR",
         "n": "Vharr",
@@ -748,7 +789,7 @@
     "1148": {
      "levels": {
       "40": {
-       "at": 1795660895,
+       "at": 1795705109,
        "v": {
         "armor": 1980,
         "class": "WARRIOR",
@@ -785,7 +826,7 @@
     "1150": {
      "levels": {
       "30": {
-       "at": 1795525804,
+       "at": 1795702510,
        "v": {
         "class": "WARRIOR",
         "fam": "Crocolisk",
@@ -1646,7 +1687,7 @@
     "1387": {
      "levels": {
       "55": {
-       "at": 1795663300,
+       "at": 1795705109,
        "v": {
         "armor": 3292,
         "class": "WARRIOR",
@@ -2009,7 +2050,7 @@
     "14990": {
      "levels": {
       "40": {
-       "at": 1795697207,
+       "at": 1795701500,
        "v": {
         "armor": 1980,
         "class": "WARRIOR",
@@ -2659,7 +2700,7 @@
     "1775": {
      "levels": {
       "60": {
-       "at": 1795662998,
+       "at": 1795705314,
        "v": {
         "armor": 3566,
         "class": "WARRIOR",
@@ -3249,7 +3290,7 @@
     "2464": {
      "levels": {
       "60": {
-       "at": 1795660894,
+       "at": 1795704993,
        "v": {
         "armor": 3566,
         "class": "WARRIOR",
@@ -3270,7 +3311,7 @@
     "2465": {
      "levels": {
       "45": {
-       "at": 1795660999,
+       "at": 1795705109,
        "v": {
         "armor": 2742,
         "class": "WARRIOR",
@@ -3310,7 +3351,7 @@
     "2483": {
      "levels": {
       "39": {
-       "at": 1795561061,
+       "at": 1795704787,
        "v": {
         "class": "WARRIOR",
         "n": "Jaquilina Dramet",
@@ -4203,10 +4244,10 @@
      "name": "Redridge Brute",
      "spells": {
       "7165": {
-       "at": "2026-11-25",
+       "at": "2026-11-26",
        "build": "1.60.1",
-       "n": 2,
-       "spawns": 2
+       "n": 3,
+       "spawns": 3
       }
      }
     },
@@ -4248,7 +4289,7 @@
     "255993": {
      "levels": {
       "55": {
-       "at": 1795661485,
+       "at": 1795705487,
        "v": {
         "class": "WARRIOR",
         "n": "Grakna",
@@ -4317,12 +4358,32 @@
      "name": "Tamelyn Aldridge",
      "spells": {}
     },
+    "256418": {
+     "levels": {
+      "42": {
+       "at": 1795705489,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Krom'rosh",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Riverglades"
+       }
+      }
+     },
+     "name": "Krom'rosh",
+     "spells": {}
+    },
     "256655": {
      "levels": {
       "38": {
-       "at": 1795661503,
+       "at": 1795705505,
        "v": {
+        "armor": 1724,
         "class": "WARRIOR",
+        "dmax": 69.85,
+        "dmin": 52.66,
         "n": "Gorg",
         "run": 8,
         "spd": 2,
@@ -4332,6 +4393,23 @@
       }
      },
      "name": "Gorg",
+     "spells": {}
+    },
+    "256673": {
+     "levels": {
+      "38": {
+       "at": 1795705524,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Grik",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Riverglades"
+       }
+      }
+     },
+     "name": "Grik",
      "spells": {}
     },
     "256795": {
@@ -4605,7 +4683,7 @@
     "259269": {
      "levels": {
       "38": {
-       "at": 1795661907,
+       "at": 1795705427,
        "v": {
         "class": "WARRIOR",
         "fam": "Carrion Bird",
@@ -4617,7 +4695,7 @@
        }
       },
       "39": {
-       "at": 1795661847,
+       "at": 1795705417,
        "v": {
         "class": "WARRIOR",
         "fam": "Carrion Bird",
@@ -4798,10 +4876,10 @@
        "spawns": 2
       },
       "7165": {
-       "at": "2026-11-25",
+       "at": "2026-11-26",
        "build": "1.60.1",
-       "n": 15,
-       "spawns": 15
+       "n": 26,
+       "spawns": 26
       }
      }
     },
@@ -4859,6 +4937,26 @@
      "name": "Myriaal Mistwake",
      "spells": {}
     },
+    "263190": {
+     "levels": {
+      "42": {
+       "at": 1795705517,
+       "v": {
+        "armor": 2262,
+        "class": "WARRIOR",
+        "dmax": 82.74,
+        "dmin": 62.4,
+        "n": "Tan'jani",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Riverglades"
+       }
+      }
+     },
+     "name": "Tan'jani",
+     "spells": {}
+    },
     "263343": {
      "levels": {
       "37": {
@@ -4896,10 +4994,34 @@
      "name": "Elder Saltwater Crocolisk",
      "spells": {
       "3604": {
-       "at": "2026-11-25",
+       "at": "2026-11-26",
        "build": "1.60.1",
-       "n": 6,
-       "spawns": 3
+       "n": 7,
+       "spawns": 4
+      }
+     }
+    },
+    "264712": {
+     "levels": {},
+     "name": "High Priestess Lorthuna",
+     "spells": {
+      "1269135": {
+       "at": "2026-11-26",
+       "build": "1.60.1",
+       "n": 1,
+       "spawns": 1
+      }
+     }
+    },
+    "264713": {
+     "levels": {},
+     "name": "Commander Haalien",
+     "spells": {
+      "1269135": {
+       "at": "2026-11-26",
+       "build": "1.60.1",
+       "n": 1,
+       "spawns": 1
       }
      }
     },
@@ -5098,7 +5220,7 @@
        }
       },
       "38": {
-       "at": 1795563273,
+       "at": 1795702127,
        "v": {
         "class": "MAGE",
         "n": "Carnivorous Weed",
@@ -5112,22 +5234,22 @@
      "name": "Carnivorous Weed",
      "spells": {
       "1303308": {
-       "at": "2026-11-25",
+       "at": "2026-11-26",
        "build": "1.60.1",
-       "n": 6,
-       "spawns": 2
+       "n": 10,
+       "spawns": 4
       },
       "1303309": {
-       "at": "2026-11-25",
+       "at": "2026-11-26",
        "build": "1.60.1",
-       "n": 28,
-       "spawns": 2
+       "n": 61,
+       "spawns": 6
       },
       "13728": {
-       "at": "2026-11-25",
+       "at": "2026-11-26",
        "build": "1.60.1",
-       "n": 2,
-       "spawns": 2
+       "n": 4,
+       "spawns": 4
       }
      }
     },
@@ -5852,10 +5974,10 @@
      "name": "Burning Blade Fanatic",
      "spells": {
       "5262": {
-       "at": "2026-11-25",
+       "at": "2026-11-26",
        "build": "1.60.1",
-       "n": 4,
-       "spawns": 2
+       "n": 10,
+       "spawns": 5
       }
      }
     },
@@ -5881,11 +6003,17 @@
      "levels": {},
      "name": "Gazz'uz",
      "spells": {
-      "20798": {
-       "at": "2026-11-25",
+      "20791": {
+       "at": "2026-11-26",
        "build": "1.60.1",
-       "n": 3,
+       "n": 2,
        "spawns": 1
+      },
+      "20798": {
+       "at": "2026-11-26",
+       "build": "1.60.1",
+       "n": 4,
+       "spawns": 2
       }
      }
     },
@@ -6377,7 +6505,7 @@
     "3296": {
      "levels": {
       "55": {
-       "at": 1795700424,
+       "at": 1795701689,
        "v": {
         "armor": 3292,
         "class": "WARRIOR",
@@ -6397,7 +6525,7 @@
     "3309": {
      "levels": {
       "45": {
-       "at": 1795700437,
+       "at": 1795701575,
        "v": {
         "armor": 2742,
         "class": "WARRIOR",
@@ -9007,7 +9135,7 @@
     "4457": {
      "levels": {
       "35": {
-       "at": 1795526518,
+       "at": 1795702287,
        "v": {
         "class": "WARRIOR",
         "n": "Murkgill Forager",
@@ -9063,7 +9191,7 @@
     "4461": {
      "levels": {
       "35": {
-       "at": 1795394562,
+       "at": 1795702287,
        "v": {
         "class": "WARRIOR",
         "n": "Murkgill Warrior",
@@ -9443,6 +9571,18 @@
      },
      "name": "Rau Cliffrunner",
      "spells": {}
+    },
+    "4723": {
+     "levels": {},
+     "name": "Foreman Cozzle",
+     "spells": {
+      "184": {
+       "at": "2026-11-26",
+       "build": "1.60.1",
+       "n": 1,
+       "spawns": 1
+      }
+     }
     },
     "4725": {
      "levels": {
@@ -10449,7 +10589,7 @@
     "5609": {
      "levels": {
       "14": {
-       "at": 1795700542,
+       "at": 1795701438,
        "v": {
         "class": "WARRIOR",
         "n": "Zazo",
@@ -10483,7 +10623,7 @@
     "5611": {
      "levels": {
       "13": {
-       "at": 1795700537,
+       "at": 1795701442,
        "v": {
         "class": "WARRIOR",
         "n": "Barkeep Morag",
@@ -10811,6 +10951,18 @@
      "name": "Mirelle Tremayne",
      "spells": {}
     },
+    "5822": {
+     "levels": {},
+     "name": "Felweaver Scornn",
+     "spells": {
+      "9613": {
+       "at": "2026-11-26",
+       "build": "1.60.1",
+       "n": 6,
+       "spawns": 1
+      }
+     }
+    },
     "5835": {
      "levels": {},
      "name": "Foreman Grills",
@@ -10826,7 +10978,7 @@
     "587": {
      "levels": {
       "33": {
-       "at": 1795666466,
+       "at": 1795702367,
        "v": {
         "class": "WARRIOR",
         "n": "Bloodscalp Warrior",
@@ -10837,7 +10989,7 @@
        }
       },
       "34": {
-       "at": 1795666300,
+       "at": 1795702264,
        "v": {
         "class": "WARRIOR",
         "n": "Bloodscalp Warrior",
@@ -10851,22 +11003,57 @@
      "name": "Bloodscalp Warrior",
      "spells": {
       "11972": {
-       "at": "2026-11-25",
+       "at": "2026-11-26",
        "build": "1.60.1",
-       "n": 9,
-       "spawns": 6
+       "n": 11,
+       "spawns": 8
       },
       "6713": {
-       "at": "2026-11-25",
+       "at": "2026-11-26",
        "build": "1.60.1",
-       "n": 7,
-       "spawns": 4
+       "n": 9,
+       "spawns": 5
       },
       "8599": {
-       "at": "2026-11-25",
+       "at": "2026-11-26",
        "build": "1.60.1",
-       "n": 27,
-       "spawns": 14
+       "n": 33,
+       "spawns": 17
+      }
+     }
+    },
+    "588": {
+     "levels": {
+      "34": {
+       "at": 1795703089,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Bloodscalp Scout",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Stranglethorn Vale"
+       }
+      },
+      "35": {
+       "at": 1795703091,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Bloodscalp Scout",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Stranglethorn Vale"
+       }
+      }
+     },
+     "name": "Bloodscalp Scout",
+     "spells": {
+      "8599": {
+       "at": "2026-11-26",
+       "build": "1.60.1",
+       "n": 15,
+       "spawns": 8
       }
      }
     },
@@ -10960,6 +11147,51 @@
      "name": "Strength of Earth Totem II",
      "spells": {}
     },
+    "595": {
+     "levels": {
+      "34": {
+       "at": 1795703083,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Bloodscalp Hunter",
+        "ty": "Humanoid",
+        "z": "Stranglethorn Vale"
+       }
+      },
+      "35": {
+       "at": 1795703082,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Bloodscalp Hunter",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Stranglethorn Vale"
+       }
+      }
+     },
+     "name": "Bloodscalp Hunter",
+     "spells": {
+      "10277": {
+       "at": "2026-11-26",
+       "build": "1.60.1",
+       "n": 42,
+       "spawns": 8
+      },
+      "1303136": {
+       "at": "2026-11-26",
+       "build": "1.60.1",
+       "n": 13,
+       "spawns": 6
+      },
+      "8599": {
+       "at": "2026-11-26",
+       "build": "1.60.1",
+       "n": 18,
+       "spawns": 9
+      }
+     }
+    },
     "5951": {
      "levels": {
       "1": {
@@ -10976,6 +11208,18 @@
      },
      "name": "Hare",
      "spells": {}
+    },
+    "597": {
+     "levels": {},
+     "name": "Bloodscalp Berserker",
+     "spells": {
+      "8599": {
+       "at": "2026-11-26",
+       "build": "1.60.1",
+       "n": 8,
+       "spawns": 4
+      }
+     }
     },
     "6020": {
      "levels": {
@@ -11014,6 +11258,18 @@
      },
      "name": "Breyk",
      "spells": {}
+    },
+    "6066": {
+     "levels": {},
+     "name": "Earthgrab Totem",
+     "spells": {
+      "8377": {
+       "at": "2026-11-26",
+       "build": "1.60.1",
+       "n": 1,
+       "spawns": 1
+      }
+     }
     },
     "6112": {
      "levels": {
@@ -11211,6 +11467,30 @@
      "name": "Vizzklick",
      "spells": {}
     },
+    "660": {
+     "levels": {},
+     "name": "Bloodscalp Witch Doctor",
+     "spells": {
+      "5605": {
+       "at": "2026-11-26",
+       "build": "1.60.1",
+       "n": 2,
+       "spawns": 1
+      },
+      "8376": {
+       "at": "2026-11-26",
+       "build": "1.60.1",
+       "n": 2,
+       "spawns": 1
+      },
+      "8599": {
+       "at": "2026-11-26",
+       "build": "1.60.1",
+       "n": 2,
+       "spawns": 1
+      }
+     }
+    },
     "667": {
      "levels": {
       "39": {
@@ -11227,6 +11507,47 @@
      },
      "name": "Skullsplitter Warrior",
      "spells": {}
+    },
+    "671": {
+     "levels": {
+      "36": {
+       "at": 1795703030,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Bloodscalp Headhunter",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Stranglethorn Vale"
+       }
+      },
+      "37": {
+       "at": 1795702937,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Bloodscalp Headhunter",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Stranglethorn Vale"
+       }
+      }
+     },
+     "name": "Bloodscalp Headhunter",
+     "spells": {
+      "10277": {
+       "at": "2026-11-26",
+       "build": "1.60.1",
+       "n": 27,
+       "spawns": 4
+      },
+      "8599": {
+       "at": "2026-11-26",
+       "build": "1.60.1",
+       "n": 6,
+       "spawns": 3
+      }
+     }
     },
     "6726": {
      "levels": {
@@ -11269,7 +11590,7 @@
     "681": {
      "levels": {
       "30": {
-       "at": 1795562830,
+       "at": 1795702535,
        "v": {
         "class": "WARRIOR",
         "fam": "Cat",
@@ -11281,7 +11602,7 @@
        }
       },
       "31": {
-       "at": 1795562777,
+       "at": 1795702392,
        "v": {
         "class": "WARRIOR",
         "fam": "Cat",
@@ -11299,7 +11620,7 @@
     "682": {
      "levels": {
       "32": {
-       "at": 1795396248,
+       "at": 1795702263,
        "v": {
         "class": "WARRIOR",
         "fam": "Cat",
@@ -11311,7 +11632,7 @@
        }
       },
       "33": {
-       "at": 1795396246,
+       "at": 1795702643,
        "v": {
         "class": "WARRIOR",
         "fam": "Cat",
@@ -11386,10 +11707,40 @@
      "name": "Shadowmaw Panther",
      "spells": {}
     },
+    "685": {
+     "levels": {
+      "33": {
+       "at": 1795702821,
+       "v": {
+        "class": "WARRIOR",
+        "fam": "Raptor",
+        "n": "Stranglethorn Raptor",
+        "run": 8,
+        "spd": 2,
+        "ty": "Beast",
+        "z": "Stranglethorn Vale"
+       }
+      },
+      "34": {
+       "at": 1795702699,
+       "v": {
+        "class": "WARRIOR",
+        "fam": "Raptor",
+        "n": "Stranglethorn Raptor",
+        "run": 8,
+        "spd": 2,
+        "ty": "Beast",
+        "z": "Stranglethorn Vale"
+       }
+      }
+     },
+     "name": "Stranglethorn Raptor",
+     "spells": {}
+    },
     "686": {
      "levels": {
       "35": {
-       "at": 1795666518,
+       "at": 1795702212,
        "v": {
         "class": "WARRIOR",
         "fam": "Raptor",
@@ -11401,7 +11752,7 @@
        }
       },
       "36": {
-       "at": 1795666502,
+       "at": 1795702182,
        "v": {
         "class": "WARRIOR",
         "fam": "Raptor",
@@ -11416,10 +11767,10 @@
      "name": "Lashtail Raptor",
      "spells": {
       "6607": {
-       "at": "2026-11-25",
+       "at": "2026-11-26",
        "build": "1.60.1",
-       "n": 24,
-       "spawns": 11
+       "n": 28,
+       "spawns": 13
       }
      }
     },
@@ -11451,10 +11802,22 @@
      "name": "Crystal Spine Basilisk",
      "spells": {
       "3635": {
-       "at": "2026-11-25",
+       "at": "2026-11-26",
        "build": "1.60.1",
-       "n": 5,
-       "spawns": 3
+       "n": 8,
+       "spawns": 5
+      }
+     }
+    },
+    "690": {
+     "levels": {},
+     "name": "Cold Eye Basilisk",
+     "spells": {
+      "3636": {
+       "at": "2026-11-26",
+       "build": "1.60.1",
+       "n": 1,
+       "spawns": 1
       }
      }
     },
@@ -11512,7 +11875,7 @@
        }
       },
       "34": {
-       "at": 1795666463,
+       "at": 1795702275,
        "v": {
         "class": "WARRIOR",
         "n": "Bloodscalp Axe Thrower",
@@ -11526,16 +11889,16 @@
      "name": "Bloodscalp Axe Thrower",
      "spells": {
       "10277": {
-       "at": "2026-11-25",
+       "at": "2026-11-26",
        "build": "1.60.1",
-       "n": 212,
-       "spawns": 12
+       "n": 216,
+       "spawns": 14
       },
       "8599": {
-       "at": "2026-11-25",
+       "at": "2026-11-26",
        "build": "1.60.1",
-       "n": 38,
-       "spawns": 19
+       "n": 42,
+       "spawns": 21
       }
      }
     },
@@ -11553,7 +11916,7 @@
        }
       },
       "34": {
-       "at": 1795666494,
+       "at": 1795702367,
        "v": {
         "class": "PALADIN",
         "n": "Bloodscalp Shaman",
@@ -11567,29 +11930,164 @@
      "name": "Bloodscalp Shaman",
      "spells": {
       "11969": {
-       "at": "2026-11-25",
+       "at": "2026-11-26",
        "build": "1.60.1",
-       "n": 14,
-       "spawns": 14
+       "n": 16,
+       "spawns": 16
       },
       "8599": {
-       "at": "2026-11-25",
+       "at": "2026-11-26",
        "build": "1.60.1",
-       "n": 40,
-       "spawns": 20
+       "n": 43,
+       "spawns": 22
       },
       "8788": {
-       "at": "2026-11-25",
+       "at": "2026-11-26",
        "build": "1.60.1",
-       "n": 50,
-       "spawns": 20
+       "n": 58,
+       "spawns": 25
+      }
+     }
+    },
+    "698": {
+     "levels": {
+      "34": {
+       "at": 1795702987,
+       "v": {
+        "class": "WARRIOR",
+        "fam": "Cat",
+        "n": "Bloodscalp Tiger",
+        "run": 8,
+        "spd": 2,
+        "ty": "Beast",
+        "z": "Stranglethorn Vale"
+       }
+      },
+      "35": {
+       "at": 1795703061,
+       "v": {
+        "class": "WARRIOR",
+        "fam": "Cat",
+        "n": "Bloodscalp Tiger",
+        "ty": "Beast",
+        "z": "Stranglethorn Vale"
+       }
+      }
+     },
+     "name": "Bloodscalp Tiger",
+     "spells": {
+      "8599": {
+       "at": "2026-11-26",
+       "build": "1.60.1",
+       "n": 3,
+       "spawns": 2
+      }
+     }
+    },
+    "699": {
+     "levels": {
+      "34": {
+       "at": 1795703111,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Bloodscalp Beastmaster",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Stranglethorn Vale"
+       }
+      },
+      "35": {
+       "at": 1795702858,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Bloodscalp Beastmaster",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Stranglethorn Vale"
+       }
+      }
+     },
+     "name": "Bloodscalp Beastmaster",
+     "spells": {
+      "3612": {
+       "at": "2026-11-26",
+       "build": "1.60.1",
+       "n": 2,
+       "spawns": 2
+      },
+      "6660": {
+       "at": "2026-11-26",
+       "build": "1.60.1",
+       "n": 19,
+       "spawns": 2
+      },
+      "8599": {
+       "at": "2026-11-26",
+       "build": "1.60.1",
+       "n": 4,
+       "spawns": 2
+      }
+     }
+    },
+    "701": {
+     "levels": {
+      "34": {
+       "at": 1795703082,
+       "v": {
+        "class": "PALADIN",
+        "n": "Bloodscalp Mystic",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Stranglethorn Vale"
+       }
+      },
+      "35": {
+       "at": 1795703061,
+       "v": {
+        "class": "PALADIN",
+        "n": "Bloodscalp Mystic",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Stranglethorn Vale"
+       }
+      }
+     },
+     "name": "Bloodscalp Mystic",
+     "spells": {
+      "11986": {
+       "at": "2026-11-26",
+       "build": "1.60.1",
+       "n": 8,
+       "spawns": 5
+      },
+      "4979": {
+       "at": "2026-11-26",
+       "build": "1.60.1",
+       "n": 14,
+       "spawns": 5
+      },
+      "8599": {
+       "at": "2026-11-26",
+       "build": "1.60.1",
+       "n": 14,
+       "spawns": 8
+      },
+      "9532": {
+       "at": "2026-11-26",
+       "build": "1.60.1",
+       "n": 59,
+       "spawns": 11
       }
      }
     },
     "702": {
      "levels": {
       "33": {
-       "at": 1795526719,
+       "at": 1795702504,
        "v": {
         "class": "WARRIOR",
         "n": "Bloodscalp Scavenger",
@@ -11612,7 +12110,20 @@
       }
      },
      "name": "Bloodscalp Scavenger",
-     "spells": {}
+     "spells": {
+      "744": {
+       "at": "2026-11-26",
+       "build": "1.60.1",
+       "n": 4,
+       "spawns": 2
+      },
+      "8599": {
+       "at": "2026-11-26",
+       "build": "1.60.1",
+       "n": 5,
+       "spawns": 3
+      }
+     }
     },
     "7038": {
      "levels": {},
@@ -11671,7 +12182,7 @@
     "715": {
      "levels": {
       "40": {
-       "at": 1795562758,
+       "at": 1795704789,
        "v": {
         "armor": 1980,
         "class": "WARRIOR",
@@ -11691,7 +12202,7 @@
     "716": {
      "levels": {
       "40": {
-       "at": 1795562750,
+       "at": 1795702462,
        "v": {
         "armor": 1980,
         "class": "WARRIOR",
@@ -11711,7 +12222,7 @@
     "717": {
      "levels": {
       "40": {
-       "at": 1795561062,
+       "at": 1795702470,
        "v": {
         "armor": 1980,
         "class": "WARRIOR",
@@ -11731,7 +12242,7 @@
     "718": {
      "levels": {
       "40": {
-       "at": 1795562752,
+       "at": 1795704780,
        "v": {
         "armor": 1980,
         "class": "WARRIOR",
@@ -11768,7 +12279,7 @@
     "729": {
      "levels": {
       "37": {
-       "at": 1795394783,
+       "at": 1795702359,
        "v": {
         "class": "WARRIOR",
         "fam": "Cat",
@@ -11781,7 +12292,14 @@
       }
      },
      "name": "Sin'Dall",
-     "spells": {}
+     "spells": {
+      "5164": {
+       "at": "2026-11-26",
+       "build": "1.60.1",
+       "n": 10,
+       "spawns": 2
+      }
+     }
     },
     "7332": {
      "levels": {
@@ -11838,6 +12356,7 @@
        "v": {
         "class": "WARRIOR",
         "fam": "Cat",
+        "n": "Panther",
         "run": 10,
         "spd": 1.3,
         "ty": "Beast",
@@ -11849,6 +12368,7 @@
        "v": {
         "class": "WARRIOR",
         "fam": "Cat",
+        "n": "Panther",
         "run": 10,
         "spd": 1.3,
         "ty": "Beast",
@@ -11856,7 +12376,7 @@
        }
       }
      },
-     "name": "",
+     "name": "Panther",
      "spells": {}
     },
     "7366": {
@@ -12035,7 +12555,7 @@
     "7485": {
      "levels": {
       "40": {
-       "at": 1795660999,
+       "at": 1795705109,
        "v": {
         "class": "WARRIOR",
         "n": "Nargatt",
@@ -12101,6 +12621,23 @@
       }
      },
      "name": "Crimson Snake",
+     "spells": {}
+    },
+    "757": {
+     "levels": {
+      "36": {
+       "at": 1795705331,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Lost One Fisherman",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Swamp of Sorrows"
+       }
+      }
+     },
+     "name": "Lost One Fisherman",
      "spells": {}
     },
     "7583": {
@@ -12175,6 +12712,24 @@
       }
      },
      "name": "Tangled Horror",
+     "spells": {}
+    },
+    "767": {
+     "levels": {
+      "36": {
+       "at": 1795705321,
+       "v": {
+        "class": "WARRIOR",
+        "fam": "Cat",
+        "n": "Swamp Jaguar",
+        "run": 10,
+        "spd": 1.2,
+        "ty": "Beast",
+        "z": "Swamp of Sorrows"
+       }
+      }
+     },
+     "name": "Swamp Jaguar",
      "spells": {}
     },
     "768": {
@@ -12782,6 +13337,24 @@
      "name": "Rartar",
      "spells": {}
     },
+    "855": {
+     "levels": {
+      "31": {
+       "at": 1795702811,
+       "v": {
+        "class": "WARRIOR",
+        "fam": "Raptor",
+        "n": "Young Stranglethorn Raptor",
+        "run": 8,
+        "spd": 2,
+        "ty": "Beast",
+        "z": "Stranglethorn Vale"
+       }
+      }
+     },
+     "name": "Young Stranglethorn Raptor",
+     "spells": {}
+    },
     "856": {
      "levels": {
       "33": {
@@ -12832,7 +13405,7 @@
        }
       },
       "38": {
-       "at": 1795662812,
+       "at": 1795705335,
        "v": {
         "class": "WARRIOR",
         "n": "Stonard Explorer",
@@ -12982,7 +13555,7 @@
        }
       },
       "32": {
-       "at": 1795661088,
+       "at": 1795702517,
        "v": {
         "class": "WARRIOR",
         "n": "Sharptooth Frenzy",
@@ -13007,6 +13580,23 @@
        "spawns": 2
       }
      }
+    },
+    "920": {
+     "levels": {
+      "30": {
+       "at": 1795705188,
+       "v": {
+        "class": "PALADIN",
+        "n": "Nightbane Tainted One",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Duskwood"
+       }
+      }
+     },
+     "name": "Nightbane Tainted One",
+     "spells": {}
     },
     "921": {
      "levels": {
@@ -13493,6 +14083,7 @@
     "11969": "Fire Nova",
     "11972": "Shield Bash",
     "11976": "Strike",
+    "11986": "Healing Wave",
     "12024": "Net",
     "12167": "Lightning Bolt",
     "122": "Frost Nova",
@@ -13500,9 +14091,11 @@
     "12548": "Frost Shock",
     "12555": "Pummel",
     "1263629": "Battle Snort",
+    "1269135": "Apparition",
     "12746": "Summon Voidwalker",
     "1286699": "Twilight Empowerment",
     "1287573": "Tapped",
+    "1303136": "Net",
     "1303308": "Entangling Roots",
     "1303309": "Venom Spit",
     "1314281": "Flamestrike",
@@ -13518,6 +14111,7 @@
     "15039": "Flame Shock",
     "15043": "Frostbolt",
     "15531": "Frost Nova",
+    "184": "Fire Shield II",
     "19030": "Bear Form",
     "20791": "Shadow Bolt",
     "20798": "Demon Skin",
@@ -13535,12 +14129,17 @@
     "3472": "Holy Light",
     "3490": "Frenzied Rage",
     "3604": "Tendon Rip",
+    "3612": "Bloodscalp Pet",
     "3635": "Crystal Gaze",
+    "3636": "Crystalline Slumber",
     "3639": "Improved Blocking",
     "3815": "Poison Cloud",
+    "4979": "Quick Flame Ward",
+    "5164": "Knockdown",
     "5262": "Fanatic Blade",
     "5401": "Lizard Bolt",
     "5588": "Hammer of Justice",
+    "5605": "Healing Ward",
     "6016": "Pierce Armor",
     "6063": "Heal",
     "6136": "Chilled",
@@ -13593,6 +14192,8 @@
     "8258": "Devotion Aura",
     "8269": "Enrage",
     "8362": "Renew",
+    "8376": "Earthgrab Totem",
+    "8377": "Earthgrab",
     "8382": "Leech Poison",
     "8391": "Ravage",
     "8398": "Frostbolt Volley",
