@@ -125,7 +125,9 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           title=$(jq -r .title "$out/result.json")
           # An approved held list is merged through its own pull request, so
-          # the one the owner approved is the one that shows as merged.
+          # the one the owner approved is the one that shows as merged. That
+          # goes for an approving review and for a comment that approved all
+          # that was left on it.
           if [ "$APPROVED" = true ] && [ -n "$HELD" ]; then
             branch="$HELD_BRANCH"
             pr="$HELD"

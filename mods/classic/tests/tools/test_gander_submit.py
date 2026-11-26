@@ -373,6 +373,33 @@ class Intake(unittest.TestCase):
         self.assertEqual(r["commands"][0]["id"], 11)
         self.assertIn("Approved", r["commands"][0]["reply"])
 
+    def test_a_comment_that_approves_the_whole_list_merges_the_held_pull_request(self):
+        # "approved" tells the workflow to merge through the held pull request
+        # itself, so it shows as merged and not as closed.
+        self.waiting()
+        r = self.go(comments=[comment(11, "approve all")])
+        self.assertTrue(r["approved"])
+        self.assertIn("approved by the repository owner", r["body"])
+
+    def test_approving_the_last_of_the_list_piece_by_piece_merges_it_too(self):
+        self.waiting()
+        r = self.go(comments=[comment(11, "approve m3238 zones s6205 i36")])
+        self.assertFalse(r["approved"], "the pull request still lists a mob nobody approved")
+        r = self.go(comments=[comment(12, "approve m3273")])
+        self.assertEqual(self.held["pending"], [])
+        self.assertTrue(r["approved"])
+
+    def test_a_comment_that_only_drops_doesnt_merge_the_held_pull_request(self):
+        self.waiting()
+        r = self.go(comments=[comment(11, "drop all")])
+        self.assertEqual(self.held["pending"], [])
+        self.assertFalse(r["approved"], "nothing was approved, so there is nothing to show as merged")
+
+    def test_a_comment_nobody_understood_merges_nothing(self):
+        self.waiting()
+        r = self.go(comments=[comment(11, "approve the lot please")])
+        self.assertFalse(r["approved"])
+
     def test_nobody_elses_comment_counts(self):
         self.waiting()
         r = self.go(comments=[comment(11, "approve all", login="stranger"), comment(12, "approve all", liked=1),

@@ -638,6 +638,10 @@ def process(data, held, issues, comments, owner, now, approve_hash=None):
             reply = (f"Approved: {count(waiting - left, 'fact', 'facts')} went into the database, "
                      f"{left} still waiting.")
             did.append("approved held data")
+            if left == 0 and waiting > 0:
+                # The whole list went in, as with an approving review: the
+                # workflow merges through the held pull request itself.
+                result["approved"] = True
         else:
             drop(data, held, set(tokens))
             left = sum(facts(p) for p in held["pending"])
