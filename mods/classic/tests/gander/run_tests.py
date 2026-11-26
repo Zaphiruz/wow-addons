@@ -1083,7 +1083,9 @@ SCENARIOS = {
   cmd("send")
   local w = GanderSend
   ok(w and w:IsShown(), "no window")
-  ok(w.url:GetText() == "https://github.com/Zaphiruz/wow-addons/issues/new?template=gander-data.yml", w.url:GetText())
+  ok(w.url:GetText() == "https://zaphiruz.github.io/wow-addons/", w.url:GetText())
+  ok(w.logs:GetText() == "", "talks about combat logs to someone who doesn't log: " .. w.logs:GetText())
+  ok(w.last:GetText():find("^3%. Tell Gander"), w.last:GetText())
   local block = w.data:GetText()
   ok(block:find('"format":1', 1, true) and block:find('"game":"forever"', 1, true)
      and block:find('"locale":"enUS"', 1, true), block)
@@ -1166,7 +1168,7 @@ SCENARIOS = {
   cmd("send")
   local w, block = GanderSend, GanderSend.data:GetText()
   w.data:Type("oops"); w.url:Type("oops")
-  ok(w.data:GetText() == block and w.url:GetText():find("^https://github.com/"), "a box kept what was typed")
+  ok(w.data:GetText() == block and w.url:GetText():find("^https://zaphiruz.github.io/"), "a box kept what was typed")
 ''',
 "a big bestiary is sent in parts": r'''
   login(nil)
@@ -1228,6 +1230,109 @@ SCENARIOS = {
   ok(not w.sent:IsEnabled(), "the button should wait until the block was clicked into")
   w.sent:Click()
   ok(w:IsShown() and #w.data:GetText() > 0, "marked without the block being copied")
+''',
+"with logging switched on, the window says where the combat logs are": r'''
+  login({ autolog = true })
+  sampleMobs()
+  cmd("send")
+  local w = GanderSend
+  local t = w.logs:GetText()
+  ok(t:find("^3%. Drop your combat logs on that page too"), t)
+  ok(t:find("World of Warcraft\\_forever_\\Logs", 1, true), t)
+  ok(not t:find("You logged", 1, true), "named dungeons it never logged: " .. t)
+  ok(w.last:GetText():find("^4%. Tell Gander"), w.last:GetText())
+  ok(w.url:GetText() == "https://zaphiruz.github.io/wow-addons/", w.url:GetText())
+''',
+"Classic Era names its own Logs folder": r'''
+  classicEra()
+  login({ autolog = true })
+  cmd("send")
+  ok(GanderSend.logs:GetText():find("World of Warcraft\\_classic_era_\\Logs", 1, true), GanderSend.logs:GetText())
+''',
+"the dungeons that were logged are named until you say you sent them": r'''
+  login({ autolog = true })
+  enter(BFD); enter(nil)
+  enter({ id = 33, name = "Shadowfang Keep", kind = "party" }); enter(nil)
+  enter(BFD); enter(nil)
+  ok(#GanderDB.logged == 2, "should note each dungeon once: " .. list(GanderDB.logged))
+  sampleMobs()
+  cmd("send")
+  local w = GanderSend
+  ok(w.logs:GetText():find("You logged Blackfathom Deeps and Shadowfang Keep.", 1, true), w.logs:GetText())
+  clickInto(w.data); w.sent:Click()
+  ok(#GanderDB.logged == 0, "still remembers them: " .. list(GanderDB.logged))
+  cmd("send")
+  ok(not w.logs:GetText():find("You logged", 1, true), w.logs:GetText())
+''',
+"a long list of logged dungeons is cut short": r'''
+  login({ autolog = true, logged = { "One", "Two", "Three", "Four", "Five", "Six" } })
+  cmd("send")
+  ok(GanderSend.logs:GetText():find("You logged One, Two, Three and 3 more.", 1, true), GanderSend.logs:GetText())
+''',
+"logging you switched on yourself counts, with the setting off": r'''
+  login(nil)
+  logging = true
+  enter(BFD); enter(nil)
+  ok(logging == true, "switched off logging the player started")
+  cmd("send")
+  local t = GanderSend.logs:GetText()
+  ok(t:find("You logged Blackfathom Deeps.", 1, true) and t:find("_forever_\\Logs", 1, true), t)
+''',
+"a dungeon that wasn't logged isn't named": r'''
+  withData()
+  login({ autolog = true })
+  enter({ id = 36, name = "The Deadmines", kind = "party" }); enter(nil)
+  enter({ id = 489, name = "Warsong Gulch", kind = "pvp" }); enter(nil)
+  ok(#GanderDB.logged == 0, "noted " .. list(GanderDB.logged))
+  loggingAllowed = false
+  enter(BFD); enter(nil)
+  ok(#GanderDB.logged == 0, "noted a dungeon where logging couldn't start: " .. list(GanderDB.logged))
+''',
+"with only combat logs to send, I sent it is awake straight away": r'''
+  login({ autolog = true })
+  enter(BFD); enter(nil)
+  cmd("send")
+  local w = GanderSend
+  ok(w.summary:GetText():find("combat logs", 1, true) and not w.summary:GetText():find("Nothing new", 1, true),
+     w.summary:GetText())
+  ok(w.data:GetText() == "", w.data:GetText())
+  ok(w.sent:IsEnabled(), "there is no block to click into, so the button should be awake")
+  out = {}
+  w.sent:Click()
+  ok(#GanderDB.logged == 0 and not w:IsShown(), "should forget the dungeons and close")
+  ok(list(out):find("Thank you", 1, true), list(out))
+  cmd("send")
+  ok(w.summary:GetText():find("Nothing new", 1, true) and not w.sent:IsEnabled(), w.summary:GetText())
+''',
+"with several pages, the dungeons are kept until the last one is sent": r'''
+  local mobs = {}
+  for id = 1, 600 do
+    mobs[id] = { heard = {}, lv = { [10] = { at = clock - 50, v = { spd = 2, hp = 1000 + id, n = "A Mob With A Long Name " .. id,
+                                                            ty = "Humanoid", z = "Stranglethorn Vale" } } } }
+  end
+  login({ mobs = mobs, logged = { "Blackfathom Deeps" } })
+  cmd("send")
+  local w = GanderSend
+  ok(w.summary:GetText():find("Page 1 of", 1, true), w.summary:GetText())
+  clickInto(w.data); w.sent:Click()
+  ok(w:IsShown() and #GanderDB.logged == 1, "forgot the dungeons before the last page")
+''',
+"the reminder mentions logged dungeons, even with no sightings": r'''
+  login({ remind = true, sendPlayed = 5 * 3600, logged = { "Blackfathom Deeps", "Shadowfang Keep" } })
+  resting = true
+  out = {}; fire("PLAYER_UPDATE_RESTING")
+  ok(reminders() == 1 and list(out):find("combat logs from 2 dungeons the GanderData", 1, true), list(out))
+  login({ remind = true, sendPlayed = 5 * 3600, logged = { "Blackfathom Deeps" } })
+  units.mouseover = BOAR(); hover("mouseover")
+  out = {}; fire("PLAYER_UPDATE_RESTING")
+  ok(reminders() == 1 and list(out):find("1 sighting and combat logs from 1 dungeon the GanderData", 1, true), list(out))
+  ok(list(out):find("share them", 1, true), list(out))
+''',
+"a broken list of logged dungeons is mended on login": r'''
+  login({ logged = "junk" })
+  ok(type(GanderDB.logged) == "table" and #GanderDB.logged == 0, "not mended")
+  login({ logged = { "Blackfathom Deeps", 7, "", "Shadowfang Keep" } })
+  ok(list(GanderDB.logged) == "Blackfathom Deeps | Shadowfang Keep", list(GanderDB.logged))
 ''',
 "/gander send again offers everything again": r'''
   login(nil)

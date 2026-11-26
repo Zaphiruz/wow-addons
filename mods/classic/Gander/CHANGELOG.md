@@ -1,5 +1,11 @@
 # Gander changelog
 
+## 0.11.0 (2026-11-26)
+
+- `/gander send` now points to a new page that needs no GitHub account. Paste the block there and it is sent at once: with several pages, it's one paste for each.
+- If you log combat (Gander's setting, or `/combatlog` in a dungeon), the window also asks you to drop your combat logs on that page. It names the dungeons you logged and says where the game keeps the files.
+- The reminder now mentions dungeons you logged, even when you have no new sightings.
+
 ## 0.10.1 (2026-11-25)
 
 - When there is too much to send in one go, the send window now says so plainly: "Page 1 of 3" in the window and on its title bar, and the button reads "I sent page 1". Each page is a new block to copy and send.

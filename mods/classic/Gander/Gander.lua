@@ -56,6 +56,12 @@ local function loadSettings()
   if type(db.mobs) ~= "table" then db.mobs = {} end
   if type(db.autolog) ~= "boolean" then db.autolog = false end
   if type(db.autologWorld) ~= "boolean" then db.autologWorld = false end
+  -- The dungeons with a combat log the player hasn't said they sent yet.
+  local logged = {}
+  for _, name in ipairs(type(db.logged) == "table" and db.logged or logged) do
+    if type(name) == "string" and name ~= "" then logged[#logged + 1] = name end
+  end
+  db.logged = logged
   if type(db.remind) ~= "boolean" then db.remind = false end
   if type(db.sendPlayed) ~= "number" or db.sendPlayed < 0 then db.sendPlayed = 0 end
   -- The order the lines are shown in: what's saved and still valid, then
@@ -889,8 +895,12 @@ end
 -- are never logged. Gander never touches logging the player switched on
 -- themselves: GanderDB.logging is set only while logging that Gander started
 -- is running.
+--
+-- A dungeon or raid that was logged, by Gander or by the player, is noted in
+-- GanderDB.logged, so /gander send can say there is a log file to send.
 ---------------------------------------------------------------------------
 local AUTOLOG_ENOUGH = 90   -- minutes of logged fighting after which an instance is covered
+local LOGGED_MAX = 20       -- dungeons to remember at most
 
 local function isLogging()
   local on = call("LoggingCombat")
@@ -902,7 +912,8 @@ local function checkLogging()
   local inside, kind = call("IsInInstance")
   local name, _, _, _, _, _, _, instanceID = call("GetInstanceInfo")
   if isSecret(inside) or isSecret(kind) or isSecret(instanceID) then return end
-  if isSecret(name) or type(name) ~= "string" then name = "this instance" end
+  local known = not isSecret(name) and type(name) == "string" and name ~= ""
+  if not known then name = "this instance" end
   local dungeon = inside and (kind == "party" or kind == "raid") or false
   local wanted = false
   if db.autolog and dungeon then
@@ -914,8 +925,7 @@ local function checkLogging()
   elseif db.autolog and db.autologWorld and not inside then
     wanted = true
   end
-  if wanted then
-    if isLogging() then return end
+  if wanted and not isLogging() then
     call("LoggingCombat", true)
     if isLogging() then
       db.logging = true
@@ -927,12 +937,19 @@ local function checkLogging()
     else
       say("couldn't switch combat logging on here.")
     end
-  elseif db.logging then
+  elseif not wanted and db.logging then
     db.logging = nil
     if isLogging() then
       call("LoggingCombat", false)
       say("combat logging is off again.")
     end
+  end
+  if dungeon and known and isLogging() then
+    for _, have in ipairs(db.logged) do
+      if have == name then return end
+    end
+    if #db.logged >= LOGGED_MAX then table.remove(db.logged, 1) end
+    db.logged[#db.logged + 1] = name
   end
 end
 
@@ -946,6 +963,11 @@ end
 -- (record.sent) so they aren't offered again. A sighting whose values
 -- change later is news again.
 --
+-- The page is site/ in the repository. It sends the block on by itself, so
+-- the player needs no account anywhere, and it also reads combat logs. The
+-- window only talks about logs to a player who has some: the logging
+-- setting is on, or a dungeon was logged since they last sent.
+--
 -- The block is the JSON that tools/gander_submit.py checks: format 1.
 --
 -- All of it sits in a block of its own: a Lua file may have 200 local
@@ -953,7 +975,9 @@ end
 ---------------------------------------------------------------------------
 local openSend, maybeRemind, startClock
 do
-local SEND_URL = "https://github.com/Zaphiruz/wow-addons/issues/new?template=gander-data.yml"
+local SEND_URL = "https://zaphiruz.github.io/wow-addons/"
+local LOGS_FOLDER = "World of Warcraft\\" .. (GAME == "forever" and "_forever_" or "_classic_era_") .. "\\Logs"
+local LOGGED_SHOWN = 3    -- dungeons named in the window before "and N more"
 local BLOCK_SIZE = 30000        -- characters in one block; a GitHub issue holds 65,536
 local REMIND_AFTER = 4 * 3600   -- seconds of play between reminders
 local REMIND_TICK = 60          -- seconds between counts of play time
@@ -1081,11 +1105,35 @@ local function copyBox(box)
   box:SetScript("OnEscapePressed", function(self) self:ClearFocus() end)
 end
 
+-- "Blackfathom Deeps", "A and B", "A, B and C", "A, B, C and 3 more".
+local function dungeonList(names)
+  local n = #names
+  if n == 1 then return names[1] end
+  if n <= LOGGED_SHOWN then
+    return table.concat(names, ", ", 1, n - 1) .. " and " .. names[n]
+  end
+  return format("%s and %d more", table.concat(names, ", ", 1, LOGGED_SHOWN), n - LOGGED_SHOWN)
+end
+
+-- The step about combat logs, or nil for a player who has none.
+local function logsStep()
+  local n = #db.logged
+  if n == 0 and not db.autolog then return end
+  return format("3. Drop your combat logs on that page too. %sThey are in %s.",
+                n > 0 and ("You logged " .. dungeonList(db.logged) .. ". ") or "", LOGS_FOLDER)
+end
+
+-- With no sightings left but a dungeon logged, there is no block to copy:
+-- the button only says the logs were sent.
+local function onlyLogs()
+  return #sendBlock.records == 0 and #db.logged > 0
+end
+
 -- "I sent it" only works once the player has clicked into this page's
 -- block, so a second click can't mark a page that was never copied.
 local function armSend(on)
   sendArmed = on
-  sendWindow.sent:SetEnabled(on and #sendBlock.records > 0)
+  sendWindow.sent:SetEnabled((on and #sendBlock.records > 0) or onlyLogs())
 end
 
 local function drawSend()
@@ -1093,7 +1141,11 @@ local function drawSend()
   local here, waiting = #sendBlock.records, sendBlock.waiting
   local pages = sendPage - 1 + sendBlock.pages   -- sent this sitting, plus what is left
   local title, button = "Gander: send to the GanderData database", "I sent it"
-  if here == 0 then
+  local logs = logsStep()
+  if here == 0 and #db.logged > 0 then
+    sendWindow.summary:SetText("No new sightings to send, but you have combat logs the database hasn't had. "
+      .. "Open the address below and see step 3.")
+  elseif here == 0 then
     sendWindow.summary:SetText("Nothing new to send. Everything you've seen has already been sent.")
   elseif pages > 1 then
     sendWindow.summary:SetText(format("|cff40ff40Page %d of %d.|r You have %s left to send, too many for one block. "
@@ -1106,6 +1158,10 @@ local function drawSend()
   end
   if type(sendWindow.TitleText) == "table" then sendWindow.TitleText:SetText(title) end
   sendWindow.sent:SetText(button)
+  sendWindow.logs:SetText(logs or "")
+  sendWindow.last:SetText((logs and "4" or "3")
+    .. ". Tell Gander, so these aren't sent twice. The button wakes up once you've clicked in the box.")
+  sendWindow.scroll:SetPoint("BOTTOMRIGHT", -36, logs and 132 or 84)
   fill(sendWindow.url, SEND_URL)
   fill(sendWindow.data, sendBlock.text)
   sendWindow.data:ClearFocus()   -- so the next click into it counts as a new one
@@ -1137,16 +1193,17 @@ local function buildSend()
   end
   w.summary = line("", -34)
   line("They are mob stats only: no character, realm or account names.", -76, "GameFontDisableSmall")
-  line("1. Open this address in your browser. It needs a free GitHub account.", -98, "GameFontNormal")
+  line("1. Open this address in your browser.", -98, "GameFontNormal")
   w.url = CreateFrame("EditBox", "GanderSendUrl", w, "InputBoxTemplate")
   w.url:SetSize(476, 22)
   w.url:SetPoint("TOPLEFT", 24, -116)
   copyBox(w.url)
-  line("2. Click in the box below, press Ctrl+C, and paste it into the Data box on that page.", -148,
+  line("2. Click in the box below, press Ctrl+C, and paste it into the box at the top of that page.", -148,
        "GameFontNormal")
   local scroll = CreateFrame("ScrollFrame", "GanderSendScroll", w, "UIPanelScrollFrameTemplate")
   scroll:SetPoint("TOPLEFT", 20, -170)
   scroll:SetPoint("BOTTOMRIGHT", -36, 84)
+  w.scroll = scroll
   local back = scroll:CreateTexture(nil, "BACKGROUND")
   back:SetAllPoints(scroll)
   back:SetColorTexture(0, 0, 0, 0.5)
@@ -1164,28 +1221,42 @@ local function buildSend()
   scroll:SetScrollChild(w.data)
   scroll:EnableMouse(true)
   scroll:SetScript("OnMouseDown", function() w.data:SetFocus() end)
-  local last = w:CreateFontString(nil, "ARTWORK", "GameFontNormal")
-  last:SetPoint("BOTTOMLEFT", 16, 56)
-  last:SetWidth(488)
-  last:SetJustifyH("LEFT")
-  last:SetText("3. Tell Gander, so these aren't sent twice. The button wakes up once you've clicked in the box.")
+  w.logs = w:CreateFontString(nil, "ARTWORK", "GameFontNormal")
+  w.logs:SetPoint("BOTTOMLEFT", 16, 88)
+  w.logs:SetWidth(488)
+  w.logs:SetJustifyH("LEFT")
+  w.logs:SetText("")
+  w.last = w:CreateFontString(nil, "ARTWORK", "GameFontNormal")
+  w.last:SetPoint("BOTTOMLEFT", 16, 56)
+  w.last:SetWidth(488)
+  w.last:SetJustifyH("LEFT")
+  w.last:SetText("")
 
   w.sent = CreateFrame("Button", nil, w, "UIPanelButtonTemplate")
   w.sent:SetSize(140, 24)
   w.sent:SetPoint("BOTTOMLEFT", 16, 20)
   w.sent:SetScript("OnClick", function()
-    if not sendArmed then return end
+    if not (sendArmed or onlyLogs()) then return end
     local n = markSent(sendBlock)
     db.sendPlayed = 0
     sendPage = sendPage + 1
-    drawSend()
+    sendBlock = buildBlock()
     if #sendBlock.records == 0 then
-      say("marked %s as sent. Thank you!", sightings(n))
+      -- The last page: the combat logs went with it.
+      local logs = #db.logged
+      db.logged = {}
+      drawSend()
+      if n == 0 then
+        say("noted that your combat logs are sent. Thank you!")
+      else
+        say("marked %s as sent%s. Thank you!", sightings(n), logs > 0 and ", and your combat logs" or "")
+      end
       w:Hide()
-    else
-      say("marked page %d as sent (%s). Page %d of %d is in the window now: it's a new block, so copy and send "
-          .. "it too.", sendPage - 1, sightings(n), sendPage, sendPage - 1 + sendBlock.pages)
+      return
     end
+    drawSend()
+    say("marked page %d as sent (%s). Page %d of %d is in the window now: it's a new block, so copy and send "
+        .. "it too.", sendPage - 1, sightings(n), sendPage, sendPage - 1 + sendBlock.pages)
   end)
   w.later = CreateFrame("Button", nil, w, "UIPanelButtonTemplate")
   w.later:SetSize(120, 24)
@@ -1219,11 +1290,13 @@ function maybeRemind(atLogin)
   if not db.remind or db.sendPlayed < REMIND_AFTER then return end
   if InCombatLockdown() or IsInInstance() then return end
   if not (atLogin or call("IsResting")) then return end
-  local n = buildBlock().waiting
-  if n == 0 then return end
+  local n, logs = buildBlock().waiting, #db.logged
+  if n == 0 and logs == 0 then return end
   db.sendPlayed = 0
-  say("you have %s the GanderData database hasn't had from you. Type /gander send to share %s.", sightings(n),
-      n == 1 and "it" or "them")
+  local runs = logs > 0 and format("combat logs from %d %s", logs, logs == 1 and "dungeon" or "dungeons")
+  local what = n == 0 and runs or (sightings(n) .. (runs and (" and " .. runs) or ""))
+  say("you have %s the GanderData database hasn't had from you. Type /gander send to share %s.", what,
+      (n == 1 and not runs) and "it" or "them")
 end
 
 local function countPlay()
