@@ -553,6 +553,7 @@ GanderData = {
       [5819] = "Mirelle Tremayne",
       [5822] = "Felweaver Scornn",
       [5835] = "Foreman Grills",
+      [5873] = "Stoneskin Totem",
       [5907] = "Kranal Fiss",
       [5913] = "Tremor Totem",
       [5920] = "Stoneskin Totem III",
@@ -733,9 +734,12 @@ GanderData = {
       [249363] = "Yala Windwatcher",
       [250873] = "Juvenile Vuldren",
       [250926] = "Scrawny Ursera",
+      [250928] = "Highlands Ursera",
       [251143] = "Roiling Winds",
       [251160] = "Al'Aketh Convert",
       [251169] = "Pesky Cirrusfly",
+      [251245] = "Prideclaw",
+      [251314] = "Skyhopper",
       [251361] = "Rorian the Dayseeker",
       [251362] = "Ailee Farheart",
       [251363] = "Dalia the Collector",
@@ -753,12 +757,32 @@ GanderData = {
       [251437] = "Fireflies",
       [251487] = "Ventaari Brightwish",
       [251537] = "Uualia Suncrest",
+      [251661] = "Galestrider",
+      [251727] = "Skyhopper",
       [251965] = "Fevrath Skyhammer",
+      [252359] = "Lotheluum Starbreeze",
+      [252382] = "Sessaria Skystride",
+      [252388] = "Halavuul Cragwind",
+      [252392] = "Orsaan Dalewind",
+      [252449] = "Iallion Featherfall",
+      [252477] = "Peacekeeper Elite",
+      [252479] = "Daeann Steelwind",
+      [253372] = "Dead Cultist",
+      [253474] = "Peacekeeper",
       [253524] = "Bristleback Nomad",
       [253525] = "Bristleback Thornweaver",
       [253526] = "Bristleback Skullcrusher",
       [253529] = "Bristleback Snortsnout",
+      [253812] = "Elaadrin Evengale",
+      [253813] = "Ayessa Dawnsinger",
+      [253844] = "Valennia Stormfist",
+      [254100] = "Zephras Citizen",
+      [254287] = "Peacekeeper Elite",
+      [254294] = "High Order Mage",
+      [254296] = "Windshaper Shaman",
+      [254344] = "Endaria Mistgaze",
       [254560] = "Twilight Shadowmancer",
+      [254626] = "Al'Aketh Assassin",
       [255002] = "Ryff",
       [255769] = "Redridge Brute",
       [255851] = "Mature Paletusk",
@@ -774,17 +798,29 @@ GanderData = {
       [256798] = "Twilight Neophyte",
       [256799] = "Twilight Champion",
       [256952] = "Twilight Raider",
+      [257003] = "Ishlee Breezewhisper",
+      [257004] = "Eaysaa Brightgust",
+      [257005] = "Valiena Swiftgale",
       [257017] = "Twilight Worg",
+      [257036] = "Baelann Favorbreeze",
+      [257037] = "Zelena Favorbreeze",
+      [257422] = "Railee Thriceforged",
       [257551] = "Valreaa Valewind",
       [257554] = "Halaan Hawk-Eye",
       [258331] = "Young Paletusk",
       [258463] = "Darah",
       [258686] = "Farholde Lookout",
+      [259011] = "Ban'aethal Refugee",
+      [259012] = "Ealaane Nimbuswalker",
       [259046] = "Freshwater Crocolisk",
       [259052] = "Rog'mar Poacher",
+      [259058] = "Windshaper Shaman",
+      [259060] = "High Order Mage",
       [259158] = "Fuzzle",
+      [259175] = "Docile Galestrider",
       [259269] = "High Plains Buzzard",
       [259649] = "Ulric Frostveil",
+      [259818] = "Ivory Galestrider",
       [259842] = "Musical Gustjumper",
       [260343] = "Maka",
       [260405] = "Wharfmaster Steamfizzle",
@@ -796,30 +832,41 @@ GanderData = {
       [263113] = "Myriaal Mistwake",
       [263190] = "Tan'jani",
       [263343] = "Low Plains Buzzard",
+      [263930] = "Peacekeeper",
       [264712] = "High Priestess Lorthuna",
       [264713] = "Commander Haalien",
       [265574] = "Winklespark",
       [265576] = "Rettrick",
       [266025] = "Rat Familiar",
       [266735] = "Excitable Slime",
+      [266860] = "Galestrider Chick",
+      [267936] = "Refugee Child",
       [268048] = "Darkspear Emissary",
       [268624] = "Razormane Raider",
       [268705] = "Aka'rai",
       [268707] = "Prairie Wolf Pup",
       [269175] = "Carnivorous Weed",
       [270094] = "Stormheart",
+      [271465] = "Falfaan Halfwind",
+      [271478] = "Elaria Anvilwind",
+      [271480] = "Taliaa Brightsky",
+      [271483] = "Ergaan Eastwind",
       [271867] = "Pachimari",
       [271913] = "Plagued Cockroach",
       [271929] = "Shen'dorei Windwell",
       [272328] = "Mini Diablo",
       [272329] = "Zergling",
       [272330] = "Panda Cub",
+      [273017] = "Fendaal Windstone",
       [274334] = "Tallstrider Hatchling",
       [274911] = "Eshka P'ari",
       [274931] = "Elril Everlight",
+      [274934] = "Amandriel",
+      [275270] = "Windshapers Dockmaster",
       [275487] = "Unknown",
       [276020] = "Riptear",
       [277059] = "Je'lu",
+      [277723] = "Jaekal Galeshot",
       [277882] = "Foothills Duskbat",
     },
     casts = {
@@ -2117,6 +2164,9 @@ GanderData = {
       [5819] = {
         [30] = { at = 1795667605, v = { class = "WARRIOR", n = "Mirelle Tremayne", run = 8, spd = 2, ty = "Humanoid", z = "Undercity" } },
       },
+      [5873] = {
+        [13] = { at = 1795706275, v = { class = "WARRIOR", n = "Stoneskin Totem", run = 7, spd = 2, ty = "Totem", z = "Zephras Isle" } },
+      },
       [5907] = {
         [15] = { at = 1795396766, v = { class = "WARRIOR", n = "Kranal Fiss", run = 8, spd = 2, ty = "Humanoid", z = "The Barrens" } },
       },
@@ -2651,6 +2701,9 @@ GanderData = {
         [3] = { at = 1795442093, v = { class = "WARRIOR", fam = "Bear", n = "Scrawny Ursera", run = 10, spd = 2, ty = "Beast", z = "Zephras Isle" } },
         [4] = { at = 1795442100, v = { class = "WARRIOR", fam = "Bear", n = "Scrawny Ursera", run = 10, spd = 2, ty = "Beast", z = "Zephras Isle" } },
       },
+      [250928] = {
+        [7] = { at = 1795706147, v = { class = "WARRIOR", fam = "Bear", n = "Highlands Ursera", run = 10, spd = 2, ty = "Beast", z = "Zephras Isle" } },
+      },
       [251143] = {
         [2] = { at = 1795441626, v = { class = "WARRIOR", n = "Roiling Winds", run = 8, spd = 2, ty = "Not specified", z = "Zephras Isle" } },
         [3] = { at = 1795441631, v = { class = "WARRIOR", n = "Roiling Winds", run = 8, spd = 2, ty = "Not specified", z = "Zephras Isle" } },
@@ -2661,6 +2714,13 @@ GanderData = {
       },
       [251169] = {
         [1] = { at = 1795442330, v = { armor = 10, class = "MAGE", dmax = 1.29, dmin = 1.29, n = "Pesky Cirrusfly", run = 8, spd = 2, ty = "Beast", z = "Zephras Isle" } },
+      },
+      [251245] = {
+        [5] = { at = 1795706168, v = { class = "WARRIOR", fam = "Cat", n = "Prideclaw", run = 10, spd = 2, ty = "Beast", z = "Zephras Isle" } },
+      },
+      [251314] = {
+        [7] = { at = 1795706992, v = { class = "PALADIN", n = "Skyhopper", run = 8, spd = 1.3, ty = "Beast", z = "Zephras Isle" } },
+        [8] = { at = 1795707425, v = { armor = 260, class = "PALADIN", dmax = 6.23, dmin = 4.69, n = "Skyhopper", run = 8, spd = 1.3, ty = "Beast", z = "Zephras Isle" } },
       },
       [251361] = {
         [20] = { at = 1795441824, v = { armor = 697, class = "PALADIN", dmax = 36.29, dmin = 27.33, n = "Rorian the Dayseeker", run = 6, spd = 2, ty = "Humanoid", z = "Zephras Isle" } },
@@ -2713,8 +2773,43 @@ GanderData = {
       [251537] = {
         [5] = { at = 1795442135, v = { armor = 102, class = "PALADIN", dmax = 6.4, dmin = 4.79, n = "Uualia Suncrest", run = 6, spd = 2, ty = "Humanoid", z = "Zephras Isle" } },
       },
+      [251661] = {
+        [5] = { at = 1795706176, v = { class = "WARRIOR", fam = "Tallstrider", n = "Galestrider", run = 8, spd = 1.5, ty = "Beast", z = "Zephras Isle" } },
+        [6] = { at = 1795706027, v = { class = "WARRIOR", fam = "Tallstrider", n = "Galestrider", run = 8, spd = 1.5, ty = "Beast", z = "Zephras Isle" } },
+      },
+      [251727] = {
+        [7] = { at = 1795706696, v = { class = "PALADIN", n = "Skyhopper", run = 8, spd = 1.3, ty = "Beast", z = "Zephras Isle" } },
+        [8] = { at = 1795706466, v = { armor = 260, class = "PALADIN", dmax = 6.23, dmin = 4.69, n = "Skyhopper", run = 8, spd = 1.3, ty = "Beast", z = "Zephras Isle" } },
+      },
       [251965] = {
         [5] = { at = 1795442420, v = { armor = 126, class = "WARRIOR", dmax = 6.87, dmin = 5.15, n = "Fevrath Skyhammer", run = 8, spd = 2, ty = "Humanoid", z = "Zephras Isle" } },
+      },
+      [252359] = {
+        [10] = { at = 1795705654, v = { class = "PALADIN", n = "Lotheluum Starbreeze", run = 6, spd = 2, ty = "Humanoid", z = "Zephras Isle" } },
+      },
+      [252382] = {
+        [10] = { at = 1795707027, v = { class = "PALADIN", n = "Sessaria Skystride", run = 6, spd = 2, ty = "Humanoid", z = "Zephras Isle" } },
+      },
+      [252388] = {
+        [10] = { at = 1795706850, v = { class = "PALADIN", n = "Halavuul Cragwind", run = 6, spd = 2, ty = "Humanoid", z = "Zephras Isle" } },
+      },
+      [252392] = {
+        [10] = { at = 1795707427, v = { armor = 419, class = "PALADIN", dmax = 16.18, dmin = 12.17, n = "Orsaan Dalewind", run = 6, spd = 2, ty = "Humanoid", z = "Zephras Isle" } },
+      },
+      [252449] = {
+        [10] = { at = 1795707239, v = { class = "PALADIN", n = "Iallion Featherfall", run = 6, spd = 2, ty = "Humanoid", z = "Zephras Isle" } },
+      },
+      [252477] = {
+        [12] = { at = 1795706805, v = { armor = 469, class = "PALADIN", dmax = 20.87, dmin = 15.72, n = "Peacekeeper Elite", run = 6, spd = 2, ty = "Humanoid", z = "Zephras Isle" } },
+      },
+      [252479] = {
+        [10] = { at = 1795706938, v = { class = "PALADIN", n = "Daeann Steelwind", run = 6, spd = 2, ty = "Humanoid", z = "Zephras Isle" } },
+      },
+      [253372] = {
+        [10] = { at = 1795706235, v = { armor = 419, class = "PALADIN", dmax = 16.18, dmin = 12.17, n = "Dead Cultist", run = 6, spd = 2, ty = "Humanoid", z = "Zephras Isle" } },
+      },
+      [253474] = {
+        [10] = { at = 1795706449, v = { class = "PALADIN", n = "Peacekeeper", run = 6, spd = 2, ty = "Humanoid", z = "Zephras Isle" } },
       },
       [253524] = {
         [42] = { at = 1795649384, v = { class = "WARRIOR", n = "Bristleback Nomad", run = 8, spd = 2, ty = "Humanoid", z = "Shen'dralas" } },
@@ -2725,8 +2820,36 @@ GanderData = {
       [253529] = {
         [42] = { at = 1795649380, v = { class = "WARRIOR", fam = "Boar", n = "Bristleback Snortsnout", run = 8, spd = 2, ty = "Beast", z = "Shen'dralas" } },
       },
+      [253812] = {
+        [-1] = { at = 1795705812, v = { armor = 554, class = "PALADIN", dmax = 27.26, dmin = 20.56, n = "Elaadrin Evengale", rk = "ELITE", run = 6, spd = 2, ty = "Humanoid", z = "Zephras Isle" } },
+      },
+      [253813] = {
+        [-1] = { at = 1795705801, v = { class = "PALADIN", n = "Ayessa Dawnsinger", rk = "ELITE", run = 6, spd = 2, ty = "Humanoid", z = "Zephras Isle" } },
+      },
+      [253844] = {
+        [13] = { at = 1795705805, v = { armor = 498, class = "PALADIN", dmax = 22.74, dmin = 17.11, n = "Valennia Stormfist", run = 6, spd = 2, ty = "Humanoid", z = "Zephras Isle" } },
+      },
+      [254100] = {
+        [10] = { at = 1795706608, v = { class = "PALADIN", n = "Zephras Citizen", run = 6, spd = 2, ty = "Humanoid", z = "Zephras Isle" } },
+      },
+      [254287] = {
+        [12] = { at = 1795705803, v = { class = "PALADIN", n = "Peacekeeper Elite", run = 6, spd = 2, ty = "Humanoid", z = "Zephras Isle" } },
+      },
+      [254294] = {
+        [12] = { at = 1795705802, v = { class = "PALADIN", n = "High Order Mage", run = 6, spd = 2, ty = "Humanoid", z = "Zephras Isle" } },
+      },
+      [254296] = {
+        [12] = { at = 1795705815, v = { armor = 469, class = "PALADIN", dmax = 20.87, dmin = 15.72, n = "Windshaper Shaman", run = 6, spd = 2, ty = "Humanoid", z = "Zephras Isle" } },
+      },
+      [254344] = {
+        [10] = { at = 1795707026, v = { class = "PALADIN", n = "Endaria Mistgaze", run = 6, spd = 2, ty = "Humanoid", z = "Zephras Isle" } },
+      },
       [254560] = {
         [39] = { at = 1795661693, v = { class = "MAGE", n = "Twilight Shadowmancer", ty = "Humanoid", z = "Riverglades" } },
+      },
+      [254626] = {
+        [9] = { at = 1795706273, v = { class = "ROGUE", n = "Al'Aketh Assassin", run = 8, spd = 2, ty = "Humanoid", z = "Zephras Isle" } },
+        [10] = { at = 1795706334, v = { class = "ROGUE", n = "Al'Aketh Assassin", run = 8, spd = 2, ty = "Humanoid", z = "Zephras Isle" } },
       },
       [255002] = {
         [6] = { at = 1795441833, v = { armor = 180, class = "WARRIOR", dmax = 9.15, dmin = 6.86, n = "Ryff", run = 10, spd = 2, ty = "Beast", z = "Zephras Isle" } },
@@ -2772,6 +2895,24 @@ GanderData = {
       [256952] = {
         [39] = { at = 1795661614, v = { class = "WARRIOR", n = "Twilight Raider", run = 8, spd = 2, ty = "Humanoid", z = "Riverglades" } },
       },
+      [257003] = {
+        [10] = { at = 1795707417, v = { armor = 419, class = "PALADIN", dmax = 16.18, dmin = 12.17, n = "Ishlee Breezewhisper", run = 6, spd = 2, ty = "Humanoid", z = "Zephras Isle" } },
+      },
+      [257004] = {
+        [10] = { at = 1795707200, v = { armor = 419, class = "PALADIN", dmax = 16.18, dmin = 12.17, n = "Eaysaa Brightgust", run = 6, spd = 2, ty = "Humanoid", z = "Zephras Isle" } },
+      },
+      [257005] = {
+        [10] = { at = 1795707437, v = { armor = 419, class = "PALADIN", dmax = 16.18, dmin = 12.17, n = "Valiena Swiftgale", run = 6, spd = 2, ty = "Humanoid", z = "Zephras Isle" } },
+      },
+      [257036] = {
+        [10] = { at = 1795707060, v = { class = "PALADIN", n = "Baelann Favorbreeze", run = 6, spd = 2, ty = "Humanoid", z = "Zephras Isle" } },
+      },
+      [257037] = {
+        [10] = { at = 1795707084, v = { class = "PALADIN", n = "Zelena Favorbreeze", run = 6, spd = 2, ty = "Humanoid", z = "Zephras Isle" } },
+      },
+      [257422] = {
+        [10] = { at = 1795707239, v = { class = "PALADIN", n = "Railee Thriceforged", run = 6, spd = 2, ty = "Humanoid", z = "Zephras Isle" } },
+      },
       [257551] = {
         [10] = { at = 1795442373, v = { armor = 419, class = "PALADIN", dmax = 16.18, dmin = 12.17, n = "Valreaa Valewind", run = 6, spd = 2, ty = "Humanoid", z = "Zephras Isle" } },
       },
@@ -2787,6 +2928,12 @@ GanderData = {
       [258686] = {
         [46] = { at = 1795661816, v = { class = "WARRIOR", n = "Farholde Lookout", run = 10, spd = 2, ty = "Humanoid", z = "Riverglades" } },
       },
+      [259011] = {
+        [10] = { at = 1795706715, v = { class = "PALADIN", n = "Ban'aethal Refugee", run = 6, spd = 2, ty = "Humanoid", z = "Zephras Isle" } },
+      },
+      [259012] = {
+        [10] = { at = 1795706716, v = { class = "PALADIN", n = "Ealaane Nimbuswalker", run = 6, spd = 2, ty = "Humanoid", z = "Zephras Isle" } },
+      },
       [259046] = {
         [38] = { at = 1795661637, v = { class = "WARRIOR", fam = "Crocolisk", n = "Freshwater Crocolisk", run = 8, spd = 2, ty = "Beast", z = "Riverglades" } },
       },
@@ -2794,12 +2941,24 @@ GanderData = {
         [38] = { at = 1795661589, v = { class = "WARRIOR", n = "Rog'mar Poacher", run = 8, spd = 2, ty = "Humanoid", z = "Riverglades" } },
         [39] = { at = 1795661589, v = { class = "WARRIOR", n = "Rog'mar Poacher", run = 8, spd = 2, ty = "Humanoid", z = "Riverglades" } },
       },
+      [259058] = {
+        [10] = { at = 1795707556, v = { class = "PALADIN", n = "Windshaper Shaman", run = 6, spd = 2, ty = "Humanoid", z = "Zephras Isle" } },
+      },
+      [259060] = {
+        [10] = { at = 1795706847, v = { class = "PALADIN", n = "High Order Mage", run = 6, spd = 2, ty = "Humanoid", z = "Zephras Isle" } },
+      },
+      [259175] = {
+        [1] = { at = 1795706605, v = { class = "WARRIOR", fam = "Crab", n = "Docile Galestrider", run = 6, spd = 2, ty = "Critter", z = "Zephras Isle" } },
+      },
       [259269] = {
         [38] = { at = 1795705427, v = { class = "WARRIOR", fam = "Carrion Bird", n = "High Plains Buzzard", run = 8, spd = 2, ty = "Beast", z = "Riverglades" } },
         [39] = { at = 1795705417, v = { class = "WARRIOR", fam = "Carrion Bird", n = "High Plains Buzzard", run = 8, spd = 2, ty = "Beast", z = "Riverglades" } },
       },
       [259649] = {
         [25] = { at = 1795567020, v = { armor = 1244, class = "WARRIOR", dmax = 47.5, dmin = 35.81, n = "Ulric Frostveil", run = 8, spd = 2, ty = "Humanoid", z = "Ashenvale" } },
+      },
+      [259818] = {
+        [2] = { at = 1795706449, v = { class = "WARRIOR", n = "Ivory Galestrider", run = 9.7, spd = 2, ty = "Beast", z = "Zephras Isle" } },
       },
       [259842] = {
         [38] = { at = 1795577438, v = { class = "WARRIOR", n = "Musical Gustjumper", run = 8, spd = 2, ty = "Non-combat Pet", z = "Desolace" } },
@@ -2825,6 +2984,9 @@ GanderData = {
       [263343] = {
         [37] = { at = 1795661583, v = { class = "WARRIOR", fam = "Carrion Bird", n = "Low Plains Buzzard", run = 8, spd = 2, ty = "Beast", z = "Riverglades" } },
       },
+      [263930] = {
+        [10] = { at = 1795705977, v = { class = "PALADIN", n = "Peacekeeper", run = 8, spd = 2, ty = "Humanoid", z = "Zephras Isle" } },
+      },
       [265574] = {
         [22] = { at = 1795563733, v = { class = "WARRIOR", n = "Winklespark", run = 8, spd = 2, ty = "Humanoid", z = "The Barrens" } },
       },
@@ -2837,6 +2999,12 @@ GanderData = {
       [266735] = {
         [30] = { at = 1795374561, v = { class = "WARRIOR" } },
         [43] = { at = 1795562973, v = { class = "WARRIOR", n = "Excitable Slime", run = 8, spd = 2, ty = "Non-combat Pet", z = "Stranglethorn Vale" } },
+      },
+      [266860] = {
+        [1] = { at = 1795706542, v = { class = "WARRIOR", n = "Galestrider Chick", run = 6, spd = 2, ty = "Critter", z = "Zephras Isle" } },
+      },
+      [267936] = {
+        [1] = { at = 1795706660, v = { class = "WARRIOR", n = "Refugee Child", run = 8, spd = 1, ty = "Humanoid", z = "Zephras Isle" } },
       },
       [268048] = {
         [30] = { at = 1795524000, v = { armor = 981, class = "PALADIN", dmax = 52.37, dmin = 39.49, n = "Darkspear Emissary", run = 8, spd = 2, ty = "Humanoid", z = "Orgrimmar" } },
@@ -2859,6 +3027,18 @@ GanderData = {
       },
       [270094] = {
         [30] = { at = 1795398810, v = { class = "WARRIOR", n = "Stormheart", rk = "ELITE", run = 8, spd = 2, ty = "Beast", z = "Thousand Needles" } },
+      },
+      [271465] = {
+        [5] = { at = 1795707422, v = { armor = 102, class = "PALADIN", dmax = 6.4, dmin = 4.79, n = "Falfaan Halfwind", run = 6, spd = 2, ty = "Humanoid", z = "Zephras Isle" } },
+      },
+      [271478] = {
+        [5] = { at = 1795707415, v = { armor = 126, class = "WARRIOR", dmax = 6.87, dmin = 5.15, n = "Elaria Anvilwind", run = 8, spd = 2, ty = "Humanoid", z = "Zephras Isle" } },
+      },
+      [271480] = {
+        [5] = { at = 1795707156, v = { armor = 126, class = "WARRIOR", dmax = 6.87, dmin = 5.15, n = "Taliaa Brightsky", run = 8, spd = 2, ty = "Humanoid", z = "Zephras Isle" } },
+      },
+      [271483] = {
+        [5] = { at = 1795707002, v = { class = "WARRIOR", n = "Ergaan Eastwind", run = 8, spd = 2, ty = "Humanoid", z = "Zephras Isle" } },
       },
       [271867] = {
         [41] = { at = 1795662821, v = { class = "WARRIOR", n = "Pachimari", run = 8, spd = 2, ty = "Non-combat Pet", z = "Swamp of Sorrows" } },
@@ -2889,6 +3069,9 @@ GanderData = {
         [48] = { at = 1795399773, v = { class = "WARRIOR", n = "Panda Cub", run = 8, spd = 2, ty = "Non-combat Pet", z = "Tanaris" } },
         [52] = { at = 1795573572, v = { class = "WARRIOR", n = "Panda Cub", run = 8, spd = 2, ty = "Non-combat Pet", z = "Tanaris" } },
       },
+      [273017] = {
+        [10] = { at = 1795706344, v = { class = "PALADIN", n = "Fendaal Windstone", run = 6, spd = 2, ty = "Humanoid", z = "Zephras Isle" } },
+      },
       [274334] = {
         [57] = { at = 1795648227, v = { class = "WARRIOR", n = "Tallstrider Hatchling", run = 8, spd = 2, ty = "Non-combat Pet", z = "Orgrimmar" } },
       },
@@ -2898,12 +3081,21 @@ GanderData = {
       [274931] = {
         [55] = { at = 1795394154, v = { class = "WARRIOR", n = "Elril Everlight", run = 8, spd = 2, ty = "Humanoid", z = "Stranglethorn Vale" } },
       },
+      [274934] = {
+        [12] = { at = 1795707013, v = { class = "WARRIOR", n = "Amandriel", run = 8, spd = 2, ty = "Humanoid", z = "Zephras Isle" } },
+      },
+      [275270] = {
+        [10] = { at = 1795707576, v = { class = "PALADIN", n = "Windshapers Dockmaster", run = 6, spd = 2, ty = "Humanoid", z = "Zephras Isle" } },
+      },
       [275487] = {
         [29] = { at = 1795439760, v = { class = "WARRIOR", n = "Unknown", run = 8, spd = 2, ty = "Non-combat Pet", z = "Orgrimmar" } },
         [35] = { at = 1795373745, v = { class = "WARRIOR", run = 8, spd = 2 } },
       },
       [277059] = {
         [32] = { at = 1795577273, v = { class = "PALADIN", n = "Je'lu", run = 8, spd = 2, ty = "Humanoid", z = "Desolace" } },
+      },
+      [277723] = {
+        [10] = { at = 1795706694, v = { class = "WARRIOR", n = "Jaekal Galeshot", run = 8, spd = 2, ty = "Humanoid", z = "Zephras Isle" } },
       },
       [277882] = {
         [12] = { at = 1795642874, v = { class = "WARRIOR", fam = "Bat", n = "Foothills Duskbat", run = 10, spd = 2, ty = "Beast", z = "Tirisfal Glades" } },
