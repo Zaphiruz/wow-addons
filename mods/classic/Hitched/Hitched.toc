@@ -1,0 +1,8 @@
+## Interface: 11509, 16001
+## Title: Hitched
+## Notes: Marry another player. Propose on one knee, and married players show "Married to ..." on their tooltip. Either of you can divorce. Type /hitched.
+## Version: 0.1.0
+## X-Curse-Optional: storied
+## SavedVariables: HitchedDB
+## SavedVariablesPerCharacter: HitchedCharDB
+Hitched.lua

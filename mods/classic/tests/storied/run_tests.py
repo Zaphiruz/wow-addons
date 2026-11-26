@@ -402,6 +402,16 @@ function cmd(s) out = {}; SlashCmdList.STORIED(s); return table.concat(out, "\n"
 function ok(c, m) if not c then error("FAIL: " .. tostring(m), 2) end end
 function panel() return categories[1].frame end
 function kill(attacker) fire("PARTY_KILL", attacker or "Player-1-0001", creature(299)) end
+-- A stand-in for the Hitched addon: its story, your spouse, and the function
+-- Storied gave it to hear about changes.
+function hitched(list, spouse)
+  hitchedSpouse = spouse
+  Hitched = {
+    story = function() return list end,
+    spouse = function() if hitchedSpouse then return hitchedSpouse, clock end end,
+    watch = function(fn) hitchedNews = fn end,
+  }
+end
 -- The story window's text, without colours.
 function story() return plain(StoriedStory.list:GetText()) end
 function summary() return plain(StoriedStory.summary:GetText()) end
@@ -986,6 +996,73 @@ SCENARIOS = {
   ok(opened == 88, "settings button")
   hit("Hogger"); die()
   ok(summary() == "Level 40, 2 deaths", "an open window updates: " .. summary())
+''',
+# ---- Hitched: marriage in the story ----
+"with Hitched installed, proposals and weddings are part of your story": r'''
+  hitched({ { what = "Bob proposed to you", at = clock - 50, place = "Ironforge" },
+            { what = "Married Bob", at = clock + 20, place = "Stormwind City" } }, "Bob")
+  login(nil, nil)
+  cmd("")
+  ok(story() == "Married Bob\n11 Nov 2026, Stormwind City\n"
+       .. "Storied started keeping your story at level 39\n11 Nov 2026, Elwynn Forest\n"
+       .. "Bob proposed to you\n11 Nov 2026, Ironforge", story())
+  ok(summary() == "Level 39, married to Bob", summary())
+  ok(StoriedStory.list:GetText():find("|cffff8fb4Married Bob|r", 1, true), "its own colour")
+''',
+"marriage lines show under All only": r'''
+  hitched({ { what = "Married Bob", at = clock + 20 } }, "Bob")
+  login(nil, nil)
+  ding(40)
+  cmd("")
+  ok(story():find("Married Bob\n11 Nov 2026\n"), "a line without a place: " .. story())
+  StoriedStory.filters.level:Click()
+  ok(not story():find("Married"), story())
+  StoriedStory.filters.death:Click()
+  ok(story() == "Nothing yet.", story())
+''',
+"an open story updates when Hitched has news": r'''
+  local list = {}
+  hitched(list)
+  login(nil, nil)
+  cmd("")
+  ok(not story():find("Married"), story())
+  list[1] = { what = "Married Bob", at = clock + 5 }
+  hitchedSpouse = "Bob"
+  hitchedNews()
+  ok(story():find("^Married Bob\n"), story())
+  ok(summary():find("married to Bob"), summary())
+''',
+"the Marriage switch leaves Hitched out of the story": r'''
+  hitched({ { what = "Married Bob", at = clock + 20 } }, "Bob")
+  login({ marriage = false }, nil)
+  cmd("")
+  ok(not story():find("Married") and not summary():find("married"), story() .. " / " .. summary())
+  panel():Show()
+  ok(panel().checks.marriage.checked == false, "settings row")
+  panel().checks.marriage:Click()
+  ok(StoriedDB.marriage == true, "switched on")
+''',
+"without Hitched the story is as before, and Marriage is on for when it comes": r'''
+  login(nil, nil)
+  cmd("")
+  ok(story() == "Storied started keeping your story at level 39\n11 Nov 2026, Elwynn Forest", story())
+  ok(summary() == "Level 39", summary())
+  ok(StoriedDB.marriage == true, "default")
+''',
+"a Hitched that breaks or sends nonsense doesn't break the story": r'''
+  Hitched = { story = function() error("oops") end, spouse = function() error("oops") end, watch = "no" }
+  login(nil, nil)
+  cmd("")
+  ok(story():find("^Storied started"), story())
+  Hitched = { story = function() return { "x", { what = 5, at = clock }, { what = "Married Bob" },
+                                          { what = "Married |cffff0000Bob|r", at = clock + 9, place = 7 } } end,
+              spouse = function() return 12 end }
+  StoriedStory:Hide(); cmd("")
+  ok(story():find("^Married cffff0000Bobr\n11 Nov 2026\nStoried started"), story())
+  ok(summary() == "Level 39", summary())
+  Hitched = { story = function() return "nope" end }
+  StoriedStory:Hide(); cmd("")
+  ok(story():find("^Storied started"), story())
 ''',
 "with levels and deaths switched off, nothing is recorded": r'''
   login({ levels = false, deaths = false }, nil)

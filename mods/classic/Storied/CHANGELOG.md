@@ -1,5 +1,11 @@
 # Storied changelog
 
+## 0.5.0 (2026-11-26)
+
+- If you also have the Hitched addon, your proposals, weddings and divorces are part of your story (`/storied`), and the line at the top says who you're married to.
+- New "Marriage" switch in Options > AddOns > Storied to leave them out.
+- The settings rows sit a little closer together, to make room for it.
+
 ## 0.4.1 (2026-11-22)
 
 - Fixed an error when you asked for the settings during a fight (/storied settings, or the Settings button on the story window). The game doesn't let addons open the settings window in combat, so Storied now tells you and opens it when the fight ends.

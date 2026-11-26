@@ -42,6 +42,8 @@ local OPTIONS = {
     note = "Whisper them when you accept a resurrect or summon. {name} is their name." },
   { key = "levels", label = "Level-ups", note = "The date, zone and played time of each level you reach" },
   { key = "deaths", label = "Deaths", note = "What killed you, where, and at what level" },
+  { key = "marriage", label = "Marriage",
+    note = "Proposals, weddings and divorces in your story, if you have the Hitched addon" },
   { key = "tooltips", label = "Show on tooltips", note = "Turn off to keep recording without the extra lines" },
 }
 local TEXTS = { thanksRes = "Thanks for the res, {name}!", thanksSummon = "Thanks for the summon, {name}!" }
@@ -798,9 +800,44 @@ end
 
 local function join(parts) return table.concat(parts, ", ") end
 
+-- The Hitched addon, if the player has it: it keeps proposals, weddings and
+-- divorces, and hands them over for the story. Storied works without it,
+-- and nothing Hitched does wrong may break the story.
+local function hitched()
+  local h = rawget(_G, "Hitched")
+  if db.marriage and type(h) == "table" then return h end
+end
+
+-- Hitched's entries as story entries, oldest first.
+local function marriageStory()
+  local list = {}
+  local h = hitched()
+  if not (h and type(h.story) == "function") then return list end
+  local ok, entries = pcall(h.story)
+  if not ok or type(entries) ~= "table" then return list end
+  for _, e in ipairs(entries) do
+    local what, at = type(e) == "table" and text(e.what), type(e) == "table" and number(e.at)
+    if what and at then
+      -- No colour codes or links from another addon's text.
+      list[#list + 1] = { kind = "marriage", what = what:gsub("|", ""), at = at, place = text(e.place) }
+    end
+  end
+  table.sort(list, function(a, b) return a.at < b.at end)
+  return list
+end
+
+local function spouseName()
+  local h = hitched()
+  if not (h and type(h.spouse) == "function") then return end
+  local ok, name = pcall(h.spouse)
+  if ok and text(name) then return (name:gsub("|", "")) end
+end
+
 -- The two lines for one entry: what happened, then when and where.
 local function storyLines(e, playedAt)
-  if e.kind == "start" then
+  if e.kind == "marriage" then
+    return e.what, join({ day(e.at), e.place })
+  elseif e.kind == "start" then
     return format("Storied started keeping your story at level %s", e.level or "?"),
            join({ day(e.at), e.place })
   elseif e.kind == "level" then
@@ -832,8 +869,24 @@ local function storyLines(e, playedAt)
   end
 end
 
-local COLORS = { start = "|cffc9a66b", level = "|cff66dd66", death = "|cffff6666" }
+local COLORS = { start = "|cffc9a66b", level = "|cff66dd66", death = "|cffff6666", marriage = "|cffff8fb4" }
 local DETAIL = "|cff9d9d9d"
+
+-- Your own story with Hitched's entries put in by time, oldest first.
+local function wholeStory()
+  local extra = marriageStory()
+  if #extra == 0 then return char.story end
+  local all, j = {}, 1
+  for _, e in ipairs(char.story) do
+    while extra[j] and extra[j].at < (number(e.at) or 0) do
+      all[#all + 1] = extra[j]
+      j = j + 1
+    end
+    all[#all + 1] = e
+  end
+  for k = j, #extra do all[#all + 1] = extra[k] end
+  return all
+end
 
 -- The window's text for one filter: "all", "level" or "death".
 local function storyText(filter)
@@ -842,8 +895,9 @@ local function storyText(filter)
     if e.kind == "level" and e.played then playedAt[e.level] = e.played end
   end
   local out = {}
-  for i = #char.story, 1, -1 do
-    local e = char.story[i]
+  local entries = filter == "all" and wholeStory() or char.story
+  for i = #entries, 1, -1 do
+    local e = entries[i]
     local kind = e.kind == "start" and "level" or e.kind
     if filter == "all" or filter == kind then
       local what, detail = storyLines(e, playedAt)
@@ -861,6 +915,8 @@ local function storySummary()
     if e.kind == "death" then deaths = deaths + 1 end
   end
   local parts = { format("Level %s", number(UnitLevel("player")) or "?") }
+  local spouse = spouseName()
+  if spouse then parts[#parts + 1] = "married to " .. spouse end
   if deaths > 0 then parts[#parts + 1] = format("%d death%s", deaths, deaths == 1 and "" or "s") end
   local p = playedNow()
   if p then parts[#parts + 1] = span(p) .. " played" end
@@ -1013,7 +1069,7 @@ local function buildPanel()
     note:SetPoint("TOPLEFT", 48, y - 22)
     note:SetText(o.note)
     panel.checks[o.key] = check
-    y = y - 44
+    y = y - 40
     if o.key == "thanks" then
       panel.thanksRes = textBox("thanksRes", y + 4)
       panel.thanksSummon = textBox("thanksSummon", y - 22)
@@ -1238,6 +1294,12 @@ events:SetScript("OnEvent", function(_, event, ...)
     buildPanel()
     hookTooltips()
     hookFunctions()
+    -- Hitched says when a proposal, wedding or divorce happens, so an open
+    -- story window shows it at once.
+    local h = rawget(_G, "Hitched")
+    if type(h) == "table" and type(h.watch) == "function" then
+      pcall(h.watch, function() refreshStory() end)
+    end
     pcall(onGearChanged)  -- the first look at your gear's enchants
     if #char.story == 0 then
       char.story[1] = { kind = "start", level = number(UnitLevel("player")), at = time(), place = place() }

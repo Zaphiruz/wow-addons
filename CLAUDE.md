@@ -1,6 +1,6 @@
 # WoW addons
 
-World of Warcraft Classic Era addons (Bushel, Downcast, Gander, GanderData, Hawker, Hopscotch, Huzzah, Storied), released to
+World of Warcraft Classic Era addons (Bushel, Downcast, Gander, GanderData, Hawker, Hitched, Hopscotch, Huzzah, Storied), released to
 CurseForge and GitHub from this one repository. The README covers the layout
 and release commands for people; this file is how we work on it.
 
@@ -24,7 +24,7 @@ and release commands for people; this file is how we work on it.
   `D:\Battle.net\Games\World of Warcraft\_forever_`, version 1.60.1,
   `## Interface: 16001`. Its UI is built on modern retail code (12.1), so check
   APIs against the `forever` branch of wow-ui-source, not `classic_era`.
-- Bushel, Gander, GanderData, Hawker, Hopscotch, Huzzah and Storied support both games from one folder:
+- Bushel, Gander, GanderData, Hawker, Hitched, Hopscotch, Huzzah and Storied support both games from one folder:
   `## Interface: 11509, 16001`. Downcast is Classic Era only.
 - On Forever the CurseForge app installs the released addons as real folders
   (it replaced the junctions), so the game there runs the last release, not

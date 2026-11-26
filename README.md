@@ -9,6 +9,7 @@ World of Warcraft addons, released to CurseForge from this repository.
 | [Gander](mods/classic/Gander) | Classic Era, Forever | Shows a mob's stats on its tooltip, remembers them in a bestiary for when the game hides them, and shares them with other players |
 | [GanderData](mods/classic/GanderData) | Classic Era, Forever | The database Gander reads: what each mob casts and its stats, gathered by players. Optional |
 | [Hawker](mods/classic/Hawker) | Classic Era, Forever | Keeps a list of advert lines and says a random one with `/hawk` |
+| [Hitched](mods/classic/Hitched) | Classic Era, Forever | Marry another player: propose on one knee, show "Married to ..." on tooltips, and divorce |
 | [Hopscotch](mods/classic/Hopscotch) | Classic Era, Forever | Counts every hop off the ground, for each character and the whole account |
 | [Huzzah](mods/classic/Huzzah) | Classic Era, Forever | Emotes and sends a message when your group, guild, a stranger nearby or you level up |
 | [Storied](mods/classic/Storied) | Classic Era, Forever | Remembers your gear's history, who you grouped with and who helped you, and your level-ups and deaths |
