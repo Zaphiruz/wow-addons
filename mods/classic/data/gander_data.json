@@ -579,6 +579,17 @@
     },
     "1144": {
      "levels": {
+      "36": {
+       "at": 1795663273,
+       "v": {
+        "class": "PALADIN",
+        "n": "Mosh'Ogg Witch Doctor",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Stranglethorn Vale"
+       }
+      },
       "37": {
        "at": 1795563225,
        "v": {
@@ -3044,9 +3055,12 @@
     "2497": {
      "levels": {
       "41": {
-       "at": 1795524821,
+       "at": 1795666590,
        "v": {
+        "armor": 2117,
         "class": "WARRIOR",
+        "dmax": 77.86,
+        "dmin": 58.71,
         "n": "Nimboya",
         "run": 8,
         "spd": 2,
@@ -3590,9 +3604,12 @@
     "2519": {
      "levels": {
       "39": {
-       "at": 1795394521,
+       "at": 1795666585,
        "v": {
+        "armor": 1849,
         "class": "WARRIOR",
+        "dmax": 72.04,
+        "dmin": 54.31,
         "n": "Kin'weelay",
         "run": 8,
         "spd": 2,
@@ -4191,6 +4208,17 @@
         "z": "Orgrimmar"
        }
       },
+      "33": {
+       "at": 1795666461,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Prairie Wolf Pup",
+        "run": 8,
+        "spd": 2,
+        "ty": "Non-combat Pet",
+        "z": "Stranglethorn Vale"
+       }
+      },
       "36": {
        "at": 1795564078,
        "v": {
@@ -4410,6 +4438,17 @@
         "spd": 2,
         "ty": "Non-combat Pet",
         "z": "Orgrimmar"
+       }
+      },
+      "40": {
+       "at": 1795697773,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Panda Cub",
+        "run": 8,
+        "spd": 2,
+        "ty": "Non-combat Pet",
+        "z": "Tirisfal Glades"
        }
       },
       "48": {
@@ -4661,6 +4700,18 @@
     },
     "3100": {
      "levels": {
+      "8": {
+       "at": 1795664283,
+       "v": {
+        "class": "WARRIOR",
+        "fam": "Boar",
+        "n": "Elder Mottled Boar",
+        "run": 6,
+        "spd": 2,
+        "ty": "Beast",
+        "z": "Durotar"
+       }
+      },
       "9": {
        "at": 1795524286,
        "v": {
@@ -4696,7 +4747,30 @@
      "spells": {}
     },
     "3130": {
-     "levels": {},
+     "levels": {
+      "10": {
+       "at": 1795664292,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Thunder Lizard",
+        "run": 6,
+        "spd": 2,
+        "ty": "Beast",
+        "z": "Durotar"
+       }
+      },
+      "9": {
+       "at": 1795664295,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Thunder Lizard",
+        "run": 6,
+        "spd": 2,
+        "ty": "Beast",
+        "z": "Durotar"
+       }
+      }
+     },
      "name": "Thunder Lizard",
      "spells": {
       "5401": {
@@ -5327,7 +5401,7 @@
     "3320": {
      "levels": {
       "45": {
-       "at": 1795648996,
+       "at": 1795700439,
        "v": {
         "armor": 3005,
         "class": "WARRIOR",
@@ -7345,7 +7419,30 @@
      "spells": {}
     },
     "4389": {
-     "levels": {},
+     "levels": {
+      "41": {
+       "at": 1795664798,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Murk Thresher",
+        "run": 8,
+        "spd": 2,
+        "ty": "Beast",
+        "z": "Dustwallow Marsh"
+       }
+      },
+      "42": {
+       "at": 1795664842,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Murk Thresher",
+        "run": 8,
+        "spd": 2,
+        "ty": "Beast",
+        "z": "Dustwallow Marsh"
+       }
+      }
+     },
      "name": "Murk Thresher",
      "spells": {
       "3391": {
@@ -8390,6 +8487,17 @@
         "ty": "Humanoid",
         "z": "Dustwallow Marsh"
        }
+      },
+      "36": {
+       "at": 1795664539,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Theramore Sentry",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Dustwallow Marsh"
+       }
       }
      },
      "name": "Theramore Sentry",
@@ -9152,7 +9260,7 @@
     "6491": {
      "levels": {
       "60": {
-       "at": 1795376057,
+       "at": 1795699069,
        "v": {
         "armor": 3566,
         "class": "WARRIOR",
@@ -10869,6 +10977,17 @@
         "spd": 2,
         "ty": "Non-combat Pet",
         "z": "Feralas"
+       }
+      },
+      "55": {
+       "at": 1795663871,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Sprite Darter Hatchling",
+        "run": 8,
+        "spd": 2,
+        "ty": "Non-combat Pet",
+        "z": "Orgrimmar"
        }
       }
      },
