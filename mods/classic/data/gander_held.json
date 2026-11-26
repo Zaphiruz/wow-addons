@@ -1,5 +1,68 @@
 {
- "pending": [],
+ "pending": [
+  {
+   "game": "forever",
+   "instances": {},
+   "mobs": {
+    "261710": {
+     "levels": {},
+     "name": "Twilight Brute",
+     "spells": {
+      "14102": {
+       "at": "2026-11-26",
+       "build": "1.60.1",
+       "n": 3,
+       "spawns": 2
+      }
+     }
+    },
+    "261711": {
+     "levels": {},
+     "name": "Empowered Brute",
+     "spells": {
+      "8374": {
+       "at": "2026-11-26",
+       "build": "1.60.1",
+       "n": 5,
+       "spawns": 4
+      }
+     }
+    },
+    "3232": {
+     "levels": {},
+     "name": "Bristleback Interloper",
+     "spells": {
+      "12166": {
+       "at": "2026-11-26",
+       "build": "1.60.1",
+       "n": 2,
+       "spawns": 1
+      }
+     }
+    },
+    "3282": {
+     "levels": {},
+     "name": "Venture Co. Mercenary",
+     "spells": {
+      "6660": {
+       "at": "2026-11-26",
+       "build": "1.60.1",
+       "n": 2,
+       "spawns": 1
+      }
+     }
+    }
+   },
+   "received": "2026-11-26",
+   "sender": "acd0d078eb62",
+   "spells": {
+    "12166": "Muscle Tear",
+    "14102": "Head Smash",
+    "6660": "Shoot",
+    "8374": "Arcing Smash"
+   }
+  }
+ ],
  "seen": [
   "6aeebeba80aca3df",
   "d546a197f4d54166",
@@ -15,7 +78,8 @@
   "79ffec1a4f7d67ad",
   "07af8978378cfd21",
   "c64305df1071a6b4",
-  "606f990b622f1cce"
+  "606f990b622f1cce",
+  "8cbb8ac7b881fa19"
  ],
  "version": 1
 }
