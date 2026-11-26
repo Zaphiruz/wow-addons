@@ -172,6 +172,12 @@ confirmations (`ConfirmBindOnUse`) and Logout in Downcast and Hawker 0.2.0.
 - The game keeps its current log file open until the client exits, even after
   logging is switched off, so that file can't be deleted while the game runs.
   The importer remembers how far it read and deletes it on a later run.
+- The page (`site/`) and the importer each remember what they have read,
+  separately: the browser's `localStorage` and `gander_import_state.json`. A
+  log that goes through both is counted twice. Before importing a log the
+  owner already sent from the page, set its `offset` in the state file to
+  where the page stopped, after checking that reading that part gives exactly
+  the casts in the issue. Then check the counts didn't change.
 - Data only ever grows: a later import adds spells, counts and newer
   sightings, it never removes a mob or a spell.
 - Account folder names are private: the importer finds the saved database by
