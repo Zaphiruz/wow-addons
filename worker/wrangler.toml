@@ -1,5 +1,6 @@
 # The Cloudflare Worker that files what the page (site/) sends as issues.
-# Deploy it from this folder with: npx wrangler deploy
+# Deploy it from the repository's top folder with:
+#   npx wrangler deploy --config worker/wrangler.toml
 # Its two secrets are not in this file. See README.md.
 name = "gander-data"
 main = "gander-worker.mjs"

@@ -19,26 +19,31 @@ It runs on Cloudflare's free plan. You need a Cloudflare account and Node.js.
    - Repository access: Only select repositories, `wow-addons`.
    - Permissions: Repository permissions, Issues: Read and write. Nothing else.
    - Copy the token. It is shown once.
-2. **Log in to Cloudflare** from the `worker` folder. A browser window opens:
+2. **Log in to Cloudflare.** A browser window opens. Run this and every
+   command below from the repository's top folder:
 
    ```
    npx wrangler login
    ```
+
+   Keep the `--config worker/wrangler.toml` part on the commands that have
+   it. Without it wrangler makes settings of its own and publishes the `site`
+   folder as a different Worker.
 
 3. **Deploy.** The first time, it asks you to pick a `workers.dev` name. At the
    end it prints the Worker's address, like
    `https://gander-data.<your-name>.workers.dev`:
 
    ```
-   npx wrangler deploy
+   npx wrangler deploy --config worker/wrangler.toml
    ```
 
 4. **Save the two secrets.** Each command asks for the value and hides what
    you type. The salt is any long random text: nobody needs to remember it.
 
    ```
-   npx wrangler secret put GITHUB_TOKEN
-   npx wrangler secret put SENDER_SALT
+   npx wrangler secret put GITHUB_TOKEN --config worker/wrangler.toml
+   npx wrangler secret put SENDER_SALT --config worker/wrangler.toml
    ```
 
 5. **Check it.** Open the Worker's address in a browser. It should show
@@ -49,10 +54,12 @@ It runs on Cloudflare's free plan. You need a Cloudflare account and Node.js.
 
 ## Keeping it running
 
-- When the code changes, deploy again: `npx wrangler deploy`. The secrets stay.
+- When the code changes, deploy again:
+  `npx wrangler deploy --config worker/wrangler.toml`. The secrets stay.
 - When the token expires, make a new one and run
-  `npx wrangler secret put GITHUB_TOKEN` again. Until then the page tells
-  players it couldn't reach the database, and they can still send by hand.
+  `npx wrangler secret put GITHUB_TOKEN --config worker/wrangler.toml` again.
+  Until then the page tells players it couldn't reach the database, and
+  they can still send by hand.
 - Changing `SENDER_SALT` makes every sender look new. Data that is waiting for
   a second sender could then be confirmed by the same person, so leave it.
 - The token and the salt live only in Cloudflare. Never put them in a file.
