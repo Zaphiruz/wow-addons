@@ -1,5 +1,7 @@
 """Tests for tools/gander_import.py. Run: python -m unittest discover -s mods/classic/tests/tools"""
+import contextlib
 import datetime
+import io
 import json
 import os
 import pathlib
@@ -430,6 +432,36 @@ class ImportTest(unittest.TestCase):
         self.assertIn("## 1.0.1 (2026-11-26)", log)
         self.assertEqual(gander_import.utc_day(evening), "2026-11-26")
         self.assertRegex(gander_import.utc_day(), "^20[0-9][0-9]-[0-9][0-9]-[0-9][0-9]$")
+
+    def test_the_daily_release_is_tried_every_hour_but_happens_once_a_day(self):
+        # GitHub starts a scheduled run hours late, or not at all (the 09:17 run of
+        # 26 Nov came at 19:07), so the release is tried every hour. A day starts
+        # at 09:00 UTC: the first try after that releases, the later ones don't.
+        def at(day, hour, minute=0):
+            return datetime.datetime(2026, 11, day, hour, minute, tzinfo=datetime.timezone.utc).timestamp()
+        done = gander_import.released_today
+        by_hand = at(26, 18, 46)
+        self.assertTrue(done(by_hand, at(26, 19, 7)), "the late run, after a release by hand")
+        self.assertTrue(done(by_hand, at(27, 8, 59)), "still the same day")
+        self.assertFalse(done(by_hand, at(27, 9, 0)), "the new day")
+        self.assertFalse(done(by_hand, at(27, 13, 9)))
+        morning = at(27, 9, 20)
+        self.assertTrue(done(morning, at(27, 10, 17)))
+        self.assertTrue(done(morning, at(28, 3, 17)), "after midnight is not a new day yet")
+        self.assertFalse(done(morning, at(28, 9, 17)))
+        self.assertFalse(done(at(27, 8, 59), at(27, 9, 0)), "just before the day started")
+        self.assertFalse(done(None, at(27, 10)), "never released")
+        self.assertFalse(done(at(27, 12), at(27, 10)), "a clock that disagrees doesn't stop a release")
+
+    def test_the_workflow_can_ask_if_today_is_done(self):
+        said = io.StringIO()
+        now = int(datetime.datetime.now(datetime.timezone.utc).timestamp())
+        with contextlib.redirect_stdout(said):
+            self.assertEqual(gander_import.main(["--released-today", str(now)]), 0)
+            self.assertEqual(gander_import.main(["--released-today", str(now - 2 * 86400)]), 0)
+            self.assertEqual(gander_import.main(["--released-today", ""]), 0)
+            self.assertEqual(gander_import.main(["--released-today", "soon"]), 0)
+        self.assertEqual(said.getvalue().split(), ["yes", "no", "no", "no"])
 
     def test_no_bump_writes_the_data_under_the_current_version(self):
         self.release("1.0.0")

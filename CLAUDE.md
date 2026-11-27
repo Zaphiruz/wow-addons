@@ -199,6 +199,11 @@ confirmations (`ConfirmBindOnUse`) and Logout in Downcast and Hawker 0.2.0.
 - Those merges don't bump the version. The "GanderData release" workflow does
   that once a day and releases it, so don't push a `GanderData/v...` tag for
   data: run that workflow by hand if a release can't wait.
+- GitHub starts scheduled runs hours late or not at all (a 09:17 UTC run came
+  at 19:07), so that workflow is tried every hour and a scheduled try does
+  nothing once there has been a release since 09:00 UTC. A late release is
+  GitHub's clock, not a broken workflow: `gh run list --workflow
+  gander-release.yml` shows when the tries came.
 - `main` now moves by itself. Pull before working on GanderData or running
   the importer:
   `git -c credential.helper= -c "credential.helper=!gh auth git-credential" pull https://github.com/Zaphiruz/wow-addons.git main`

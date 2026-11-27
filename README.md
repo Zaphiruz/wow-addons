@@ -87,7 +87,7 @@ issue form. Gander makes the block to paste there: `/gander send` in game. The *
   or comment does anything, and what waits 90 days is forgotten.
 - **Broken or impossible:** left out, and the sender is told.
 
-A merge is not a release. The **GanderData release** workflow runs once a day
+A merge is not a release. The **GanderData release** workflow is tried every hour, releases at most once a day (the first try after 09:00 UTC)
 and gives whatever was merged one new patch version. Nothing records who sent
 what: a sender is only a scrambled marker, used to tell two senders apart.
 

@@ -8,6 +8,9 @@ Usage: python gander_import.py              import everything new, then delete t
        python gander_import.py --release-since OLD_JSON
                                             import nothing: give data merged from players'
                                             submissions (gander_submit.py) the next version
+       python gander_import.py --released-today TIME
+                                            import nothing: print yes if TIME (seconds since
+                                            1970, the last release) is in today's day of releases
        python gander_import.py --saved GAME=FILE
                                             read a saved Gander database (repeatable);
                                             GAME is forever or classic
@@ -435,6 +438,22 @@ def utc_day(now=None):
     return datetime.datetime.fromtimestamp(now, datetime.timezone.utc).date().isoformat()
 
 
+# The hour, in UTC, at which a day of releases starts.
+DAY_STARTS = 9
+
+
+def released_today(last, now=None):
+    """Whether the last release (seconds since 1970, or None) was in the
+    current day of releases. GitHub starts scheduled runs hours late or not at
+    all, so the release workflow is tried every hour and asks this: the first
+    try of a day releases, the rest do nothing."""
+    now = time.time() if now is None else now
+    if not last or last > now:
+        return False
+    start = (now - DAY_STARTS * 3600) // 86400 * 86400 + DAY_STARTS * 3600
+    return last >= start
+
+
 def bump(addon, note, today):
     """Give GanderData the next patch version and a changelog entry. Returns the version."""
     toc = addon / f"{addon.name}.toc"
@@ -583,7 +602,14 @@ def main(argv=None):
     p.add_argument("--release-since", metavar="OLD_JSON",
                    help="import nothing: give the data merged since OLD_JSON (the database as last "
                         "released) the next version, and print it")
+    p.add_argument("--released-today", metavar="TIME",
+                   help="import nothing: print yes if TIME (seconds since 1970, the last release) "
+                        "is in today's day of releases, else no")
     args = p.parse_args(argv)
+    if args.released_today is not None:
+        last = int(args.released_today) if args.released_today.isdigit() else None
+        print("yes" if released_today(last) else "no")
+        return 0
     if args.release_since:
         print(prepare_release(args.release_since))
         return 0
