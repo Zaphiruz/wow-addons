@@ -154,11 +154,13 @@
     "10063": {
      "levels": {
       "35": {
-       "at": 1795408300,
+       "at": 1795808015,
        "v": {
         "class": "WARRIOR",
         "run": 8,
-        "spd": 1
+        "spd": 1,
+        "ty": "Humanoid",
+        "z": "The Barrens"
        }
       }
      },
@@ -3401,7 +3403,7 @@
     "1385": {
      "levels": {
       "35": {
-       "at": 1795663312,
+       "at": 1795808699,
        "v": {
         "armor": 1387,
         "class": "WARRIOR",
@@ -3500,6 +3502,18 @@
      "levels": {
       "42": {
        "at": 1795573854,
+       "v": {
+        "class": "WARRIOR",
+        "fam": "Turtle",
+        "n": "Steeljaw Snapper",
+        "run": 8,
+        "spd": 2,
+        "ty": "Beast",
+        "z": "Tanaris"
+       }
+      },
+      "43": {
+       "at": 1795805250,
        "v": {
         "class": "WARRIOR",
         "fam": "Turtle",
@@ -11814,7 +11828,7 @@
        }
       },
       "38": {
-       "at": 1795806991,
+       "at": 1795808753,
        "v": {
         "class": "WARRIOR",
         "n": "Brinescale Skirmisher",
@@ -13529,6 +13543,17 @@
         "spd": 2,
         "ty": "Non-combat Pet",
         "z": "Ashenvale"
+       }
+      },
+      "34": {
+       "at": 1795808204,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Mini Diablo",
+        "run": 8,
+        "spd": 2,
+        "ty": "Non-combat Pet",
+        "z": "The Barrens"
        }
       },
       "54": {
@@ -20567,14 +20592,16 @@
     "3339": {
      "levels": {
       "25": {
-       "at": 1795408048,
+       "at": 1795808008,
        "v": {
         "armor": 1037,
         "class": "WARRIOR",
         "dmax": 47.5,
         "dmin": 35.81,
         "run": 8,
-        "spd": 2
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "The Barrens"
        }
       }
      },
@@ -21533,12 +21560,14 @@
     "3425": {
      "levels": {
       "14": {
-       "at": 1795405184,
+       "at": 1795805889,
        "v": {
         "class": "WARRIOR",
         "fam": "Cat",
         "run": 8,
-        "spd": 1.4
+        "spd": 1.4,
+        "ty": "Beast",
+        "z": "The Barrens"
        }
       },
       "15": {
@@ -21817,14 +21846,16 @@
     "3446": {
      "levels": {
       "17": {
-       "at": 1795405956,
+       "at": 1795807980,
        "v": {
         "armor": 756,
         "class": "WARRIOR",
         "dmax": 33.21,
         "dmin": 25.05,
         "run": 8,
-        "spd": 2
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "The Barrens"
        }
       }
      },
@@ -22531,7 +22562,7 @@
     "3502": {
      "levels": {
       "57": {
-       "at": 1795670957,
+       "at": 1795808235,
        "v": {
         "class": "WARRIOR",
         "n": "Ratchet Bruiser",
@@ -25523,7 +25554,7 @@
        }
       },
       "31": {
-       "at": 1795759008,
+       "at": 1795805608,
        "v": {
         "class": "WARRIOR",
         "fam": "Turtle",
@@ -25645,7 +25676,7 @@
     "4151": {
      "levels": {
       "32": {
-       "at": 1795758623,
+       "at": 1795805598,
        "v": {
         "class": "PALADIN",
         "n": "Saltstone Crystalhide",
@@ -30024,7 +30055,7 @@
     "5774": {
      "levels": {
       "1": {
-       "at": 1795537494,
+       "at": 1795804745,
        "v": {
         "class": "WARRIOR",
         "n": "Riding Wolf",
@@ -31243,7 +31274,7 @@
        }
       },
       "19": {
-       "at": 1795670929,
+       "at": 1795808102,
        "v": {
         "class": "WARRIOR",
         "n": "Slimeshell Makrura",
@@ -34358,11 +34389,13 @@
     "8119": {
      "levels": {
       "45": {
-       "at": 1795408193,
+       "at": 1795807965,
        "v": {
         "class": "WARRIOR",
         "run": 8,
-        "spd": 2
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "The Barrens"
        }
       }
      },
@@ -35026,7 +35059,7 @@
     "873": {
      "levels": {
       "36": {
-       "at": 1795804032,
+       "at": 1795804034,
        "v": {
         "class": "PALADIN",
         "n": "Saltscale Oracle",
@@ -35681,9 +35714,12 @@
     "9558": {
      "levels": {
       "45": {
-       "at": 1795561922,
+       "at": 1795808212,
        "v": {
+        "armor": 2742,
         "class": "WARRIOR",
+        "dmax": 50.16,
+        "dmin": 37.82,
         "n": "Grimble",
         "run": 8,
         "spd": 1,
@@ -35821,6 +35857,17 @@
         "spd": 2,
         "ty": "Non-combat Pet",
         "z": "Undercity"
+       }
+      },
+      "53": {
+       "at": 1795807636,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Sprite Darter Hatchling",
+        "run": 8,
+        "spd": 2,
+        "ty": "Non-combat Pet",
+        "z": "Orgrimmar"
        }
       },
       "55": {
@@ -36015,6 +36062,17 @@
         "spd": 2,
         "ty": "Non-combat Pet",
         "z": "Orgrimmar"
+       }
+      },
+      "25": {
+       "at": 1795804167,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Corrupted Kitten",
+        "run": 8,
+        "spd": 2,
+        "ty": "Non-combat Pet",
+        "z": "Stranglethorn Vale"
        }
       },
       "34": {
