@@ -376,6 +376,48 @@
      "name": "Thalia Amberhide",
      "spells": {}
     },
+    "10696": {
+     "levels": {
+      "41": {
+       "at": 1795744376,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Refuge Pointe Defender",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Arathi Highlands"
+       }
+      }
+     },
+     "name": "Refuge Pointe Defender",
+     "spells": {
+      "1316579": {
+       "at": "2026-11-26",
+       "build": "1.60.1",
+       "n": 12,
+       "spawns": 1
+      },
+      "3639": {
+       "at": "2026-11-26",
+       "build": "1.60.1",
+       "n": 2,
+       "spawns": 1
+      },
+      "6660": {
+       "at": "2026-11-26",
+       "build": "1.60.1",
+       "n": 9,
+       "spawns": 1
+      },
+      "7164": {
+       "at": "2026-11-26",
+       "build": "1.60.1",
+       "n": 2,
+       "spawns": 1
+      }
+     }
+    },
     "10719": {
      "levels": {
       "50": {
@@ -520,6 +562,24 @@
      "name": "Warcaller Gorlach",
      "spells": {}
     },
+    "10928": {
+     "levels": {
+      "43": {
+       "at": 1795733661,
+       "v": {
+        "class": "PALADIN",
+        "fam": "Succubus",
+        "n": "Succubus Minion",
+        "run": 8,
+        "spd": 2,
+        "ty": "Demon",
+        "z": "Stranglethorn Vale"
+       }
+      }
+     },
+     "name": "Succubus Minion",
+     "spells": {}
+    },
     "1094": {
      "levels": {
       "34": {
@@ -610,6 +670,24 @@
        "spawns": 1
       }
      }
+    },
+    "10996": {
+     "levels": {
+      "59": {
+       "at": 1795740454,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Fallen Hero",
+        "rk": "ELITE",
+        "run": 8,
+        "spd": 2,
+        "ty": "Undead",
+        "z": "Tirisfal Glades"
+       }
+      }
+     },
+     "name": "Fallen Hero",
+     "spells": {}
     },
     "1108": {
      "levels": {
@@ -1833,6 +1911,23 @@
      "name": "Nat Pagle",
      "spells": {}
     },
+    "12920": {
+     "levels": {
+      "48": {
+       "at": 1795740684,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Doctor Gregory Victor",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Arathi Highlands"
+       }
+      }
+     },
+     "name": "Doctor Gregory Victor",
+     "spells": {}
+    },
     "12961": {
      "levels": {
       "30": {
@@ -2612,6 +2707,23 @@
      "name": "Scarlet Warrior",
      "spells": {}
     },
+    "15350": {
+     "levels": {
+      "60": {
+       "at": 1795720455,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Horde Warbringer",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Undercity"
+       }
+      }
+     },
+     "name": "Horde Warbringer",
+     "spells": {}
+    },
     "1536": {
      "levels": {
       "7": {
@@ -2807,6 +2919,40 @@
        "spawns": 2
       }
      }
+    },
+    "1562": {
+     "levels": {
+      "41": {
+       "at": 1795733528,
+       "v": {
+        "class": "MAGE",
+        "n": "Bloodsail Mage",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Stranglethorn Vale"
+       }
+      }
+     },
+     "name": "Bloodsail Mage",
+     "spells": {}
+    },
+    "1564": {
+     "levels": {
+      "43": {
+       "at": 1795733680,
+       "v": {
+        "class": "MAGE",
+        "n": "Bloodsail Warlock",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Stranglethorn Vale"
+       }
+      }
+     },
+     "name": "Bloodsail Warlock",
+     "spells": {}
     },
     "15677": {
      "levels": {
@@ -3228,6 +3374,24 @@
       }
      }
     },
+    "1795": {
+     "levels": {},
+     "name": "Searing Ghoul",
+     "spells": {
+      "23038": {
+       "at": "2026-11-26",
+       "build": "1.60.1",
+       "n": 2,
+       "spawns": 1
+      },
+      "23039": {
+       "at": "2026-11-26",
+       "build": "1.60.1",
+       "n": 3,
+       "spawns": 1
+      }
+     }
+    },
     "1797": {
      "levels": {
       "12": {
@@ -3491,6 +3655,47 @@
       }
      }
     },
+    "1907": {
+     "levels": {
+      "43": {
+       "at": 1795733539,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Naga Explorer",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Stranglethorn Vale"
+       }
+      },
+      "44": {
+       "at": 1795733619,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Naga Explorer",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Stranglethorn Vale"
+       }
+      }
+     },
+     "name": "Naga Explorer",
+     "spells": {
+      "6548": {
+       "at": "2026-11-26",
+       "build": "1.60.1",
+       "n": 4,
+       "spawns": 2
+      },
+      "7165": {
+       "at": "2026-11-26",
+       "build": "1.60.1",
+       "n": 21,
+       "spawns": 12
+      }
+     }
+    },
     "1912": {
      "levels": {
       "14": {
@@ -3618,6 +3823,23 @@
      "name": "Tirisfal Farmhand",
      "spells": {}
     },
+    "214529": {
+     "levels": {
+      "50": {
+       "at": 1795740567,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Brave Stonetorch",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Hillsbrad Foothills"
+       }
+      }
+     },
+     "name": "Brave Stonetorch",
+     "spells": {}
+    },
     "214954": {
      "levels": {
       "45": {
@@ -3695,6 +3917,26 @@
      "name": "Wendel Mathers",
      "spells": {}
     },
+    "2227": {
+     "levels": {
+      "25": {
+       "at": 1795720501,
+       "v": {
+        "armor": 1037,
+        "class": "WARRIOR",
+        "dmax": 47.5,
+        "dmin": 35.81,
+        "n": "Sharlindra",
+        "run": 8,
+        "spd": 2,
+        "ty": "Undead",
+        "z": "Undercity"
+       }
+      }
+     },
+     "name": "Sharlindra",
+     "spells": {}
+    },
     "2237": {
      "levels": {
       "18": {
@@ -3711,6 +3953,23 @@
       }
      },
      "name": "Moonstalker Sire",
+     "spells": {}
+    },
+    "2260": {
+     "levels": {
+      "22": {
+       "at": 1795740595,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Syndicate Rogue",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Hillsbrad Foothills"
+       }
+      }
+     },
+     "name": "Syndicate Rogue",
      "spells": {}
     },
     "230317": {
@@ -3751,6 +4010,209 @@
      "name": "Giant Foreststrider",
      "spells": {}
     },
+    "2347": {
+     "levels": {
+      "40": {
+       "at": 1795740592,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Wild Gryphon",
+        "run": 8,
+        "spd": 2,
+        "ty": "Beast",
+        "z": "Hillsbrad Foothills"
+       }
+      }
+     },
+     "name": "Wild Gryphon",
+     "spells": {}
+    },
+    "2349": {
+     "levels": {
+      "24": {
+       "at": 1795740586,
+       "v": {
+        "class": "WARRIOR",
+        "fam": "Spider",
+        "n": "Giant Moss Creeper",
+        "run": 8,
+        "spd": 2,
+        "ty": "Beast",
+        "z": "Hillsbrad Foothills"
+       }
+      },
+      "25": {
+       "at": 1795740578,
+       "v": {
+        "class": "WARRIOR",
+        "fam": "Spider",
+        "n": "Giant Moss Creeper",
+        "run": 8,
+        "spd": 2,
+        "ty": "Beast",
+        "z": "Hillsbrad Foothills"
+       }
+      }
+     },
+     "name": "Giant Moss Creeper",
+     "spells": {}
+    },
+    "2350": {
+     "levels": {
+      "20": {
+       "at": 1795740560,
+       "v": {
+        "class": "WARRIOR",
+        "fam": "Spider",
+        "n": "Forest Moss Creeper",
+        "run": 8,
+        "spd": 2,
+        "ty": "Beast",
+        "z": "Hillsbrad Foothills"
+       }
+      }
+     },
+     "name": "Forest Moss Creeper",
+     "spells": {
+      "3396": {
+       "at": "2026-11-26",
+       "build": "1.60.1",
+       "n": 2,
+       "spawns": 1
+      }
+     }
+    },
+    "2351": {
+     "levels": {
+      "22": {
+       "at": 1795747011,
+       "v": {
+        "class": "WARRIOR",
+        "fam": "Bear",
+        "n": "Gray Bear",
+        "run": 8,
+        "spd": 2,
+        "ty": "Beast",
+        "z": "Alterac Mountains"
+       }
+      }
+     },
+     "name": "Gray Bear",
+     "spells": {}
+    },
+    "2356": {
+     "levels": {
+      "25": {
+       "at": 1795740589,
+       "v": {
+        "class": "WARRIOR",
+        "fam": "Bear",
+        "n": "Elder Gray Bear",
+        "run": 8,
+        "spd": 2,
+        "ty": "Beast",
+        "z": "Hillsbrad Foothills"
+       }
+      },
+      "26": {
+       "at": 1795740574,
+       "v": {
+        "class": "WARRIOR",
+        "fam": "Bear",
+        "n": "Elder Gray Bear",
+        "run": 8,
+        "spd": 2,
+        "ty": "Beast",
+        "z": "Hillsbrad Foothills"
+       }
+      }
+     },
+     "name": "Elder Gray Bear",
+     "spells": {}
+    },
+    "2389": {
+     "levels": {
+      "55": {
+       "at": 1795746931,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Zarise",
+        "rk": "ELITE",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Hillsbrad Foothills"
+       }
+      }
+     },
+     "name": "Zarise",
+     "spells": {}
+    },
+    "2405": {
+     "levels": {
+      "55": {
+       "at": 1795746953,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Tarren Mill Deathguard",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Hillsbrad Foothills"
+       }
+      }
+     },
+     "name": "Tarren Mill Deathguard",
+     "spells": {}
+    },
+    "2407": {
+     "levels": {
+      "33": {
+       "at": 1795747125,
+       "v": {
+        "class": "WARRIOR",
+        "fam": "Cat",
+        "n": "Hulking Mountain Lion",
+        "run": 10,
+        "spd": 1.4,
+        "ty": "Beast",
+        "z": "Alterac Mountains"
+       }
+      }
+     },
+     "name": "Hulking Mountain Lion",
+     "spells": {}
+    },
+    "2408": {
+     "levels": {
+      "30": {
+       "at": 1795740552,
+       "v": {
+        "class": "WARRIOR",
+        "fam": "Turtle",
+        "n": "Snapjaw",
+        "run": 8,
+        "spd": 2,
+        "ty": "Beast",
+        "z": "Alterac Mountains"
+       }
+      },
+      "31": {
+       "at": 1795740571,
+       "v": {
+        "class": "WARRIOR",
+        "fam": "Turtle",
+        "n": "Snapjaw",
+        "run": 8,
+        "spd": 2,
+        "ty": "Beast",
+        "z": "Alterac Mountains"
+       }
+      }
+     },
+     "name": "Snapjaw",
+     "spells": {}
+    },
     "2425": {
      "levels": {
       "-1": {
@@ -3770,6 +4232,21 @@
       }
      },
      "name": "Varimathras",
+     "spells": {}
+    },
+    "2442": {
+     "levels": {
+      "5": {
+       "at": 1795744709,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Cow",
+        "ty": "Critter",
+        "z": "Arathi Highlands"
+       }
+      }
+     },
+     "name": "Cow",
      "spells": {}
     },
     "2458": {
@@ -3902,6 +4379,26 @@
       }
      },
      "name": "Fin Fizracket",
+     "spells": {}
+    },
+    "2488": {
+     "levels": {
+      "34": {
+       "at": 1795733148,
+       "v": {
+        "armor": 1353,
+        "class": "WARRIOR",
+        "dmax": 62.74,
+        "dmin": 47.3,
+        "n": "Deeg",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Stranglethorn Vale"
+       }
+      }
+     },
+     "name": "Deeg",
      "spells": {}
     },
     "2490": {
@@ -4039,6 +4536,23 @@
       }
      },
      "name": "Crank Fizzlebub",
+     "spells": {}
+    },
+    "2499": {
+     "levels": {
+      "38": {
+       "at": 1795733447,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Markel Smythe",
+        "run": 8,
+        "spd": 1,
+        "ty": "Humanoid",
+        "z": "Stranglethorn Vale"
+       }
+      }
+     },
+     "name": "Markel Smythe",
      "spells": {}
     },
     "2500": {
@@ -5100,6 +5614,26 @@
      "name": "Zephras Citizen",
      "spells": {}
     },
+    "254149": {
+     "levels": {
+      "10": {
+       "at": 1795720589,
+       "v": {
+        "armor": 419,
+        "class": "PALADIN",
+        "dmax": 16.18,
+        "dmin": 12.17,
+        "n": "Sirocca \"Swimmers\" Starfeather",
+        "run": 6,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Zephras Isle"
+       }
+      }
+     },
+     "name": "Sirocca \"Swimmers\" Starfeather",
+     "spells": {}
+    },
     "2542": {
      "levels": {
       "50": {
@@ -5293,6 +5827,18 @@
      "name": "Ryff",
      "spells": {}
     },
+    "2553": {
+     "levels": {},
+     "name": "Witherbark Shadowcaster",
+     "spells": {
+      "11939": {
+       "at": "2026-11-26",
+       "build": "1.60.1",
+       "n": 1,
+       "spawns": 1
+      }
+     }
+    },
     "255679": {
      "levels": {
       "58": {
@@ -5338,6 +5884,56 @@
       }
      },
      "name": "Mature Paletusk",
+     "spells": {}
+    },
+    "2559": {
+     "levels": {
+      "30": {
+       "at": 1795743166,
+       "v": {
+        "class": "WARRIOR",
+        "fam": "Raptor",
+        "n": "Highland Strider",
+        "run": 8,
+        "spd": 2,
+        "ty": "Beast",
+        "z": "Arathi Highlands"
+       }
+      },
+      "31": {
+       "at": 1795746447,
+       "v": {
+        "class": "WARRIOR",
+        "fam": "Raptor",
+        "n": "Highland Strider",
+        "run": 8,
+        "spd": 2,
+        "ty": "Beast",
+        "z": "Arathi Highlands"
+       }
+      }
+     },
+     "name": "Highland Strider",
+     "spells": {}
+    },
+    "255940": {
+     "levels": {
+      "10": {
+       "at": 1795720587,
+       "v": {
+        "armor": 419,
+        "class": "PALADIN",
+        "dmax": 16.18,
+        "dmin": 12.17,
+        "n": "Donaal Downbreeze",
+        "run": 6,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Zephras Isle"
+       }
+      }
+     },
+     "name": "Donaal Downbreeze",
      "spells": {}
     },
     "255979": {
@@ -5394,6 +5990,77 @@
      },
      "name": "Rog'mar Grunt",
      "spells": {}
+    },
+    "2562": {
+     "levels": {
+      "32": {
+       "at": 1795746475,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Boulderfist Ogre",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Arathi Highlands"
+       }
+      },
+      "33": {
+       "at": 1795744459,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Boulderfist Ogre",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Arathi Highlands"
+       }
+      }
+     },
+     "name": "Boulderfist Ogre",
+     "spells": {}
+    },
+    "2563": {
+     "levels": {
+      "32": {
+       "at": 1795746436,
+       "v": {
+        "class": "WARRIOR",
+        "fam": "Spider",
+        "n": "Plains Creeper",
+        "run": 8,
+        "spd": 2,
+        "ty": "Beast",
+        "z": "Arathi Highlands"
+       }
+      },
+      "33": {
+       "at": 1795746591,
+       "v": {
+        "class": "WARRIOR",
+        "fam": "Spider",
+        "n": "Plains Creeper",
+        "run": 8,
+        "spd": 2,
+        "ty": "Beast",
+        "z": "Arathi Highlands"
+       }
+      }
+     },
+     "name": "Plains Creeper",
+     "spells": {
+      "4962": {
+       "at": "2026-11-26",
+       "build": "1.60.1",
+       "n": 5,
+       "spawns": 3
+      },
+      "744": {
+       "at": "2026-11-26",
+       "build": "1.60.1",
+       "n": 6,
+       "spawns": 3
+      }
+     }
     },
     "256386": {
      "levels": {
@@ -5452,6 +6119,49 @@
      "name": "Krom'rosh",
      "spells": {}
     },
+    "2565": {
+     "levels": {
+      "35": {
+       "at": 1795746832,
+       "v": {
+        "class": "WARRIOR",
+        "fam": "Spider",
+        "n": "Giant Plains Creeper",
+        "run": 8,
+        "spd": 2,
+        "ty": "Beast",
+        "z": "Arathi Highlands"
+       }
+      },
+      "36": {
+       "at": 1795746830,
+       "v": {
+        "class": "WARRIOR",
+        "fam": "Spider",
+        "n": "Giant Plains Creeper",
+        "run": 8,
+        "spd": 2,
+        "ty": "Beast",
+        "z": "Arathi Highlands"
+       }
+      }
+     },
+     "name": "Giant Plains Creeper",
+     "spells": {
+      "4962": {
+       "at": "2026-11-26",
+       "build": "1.60.1",
+       "n": 13,
+       "spawns": 4
+      },
+      "744": {
+       "at": "2026-11-26",
+       "build": "1.60.1",
+       "n": 7,
+       "spawns": 3
+      }
+     }
+    },
     "256655": {
      "levels": {
       "38": {
@@ -5472,6 +6182,43 @@
      "name": "Gorg",
      "spells": {}
     },
+    "256657": {
+     "levels": {
+      "40": {
+       "at": 1795732678,
+       "v": {
+        "armor": 1980,
+        "class": "WARRIOR",
+        "dmax": 74.32,
+        "dmin": 56.02,
+        "n": "Kreza Darkthorn",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Riverglades"
+       }
+      }
+     },
+     "name": "Kreza Darkthorn",
+     "spells": {}
+    },
+    "256658": {
+     "levels": {
+      "25": {
+       "at": 1795732649,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Gur'dok",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Riverglades"
+       }
+      }
+     },
+     "name": "Gur'dok",
+     "spells": {}
+    },
     "256673": {
      "levels": {
       "38": {
@@ -5487,6 +6234,46 @@
       }
      },
      "name": "Grik",
+     "spells": {}
+    },
+    "256675": {
+     "levels": {
+      "38": {
+       "at": 1795731569,
+       "v": {
+        "armor": 1724,
+        "class": "WARRIOR",
+        "dmax": 69.85,
+        "dmin": 52.66,
+        "n": "Innkeeper Toka",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Riverglades"
+       }
+      }
+     },
+     "name": "Innkeeper Toka",
+     "spells": {}
+    },
+    "256710": {
+     "levels": {
+      "39": {
+       "at": 1795732684,
+       "v": {
+        "armor": 942,
+        "class": "MAGE",
+        "dmax": 52.6,
+        "dmin": 39.64,
+        "n": "Tran'gul",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Riverglades"
+       }
+      }
+     },
+     "name": "Tran'gul",
      "spells": {}
     },
     "256795": {
@@ -5670,6 +6457,26 @@
      "name": "Valiena Swiftgale",
      "spells": {}
     },
+    "257007": {
+     "levels": {
+      "10": {
+       "at": 1795720637,
+       "v": {
+        "armor": 419,
+        "class": "PALADIN",
+        "dmax": 16.18,
+        "dmin": 12.17,
+        "n": "Melasa Fairmend",
+        "run": 6,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Zephras Isle"
+       }
+      }
+     },
+     "name": "Melasa Fairmend",
+     "spells": {}
+    },
     "257017": {
      "levels": {},
      "name": "Twilight Worg",
@@ -5773,6 +6580,48 @@
      "name": "Halaan Hawk-Eye",
      "spells": {}
     },
+    "2578": {
+     "levels": {
+      "31": {
+       "at": 1795744520,
+       "v": {
+        "class": "WARRIOR",
+        "fam": "Carrion Bird",
+        "n": "Young Mesa Buzzard",
+        "run": 8,
+        "spd": 2,
+        "ty": "Beast",
+        "z": "Arathi Highlands"
+       }
+      },
+      "32": {
+       "at": 1795746414,
+       "v": {
+        "class": "WARRIOR",
+        "fam": "Carrion Bird",
+        "n": "Young Mesa Buzzard",
+        "run": 8,
+        "spd": 2,
+        "ty": "Beast",
+        "z": "Arathi Highlands"
+       }
+      }
+     },
+     "name": "Young Mesa Buzzard",
+     "spells": {}
+    },
+    "2579": {
+     "levels": {},
+     "name": "Mesa Buzzard",
+     "spells": {
+      "8139": {
+       "at": "2026-11-26",
+       "build": "1.60.1",
+       "n": 8,
+       "spawns": 2
+      }
+     }
+    },
     "258331": {
      "levels": {
       "36": {
@@ -5808,6 +6657,62 @@
      "name": "Darah",
      "spells": {}
     },
+    "258588": {
+     "levels": {
+      "38": {
+       "at": 1795732489,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Jumbo Crawfish",
+        "ty": "Humanoid",
+        "z": "Riverglades"
+       }
+      }
+     },
+     "name": "Jumbo Crawfish",
+     "spells": {}
+    },
+    "2586": {
+     "levels": {
+      "30": {
+       "at": 1795744871,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Syndicate Highwayman",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Arathi Highlands"
+       }
+      },
+      "31": {
+       "at": 1795744760,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Syndicate Highwayman",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Arathi Highlands"
+       }
+      }
+     },
+     "name": "Syndicate Highwayman",
+     "spells": {
+      "22766": {
+       "at": "2026-11-26",
+       "build": "1.60.1",
+       "n": 15,
+       "spawns": 13
+      },
+      "2591": {
+       "at": "2026-11-26",
+       "build": "1.60.1",
+       "n": 6,
+       "spawns": 5
+      }
+     }
+    },
     "258686": {
      "levels": {
       "46": {
@@ -5824,6 +6729,18 @@
      },
      "name": "Farholde Lookout",
      "spells": {}
+    },
+    "2587": {
+     "levels": {},
+     "name": "Syndicate Pathstalker",
+     "spells": {
+      "6660": {
+       "at": "2026-11-26",
+       "build": "1.60.1",
+       "n": 32,
+       "spawns": 4
+      }
+     }
     },
     "259011": {
      "levels": {
@@ -5903,6 +6820,24 @@
       }
      },
      "name": "Rog'mar Poacher",
+     "spells": {}
+    },
+    "259055": {
+     "levels": {
+      "38": {
+       "at": 1795732573,
+       "v": {
+        "class": "WARRIOR",
+        "fam": "Cat",
+        "n": "Wildplains Huntress",
+        "run": 8,
+        "spd": 1.3,
+        "ty": "Beast",
+        "z": "Riverglades"
+       }
+      }
+     },
+     "name": "Wildplains Huntress",
      "spells": {}
     },
     "259058": {
@@ -6158,6 +7093,24 @@
      "name": "Venture Co. Agent",
      "spells": {}
     },
+    "2611": {
+     "levels": {
+      "42": {
+       "at": 1795743753,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Fozruk",
+        "rk": "ELITE",
+        "run": 8,
+        "spd": 2,
+        "ty": "Giant",
+        "z": "Arathi Highlands"
+       }
+      }
+     },
+     "name": "Fozruk",
+     "spells": {}
+    },
     "261313": {
      "levels": {
       "36": {
@@ -6175,6 +7128,18 @@
      "name": "Naluk",
      "spells": {}
     },
+    "261710": {
+     "levels": {},
+     "name": "Twilight Brute",
+     "spells": {
+      "14102": {
+       "at": "2026-11-26",
+       "build": "1.60.1",
+       "n": 3,
+       "spawns": 2
+      }
+     }
+    },
     "261711": {
      "levels": {},
      "name": "Empowered Brute",
@@ -6190,8 +7155,31 @@
        "build": "1.60.1",
        "n": 2,
        "spawns": 1
+      },
+      "8374": {
+       "at": "2026-11-26",
+       "build": "1.60.1",
+       "n": 5,
+       "spawns": 4
       }
      }
+    },
+    "2621": {
+     "levels": {
+      "50": {
+       "at": 1795746779,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Hammerfall Guardian",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Arathi Highlands"
+       }
+      }
+     },
+     "name": "Hammerfall Guardian",
+     "spells": {}
     },
     "262169": {
      "levels": {},
@@ -6226,6 +7214,18 @@
        "build": "1.60.1",
        "n": 26,
        "spawns": 26
+      }
+     }
+    },
+    "262477": {
+     "levels": {},
+     "name": "Cinderscale Warrior",
+     "spells": {
+      "2602": {
+       "at": "2026-11-26",
+       "build": "1.60.1",
+       "n": 1,
+       "spawns": 1
       }
      }
     },
@@ -6553,6 +7553,18 @@
      "name": "Galestrider Chick",
      "spells": {}
     },
+    "267006": {
+     "levels": {},
+     "name": "Dark Neophyte",
+     "spells": {
+      "9613": {
+       "at": "2026-11-26",
+       "build": "1.60.1",
+       "n": 2,
+       "spawns": 1
+      }
+     }
+    },
     "267936": {
      "levels": {
       "1": {
@@ -6688,6 +7700,23 @@
      "name": "Prairie Wolf Pup",
      "spells": {}
     },
+    "268744": {
+     "levels": {
+      "34": {
+       "at": 1795741169,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Frog Familiar",
+        "run": 8,
+        "spd": 2,
+        "ty": "Non-combat Pet",
+        "z": "Arathi Highlands"
+       }
+      }
+     },
+     "name": "Frog Familiar",
+     "spells": {}
+    },
     "269175": {
      "levels": {
       "37": {
@@ -6753,6 +7782,23 @@
      "name": "Stormheart",
      "spells": {}
     },
+    "2703": {
+     "levels": {
+      "40": {
+       "at": 1795746782,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Zengu",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Arathi Highlands"
+       }
+      }
+     },
+     "name": "Zengu",
+     "spells": {}
+    },
     "2704": {
      "levels": {
       "50": {
@@ -6771,6 +7817,23 @@
       }
      },
      "name": "Hanashi",
+     "spells": {}
+    },
+    "2706": {
+     "levels": {
+      "40": {
+       "at": 1795740687,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Tor'gan",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Arathi Highlands"
+       }
+      }
+     },
+     "name": "Tor'gan",
      "spells": {}
     },
     "271465": {
@@ -6848,6 +7911,23 @@
       }
      },
      "name": "Ergaan Eastwind",
+     "spells": {}
+    },
+    "271866": {
+     "levels": {
+      "25": {
+       "at": 1795732987,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Night Watch Guard",
+        "run": 10,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Duskwood"
+       }
+      }
+     },
+     "name": "Night Watch Guard",
      "spells": {}
     },
     "271867": {
@@ -7151,6 +8231,23 @@
      "name": "Fendaal Windstone",
      "spells": {}
     },
+    "273256": {
+     "levels": {
+      "38": {
+       "at": 1795718790,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Arrgrah Stonewall",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Thunder Bluff"
+       }
+      }
+     },
+     "name": "Arrgrah Stonewall",
+     "spells": {}
+    },
     "274334": {
      "levels": {
       "57": {
@@ -7334,6 +8431,34 @@
      "name": "Unknown",
      "spells": {}
     },
+    "2760": {
+     "levels": {
+      "38": {
+       "at": 1795746404,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Burning Exile",
+        "run": 8,
+        "spd": 2,
+        "ty": "Elemental",
+        "z": "Arathi Highlands"
+       }
+      },
+      "39": {
+       "at": 1795746413,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Burning Exile",
+        "run": 8,
+        "spd": 2,
+        "ty": "Elemental",
+        "z": "Arathi Highlands"
+       }
+      }
+     },
+     "name": "Burning Exile",
+     "spells": {}
+    },
     "276020": {
      "levels": {},
      "name": "Riptear",
@@ -7349,6 +8474,53 @@
        "build": "1.60.1",
        "n": 2,
        "spawns": 1
+      }
+     }
+    },
+    "2761": {
+     "levels": {
+      "38": {
+       "at": 1795742465,
+       "v": {
+        "class": "PALADIN",
+        "n": "Cresting Exile",
+        "run": 8,
+        "spd": 2,
+        "ty": "Elemental",
+        "z": "Arathi Highlands"
+       }
+      },
+      "39": {
+       "at": 1795742430,
+       "v": {
+        "class": "PALADIN",
+        "n": "Cresting Exile",
+        "run": 8,
+        "spd": 2,
+        "ty": "Elemental",
+        "z": "Arathi Highlands"
+       }
+      }
+     },
+     "name": "Cresting Exile",
+     "spells": {
+      "12544": {
+       "at": "2026-11-26",
+       "build": "1.60.1",
+       "n": 136,
+       "spawns": 60
+      },
+      "6136": {
+       "at": "2026-11-26",
+       "build": "1.60.1",
+       "n": 205,
+       "spawns": 51
+      },
+      "865": {
+       "at": "2026-11-26",
+       "build": "1.60.1",
+       "n": 214,
+       "spawns": 53
       }
      }
     },
@@ -7382,6 +8554,98 @@
       }
      },
      "name": "Oura Stormspinner",
+     "spells": {}
+    },
+    "2762": {
+     "levels": {
+      "38": {
+       "at": 1795744167,
+       "v": {
+        "class": "PALADIN",
+        "n": "Thundering Exile",
+        "run": 8,
+        "spd": 2,
+        "ty": "Elemental",
+        "z": "Arathi Highlands"
+       }
+      },
+      "39": {
+       "at": 1795744325,
+       "v": {
+        "class": "PALADIN",
+        "n": "Thundering Exile",
+        "run": 8,
+        "spd": 2,
+        "ty": "Elemental",
+        "z": "Arathi Highlands"
+       }
+      }
+     },
+     "name": "Thundering Exile",
+     "spells": {
+      "11824": {
+       "at": "2026-11-26",
+       "build": "1.60.1",
+       "n": 55,
+       "spawns": 34
+      },
+      "9532": {
+       "at": "2026-11-26",
+       "build": "1.60.1",
+       "n": 340,
+       "spawns": 37
+      }
+     }
+    },
+    "2764": {
+     "levels": {
+      "40": {
+       "at": 1795743753,
+       "v": {
+        "class": "PALADIN",
+        "n": "Sleeby",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Arathi Highlands"
+       }
+      }
+     },
+     "name": "Sleeby",
+     "spells": {}
+    },
+    "2765": {
+     "levels": {
+      "39": {
+       "at": 1795743763,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Znort",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Arathi Highlands"
+       }
+      }
+     },
+     "name": "Znort",
+     "spells": {}
+    },
+    "276795": {
+     "levels": {
+      "52": {
+       "at": 1795720410,
+       "v": {
+        "class": "MAGE",
+        "n": "Anya Rince",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Undercity"
+       }
+      }
+     },
+     "name": "Anya Rince",
      "spells": {}
     },
     "277059": {
@@ -7434,6 +8698,41 @@
       }
      },
      "name": "Foothills Duskbat",
+     "spells": {}
+    },
+    "2792": {
+     "levels": {
+      "40": {
+       "at": 1795746773,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Gor'mul",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Arathi Highlands"
+       }
+      }
+     },
+     "name": "Gor'mul",
+     "spells": {}
+    },
+    "2804": {
+     "levels": {
+      "61": {
+       "at": 1795720452,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Kurden Bloodclaw",
+        "rk": "ELITE",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Undercity"
+       }
+      }
+     },
+     "name": "Kurden Bloodclaw",
      "spells": {}
     },
     "2831": {
@@ -7555,6 +8854,24 @@
       }
      },
      "name": "Qixdi Goodstitch",
+     "spells": {}
+    },
+    "2851": {
+     "levels": {
+      "55": {
+       "at": 1795746787,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Urda",
+        "rk": "ELITE",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Arathi Highlands"
+       }
+      }
+     },
+     "name": "Urda",
      "spells": {}
     },
     "2856": {
@@ -7701,6 +9018,23 @@
      "name": "Tal",
      "spells": {}
     },
+    "3011": {
+     "levels": {
+      "35": {
+       "at": 1795718790,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Teg Dawnstrider",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Thunder Bluff"
+       }
+      }
+     },
+     "name": "Teg Dawnstrider",
+     "spells": {}
+    },
     "3037": {
      "levels": {
       "30": {
@@ -7716,6 +9050,45 @@
       }
      },
      "name": "Sheza Wildmane",
+     "spells": {}
+    },
+    "3057": {
+     "levels": {
+      "-1": {
+       "at": 1795718973,
+       "v": {
+        "armor": 3731,
+        "class": "WARRIOR",
+        "dmax": 3437.06,
+        "dmin": 3204.53,
+        "n": "Cairne Bloodhoof",
+        "rk": "WORLDBOSS",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Thunder Bluff"
+       }
+      }
+     },
+     "name": "Cairne Bloodhoof",
+     "spells": {}
+    },
+    "3083": {
+     "levels": {
+      "60": {
+       "at": 1795719007,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Honor Guard",
+        "rk": "ELITE",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Thunder Bluff"
+       }
+      }
+     },
+     "name": "Honor Guard",
      "spells": {}
     },
     "3098": {
@@ -8086,6 +9459,18 @@
      },
      "name": "Corrupted Dreadmaw Crocolisk",
      "spells": {}
+    },
+    "3232": {
+     "levels": {},
+     "name": "Bristleback Interloper",
+     "spells": {
+      "12166": {
+       "at": "2026-11-26",
+       "build": "1.60.1",
+       "n": 2,
+       "spawns": 1
+      }
+     }
     },
     "3234": {
      "levels": {
@@ -8578,6 +9963,18 @@
      "name": "Kolkar Stormer",
      "spells": {}
     },
+    "3282": {
+     "levels": {},
+     "name": "Venture Co. Mercenary",
+     "spells": {
+      "6660": {
+       "at": "2026-11-26",
+       "build": "1.60.1",
+       "n": 2,
+       "spawns": 1
+      }
+     }
+    },
     "3296": {
      "levels": {
       "55": {
@@ -8779,6 +10176,23 @@
       }
      },
      "name": "",
+     "spells": {}
+    },
+    "3342": {
+     "levels": {
+      "35": {
+       "at": 1795719379,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Shan'ti",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Orgrimmar"
+       }
+      }
+     },
+     "name": "Shan'ti",
      "spells": {}
     },
     "3344": {
@@ -9538,7 +10952,8 @@
         "n": "Mana Spring Totem",
         "run": 7,
         "spd": 2,
-        "ty": "Totem"
+        "ty": "Totem",
+        "z": "Arathi Highlands"
        }
       },
       "34": {
@@ -10175,6 +11590,23 @@
      "name": "Wrathtail Priestess",
      "spells": {}
     },
+    "3945": {
+     "levels": {
+      "34": {
+       "at": 1795733455,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Caravaneer Ruzzgot",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Stranglethorn Vale"
+       }
+      }
+     },
+     "name": "Caravaneer Ruzzgot",
+     "spells": {}
+    },
     "3975": {
      "levels": {},
      "name": "Herod",
@@ -10214,6 +11646,23 @@
       }
      },
      "name": "Galthuk",
+     "spells": {}
+    },
+    "4046": {
+     "levels": {
+      "62": {
+       "at": 1795718842,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Magatha Grimtotem",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Thunder Bluff"
+       }
+      }
+     },
+     "name": "Magatha Grimtotem",
      "spells": {}
     },
     "4047": {
@@ -10984,6 +12433,40 @@
       }
      }
     },
+    "4309": {
+     "levels": {
+      "62": {
+       "at": 1795718842,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Gorm Grimtotem",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Thunder Bluff"
+       }
+      }
+     },
+     "name": "Gorm Grimtotem",
+     "spells": {}
+    },
+    "4310": {
+     "levels": {
+      "62": {
+       "at": 1795718842,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Cor Grimtotem",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Thunder Bluff"
+       }
+      }
+     },
+     "name": "Cor Grimtotem",
+     "spells": {}
+    },
     "4311": {
      "levels": {
       "30": {
@@ -11541,6 +13024,24 @@
      "name": "Murkgill Warrior",
      "spells": {}
     },
+    "4481": {
+     "levels": {},
+     "name": "Marcel Dabyrie",
+     "spells": {
+      "15062": {
+       "at": "2026-11-26",
+       "build": "1.60.1",
+       "n": 1,
+       "spawns": 1
+      },
+      "7164": {
+       "at": "2026-11-26",
+       "build": "1.60.1",
+       "n": 1,
+       "spawns": 1
+      }
+     }
+    },
     "4486": {
      "levels": {
       "32": {
@@ -11684,6 +13185,23 @@
       }
      },
      "name": "Father Lankester",
+     "spells": {}
+    },
+    "4612": {
+     "levels": {
+      "30": {
+       "at": 1795720412,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Boyle",
+        "run": 8,
+        "spd": 2,
+        "ty": "Undead",
+        "z": "Undercity"
+       }
+      }
+     },
+     "name": "Boyle",
      "spells": {}
     },
     "4624": {
@@ -13624,7 +15142,8 @@
         "n": "Stoneskin Totem III",
         "run": 7,
         "spd": 2,
-        "ty": "Totem"
+        "ty": "Totem",
+        "z": "Arathi Highlands"
        }
       },
       "34": {
@@ -13651,7 +15170,8 @@
         "n": "Strength of Earth Totem II",
         "run": 7,
         "spd": 2,
-        "ty": "Totem"
+        "ty": "Totem",
+        "z": "Arathi Highlands"
        }
       },
       "31": {
@@ -13678,6 +15198,23 @@
       }
      },
      "name": "Strength of Earth Totem II",
+     "spells": {}
+    },
+    "5927": {
+     "levels": {
+      "30": {
+       "at": 1795745665,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Fire Resistance Totem",
+        "run": 7,
+        "spd": 2,
+        "ty": "Totem",
+        "z": "Arathi Highlands"
+       }
+      }
+     },
+     "name": "Fire Resistance Totem",
      "spells": {}
     },
     "595": {
@@ -13724,6 +15261,23 @@
        "spawns": 9
       }
      }
+    },
+    "5950": {
+     "levels": {
+      "30": {
+       "at": 1795744168,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Flametongue Totem",
+        "run": 7,
+        "spd": 2,
+        "ty": "Totem",
+        "z": "Stranglethorn Vale"
+       }
+      }
+     },
+     "name": "Flametongue Totem",
+     "spells": {}
     },
     "5951": {
      "levels": {
@@ -14310,6 +15864,24 @@
       }
      }
     },
+    "687": {
+     "levels": {
+      "40": {
+       "at": 1795733719,
+       "v": {
+        "class": "WARRIOR",
+        "fam": "Raptor",
+        "n": "Jungle Stalker",
+        "run": 8,
+        "spd": 2,
+        "ty": "Beast",
+        "z": "Stranglethorn Vale"
+       }
+      }
+     },
+     "name": "Jungle Stalker",
+     "spells": {}
+    },
     "689": {
      "levels": {
       "34": {
@@ -14647,6 +16219,12 @@
      },
      "name": "Bloodscalp Scavenger",
      "spells": {
+      "7159": {
+       "at": "2026-11-26",
+       "build": "1.60.1",
+       "n": 17,
+       "spawns": 11
+      },
       "744": {
        "at": "2026-11-26",
        "build": "1.60.1",
@@ -15088,6 +16666,23 @@
      "name": "Scalebane Captain",
      "spells": {}
     },
+    "7467": {
+     "levels": {
+      "30": {
+       "at": 1795744084,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Nature Resistance Totem",
+        "run": 7,
+        "spd": 2,
+        "ty": "Totem",
+        "z": "Arathi Highlands"
+       }
+      }
+     },
+     "name": "Nature Resistance Totem",
+     "spells": {}
+    },
     "7485": {
      "levels": {
       "40": {
@@ -15104,6 +16699,18 @@
      },
      "name": "Nargatt",
      "spells": {}
+    },
+    "754": {
+     "levels": {},
+     "name": "Rebel Watchman",
+     "spells": {
+      "1229741": {
+       "at": "2026-11-26",
+       "build": "1.60.1",
+       "n": 1,
+       "spawns": 1
+      }
+     }
     },
     "7545": {
      "levels": {
@@ -16692,14 +18299,18 @@
     "10277": "Throw",
     "10722": "Silithid Swarm",
     "11430": "Slam",
+    "11824": "Shock",
+    "11939": "Summon Imp",
     "11969": "Fire Nova",
     "11970": "Fire Nova",
     "11972": "Shield Bash",
     "11976": "Strike",
     "11986": "Healing Wave",
     "12024": "Net",
+    "12166": "Muscle Tear",
     "12167": "Lightning Bolt",
     "122": "Frost Nova",
+    "1229741": "Camp Benefits",
     "12544": "Frost Armor",
     "12548": "Frost Shock",
     "12555": "Pummel",
@@ -16712,6 +18323,7 @@
     "1303308": "Entangling Roots",
     "1303309": "Venom Spit",
     "1314281": "Flamestrike",
+    "1316579": "Shoot",
     "1319792": "Aura of Rot",
     "1324515": "Hammer of Justice",
     "1324558": "Disarm",
@@ -16720,10 +18332,12 @@
     "13443": "Rend",
     "13444": "Sunder Armor",
     "13728": "Earth Shock",
+    "14102": "Head Smash",
     "14868": "Curse of Agony",
     "14873": "Sinister Strike",
     "15039": "Flame Shock",
     "15043": "Frostbolt",
+    "15062": "Shield Wall",
     "15531": "Frost Nova",
     "16583": "Shadow Shock",
     "172": "Corruption",
@@ -16739,14 +18353,19 @@
     "21335": "Thorns",
     "22540": "Cleave",
     "22766": "Sneak",
+    "23038": "Flame Shock",
+    "23039": "Blast Wave",
     "23600": "Piercing Howl",
     "24313": "Shade Visual",
     "25771": "Forbearance",
+    "2591": "Backstab",
     "2601": "Fire Shield III",
+    "2602": "Fire Shield IV",
     "2609": "Shock",
     "3242": "Ravage",
     "3264": "Blood Howl",
     "3391": "Thrash",
+    "3396": "Corrosive Poison",
     "3429": "Plague Mind",
     "3472": "Holy Light",
     "3490": "Frenzied Rage",
@@ -16756,6 +18375,7 @@
     "3636": "Crystalline Slumber",
     "3639": "Improved Blocking",
     "3815": "Poison Cloud",
+    "4962": "Encasing Webs",
     "4979": "Quick Flame Ward",
     "5164": "Knockdown",
     "5262": "Fanatic Blade",
@@ -16796,6 +18416,7 @@
     "7140": "Expose Weakness",
     "7145": "Diving Sweep",
     "7154": "Dark Offering",
+    "7159": "Backstab",
     "7164": "Defensive Stance",
     "7165": "Battle Stance",
     "7272": "Dust Cloud",
@@ -16814,11 +18435,13 @@
     "8046": "Earth Shock",
     "8052": "Flame Shock",
     "8056": "Frost Shock",
+    "8139": "Fevered Fatigue",
     "8140": "Befuddlement",
     "8242": "Shield Slam",
     "8258": "Devotion Aura",
     "8269": "Enrage",
     "8362": "Renew",
+    "8374": "Arcing Smash",
     "8376": "Earthgrab Totem",
     "8377": "Earthgrab",
     "8382": "Leech Poison",
