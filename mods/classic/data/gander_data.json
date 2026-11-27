@@ -360,7 +360,7 @@
     "1064": {
      "levels": {
       "55": {
-       "at": 1795704979,
+       "at": 1795804890,
        "v": {
         "class": "WARRIOR",
         "n": "Grom'gol Grunt",
@@ -474,7 +474,7 @@
     "1085": {
      "levels": {
       "34": {
-       "at": 1795702271,
+       "at": 1795739481,
        "v": {
         "class": "WARRIOR",
         "fam": "Cat",
@@ -1052,7 +1052,7 @@
     "1146": {
      "levels": {
       "40": {
-       "at": 1795702115,
+       "at": 1795804833,
        "v": {
         "class": "WARRIOR",
         "n": "Vharr",
@@ -1069,7 +1069,7 @@
     "1147": {
      "levels": {
       "40": {
-       "at": 1795660894,
+       "at": 1795803790,
        "v": {
         "class": "WARRIOR",
         "n": "Hragran",
@@ -1106,7 +1106,7 @@
     "1149": {
      "levels": {
       "40": {
-       "at": 1795666565,
+       "at": 1795804126,
        "v": {
         "class": "WARRIOR",
         "n": "Uthok",
@@ -1160,7 +1160,7 @@
     "1151": {
      "levels": {
       "35": {
-       "at": 1795666303,
+       "at": 1795804713,
        "v": {
         "class": "WARRIOR",
         "fam": "Crocolisk",
@@ -1172,7 +1172,7 @@
        }
       },
       "36": {
-       "at": 1795666175,
+       "at": 1795804649,
        "v": {
         "class": "WARRIOR",
         "fam": "Crocolisk",
@@ -2197,7 +2197,10 @@
       "31": {
        "at": 1795718316,
        "v": {
+        "armor": 1247,
         "class": "WARRIOR",
+        "dmax": 57.73,
+        "dmin": 43.53,
         "n": "Snarl",
         "run": 8,
         "spd": 2,
@@ -2252,7 +2255,10 @@
       "35": {
        "at": 1795663312,
        "v": {
+        "armor": 1387,
         "class": "WARRIOR",
+        "dmax": 64.44,
+        "dmin": 48.58,
         "n": "Brawn",
         "run": 8,
         "spd": 2,
@@ -2287,7 +2293,7 @@
     "1387": {
      "levels": {
       "55": {
-       "at": 1795705109,
+       "at": 1795803788,
        "v": {
         "armor": 3292,
         "class": "WARRIOR",
@@ -2308,9 +2314,12 @@
     "1404": {
      "levels": {
       "40": {
-       "at": 1795660674,
+       "at": 1795804891,
        "v": {
+        "armor": 1980,
         "class": "WARRIOR",
+        "dmax": 74.32,
+        "dmin": 56.02,
         "n": "Kragg",
         "run": 8,
         "spd": 2,
@@ -3287,7 +3296,7 @@
        }
       },
       "11": {
-       "at": 1795643184,
+       "at": 1795648303,
        "v": {
         "class": "WARRIOR",
         "fam": "Wolf",
@@ -3488,7 +3497,7 @@
        }
       },
       "12": {
-       "at": 1795643008,
+       "at": 1795643763,
        "v": {
         "class": "WARRIOR",
         "fam": "Bear",
@@ -3560,7 +3569,7 @@
        }
       },
       "13": {
-       "at": 1795643869,
+       "at": 1795648145,
        "v": {
         "class": "WARRIOR",
         "fam": "Bear",
@@ -3577,8 +3586,50 @@
     },
     "1860": {
      "levels": {
+      "10": {
+       "at": 1795581899,
+       "v": {
+        "class": "PALADIN",
+        "fam": "Voidwalker",
+        "n": "Belnuz",
+        "run": 8,
+        "spd": 1.74,
+        "ty": "Demon",
+        "z": "Durotar"
+       }
+      },
+      "11": {
+       "at": 1795585981,
+       "v": {
+        "ap": 33,
+        "armor": 819,
+        "class": "PALADIN",
+        "dmax": 8.14,
+        "dmin": 6.13,
+        "fam": "Voidwalker",
+        "hp": 314,
+        "n": "Belnuz",
+        "pow": 158,
+        "run": 8,
+        "spd": 1.74,
+        "ty": "Demon",
+        "z": "Durotar"
+       }
+      },
       "13": {
        "at": 1795709053,
+       "v": {
+        "class": "PALADIN",
+        "fam": "Voidwalker",
+        "n": "Belnuz",
+        "run": 8,
+        "spd": 1.74,
+        "ty": "Demon",
+        "z": "Orgrimmar"
+       }
+      },
+      "15": {
+       "at": 1795587161,
        "v": {
         "class": "PALADIN",
         "fam": "Voidwalker",
@@ -3653,7 +3704,7 @@
        }
       },
       "12": {
-       "at": 1795643223,
+       "at": 1795643787,
        "v": {
         "class": "WARRIOR",
         "n": "Ravenclaw Slave",
@@ -3861,6 +3912,15 @@
         "ty": "Humanoid",
         "z": "Silverpine Forest"
        }
+      },
+      "15": {
+       "at": 1795381751,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Dalaran Protector",
+        "run": 8,
+        "spd": 2
+       }
       }
      },
      "name": "Dalaran Protector",
@@ -3974,6 +4034,23 @@
       }
      },
      "name": "Tirisfal Farmhand",
+     "spells": {}
+    },
+    "1954": {
+     "levels": {
+      "16": {
+       "at": 1795786039,
+       "v": {
+        "class": "PALADIN",
+        "n": "Elder Lake Skulker",
+        "run": 8,
+        "spd": 2,
+        "ty": "Elemental",
+        "z": "Silverpine Forest"
+       }
+      }
+     },
+     "name": "Elder Lake Skulker",
      "spells": {}
     },
     "214529": {
@@ -4108,6 +4185,34 @@
      "name": "Moonstalker Sire",
      "spells": {}
     },
+    "2252": {
+     "levels": {
+      "34": {
+       "at": 1795786374,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Crushridge Ogre",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Alterac Mountains"
+       }
+      },
+      "35": {
+       "at": 1795746824,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Crushridge Ogre",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Alterac Mountains"
+       }
+      }
+     },
+     "name": "Crushridge Ogre",
+     "spells": {}
+    },
     "2260": {
      "levels": {
       "21": {
@@ -4142,6 +4247,26 @@
        "spawns": 3
       }
      }
+    },
+    "2278": {
+     "levels": {
+      "25": {
+       "at": 1795802668,
+       "v": {
+        "armor": 1037,
+        "class": "WARRIOR",
+        "dmax": 47.5,
+        "dmin": 35.81,
+        "n": "Melisara",
+        "run": 8,
+        "spd": 2,
+        "ty": "Undead",
+        "z": "Hillsbrad Foothills"
+       }
+      }
+     },
+     "name": "Melisara",
+     "spells": {}
     },
     "230317": {
      "levels": {
@@ -4184,7 +4309,7 @@
     "2347": {
      "levels": {
       "40": {
-       "at": 1795740592,
+       "at": 1795746767,
        "v": {
         "class": "WARRIOR",
         "n": "Wild Gryphon",
@@ -4201,7 +4326,7 @@
     "2349": {
      "levels": {
       "24": {
-       "at": 1795740586,
+       "at": 1795746781,
        "v": {
         "class": "WARRIOR",
         "fam": "Spider",
@@ -4346,10 +4471,61 @@
      "name": "Zarise",
      "spells": {}
     },
+    "2392": {
+     "levels": {
+      "32": {
+       "at": 1795802434,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Delia Verana",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Hillsbrad Foothills"
+       }
+      }
+     },
+     "name": "Delia Verana",
+     "spells": {}
+    },
+    "2394": {
+     "levels": {
+      "32": {
+       "at": 1795802679,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Mallen Swain",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Hillsbrad Foothills"
+       }
+      }
+     },
+     "name": "Mallen Swain",
+     "spells": {}
+    },
+    "2401": {
+     "levels": {
+      "30": {
+       "at": 1795802671,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Kayren Soothallow",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Hillsbrad Foothills"
+       }
+      }
+     },
+     "name": "Kayren Soothallow",
+     "spells": {}
+    },
     "2405": {
      "levels": {
       "55": {
-       "at": 1795746953,
+       "at": 1795747234,
        "v": {
         "class": "WARRIOR",
         "n": "Tarren Mill Deathguard",
@@ -4406,6 +4582,18 @@
         "ty": "Beast",
         "z": "Alterac Mountains"
        }
+      },
+      "34": {
+       "at": 1795746836,
+       "v": {
+        "class": "WARRIOR",
+        "fam": "Cat",
+        "n": "Hulking Mountain Lion",
+        "run": 10,
+        "spd": 1.4,
+        "ty": "Beast",
+        "z": "Alterac Mountains"
+       }
       }
      },
      "name": "Hulking Mountain Lion",
@@ -4414,7 +4602,7 @@
     "2408": {
      "levels": {
       "30": {
-       "at": 1795740552,
+       "at": 1795747647,
        "v": {
         "class": "WARRIOR",
         "fam": "Turtle",
@@ -4426,7 +4614,7 @@
        }
       },
       "31": {
-       "at": 1795740571,
+       "at": 1795747660,
        "v": {
         "class": "WARRIOR",
         "fam": "Turtle",
@@ -4514,7 +4702,7 @@
     "2464": {
      "levels": {
       "60": {
-       "at": 1795704993,
+       "at": 1795804890,
        "v": {
         "armor": 3566,
         "class": "WARRIOR",
@@ -4535,7 +4723,7 @@
     "2465": {
      "levels": {
       "45": {
-       "at": 1795705109,
+       "at": 1795804839,
        "v": {
         "armor": 2742,
         "class": "WARRIOR",
@@ -4632,7 +4820,7 @@
     "2490": {
      "levels": {
       "44": {
-       "at": 1795528943,
+       "at": 1795536983,
        "v": {
         "armor": 2574,
         "class": "WARRIOR",
@@ -4654,7 +4842,10 @@
       "38": {
        "at": 1795527831,
        "v": {
+        "armor": 1724,
         "class": "WARRIOR",
+        "dmax": 69.85,
+        "dmin": 52.66,
         "n": "Whiskey Slim",
         "run": 8,
         "spd": 2,
@@ -4689,7 +4880,7 @@
     "2494": {
      "levels": {
       "40": {
-       "at": 1795559531,
+       "at": 1795715211,
        "v": {
         "armor": 1980,
         "class": "WARRIOR",
@@ -4729,7 +4920,7 @@
     "2497": {
      "levels": {
       "41": {
-       "at": 1795666590,
+       "at": 1795804861,
        "v": {
         "armor": 2117,
         "class": "WARRIOR",
@@ -5445,7 +5636,7 @@
     "2519": {
      "levels": {
       "39": {
-       "at": 1795666585,
+       "at": 1795804876,
        "v": {
         "armor": 1849,
         "class": "WARRIOR",
@@ -5493,6 +5684,15 @@
         "spd": 2,
         "ty": "Totem",
         "z": "Zephras Isle"
+       }
+      },
+      "14": {
+       "at": 1795409926,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Searing Totem",
+        "run": 7,
+        "spd": 2
        }
       },
       "15": {
@@ -6179,7 +6379,7 @@
     "2559": {
      "levels": {
       "30": {
-       "at": 1795743166,
+       "at": 1795744762,
        "v": {
         "class": "WARRIOR",
         "fam": "Raptor",
@@ -6191,7 +6391,7 @@
        }
       },
       "31": {
-       "at": 1795746447,
+       "at": 1795746615,
        "v": {
         "class": "WARRIOR",
         "fam": "Raptor",
@@ -6902,7 +7102,7 @@
        }
       },
       "32": {
-       "at": 1795746414,
+       "at": 1795746740,
        "v": {
         "class": "WARRIOR",
         "fam": "Carrion Bird",
@@ -6918,7 +7118,20 @@
      "spells": {}
     },
     "2579": {
-     "levels": {},
+     "levels": {
+      "34": {
+       "at": 1795740122,
+       "v": {
+        "class": "WARRIOR",
+        "fam": "Carrion Bird",
+        "n": "Mesa Buzzard",
+        "run": 8,
+        "spd": 2,
+        "ty": "Beast",
+        "z": "Arathi Highlands"
+       }
+      }
+     },
      "name": "Mesa Buzzard",
      "spells": {
       "8139": {
@@ -7281,7 +7494,7 @@
     "2594": {
      "levels": {
       "37": {
-       "at": 1795394329,
+       "at": 1795537004,
        "v": {
         "armor": 1607,
         "class": "WARRIOR",
@@ -7553,7 +7766,7 @@
     "2625": {
      "levels": {
       "55": {
-       "at": 1795529081,
+       "at": 1795761407,
        "v": {
         "class": "WARRIOR",
         "n": "Viznik Goldgrubber",
@@ -7679,7 +7892,7 @@
     "2635": {
      "levels": {
       "38": {
-       "at": 1795665875,
+       "at": 1795735919,
        "v": {
         "class": "WARRIOR",
         "fam": "Crocolisk",
@@ -8239,9 +8452,12 @@
     "2706": {
      "levels": {
       "40": {
-       "at": 1795740687,
+       "at": 1795746673,
        "v": {
+        "armor": 1980,
         "class": "WARRIOR",
+        "dmax": 74.32,
+        "dmin": 56.02,
         "n": "Tor'gan",
         "run": 8,
         "spd": 2,
@@ -8975,7 +9191,7 @@
        }
       },
       "39": {
-       "at": 1795742430,
+       "at": 1795742435,
        "v": {
         "class": "PALADIN",
         "n": "Cresting Exile",
@@ -9054,7 +9270,7 @@
        }
       },
       "39": {
-       "at": 1795744325,
+       "at": 1795744349,
        "v": {
         "class": "PALADIN",
         "n": "Thundering Exile",
@@ -9345,7 +9561,10 @@
       "55": {
        "at": 1795746787,
        "v": {
+        "armor": 3292,
         "class": "WARRIOR",
+        "dmax": 436.44,
+        "dmin": 329.12,
         "n": "Urda",
         "rk": "ELITE",
         "run": 8,
@@ -9361,7 +9580,7 @@
     "2856": {
      "levels": {
       "40": {
-       "at": 1795666584,
+       "at": 1795804129,
        "v": {
         "class": "WARRIOR",
         "n": "Angrun",
@@ -9416,8 +9635,20 @@
     },
     "2957": {
      "levels": {
+      "8": {
+       "at": 1795802352,
+       "v": {
+        "class": "WARRIOR",
+        "fam": "Tallstrider",
+        "n": "Elder Plainstrider",
+        "run": 8,
+        "spd": 2,
+        "ty": "Beast",
+        "z": "Mulgore"
+       }
+      },
       "9": {
-       "at": 1795708269,
+       "at": 1795801511,
        "v": {
         "class": "WARRIOR",
         "fam": "Tallstrider",
@@ -9433,7 +9664,32 @@
      "spells": {}
     },
     "2958": {
-     "levels": {},
+     "levels": {
+      "5": {
+       "at": 1795796244,
+       "v": {
+        "class": "WARRIOR",
+        "fam": "Wolf",
+        "n": "Prairie Wolf",
+        "run": 8,
+        "spd": 1.5,
+        "ty": "Beast",
+        "z": "Mulgore"
+       }
+      },
+      "6": {
+       "at": 1795795840,
+       "v": {
+        "class": "WARRIOR",
+        "fam": "Wolf",
+        "n": "Prairie Wolf",
+        "run": 8,
+        "spd": 1.5,
+        "ty": "Beast",
+        "z": "Mulgore"
+       }
+      }
+     },
      "name": "Prairie Wolf",
      "spells": {
       "5781": {
@@ -9447,7 +9703,19 @@
     "2959": {
      "levels": {
       "7": {
-       "at": 1795749573,
+       "at": 1795802346,
+       "v": {
+        "class": "WARRIOR",
+        "fam": "Wolf",
+        "n": "Prairie Stalker",
+        "run": 8,
+        "spd": 1.5,
+        "ty": "Beast",
+        "z": "Mulgore"
+       }
+      },
+      "8": {
+       "at": 1795801452,
        "v": {
         "class": "WARRIOR",
         "fam": "Wolf",
@@ -9465,7 +9733,19 @@
     "2960": {
      "levels": {
       "10": {
-       "at": 1795749502,
+       "at": 1795802143,
+       "v": {
+        "class": "WARRIOR",
+        "fam": "Wolf",
+        "n": "Prairie Wolf Alpha",
+        "run": 8,
+        "spd": 1.4,
+        "ty": "Beast",
+        "z": "Mulgore"
+       }
+      },
+      "9": {
+       "at": 1795802177,
        "v": {
         "class": "WARRIOR",
         "fam": "Wolf",
@@ -9481,7 +9761,30 @@
      "spells": {}
     },
     "2964": {
-     "levels": {},
+     "levels": {
+      "10": {
+       "at": 1795799019,
+       "v": {
+        "class": "MAGE",
+        "n": "Windfury Sorceress",
+        "run": 6,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Thunder Bluff"
+       }
+      },
+      "9": {
+       "at": 1795799444,
+       "v": {
+        "class": "MAGE",
+        "n": "Windfury Sorceress",
+        "run": 6,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Thunder Bluff"
+       }
+      }
+     },
      "name": "Windfury Sorceress",
      "spells": {
       "13322": {
@@ -9493,7 +9796,30 @@
      }
     },
     "2965": {
-     "levels": {},
+     "levels": {
+      "10": {
+       "at": 1795799797,
+       "v": {
+        "class": "PALADIN",
+        "n": "Windfury Matriarch",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Mulgore"
+       }
+      },
+      "11": {
+       "at": 1795799437,
+       "v": {
+        "class": "PALADIN",
+        "n": "Windfury Matriarch",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Mulgore"
+       }
+      }
+     },
      "name": "Windfury Matriarch",
      "spells": {
       "9532": {
@@ -9506,8 +9832,32 @@
     },
     "2971": {
      "levels": {
+      "10": {
+       "at": 1795802086,
+       "v": {
+        "class": "WARRIOR",
+        "fam": "Carrion Bird",
+        "n": "Taloned Swoop",
+        "run": 6,
+        "spd": 2,
+        "ty": "Beast",
+        "z": "Mulgore"
+       }
+      },
       "8": {
-       "at": 1795708269,
+       "at": 1795800390,
+       "v": {
+        "class": "WARRIOR",
+        "fam": "Carrion Bird",
+        "n": "Taloned Swoop",
+        "run": 6,
+        "spd": 2,
+        "ty": "Beast",
+        "z": "Mulgore"
+       }
+      },
+      "9": {
+       "at": 1795800479,
        "v": {
         "class": "WARRIOR",
         "fam": "Carrion Bird",
@@ -15939,7 +16289,7 @@
     "587": {
      "levels": {
       "33": {
-       "at": 1795702367,
+       "at": 1795804636,
        "v": {
         "class": "WARRIOR",
         "n": "Bloodscalp Warrior",
@@ -15950,7 +16300,7 @@
        }
       },
       "34": {
-       "at": 1795702264,
+       "at": 1795804686,
        "v": {
         "class": "WARRIOR",
         "n": "Bloodscalp Warrior",
@@ -16053,7 +16403,7 @@
        }
       },
       "35": {
-       "at": 1795703091,
+       "at": 1795804511,
        "v": {
         "class": "WARRIOR",
         "n": "Bloodscalp Scout",
@@ -16243,10 +16593,12 @@
     "595": {
      "levels": {
       "34": {
-       "at": 1795703083,
+       "at": 1795736341,
        "v": {
         "class": "WARRIOR",
         "n": "Bloodscalp Hunter",
+        "run": 8,
+        "spd": 2,
         "ty": "Humanoid",
         "z": "Stranglethorn Vale"
        }
@@ -16320,7 +16672,17 @@
      "spells": {}
     },
     "597": {
-     "levels": {},
+     "levels": {
+      "37": {
+       "at": 1795736172,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Bloodscalp Berserker",
+        "ty": "Humanoid",
+        "z": "Stranglethorn Vale"
+       }
+      }
+     },
      "name": "Bloodscalp Berserker",
      "spells": {
       "8599": {
@@ -16632,7 +16994,19 @@
      "spells": {}
     },
     "660": {
-     "levels": {},
+     "levels": {
+      "37": {
+       "at": 1795736032,
+       "v": {
+        "class": "PALADIN",
+        "n": "Bloodscalp Witch Doctor",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Stranglethorn Vale"
+       }
+      }
+     },
      "name": "Bloodscalp Witch Doctor",
      "spells": {
       "5605": {
@@ -16675,7 +17049,7 @@
     "671": {
      "levels": {
       "36": {
-       "at": 1795703030,
+       "at": 1795736163,
        "v": {
         "class": "WARRIOR",
         "n": "Bloodscalp Headhunter",
@@ -16686,7 +17060,7 @@
        }
       },
       "37": {
-       "at": 1795702937,
+       "at": 1795736029,
        "v": {
         "class": "WARRIOR",
         "n": "Bloodscalp Headhunter",
@@ -16757,7 +17131,7 @@
     "681": {
      "levels": {
       "30": {
-       "at": 1795702535,
+       "at": 1795739572,
        "v": {
         "class": "WARRIOR",
         "fam": "Cat",
@@ -16769,7 +17143,7 @@
        }
       },
       "31": {
-       "at": 1795702392,
+       "at": 1795739557,
        "v": {
         "class": "WARRIOR",
         "fam": "Cat",
@@ -16787,7 +17161,7 @@
     "682": {
      "levels": {
       "32": {
-       "at": 1795702263,
+       "at": 1795738014,
        "v": {
         "class": "WARRIOR",
         "fam": "Cat",
@@ -16877,7 +17251,7 @@
     "685": {
      "levels": {
       "33": {
-       "at": 1795702821,
+       "at": 1795804615,
        "v": {
         "class": "WARRIOR",
         "fam": "Raptor",
@@ -16889,7 +17263,7 @@
        }
       },
       "34": {
-       "at": 1795702699,
+       "at": 1795804538,
        "v": {
         "class": "WARRIOR",
         "fam": "Raptor",
@@ -16907,7 +17281,7 @@
     "686": {
      "levels": {
       "35": {
-       "at": 1795702212,
+       "at": 1795804701,
        "v": {
         "class": "WARRIOR",
         "fam": "Raptor",
@@ -16919,7 +17293,7 @@
        }
       },
       "36": {
-       "at": 1795702182,
+       "at": 1795804729,
        "v": {
         "class": "WARRIOR",
         "fam": "Raptor",
@@ -16962,7 +17336,7 @@
     "689": {
      "levels": {
       "34": {
-       "at": 1795666180,
+       "at": 1795804622,
        "v": {
         "class": "WARRIOR",
         "n": "Crystal Spine Basilisk",
@@ -16973,7 +17347,7 @@
        }
       },
       "35": {
-       "at": 1795560741,
+       "at": 1795804622,
        "v": {
         "class": "WARRIOR",
         "n": "Crystal Spine Basilisk",
@@ -17049,7 +17423,7 @@
     "694": {
      "levels": {
       "33": {
-       "at": 1795666464,
+       "at": 1795804326,
        "v": {
         "class": "WARRIOR",
         "n": "Bloodscalp Axe Thrower",
@@ -17090,7 +17464,7 @@
     "697": {
      "levels": {
       "33": {
-       "at": 1795666381,
+       "at": 1795739276,
        "v": {
         "class": "PALADIN",
         "n": "Bloodscalp Shaman",
@@ -17101,7 +17475,7 @@
        }
       },
       "34": {
-       "at": 1795702367,
+       "at": 1795804640,
        "v": {
         "class": "PALADIN",
         "n": "Bloodscalp Shaman",
@@ -17149,11 +17523,13 @@
        }
       },
       "35": {
-       "at": 1795703061,
+       "at": 1795736070,
        "v": {
         "class": "WARRIOR",
         "fam": "Cat",
         "n": "Bloodscalp Tiger",
+        "run": 8,
+        "spd": 2,
         "ty": "Beast",
         "z": "Stranglethorn Vale"
        }
@@ -17183,7 +17559,7 @@
        }
       },
       "35": {
-       "at": 1795702858,
+       "at": 1795736069,
        "v": {
         "class": "WARRIOR",
         "n": "Bloodscalp Beastmaster",
@@ -17219,7 +17595,7 @@
     "701": {
      "levels": {
       "34": {
-       "at": 1795703082,
+       "at": 1795804496,
        "v": {
         "class": "PALADIN",
         "n": "Bloodscalp Mystic",
@@ -17230,7 +17606,7 @@
        }
       },
       "35": {
-       "at": 1795703061,
+       "at": 1795736341,
        "v": {
         "class": "PALADIN",
         "n": "Bloodscalp Mystic",
@@ -17272,7 +17648,7 @@
     "702": {
      "levels": {
       "33": {
-       "at": 1795702504,
+       "at": 1795739508,
        "v": {
         "class": "WARRIOR",
         "n": "Bloodscalp Scavenger",
@@ -17283,7 +17659,7 @@
        }
       },
       "34": {
-       "at": 1795526764,
+       "at": 1795739474,
        "v": {
         "class": "WARRIOR",
         "n": "Bloodscalp Scavenger",
@@ -17373,7 +17749,7 @@
     "715": {
      "levels": {
       "40": {
-       "at": 1795704789,
+       "at": 1795739665,
        "v": {
         "armor": 1980,
         "class": "WARRIOR",
@@ -17433,7 +17809,7 @@
     "718": {
      "levels": {
       "40": {
-       "at": 1795704780,
+       "at": 1795739656,
        "v": {
         "armor": 1980,
         "class": "WARRIOR",
@@ -17555,7 +17931,7 @@
        }
       },
       "33": {
-       "at": 1795703310,
+       "at": 1795738303,
        "v": {
         "class": "WARRIOR",
         "fam": "Cat",
@@ -18662,7 +19038,7 @@
     "855": {
      "levels": {
       "31": {
-       "at": 1795702811,
+       "at": 1795804537,
        "v": {
         "class": "WARRIOR",
         "fam": "Raptor",
@@ -18681,6 +19057,18 @@
      "levels": {
       "33": {
        "at": 1795665418,
+       "v": {
+        "class": "WARRIOR",
+        "fam": "Raptor",
+        "n": "Young Lashtail Raptor",
+        "run": 8,
+        "spd": 2,
+        "ty": "Beast",
+        "z": "Stranglethorn Vale"
+       }
+      },
+      "34": {
+       "at": 1795804701,
        "v": {
         "class": "WARRIOR",
         "fam": "Raptor",

@@ -52,22 +52,6 @@
      "name": "Vile Fin Lakestalker",
      "spells": {}
     },
-    "1954": {
-     "levels": {
-      "16": {
-       "at": 1795786039,
-       "v": {
-        "class": "PALADIN",
-        "run": 8,
-        "spd": 2,
-        "ty": "Elemental",
-        "z": "Silverpine Forest"
-       }
-      }
-     },
-     "name": "Elder Lake Skulker",
-     "spells": {}
-    },
     "2215": {
      "levels": {
       "60": {
@@ -251,22 +235,6 @@
      "name": "Giant Yeti",
      "spells": {}
     },
-    "2252": {
-     "levels": {
-      "34": {
-       "at": 1795786374,
-       "v": {
-        "class": "WARRIOR",
-        "run": 8,
-        "spd": 2,
-        "ty": "Humanoid",
-        "z": "Alterac Mountains"
-       }
-      }
-     },
-     "name": "Crushridge Ogre",
-     "spells": {}
-    },
     "2261": {
      "levels": {
       "20": {
@@ -291,25 +259,6 @@
       }
      },
      "name": "Syndicate Watchman",
-     "spells": {}
-    },
-    "2278": {
-     "levels": {
-      "25": {
-       "at": 1795802668,
-       "v": {
-        "armor": 1037,
-        "class": "WARRIOR",
-        "dmax": 47.5,
-        "dmin": 35.81,
-        "run": 8,
-        "spd": 2,
-        "ty": "Undead",
-        "z": "Hillsbrad Foothills"
-       }
-      }
-     },
-     "name": "Melisara",
      "spells": {}
     },
     "2287": {
@@ -400,22 +349,6 @@
      "name": "Serge Hinott",
      "spells": {}
     },
-    "2392": {
-     "levels": {
-      "32": {
-       "at": 1795802434,
-       "v": {
-        "class": "WARRIOR",
-        "run": 8,
-        "spd": 2,
-        "ty": "Humanoid",
-        "z": "Hillsbrad Foothills"
-       }
-      }
-     },
-     "name": "Delia Verana",
-     "spells": {}
-    },
     "2393": {
      "levels": {
       "32": {
@@ -433,22 +366,6 @@
       }
      },
      "name": "Christoph Jeffcoat",
-     "spells": {}
-    },
-    "2394": {
-     "levels": {
-      "32": {
-       "at": 1795802679,
-       "v": {
-        "class": "WARRIOR",
-        "run": 8,
-        "spd": 2,
-        "ty": "Humanoid",
-        "z": "Hillsbrad Foothills"
-       }
-      }
-     },
-     "name": "Mallen Swain",
      "spells": {}
     },
     "2395": {
@@ -484,22 +401,6 @@
       }
      },
      "name": "Daryl Stack",
-     "spells": {}
-    },
-    "2401": {
-     "levels": {
-      "30": {
-       "at": 1795802671,
-       "v": {
-        "class": "WARRIOR",
-        "run": 8,
-        "spd": 2,
-        "ty": "Humanoid",
-        "z": "Hillsbrad Foothills"
-       }
-      }
-     },
-     "name": "Kayren Soothallow",
      "spells": {}
     },
     "2402": {
@@ -2373,6 +2274,1262 @@
     "9532": "Lightning Bolt",
     "9672": "Frostbolt"
    }
+  },
+  {
+   "game": "forever",
+   "instances": {},
+   "mobs": {
+    "1412": {
+     "levels": {
+      "1": {
+       "at": 1795650809,
+       "v": {
+        "class": "WARRIOR",
+        "run": 6,
+        "spd": 2,
+        "ty": "Critter",
+        "z": "Stonetalon Mountains"
+       }
+      }
+     },
+     "name": "Squirrel",
+     "spells": {}
+    },
+    "1860": {
+     "levels": {
+      "11": {
+       "at": 1795585981,
+       "v": {
+        "ptype": "MANA"
+       }
+      }
+     },
+     "name": "Grak'gak",
+     "spells": {}
+    },
+    "1892": {
+     "levels": {
+      "13": {
+       "at": 1795491817,
+       "v": {
+        "class": "WARRIOR",
+        "rk": "ELITE",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Silverpine Forest"
+       }
+      }
+     },
+     "name": "Moonrage Watcher",
+     "spells": {}
+    },
+    "1913": {
+     "levels": {
+      "16": {
+       "at": 1795381717,
+       "v": {
+        "class": "WARRIOR",
+        "run": 8,
+        "spd": 2
+       }
+      },
+      "17": {
+       "at": 1795381735,
+       "v": {
+        "class": "WARRIOR",
+        "run": 8,
+        "spd": 2
+       }
+      }
+     },
+     "spells": {}
+    },
+    "1915": {
+     "levels": {
+      "18": {
+       "at": 1795381715,
+       "v": {
+        "class": "MAGE",
+        "run": 8,
+        "spd": 2
+       }
+      }
+     },
+     "spells": {}
+    },
+    "1937": {
+     "levels": {
+      "14": {
+       "at": 1795381893,
+       "v": {
+        "armor": 650,
+        "class": "WARRIOR",
+        "dmax": 26.94,
+        "dmin": 20.29,
+        "run": 8,
+        "spd": 2
+       }
+      }
+     },
+     "spells": {}
+    },
+    "1938": {
+     "levels": {
+      "21": {
+       "at": 1795381882,
+       "v": {
+        "armor": 897,
+        "class": "WARRIOR",
+        "dmax": 40.47,
+        "dmin": 30.51,
+        "run": 8,
+        "spd": 2
+       }
+      }
+     },
+     "spells": {}
+    },
+    "1953": {
+     "levels": {
+      "15": {
+       "at": 1795747167,
+       "v": {
+        "class": "WARRIOR",
+        "run": 8,
+        "spd": 2,
+        "ty": "Elemental",
+        "z": "Silverpine Forest"
+       }
+      }
+     },
+     "name": "Lake Skulker",
+     "spells": {}
+    },
+    "2120": {
+     "levels": {
+      "22": {
+       "at": 1795381659,
+       "v": {
+        "class": "MAGE",
+        "run": 8,
+        "spd": 2
+       }
+      }
+     },
+     "spells": {}
+    },
+    "2140": {
+     "levels": {
+      "18": {
+       "at": 1795381876,
+       "v": {
+        "class": "WARRIOR",
+        "run": 8,
+        "spd": 2
+       }
+      }
+     },
+     "spells": {}
+    },
+    "2185": {
+     "levels": {
+      "12": {
+       "at": 1795398491,
+       "v": {
+        "class": "WARRIOR",
+        "run": 8,
+        "spd": 2
+       }
+      },
+      "13": {
+       "at": 1795398498,
+       "v": {
+        "class": "WARRIOR",
+        "run": 8,
+        "spd": 2
+       }
+      },
+      "14": {
+       "at": 1795398500,
+       "v": {
+        "class": "WARRIOR",
+        "run": 8,
+        "spd": 2
+       }
+      }
+     },
+     "spells": {}
+    },
+    "2187": {
+     "levels": {
+      "16": {
+       "at": 1795398538,
+       "v": {
+        "class": "WARRIOR",
+        "run": 8,
+        "spd": 2
+       }
+      }
+     },
+     "spells": {}
+    },
+    "2226": {
+     "levels": {
+      "55": {
+       "at": 1795648300,
+       "v": {
+        "armor": 3292,
+        "class": "WARRIOR",
+        "dmax": 436.44,
+        "dmin": 329.12,
+        "rk": "ELITE",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Silverpine Forest"
+       }
+      }
+     },
+     "name": "Karos Razok",
+     "spells": {}
+    },
+    "2235": {
+     "levels": {
+      "16": {
+       "at": 1795398433,
+       "v": {
+        "class": "WARRIOR",
+        "fam": "Crab",
+        "run": 8,
+        "spd": 2
+       }
+      }
+     },
+     "spells": {}
+    },
+    "2240": {
+     "levels": {
+      "32": {
+       "at": 1795747212,
+       "v": {
+        "class": "WARRIOR",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Alterac Mountains"
+       }
+      },
+      "33": {
+       "at": 1795747210,
+       "v": {
+        "class": "WARRIOR",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Alterac Mountains"
+       }
+      }
+     },
+     "name": "Syndicate Footpad",
+     "spells": {}
+    },
+    "2241": {
+     "levels": {
+      "33": {
+       "at": 1795747210,
+       "v": {
+        "class": "WARRIOR",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Alterac Mountains"
+       }
+      }
+     },
+     "name": "Syndicate Thief",
+     "spells": {}
+    },
+    "2247": {
+     "levels": {
+      "39": {
+       "at": 1795746850,
+       "v": {
+        "class": "WARRIOR",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Alterac Mountains"
+       }
+      }
+     },
+     "name": "Syndicate Enforcer",
+     "spells": {}
+    },
+    "2253": {
+     "levels": {
+      "36": {
+       "at": 1795746828,
+       "v": {
+        "class": "WARRIOR",
+        "run": 8,
+        "spd": 3,
+        "ty": "Humanoid",
+        "z": "Alterac Mountains"
+       }
+      }
+     },
+     "name": "Crushridge Brute",
+     "spells": {}
+    },
+    "2308": {
+     "levels": {
+      "40": {
+       "at": 1795382285,
+       "v": {
+        "armor": 1980,
+        "class": "WARRIOR",
+        "dmax": 74.32,
+        "dmin": 56.02,
+        "run": 8,
+        "spd": 2
+       }
+      }
+     },
+     "spells": {}
+    },
+    "2492": {
+     "levels": {
+      "35": {
+       "at": 1795739768,
+       "v": {
+        "armor": 1387,
+        "class": "WARRIOR",
+        "dmax": 64.44,
+        "dmin": 48.58,
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Undercity"
+       }
+      }
+     },
+     "name": "Lexington Mortaim",
+     "spells": {}
+    },
+    "2540": {
+     "levels": {
+      "16": {
+       "at": 1795381692,
+       "v": {
+        "class": "WARRIOR"
+       }
+      }
+     },
+     "spells": {}
+    },
+    "2572": {
+     "levels": {
+      "35": {
+       "at": 1795740331,
+       "v": {
+        "class": "WARRIOR",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Arathi Highlands"
+       }
+      }
+     },
+     "name": "Drywhisker Kobold",
+     "spells": {}
+    },
+    "2582": {
+     "levels": {
+      "30": {
+       "at": 1795746566,
+       "v": {
+        "class": "WARRIOR",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Arathi Highlands"
+       }
+      }
+     },
+     "name": "Dabyrie Laborer",
+     "spells": {}
+    },
+    "2620": {
+     "levels": {
+      "1": {
+       "at": 1795802216,
+       "v": {
+        "class": "WARRIOR",
+        "run": 6,
+        "spd": 2,
+        "ty": "Critter",
+        "z": "The Barrens"
+       }
+      }
+     },
+     "name": "Prairie Dog",
+     "spells": {}
+    },
+    "2630": {
+     "levels": {
+      "28": {
+       "at": 1795576741,
+       "v": {
+        "class": "WARRIOR",
+        "run": 7,
+        "spd": 2,
+        "ty": "Totem",
+        "z": "The Barrens"
+       }
+      }
+     },
+     "name": "Earthbind Totem",
+     "spells": {}
+    },
+    "2772": {
+     "levels": {
+      "35": {
+       "at": 1795740180,
+       "v": {
+        "class": "WARRIOR",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Arathi Highlands"
+       }
+      }
+     },
+     "name": "Korin Fel",
+     "spells": {}
+    },
+    "2787": {
+     "levels": {
+      "60": {
+       "at": 1795746669,
+       "v": {
+        "armor": 3566,
+        "class": "WARRIOR",
+        "dmax": 137.86,
+        "dmin": 103.95,
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Arathi Highlands"
+       }
+      }
+     },
+     "name": "Zaruk",
+     "spells": {}
+    },
+    "2818": {
+     "levels": {
+      "38": {
+       "at": 1795746667,
+       "v": {
+        "class": "WARRIOR",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Arathi Highlands"
+       }
+      }
+     },
+     "name": "Slagg",
+     "spells": {}
+    },
+    "2820": {
+     "levels": {
+      "31": {
+       "at": 1795746659,
+       "v": {
+        "class": "WARRIOR",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Arathi Highlands"
+       }
+      }
+     },
+     "name": "Graud",
+     "spells": {}
+    },
+    "2821": {
+     "levels": {
+      "33": {
+       "at": 1795746663,
+       "v": {
+        "class": "WARRIOR",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Arathi Highlands"
+       }
+      }
+     },
+     "name": "Keena",
+     "spells": {}
+    },
+    "2914": {
+     "levels": {
+      "1": {
+       "at": 1795659962,
+       "v": {
+        "class": "WARRIOR",
+        "run": 6,
+        "spd": 2,
+        "ty": "Critter",
+        "z": "Feralas"
+       }
+      }
+     },
+     "name": "Snake",
+     "spells": {}
+    },
+    "2934": {
+     "levels": {
+      "42": {
+       "at": 1795382202,
+       "v": {
+        "armor": 2262,
+        "class": "WARRIOR",
+        "dmax": 62.06,
+        "dmin": 46.8,
+        "run": 8,
+        "spd": 1.5
+       }
+      }
+     },
+     "spells": {}
+    },
+    "2947": {
+     "levels": {
+      "21": {
+       "at": 1795397548,
+       "v": {
+        "armor": 897,
+        "class": "WARRIOR",
+        "dmax": 40.47,
+        "dmin": 30.51,
+        "run": 8,
+        "spd": 2
+       }
+      }
+     },
+     "spells": {}
+    },
+    "2948": {
+     "levels": {
+      "25": {
+       "at": 1795802274,
+       "v": {
+        "armor": 1037,
+        "class": "WARRIOR",
+        "dmax": 47.5,
+        "dmin": 35.81,
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Mulgore"
+       }
+      }
+     },
+     "name": "Mull Thunderhorn",
+     "spells": {}
+    },
+    "2949": {
+     "levels": {
+      "5": {
+       "at": 1795394573,
+       "v": {
+        "class": "PALADIN",
+        "run": 6,
+        "spd": 2
+       }
+      },
+      "6": {
+       "at": 1795394558,
+       "v": {
+        "class": "PALADIN",
+        "run": 6,
+        "spd": 2
+       }
+      }
+     },
+     "spells": {}
+    },
+    "2950": {
+     "levels": {
+      "6": {
+       "at": 1795394560,
+       "v": {
+        "class": "PALADIN",
+        "run": 6,
+        "spd": 2
+       }
+      },
+      "7": {
+       "at": 1795394575,
+       "v": {
+        "class": "PALADIN",
+        "run": 6,
+        "spd": 2
+       }
+      }
+     },
+     "spells": {}
+    },
+    "2951": {
+     "levels": {
+      "7": {
+       "at": 1795394526,
+       "v": {
+        "class": "WARRIOR",
+        "run": 6,
+        "spd": 2
+       }
+      },
+      "8": {
+       "at": 1795394548,
+       "v": {
+        "class": "WARRIOR"
+       }
+      }
+     },
+     "spells": {}
+    },
+    "2955": {
+     "levels": {
+      "1": {
+       "at": 1795383146,
+       "v": {
+        "class": "WARRIOR",
+        "fam": "Tallstrider",
+        "run": 6,
+        "spd": 2
+       }
+      },
+      "2": {
+       "at": 1795383176,
+       "v": {
+        "class": "WARRIOR",
+        "fam": "Tallstrider",
+        "run": 6,
+        "spd": 2
+       }
+      }
+     },
+     "spells": {}
+    },
+    "2956": {
+     "levels": {
+      "6": {
+       "at": 1795801450,
+       "v": {
+        "class": "WARRIOR",
+        "fam": "Tallstrider",
+        "run": 8,
+        "spd": 2,
+        "ty": "Beast",
+        "z": "Mulgore"
+       }
+      },
+      "7": {
+       "at": 1795801047,
+       "v": {
+        "class": "WARRIOR",
+        "fam": "Tallstrider",
+        "run": 8,
+        "spd": 2,
+        "ty": "Beast",
+        "z": "Mulgore"
+       }
+      }
+     },
+     "name": "Adult Plainstrider",
+     "spells": {}
+    },
+    "2962": {
+     "levels": {
+      "7": {
+       "at": 1795801884,
+       "v": {
+        "class": "WARRIOR",
+        "run": 6,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Mulgore"
+       }
+      },
+      "8": {
+       "at": 1795801799,
+       "v": {
+        "class": "WARRIOR",
+        "run": 6,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Mulgore"
+       }
+      }
+     },
+     "name": "Windfury Harpy",
+     "spells": {}
+    },
+    "2963": {
+     "levels": {
+      "8": {
+       "at": 1795794856,
+       "v": {
+        "class": "PALADIN",
+        "run": 6,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Mulgore"
+       }
+      },
+      "9": {
+       "at": 1795392235,
+       "v": {
+        "class": "PALADIN",
+        "run": 6,
+        "spd": 2
+       }
+      }
+     },
+     "name": "Windfury Wind Witch",
+     "spells": {}
+    },
+    "2967": {
+     "levels": {
+      "8": {
+       "at": 1795801519,
+       "v": {
+        "class": "WARRIOR",
+        "run": 6,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Mulgore"
+       }
+      },
+      "9": {
+       "at": 1795801627,
+       "v": {
+        "class": "WARRIOR",
+        "run": 6,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Mulgore"
+       }
+      }
+     },
+     "name": "Galak Centaur",
+     "spells": {}
+    },
+    "2968": {
+     "levels": {
+      "10": {
+       "at": 1795801650,
+       "v": {
+        "class": "WARRIOR",
+        "run": 6,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Mulgore"
+       }
+      },
+      "9": {
+       "at": 1795801428,
+       "v": {
+        "class": "WARRIOR",
+        "run": 6,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Mulgore"
+       }
+      }
+     },
+     "name": "Galak Outrunner",
+     "spells": {}
+    },
+    "2969": {
+     "levels": {
+      "5": {
+       "at": 1795802236,
+       "v": {
+        "class": "WARRIOR",
+        "fam": "Carrion Bird",
+        "run": 6,
+        "spd": 2,
+        "ty": "Beast",
+        "z": "Mulgore"
+       }
+      },
+      "7": {
+       "at": 1795394296,
+       "v": {
+        "class": "WARRIOR",
+        "fam": "Carrion Bird",
+        "run": 6,
+        "spd": 2
+       }
+      }
+     },
+     "name": "Wiry Swoop",
+     "spells": {}
+    },
+    "2970": {
+     "levels": {
+      "7": {
+       "at": 1795802343,
+       "v": {
+        "class": "WARRIOR",
+        "fam": "Carrion Bird",
+        "run": 6,
+        "spd": 2,
+        "ty": "Beast",
+        "z": "Mulgore"
+       }
+      },
+      "8": {
+       "at": 1795801188,
+       "v": {
+        "class": "WARRIOR",
+        "fam": "Carrion Bird",
+        "run": 6,
+        "spd": 2,
+        "ty": "Beast",
+        "z": "Mulgore"
+       }
+      },
+      "9": {
+       "at": 1795395673,
+       "v": {
+        "class": "WARRIOR",
+        "fam": "Carrion Bird",
+        "run": 6,
+        "spd": 2
+       }
+      }
+     },
+     "name": "Swoop",
+     "spells": {}
+    },
+    "2972": {
+     "levels": {
+      "7": {
+       "at": 1795390027,
+       "v": {
+        "class": "WARRIOR",
+        "run": 6,
+        "spd": 3
+       }
+      },
+      "8": {
+       "at": 1795802334,
+       "v": {
+        "class": "WARRIOR",
+        "run": 6,
+        "spd": 3,
+        "ty": "Beast",
+        "z": "Mulgore"
+       }
+      }
+     },
+     "name": "Kodo Calf",
+     "spells": {}
+    },
+    "2973": {
+     "levels": {
+      "10": {
+       "at": 1795794635,
+       "v": {
+        "class": "WARRIOR",
+        "run": 8,
+        "spd": 3,
+        "ty": "Beast",
+        "z": "Mulgore"
+       }
+      }
+     },
+     "name": "Kodo Bull",
+     "spells": {}
+    },
+    "2974": {
+     "levels": {
+      "11": {
+       "at": 1795800383,
+       "v": {
+        "class": "WARRIOR",
+        "run": 8,
+        "spd": 3,
+        "ty": "Beast",
+        "z": "Mulgore"
+       }
+      },
+      "12": {
+       "at": 1795802333,
+       "v": {
+        "class": "WARRIOR",
+        "run": 8,
+        "spd": 3,
+        "ty": "Beast",
+        "z": "Mulgore"
+       }
+      }
+     },
+     "name": "Kodo Matriarch",
+     "spells": {}
+    },
+    "2975": {
+     "levels": {
+      "5": {
+       "at": 1795393875,
+       "v": {
+        "class": "WARRIOR",
+        "run": 6,
+        "spd": 2
+       }
+      },
+      "6": {
+       "at": 1795390354,
+       "v": {
+        "class": "WARRIOR",
+        "run": 6,
+        "spd": 2
+       }
+      }
+     },
+     "spells": {}
+    },
+    "2976": {
+     "levels": {
+      "6": {
+       "at": 1795801075,
+       "v": {
+        "class": "WARRIOR",
+        "run": 6,
+        "spd": 3,
+        "ty": "Humanoid",
+        "z": "Mulgore"
+       }
+      },
+      "7": {
+       "at": 1795801073,
+       "v": {
+        "class": "WARRIOR",
+        "run": 6,
+        "spd": 3,
+        "ty": "Humanoid",
+        "z": "Mulgore"
+       }
+      }
+     },
+     "name": "Venture Co. Laborer",
+     "spells": {}
+    },
+    "2977": {
+     "levels": {
+      "8": {
+       "at": 1795801106,
+       "v": {
+        "class": "WARRIOR",
+        "run": 6,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Mulgore"
+       }
+      }
+     },
+     "name": "Venture Co. Taskmaster",
+     "spells": {}
+    },
+    "416": {
+     "levels": {
+      "3": {
+       "at": 1795539712,
+       "v": {
+        "ap": 4,
+        "armor": 53,
+        "class": "MAGE",
+        "dmax": 2.74,
+        "dmin": 2.02,
+        "fam": "Imp",
+        "hp": 61,
+        "pow": 57,
+        "ptype": "MANA",
+        "run": 8,
+        "spd": 1.74,
+        "ty": "Demon",
+        "z": "Durotar"
+       }
+      },
+      "4": {
+       "at": 1795540837,
+       "v": {
+        "ap": 6,
+        "armor": 65,
+        "class": "MAGE",
+        "dmax": 3.77,
+        "dmin": 2.8,
+        "fam": "Imp",
+        "hp": 66,
+        "pow": 67,
+        "ptype": "MANA",
+        "run": 8,
+        "spd": 1.74,
+        "ty": "Demon",
+        "z": "Durotar"
+       }
+      },
+      "5": {
+       "at": 1795556508,
+       "v": {
+        "ap": 9,
+        "armor": 83,
+        "class": "MAGE",
+        "dmax": 5.03,
+        "dmin": 3.79,
+        "fam": "Imp",
+        "hp": 69,
+        "pow": 76,
+        "ptype": "MANA",
+        "run": 8,
+        "spd": 1.74,
+        "ty": "Demon",
+        "z": "Durotar"
+       }
+      },
+      "6": {
+       "at": 1795544326,
+       "v": {
+        "ap": 12,
+        "armor": 102,
+        "class": "MAGE",
+        "dmax": 6.7,
+        "dmin": 5.04,
+        "fam": "Imp",
+        "hp": 75,
+        "pow": 85,
+        "ptype": "MANA",
+        "run": 8,
+        "spd": 1.74,
+        "ty": "Demon",
+        "z": "Durotar"
+       }
+      },
+      "7": {
+       "at": 1795545888,
+       "v": {
+        "ap": 15,
+        "armor": 109,
+        "class": "MAGE",
+        "dmax": 8.68,
+        "dmin": 6.51,
+        "fam": "Imp",
+        "hp": 78,
+        "pow": 95,
+        "ptype": "MANA",
+        "run": 8,
+        "spd": 1.74,
+        "ty": "Demon",
+        "z": "Durotar"
+       }
+      },
+      "8": {
+       "at": 1795543546,
+       "v": {
+        "class": "MAGE",
+        "fam": "Imp",
+        "run": 8,
+        "spd": 1.74,
+        "ty": "Demon",
+        "z": "Durotar"
+       }
+      }
+     },
+     "name": "Lazmir",
+     "spells": {}
+    },
+    "620": {
+     "levels": {
+      "1": {
+       "at": 1795407454,
+       "v": {
+        "class": "WARRIOR",
+        "run": 6,
+        "spd": 2
+       }
+      }
+     },
+     "spells": {}
+    },
+    "691": {
+     "levels": {
+      "37": {
+       "at": 1795805412,
+       "v": {
+        "class": "WARRIOR",
+        "run": 8,
+        "spd": 2,
+        "ty": "Elemental",
+        "z": "Stranglethorn Vale"
+       }
+      }
+     },
+     "name": "Lesser Water Elemental",
+     "spells": {}
+    },
+    "871": {
+     "levels": {
+      "35": {
+       "at": 1795805836,
+       "v": {
+        "class": "WARRIOR",
+        "rk": "ELITE",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Stranglethorn Vale"
+       }
+      },
+      "36": {
+       "at": 1795806397,
+       "v": {
+        "class": "WARRIOR",
+        "rk": "ELITE",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Stranglethorn Vale"
+       }
+      }
+     },
+     "name": "Saltscale Warrior",
+     "spells": {}
+    },
+    "873": {
+     "levels": {
+      "36": {
+       "at": 1795804032,
+       "v": {
+        "class": "PALADIN",
+        "rk": "ELITE",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Stranglethorn Vale"
+       }
+      },
+      "37": {
+       "at": 1795806775,
+       "v": {
+        "class": "PALADIN",
+        "rk": "ELITE",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Stranglethorn Vale"
+       }
+      }
+     },
+     "name": "Saltscale Oracle",
+     "spells": {}
+    },
+    "875": {
+     "levels": {
+      "37": {
+       "at": 1795806812,
+       "v": {
+        "class": "PALADIN",
+        "rk": "ELITE",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Stranglethorn Vale"
+       }
+      }
+     },
+     "name": "Saltscale Tide Lord",
+     "spells": {}
+    },
+    "877": {
+     "levels": {
+      "35": {
+       "at": 1795806935,
+       "v": {
+        "class": "WARRIOR",
+        "rk": "ELITE",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Stranglethorn Vale"
+       }
+      },
+      "36": {
+       "at": 1795806925,
+       "v": {
+        "class": "WARRIOR",
+        "rk": "ELITE",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Stranglethorn Vale"
+       }
+      }
+     },
+     "name": "Saltscale Forager",
+     "spells": {}
+    },
+    "879": {
+     "levels": {
+      "35": {
+       "at": 1795807031,
+       "v": {
+        "class": "WARRIOR",
+        "rk": "ELITE",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Stranglethorn Vale"
+       }
+      },
+      "36": {
+       "at": 1795806966,
+       "v": {
+        "class": "WARRIOR",
+        "rk": "ELITE",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Stranglethorn Vale"
+       }
+      }
+     },
+     "name": "Saltscale Hunter",
+     "spells": {}
+    },
+    "883": {
+     "levels": {
+      "5": {
+       "at": 1795398278,
+       "v": {
+        "class": "WARRIOR",
+        "run": 6,
+        "spd": 2
+       }
+      }
+     },
+     "spells": {}
+    }
+   },
+   "received": "2026-11-27",
+   "sender": "1165f600583b",
+   "spells": {}
   }
  ],
  "seen": [
@@ -2397,7 +3554,8 @@
   "0770f140240901cb",
   "5deb7bffc6639d1f",
   "253fe07a68e14452",
-  "c60dfeaf1ed31237"
+  "c60dfeaf1ed31237",
+  "ac5bbab8791e03c7"
  ],
  "version": 1
 }
