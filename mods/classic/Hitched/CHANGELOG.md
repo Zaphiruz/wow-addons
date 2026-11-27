@@ -1,5 +1,10 @@
 # Hitched changelog
 
+## 0.1.1 (2026-11-27)
+
+- The game's "No player named ... is currently playing." line no longer appears out of nowhere. It showed when a player you pointed at logged out before Hitched had quietly asked their game about them, and when your ex was offline as you divorced. A proposal still shows it, so you know why nothing came back.
+- A player who goes offline while waiting to be asked is skipped, and asked the next time you point at them.
+
 ## 0.1.0 (2026-11-26)
 
 - First version. Target a player and type `/hitched propose`: you go down on one knee, and they get a question with "I do" and "No". Both of you need Hitched.

@@ -185,6 +185,52 @@ end
 ---------------------------------------------------------------------------
 local PREFIX, VERSION = "Hitched", "1"
 
+-- A whisper to a player who has logged out makes the game print "No player
+-- named '...' is currently playing.", even for a whisper nobody sees. An
+-- addon can only tell who is online while the game shows them, so for a few
+-- seconds after a quiet whisper that line is held back for that player. A
+-- proposal isn't quiet: there the line says why nothing came back.
+local QUIET_FOR = 5
+local quiet = {}    -- { name, till, told } for each quiet whisper
+local notFound      -- the game's line as a pattern that finds the name
+
+local function hush(name)
+  local t = GetTime()
+  for i = #quiet, 1, -1 do
+    if quiet[i].till < t then tremove(quiet, i) end
+  end
+  quiet[#quiet + 1] = { name = name, till = t + QUIET_FOR }
+end
+
+-- The game runs this for every chat window the line would go to, so an
+-- entry is kept until its time is up, not used up by the first window.
+local function hideLine(_, _, text)
+  if not notFound or isSecret(text) or type(text) ~= "string" then return end
+  local name = text:match(notFound)
+  if not name then return end
+  local t = GetTime()
+  for _, q in ipairs(quiet) do
+    if q.till >= t and sameName(q.name, name) then
+      if not q.told then
+        q.told = true
+        dbg("hid the game's line: %s", text)
+      end
+      return true
+    end
+  end
+end
+
+local function watchChat()
+  local line = str(ERR_CHAT_PLAYER_NOT_FOUND_S)
+  local add = (ChatFrameUtil and ChatFrameUtil.AddMessageEventFilter) or ChatFrame_AddMessageEventFilter
+  if not (line and add) then return end
+  -- "No player named '%s' is currently playing." with the name as (.+);
+  -- some languages write the name as %1$s.
+  local pattern = line:gsub("%%%d+%$s", "%%s"):gsub("%p", "%%%0"):gsub("%%%%s", "(.+)")
+  notFound = "^" .. pattern .. "$"
+  add("CHAT_MSG_SYSTEM", hideLine)
+end
+
 local function send(route, target, ...)
   local fn = C_ChatInfo and C_ChatInfo.SendAddonMessage
   if not (fn and myGUID) then return false end
@@ -194,6 +240,7 @@ local function send(route, target, ...)
     dbg("not sent, the game is blocking addon messages: %s", msg)
     return false
   end
+  if route == "WHISPER" and what ~= "propose" then hush(target) end
   local ok, result = pcall(fn, PREFIX, msg, route, target)
   local shown = not ok and "error" or isSecret(result) and "hidden" or tostring(result)
   dbg("sent %s%s: %s (%s)", route, target and (" to " .. target) or "", msg, shown)
@@ -355,11 +402,35 @@ end
 -- Pointing at or targeting a player sends their game one quiet question, at
 -- most every ten minutes per player, and never faster than one every second
 -- and a half. A player without Hitched never notices.
+--
+-- A player can log out while they wait their turn. If the game still shows
+-- them and says they're offline, they're skipped. If it no longer shows
+-- them there is no telling, so they're asked, and the game's "No player
+-- named" line is held back (see hush).
 ---------------------------------------------------------------------------
 local ASK_EVERY, ASK_GAP, QUEUE_MAX = 600, 1.5, 8
 local askedAt = {}   -- character ID -> when we last asked
-local queue = {}     -- names waiting to be asked
+local queue = {}     -- { guid, name } waiting to be asked
 local lastAsk, pumping = -100, false
+
+-- The unit the game shows this player as, if it still shows them.
+local function unitOf(guid)
+  if UnitTokenFromGUID then
+    local ok, unit = pcall(UnitTokenFromGUID, guid)
+    if ok and str(unit) then return unit end
+  end
+  for _, unit in ipairs({ "mouseover", "target" }) do
+    local ok, theirs = pcall(UnitGUID, unit)
+    if ok and str(theirs) == guid then return unit end
+  end
+end
+
+local function wentOffline(guid)
+  local unit = unitOf(guid)
+  if not unit then return false end
+  local ok, connected = pcall(UnitIsConnected, unit)
+  return ok and not isSecret(connected) and connected == false
+end
 
 local function pump()
   pumping = false
@@ -367,8 +438,17 @@ local function pump()
   local wait = lastAsk + ASK_GAP - GetTime()
   if wait <= 0 then
     if not chatLocked() then
-      lastAsk = GetTime()
-      send("WHISPER", tremove(queue, 1), "ask")
+      while #queue > 0 do
+        local q = tremove(queue, 1)
+        if wentOffline(q.guid) then
+          askedAt[q.guid] = nil   -- ask when they're back
+          dbg("not asked, they went offline: %s", q.name)
+        else
+          lastAsk = GetTime()
+          send("WHISPER", q.name, "ask")
+          break
+        end
+      end
     end
     wait = ASK_GAP
   end
@@ -395,7 +475,7 @@ local function notice(unit)
   local at = askedAt[guid]
   if (at and GetTime() - at < ASK_EVERY) or #queue >= QUEUE_MAX then return end
   askedAt[guid] = GetTime()
-  queue[#queue + 1] = whisperName(full)
+  queue[#queue + 1] = { guid = guid, name = whisperName(full) }
   if not pumping then pump() end
 end
 
@@ -862,6 +942,7 @@ events:SetScript("OnEvent", function(_, event, ...)
     end
     buildPanel()
     hookTooltips()
+    pcall(watchChat)
     C_Timer.After(LOGIN_WAIT, function()
       rememberMe()
       if char.spouse and IsInGuild() then send("GUILD", nil, wedFields()) end

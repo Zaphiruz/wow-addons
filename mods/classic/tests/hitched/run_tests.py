@@ -133,6 +133,39 @@ end
 -- Another game's addon message arrives.
 function hear(msg, route, sender) fire("CHAT_MSG_ADDON", "Hitched", msg, route or "WHISPER", sender or "Bob-Whitemane") end
 
+-- Lines the game prints itself (CHAT_MSG_SYSTEM) go through addons' filters
+-- once for every chat window that shows them. shown(text) is true when the
+-- line reaches the windows.
+ERR_CHAT_PLAYER_NOT_FOUND_S = "No player named '%s' is currently playing."
+chatFilters = {}
+ChatFrameUtil = { AddMessageEventFilter = function(event, fn)
+  chatFilters[event] = chatFilters[event] or {}
+  for _, f in ipairs(chatFilters[event]) do if f == fn then return end end
+  table.insert(chatFilters[event], fn)
+end }
+function shown(text)
+  local windows = 0
+  for w = 1, 2 do
+    local discard = false
+    for _, fn in ipairs(chatFilters.CHAT_MSG_SYSTEM or {}) do
+      -- The game doesn't hand a filter a line it can't read.
+      if not issecretvalue(text) and fn({}, "CHAT_MSG_SYSTEM", text, "", "", "") then discard = true; break end
+    end
+    if not discard then windows = windows + 1 end
+  end
+  assert(windows == 0 or windows == 2, "hidden in one chat window only")
+  return windows == 2
+end
+-- Does the game's "No player named ..." line for this name stay off the screen?
+function gone(name) return not shown(format(ERR_CHAT_PLAYER_NOT_FOUND_S, name)) end
+
+-- The game's own lookup of a player it is showing you.
+function UnitTokenFromGUID(guid)
+  for _, token in ipairs({ "target", "mouseover", "party1", "party2", "nameplate1", "nameplate2", "nameplate3" }) do
+    if units[token] and units[token].guid == guid then return token end
+  end
+end
+
 -- Frames.
 local noop = function() end
 local widgetMT = { __index = function() return noop end }
@@ -233,7 +266,7 @@ function leave() GameTooltip:Hide(); GameTooltip.unit = nil; units.mouseover = n
 function fire(e, ...) local f = events[e]; if f then f.scripts.OnEvent(f, e, ...) end end
 function login(saved, charSaved)
   HitchedDB, HitchedCharDB = saved, charSaved
-  events, timers, categories, postCalls = {}, {}, {}, {}
+  events, timers, categories, postCalls, chatFilters = {}, {}, {}, {}, {}
   GameTooltip.hooks = {}
   assert(loadstring(ADDON_SRC, "Hitched.lua"))("Hitched")
   fire("ADDON_LOADED", "Hitched")
@@ -640,6 +673,137 @@ SCENARIOS = {
   see("target", { name = "Dana", guid = D })
   fire("PLAYER_TARGET_CHANGED")
   ok(wire() == "WHISPER>Dana 1;ask;" .. A, wire())
+''',
+# ---- players who log out before they're asked ----
+"a queued player who went offline isn't asked, and the next one doesn't wait": r'''
+  login(nil, nil)
+  for i = 1, 3 do
+    see("nameplate" .. i, { name = "Player" .. i, guid = "Player-1-000000C" .. i })
+    hover("nameplate" .. i)
+  end
+  ok(wire() == "WHISPER>Player1 1;ask;" .. A, "one at once")
+  units.nameplate2.connected = false
+  advance(1.5)
+  ok(wire() == "WHISPER>Player3 1;ask;" .. A, "the offline one is skipped: " .. wire())
+  advance(10)
+  ok(wire() == "", "and not asked later")
+  units.nameplate2.connected = nil
+  leave(); hover("nameplate2")
+  ok(wire() == "WHISPER>Player2 1;ask;" .. A, "asked once they're back: " .. wire())
+''',
+"a queued player the game no longer shows is asked, and the game's reply is hidden": r'''
+  login(nil, nil)
+  see("nameplate1", { name = "Player1", guid = "Player-1-000000C1" })
+  see("nameplate2", { name = "Dana", guid = D })
+  hover("nameplate1"); hover("nameplate2"); leave()
+  wire()
+  ok(not gone("Dana"), "nothing is hidden before the whisper")
+  units.nameplate2 = nil   -- logged out, or only out of sight: the game can't say which
+  advance(1.5)
+  ok(wire() == "WHISPER>Dana 1;ask;" .. A, "asked: " .. wire())
+  ok(gone("Dana"), "the game's line is hidden")
+  ok(not gone("Erin"), "someone else's isn't")
+  ok(shown("You are now AFK."), "other lines are left alone")
+  ok(shown("No player named Dana, sorry."), "so is a line that only looks like it")
+  advance(6)
+  ok(not gone("Dana"), "and Dana's is shown again a little later")
+''',
+"the hidden line is matched however the game spells the name": r'''
+  login(nil, nil)
+  see("target", { name = "Dana", realm = "Stormrage", guid = D })
+  fire("PLAYER_TARGET_CHANGED")
+  ok(wire() == "WHISPER>Dana-Stormrage 1;ask;" .. A, wire())
+  ok(gone("Dana-Stormrage") and gone("dana"), "with or without the realm")
+  advance(10)
+  see("target", { name = "Elicia Antikleia", guid = "Player-1-000000C7" })
+  fire("PLAYER_TARGET_CHANGED")
+  ok(gone("Elicia Antikleia") and gone("Elicia"), "a Forever name with a surname")
+  ok(not gone("Dana"), "Dana's time is up")
+''',
+"another language's line is hidden too": r'''
+  ERR_CHAT_PLAYER_NOT_FOUND_S = "Kein Spieler mit dem Namen '%1$s' spielt zurzeit."
+  login(nil, nil)
+  see("target", { name = "Dana", guid = D })
+  fire("PLAYER_TARGET_CHANGED")
+  ok(not shown("Kein Spieler mit dem Namen 'Dana' spielt zurzeit."), "hidden")
+  ok(shown("Kein Spieler mit dem Namen 'Erin' spielt zurzeit."), "someone else's isn't")
+  ok(shown("Kein Spieler mit dem Namen Dana spielt zurzeit."), "the line has to match")
+''',
+"a proposal leaves the game's line alone": r'''
+  login(nil, nil)
+  see("target", bob())
+  cmd("propose")
+  ok(wire():find("WHISPER>Bob 1;propose;", 1, true), "proposed")
+  ok(not gone("Bob"), "it says why nothing came back")
+''',
+"telling an ex who is offline doesn't show the game's line": r'''
+  login(nil, wed())
+  cmd("divorce")
+  HitchedDialog.yes:Click()
+  ok(wire():find("WHISPER>Bob 1;divorce;", 1, true), "told")
+  ok(gone("Bob"), "hidden")
+''',
+"without the game's lookup, the mouse and the target are checked": r'''
+  UnitTokenFromGUID = nil
+  login(nil, nil)
+  see("nameplate1", { name = "Player1", guid = "Player-1-000000C1" })
+  see("nameplate2", { name = "Dana", guid = D })
+  see("nameplate3", { name = "Erin", guid = "Player-1-000000C9" })
+  hover("nameplate1"); hover("nameplate2"); hover("nameplate3")
+  see("target", units.nameplate2)
+  wire()
+  units.target.connected = false   -- still targeted, now offline
+  advance(1.5)
+  ok(wire() == "WHISPER>Erin 1;ask;" .. A, "Dana is skipped: " .. wire())
+''',
+"a player whose state the game hides is asked like anyone else": r'''
+  login(nil, nil)
+  see("nameplate1", { name = "Player1", guid = "Player-1-000000C1" })
+  see("nameplate2", { name = "Dana", guid = D })
+  hover("nameplate1"); hover("nameplate2")
+  wire()
+  UnitTokenFromGUID = function() return SECRET end
+  UnitIsConnected = function() return SECRET end
+  advance(1.5)
+  ok(wire() == "WHISPER>Dana 1;ask;" .. A, wire())
+''',
+"a line the game hides, or a game without filters, is no trouble": r'''
+  ChatFrameUtil.AddMessageEventFilter = nil
+  local old = {}
+  ChatFrame_AddMessageEventFilter = function(event, fn) old[#old + 1] = { event, fn } end
+  login(nil, nil)
+  ok(#old == 1 and old[1][1] == "CHAT_MSG_SYSTEM", "the older name is used")
+  local filter = old[1][2]
+  see("target", { name = "Dana", guid = D }); fire("PLAYER_TARGET_CHANGED")
+  ok(filter({}, "CHAT_MSG_SYSTEM", SECRET) ~= true, "a hidden line is left alone")
+  ok(filter({}, "CHAT_MSG_SYSTEM", nil) ~= true and filter({}, "CHAT_MSG_SYSTEM", 5) ~= true, "so is nonsense")
+  ok(filter({}, "CHAT_MSG_SYSTEM", "No player named 'Dana' is currently playing.") == true, "the real one is hidden")
+  ChatFrame_AddMessageEventFilter = nil
+  ERR_CHAT_PLAYER_NOT_FOUND_S = nil
+  local saved, char = HitchedDB, HitchedCharDB
+  wire()
+  login(saved, char)
+  see("target", { name = "Erin", guid = "Player-1-000000C9" }); fire("PLAYER_TARGET_CHANGED")
+  ok(wire() == "WHISPER>Erin 1;ask;" .. A, "still asks without a filter: " .. wire())
+  ERR_CHAT_PLAYER_NOT_FOUND_S = "No player named '%s' is currently playing."
+  ChatFrame_AddMessageEventFilter = function() error("this game won't take a filter") end
+  login(saved, char)
+  ok(cmd(""):find("aren't married"), "a filter the game refuses doesn't stop loading: " .. cmd(""))
+''',
+"/hitched debug says once when it hides the game's line, and when it skips someone": r'''
+  login(nil, nil)
+  cmd("debug")
+  see("target", { name = "Dana", guid = D }); fire("PLAYER_TARGET_CHANGED")
+  out = {}
+  ok(gone("Dana") and gone("Dana"), "hidden")
+  local p = printed()
+  local _, n = p:gsub("hid the game's line", "")
+  ok(n == 1, "said once for two chat windows, twice over: " .. p)
+  see("nameplate1", { name = "Erin", guid = "Player-1-000000C9" })
+  hover("nameplate1")
+  units.nameplate1.connected = false
+  advance(1.5)
+  ok(printed():find("not asked, they went offline: Erin"), "says who was skipped")
 ''',
 "on Classic Era the tooltip script is used, and a line is added once": r'''
   TooltipDataProcessor = nil

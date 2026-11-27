@@ -4,7 +4,7 @@
 -- Reading these tables and adding keys to them is fine; replacing them is not.
 local owned = {}
 for _, name in ipairs({ "StaticPopupDialogs", "UISpecialFrames", "SlashCmdList", "UIParent", "GameTooltip",
-                         "ChatFrame1", "ChatFrame2", "Minimap" }) do
+                         "ChatFrame1", "ChatFrame2", "Minimap", "ChatFrameUtil" }) do
   owned[name] = rawget(_G, name)
   rawset(_G, name, nil)
 end
