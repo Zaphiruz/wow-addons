@@ -443,8 +443,8 @@
       "13443": {
        "at": "2026-11-26",
        "build": "1.60.1",
-       "n": 7,
-       "spawns": 4
+       "n": 19,
+       "spawns": 11
       }
      }
     },
@@ -1015,7 +1015,14 @@
       }
      },
      "name": "River Crocolisk",
-     "spells": {}
+     "spells": {
+      "3604": {
+       "at": "2026-11-26",
+       "build": "1.60.1",
+       "n": 2,
+       "spawns": 1
+      }
+     }
     },
     "1151": {
      "levels": {
@@ -1321,9 +1328,12 @@
     "11833": {
      "levels": {
       "20": {
-       "at": 1795708386,
+       "at": 1795718912,
        "v": {
+        "armor": 861,
         "class": "WARRIOR",
+        "dmax": 39.02,
+        "dmin": 29.39,
         "n": "Rahauro",
         "run": 8,
         "spd": 2,
@@ -3628,9 +3638,12 @@
     "215643": {
      "levels": {
       "35": {
-       "at": 1795394151,
+       "at": 1795733160,
        "v": {
+        "armor": 1387,
         "class": "WARRIOR",
+        "dmax": 64.44,
+        "dmin": 48.58,
         "n": "Tokal",
         "run": 8,
         "spd": 2,
@@ -4011,9 +4024,12 @@
     "2498": {
      "levels": {
       "34": {
-       "at": 1795394367,
+       "at": 1795733162,
        "v": {
+        "armor": 1353,
         "class": "WARRIOR",
+        "dmax": 62.74,
+        "dmin": 47.3,
         "n": "Crank Fizzlebub",
         "run": 8,
         "spd": 2,
@@ -5178,10 +5194,23 @@
     "254560": {
      "levels": {
       "39": {
-       "at": 1795661693,
+       "at": 1795732267,
        "v": {
         "class": "MAGE",
         "n": "Twilight Shadowmancer",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Riverglades"
+       }
+      },
+      "40": {
+       "at": 1795732411,
+       "v": {
+        "class": "MAGE",
+        "n": "Twilight Shadowmancer",
+        "run": 8,
+        "spd": 2,
         "ty": "Humanoid",
         "z": "Riverglades"
        }
@@ -5331,9 +5360,12 @@
     "255993": {
      "levels": {
       "55": {
-       "at": 1795705487,
+       "at": 1795732704,
        "v": {
+        "armor": 3292,
         "class": "WARRIOR",
+        "dmax": 436.44,
+        "dmin": 329.12,
         "n": "Grakna",
         "rk": "ELITE",
         "run": 8,
@@ -5403,9 +5435,12 @@
     "256418": {
      "levels": {
       "42": {
-       "at": 1795705489,
+       "at": 1795732700,
        "v": {
+        "armor": 2262,
         "class": "WARRIOR",
+        "dmax": 99.29,
+        "dmin": 74.88,
         "n": "Krom'rosh",
         "run": 8,
         "spd": 2,
@@ -5474,19 +5509,23 @@
     "256798": {
      "levels": {
       "37": {
-       "at": 1795661694,
+       "at": 1795732468,
        "v": {
         "class": "PALADIN",
         "n": "Twilight Neophyte",
+        "run": 8,
+        "spd": 2,
         "ty": "Humanoid",
         "z": "Riverglades"
        }
       },
       "38": {
-       "at": 1795661692,
+       "at": 1795732395,
        "v": {
         "class": "PALADIN",
         "n": "Twilight Neophyte",
+        "run": 8,
+        "spd": 2,
         "ty": "Humanoid",
         "z": "Riverglades"
        }
@@ -5534,6 +5573,17 @@
      "levels": {
       "39": {
        "at": 1795661614,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Twilight Raider",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Riverglades"
+       }
+      },
+      "40": {
+       "at": 1795732519,
        "v": {
         "class": "WARRIOR",
         "n": "Twilight Raider",
@@ -6622,6 +6672,17 @@
         "ty": "Non-combat Pet",
         "z": "Orgrimmar"
        }
+      },
+      "39": {
+       "at": 1795720139,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Prairie Wolf Pup",
+        "run": 8,
+        "spd": 2,
+        "ty": "Non-combat Pet",
+        "z": "Tirisfal Glades"
+       }
       }
      },
      "name": "Prairie Wolf Pup",
@@ -7228,6 +7289,17 @@
     },
     "275487": {
      "levels": {
+      "12": {
+       "at": 1795718878,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Unknown",
+        "run": 8,
+        "spd": 2,
+        "ty": "Non-combat Pet",
+        "z": "Thunder Bluff"
+       }
+      },
       "29": {
        "at": 1795439760,
        "v": {
@@ -7397,9 +7469,12 @@
     "2832": {
      "levels": {
       "38": {
-       "at": 1795394147,
+       "at": 1795733160,
        "v": {
+        "armor": 1724,
         "class": "WARRIOR",
+        "dmax": 69.85,
+        "dmin": 52.66,
         "n": "Nixxrax Fillamug",
         "run": 8,
         "spd": 2,
@@ -7608,9 +7683,12 @@
     "2995": {
      "levels": {
       "55": {
-       "at": 1795708506,
+       "at": 1795719018,
        "v": {
+        "armor": 3292,
         "class": "WARRIOR",
+        "dmax": 436.44,
+        "dmin": 329.12,
         "n": "Tal",
         "rk": "ELITE",
         "run": 8,
@@ -9451,6 +9529,16 @@
         "spd": 2,
         "ty": "Totem",
         "z": "Blackfathom Deeps"
+       }
+      },
+      "30": {
+       "at": 1795746397,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Mana Spring Totem",
+        "run": 7,
+        "spd": 2,
+        "ty": "Totem"
        }
       },
       "34": {
@@ -11388,7 +11476,14 @@
       }
      },
      "name": "Murkgill Forager",
-     "spells": {}
+     "spells": {
+      "13443": {
+       "at": "2026-11-26",
+       "build": "1.60.1",
+       "n": 2,
+       "spawns": 1
+      }
+     }
     },
     "4458": {
      "levels": {
@@ -13352,20 +13447,20 @@
       "11972": {
        "at": "2026-11-26",
        "build": "1.60.1",
-       "n": 11,
-       "spawns": 8
+       "n": 24,
+       "spawns": 14
       },
       "6713": {
        "at": "2026-11-26",
        "build": "1.60.1",
-       "n": 9,
-       "spawns": 5
+       "n": 21,
+       "spawns": 9
       },
       "8599": {
        "at": "2026-11-26",
        "build": "1.60.1",
-       "n": 33,
-       "spawns": 17
+       "n": 50,
+       "spawns": 26
       }
      }
     },
@@ -13522,6 +13617,16 @@
         "z": "Blackfathom Deeps"
        }
       },
+      "30": {
+       "at": 1795743799,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Stoneskin Totem III",
+        "run": 7,
+        "spd": 2,
+        "ty": "Totem"
+       }
+      },
       "34": {
        "at": 1795702358,
        "v": {
@@ -13539,6 +13644,16 @@
     },
     "5921": {
      "levels": {
+      "30": {
+       "at": 1795746400,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Strength of Earth Totem II",
+        "run": 7,
+        "spd": 2,
+        "ty": "Totem"
+       }
+      },
       "31": {
        "at": 1795702042,
        "v": {
@@ -13991,9 +14106,12 @@
     "6807": {
      "levels": {
       "46": {
-       "at": 1795394148,
+       "at": 1795733164,
        "v": {
+        "armor": 2798,
         "class": "WARRIOR",
+        "dmax": 51.19,
+        "dmin": 38.6,
         "n": "Innkeeper Skindle",
         "run": 8,
         "spd": 1,
@@ -14187,8 +14305,8 @@
       "6607": {
        "at": "2026-11-26",
        "build": "1.60.1",
-       "n": 28,
-       "spawns": 13
+       "n": 34,
+       "spawns": 16
       }
      }
     },
@@ -14309,14 +14427,14 @@
       "10277": {
        "at": "2026-11-26",
        "build": "1.60.1",
-       "n": 216,
-       "spawns": 14
+       "n": 242,
+       "spawns": 18
       },
       "8599": {
        "at": "2026-11-26",
        "build": "1.60.1",
-       "n": 42,
-       "spawns": 21
+       "n": 52,
+       "spawns": 26
       }
      }
     },
@@ -14350,20 +14468,20 @@
       "11969": {
        "at": "2026-11-26",
        "build": "1.60.1",
-       "n": 16,
-       "spawns": 16
+       "n": 23,
+       "spawns": 23
       },
       "8599": {
        "at": "2026-11-26",
        "build": "1.60.1",
-       "n": 43,
-       "spawns": 22
+       "n": 53,
+       "spawns": 27
       },
       "8788": {
        "at": "2026-11-26",
        "build": "1.60.1",
-       "n": 58,
-       "spawns": 25
+       "n": 99,
+       "spawns": 40
       }
      }
     },
@@ -14438,8 +14556,8 @@
       "6660": {
        "at": "2026-11-26",
        "build": "1.60.1",
-       "n": 19,
-       "spawns": 2
+       "n": 29,
+       "spawns": 3
       },
       "8599": {
        "at": "2026-11-26",
@@ -14532,14 +14650,14 @@
       "744": {
        "at": "2026-11-26",
        "build": "1.60.1",
-       "n": 4,
-       "spawns": 2
+       "n": 91,
+       "spawns": 42
       },
       "8599": {
        "at": "2026-11-26",
        "build": "1.60.1",
-       "n": 5,
-       "spawns": 3
+       "n": 168,
+       "spawns": 85
       }
      }
     },
@@ -16039,10 +16157,10 @@
      "name": "Defias Enchanter",
      "spells": {
       "12544": {
-       "at": "2026-11-25",
+       "at": "2026-11-26",
        "build": "1.60.1",
-       "n": 2,
-       "spawns": 2
+       "n": 4,
+       "spawns": 4
       }
      }
     },
