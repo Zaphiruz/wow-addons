@@ -104,6 +104,24 @@
      "name": "Lady Sylvanas Windrunner",
      "spells": {}
     },
+    "10182": {
+     "levels": {
+      "-1": {
+       "at": 1795750326,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Rexxar",
+        "rk": "ELITE",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Desolace"
+       }
+      }
+     },
+     "name": "Rexxar",
+     "spells": {}
+    },
     "10377": {
      "levels": {
       "28": {
@@ -689,6 +707,23 @@
      "name": "Fallen Hero",
      "spells": {}
     },
+    "11074": {
+     "levels": {
+      "46": {
+       "at": 1795747836,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Hgarth",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Stonetalon Mountains"
+       }
+      }
+     },
+     "name": "Hgarth",
+     "spells": {}
+    },
     "1108": {
      "levels": {
       "32": {
@@ -846,6 +881,26 @@
       }
      },
      "name": "Krathok Moltenfist",
+     "spells": {}
+    },
+    "11259": {
+     "levels": {
+      "40": {
+       "at": 1795751081,
+       "v": {
+        "armor": 1980,
+        "class": "WARRIOR",
+        "dmax": 74.32,
+        "dmin": 56.02,
+        "n": "Nataka Longhorn",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Desolace"
+       }
+      }
+     },
+     "name": "Nataka Longhorn",
      "spells": {}
     },
     "11317": {
@@ -1323,6 +1378,23 @@
       }
      }
     },
+    "11576": {
+     "levels": {
+      "34": {
+       "at": 1795749946,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Whirlwind Ripper",
+        "run": 8,
+        "spd": 1.4,
+        "ty": "Elemental",
+        "z": "Desolace"
+       }
+      }
+     },
+     "name": "Whirlwind Ripper",
+     "spells": {}
+    },
     "11578": {
      "levels": {
       "32": {
@@ -1443,6 +1515,23 @@
       }
      },
      "name": "Rahauro",
+     "spells": {}
+    },
+    "11864": {
+     "levels": {
+      "25": {
+       "at": 1795747817,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Tammra Windfield",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Stonetalon Mountains"
+       }
+      }
+     },
+     "name": "Tammra Windfield",
      "spells": {}
     },
     "11868": {
@@ -1644,6 +1733,23 @@
       }
      },
      "name": "Wulan",
+     "spells": {}
+    },
+    "12043": {
+     "levels": {
+      "32": {
+       "at": 1795747975,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Kulwia",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Stonetalon Mountains"
+       }
+      }
+     },
+     "name": "Kulwia",
      "spells": {}
     },
     "12045": {
@@ -1949,6 +2055,31 @@
      },
      "name": "Doctor Gregory Victor",
      "spells": {}
+    },
+    "12922": {
+     "levels": {
+      "39": {
+       "at": 1795750266,
+       "v": {
+        "class": "MAGE",
+        "fam": "Imp",
+        "n": "Imp Minion",
+        "run": 8,
+        "spd": 2,
+        "ty": "Demon",
+        "z": "Desolace"
+       }
+      }
+     },
+     "name": "Imp Minion",
+     "spells": {
+      "20801": {
+       "at": "2026-11-26",
+       "build": "1.60.1",
+       "n": 54,
+       "spawns": 3
+      }
+     }
     },
     "12961": {
      "levels": {
@@ -4187,6 +4318,24 @@
      "name": "Tarren Mill Deathguard",
      "spells": {}
     },
+    "2406": {
+     "levels": {
+      "32": {
+       "at": 1795747385,
+       "v": {
+        "class": "WARRIOR",
+        "fam": "Cat",
+        "n": "Mountain Lion",
+        "run": 10,
+        "spd": 1.4,
+        "ty": "Beast",
+        "z": "Alterac Mountains"
+       }
+      }
+     },
+     "name": "Mountain Lion",
+     "spells": {}
+    },
     "2407": {
      "levels": {
       "33": {
@@ -5452,6 +5601,24 @@
       }
      }
     },
+    "253066": {
+     "levels": {
+      "45": {
+       "at": 1795749986,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Umarak",
+        "rk": "ELITE",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Desolace"
+       }
+      }
+     },
+     "name": "Umarak",
+     "spells": {}
+    },
     "253372": {
      "levels": {
       "10": {
@@ -6126,6 +6293,23 @@
       }
      },
      "name": "Tamelyn Aldridge",
+     "spells": {}
+    },
+    "256398": {
+     "levels": {
+      "60": {
+       "at": 1795747668,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Off-Duty Pack Kodo",
+        "run": 8,
+        "spd": 2,
+        "ty": "Beast",
+        "z": "The Barrens"
+       }
+      }
+     },
+     "name": "Off-Duty Pack Kodo",
      "spells": {}
     },
     "256418": {
@@ -7757,6 +7941,91 @@
      "name": "Frog Familiar",
      "spells": {}
     },
+    "269138": {
+     "levels": {
+      "1": {
+       "at": 1795747801,
+       "v": {
+        "class": "WARRIOR",
+        "n": "White Riding Kodo",
+        "run": 9.7,
+        "spd": 2,
+        "ty": "Beast",
+        "z": "Stonetalon Mountains"
+       }
+      }
+     },
+     "name": "White Riding Kodo",
+     "spells": {}
+    },
+    "269139": {
+     "levels": {
+      "1": {
+       "at": 1795747801,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Grey Riding Kodo",
+        "run": 9.7,
+        "spd": 2,
+        "ty": "Beast",
+        "z": "Stonetalon Mountains"
+       }
+      }
+     },
+     "name": "Grey Riding Kodo",
+     "spells": {}
+    },
+    "269140": {
+     "levels": {
+      "1": {
+       "at": 1795747816,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Brown Riding Kodo",
+        "run": 9.7,
+        "spd": 2,
+        "ty": "Beast",
+        "z": "Stonetalon Mountains"
+       }
+      }
+     },
+     "name": "Brown Riding Kodo",
+     "spells": {}
+    },
+    "269141": {
+     "levels": {
+      "1": {
+       "at": 1795747816,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Lavender Riding Kodo",
+        "run": 9.7,
+        "spd": 2,
+        "ty": "Beast",
+        "z": "Stonetalon Mountains"
+       }
+      }
+     },
+     "name": "Lavender Riding Kodo",
+     "spells": {}
+    },
+    "269152": {
+     "levels": {
+      "30": {
+       "at": 1795747905,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Tylana Clawhoof",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Stonetalon Mountains"
+       }
+      }
+     },
+     "name": "Tylana Clawhoof",
+     "spells": {}
+    },
     "269175": {
      "levels": {
       "37": {
@@ -8420,7 +8689,7 @@
         "class": "WARRIOR",
         "n": "Enraged Orgrimmar Grunt",
         "run": 8,
-        "spd": 1.54,
+        "spd": 2,
         "ty": "Humanoid",
         "z": "Orgrimmar"
        }
@@ -9008,6 +9277,54 @@
       }
      },
      "name": "Elder Plainstrider",
+     "spells": {}
+    },
+    "2958": {
+     "levels": {},
+     "name": "Prairie Wolf",
+     "spells": {
+      "5781": {
+       "at": "2026-11-26",
+       "build": "1.60.1",
+       "n": 1,
+       "spawns": 1
+      }
+     }
+    },
+    "2959": {
+     "levels": {
+      "7": {
+       "at": 1795749573,
+       "v": {
+        "class": "WARRIOR",
+        "fam": "Wolf",
+        "n": "Prairie Stalker",
+        "run": 8,
+        "spd": 1.5,
+        "ty": "Beast",
+        "z": "Mulgore"
+       }
+      }
+     },
+     "name": "Prairie Stalker",
+     "spells": {}
+    },
+    "2960": {
+     "levels": {
+      "10": {
+       "at": 1795749502,
+       "v": {
+        "class": "WARRIOR",
+        "fam": "Wolf",
+        "n": "Prairie Wolf Alpha",
+        "run": 8,
+        "spd": 1.4,
+        "ty": "Beast",
+        "z": "Mulgore"
+       }
+      }
+     },
+     "name": "Prairie Wolf Alpha",
      "spells": {}
     },
     "2964": {
@@ -10044,8 +10361,8 @@
        "v": {
         "armor": 3292,
         "class": "WARRIOR",
-        "dmax": 249.39,
-        "dmin": 188.07,
+        "dmax": 266.82,
+        "dmin": 205.5,
         "n": "Orgrimmar Grunt",
         "run": 8,
         "spd": 2,
@@ -10380,6 +10697,23 @@
       }
      },
      "name": "Shoma",
+     "spells": {}
+    },
+    "3363": {
+     "levels": {
+      "35": {
+       "at": 1795748831,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Magar",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Orgrimmar"
+       }
+      }
+     },
+     "name": "Magar",
      "spells": {}
     },
     "3364": {
@@ -10727,6 +11061,23 @@
       }
      },
      "name": "Wandering Barrens Giraffe",
+     "spells": {}
+    },
+    "3464": {
+     "levels": {
+      "25": {
+       "at": 1795747656,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Gazrog",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "The Barrens"
+       }
+      }
+     },
+     "name": "Gazrog",
      "spells": {}
     },
     "3466": {
@@ -12121,6 +12472,23 @@
      "name": "Silithid Swarm",
      "spells": {}
     },
+    "4198": {
+     "levels": {
+      "30": {
+       "at": 1795747913,
+       "v": {
+        "class": "MAGE",
+        "n": "Braelyn Firehand",
+        "run": 8,
+        "spd": 1.5,
+        "ty": "Humanoid",
+        "z": "Stonetalon Mountains"
+       }
+      }
+     },
+     "name": "Braelyn Firehand",
+     "spells": {}
+    },
     "4248": {
      "levels": {
       "26": {
@@ -12544,6 +12912,27 @@
       }
      },
      "name": "Holgar Stormaxe",
+     "spells": {}
+    },
+    "4312": {
+     "levels": {
+      "55": {
+       "at": 1795747977,
+       "v": {
+        "armor": 3292,
+        "class": "WARRIOR",
+        "dmax": 436.44,
+        "dmin": 329.12,
+        "n": "Tharm",
+        "rk": "ELITE",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Stonetalon Mountains"
+       }
+      }
+     },
+     "name": "Tharm",
      "spells": {}
     },
     "4317": {
@@ -13121,6 +13510,26 @@
      "name": "Genavie Callow",
      "spells": {}
     },
+    "4498": {
+     "levels": {
+      "35": {
+       "at": 1795751192,
+       "v": {
+        "armor": 1387,
+        "class": "WARRIOR",
+        "dmax": 64.44,
+        "dmin": 48.58,
+        "n": "Maurin Bonesplitter",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Desolace"
+       }
+      }
+     },
+     "name": "Maurin Bonesplitter",
+     "spells": {}
+    },
     "4500": {
      "levels": {
       "45": {
@@ -13363,6 +13772,23 @@
      "name": "Gelkis Scout",
      "spells": {}
     },
+    "4648": {
+     "levels": {
+      "33": {
+       "at": 1795749957,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Gelkis Stamper",
+        "run": 10,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Desolace"
+       }
+      }
+     },
+     "name": "Gelkis Stamper",
+     "spells": {}
+    },
     "4651": {
      "levels": {
       "35": {
@@ -13395,6 +13821,157 @@
       }
      },
      "name": "Gelkis Rumbler",
+     "spells": {}
+    },
+    "4668": {
+     "levels": {
+      "39": {
+       "at": 1795750277,
+       "v": {
+        "class": "MAGE",
+        "n": "Burning Blade Summoner",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Desolace"
+       }
+      }
+     },
+     "name": "Burning Blade Summoner",
+     "spells": {
+      "11939": {
+       "at": "2026-11-26",
+       "build": "1.60.1",
+       "n": 1,
+       "spawns": 1
+      },
+      "20825": {
+       "at": "2026-11-26",
+       "build": "1.60.1",
+       "n": 43,
+       "spawns": 3
+      }
+     }
+    },
+    "4676": {
+     "levels": {
+      "36": {
+       "at": 1795750431,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Lesser Infernal",
+        "run": 8,
+        "spd": 2.2,
+        "ty": "Demon",
+        "z": "Desolace"
+       }
+      },
+      "37": {
+       "at": 1795750894,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Lesser Infernal",
+        "run": 8,
+        "spd": 2.2,
+        "ty": "Demon",
+        "z": "Desolace"
+       }
+      }
+     },
+     "name": "Lesser Infernal",
+     "spells": {
+      "2601": {
+       "at": "2026-11-26",
+       "build": "1.60.1",
+       "n": 3,
+       "spawns": 1
+      }
+     }
+    },
+    "4677": {
+     "levels": {
+      "37": {
+       "at": 1795750062,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Doomwarder",
+        "run": 8,
+        "spd": 2,
+        "ty": "Demon",
+        "z": "Desolace"
+       }
+      }
+     },
+     "name": "Doomwarder",
+     "spells": {}
+    },
+    "4678": {
+     "levels": {
+      "38": {
+       "at": 1795750383,
+       "v": {
+        "class": "PALADIN",
+        "n": "Mana Eater",
+        "run": 8,
+        "spd": 2,
+        "ty": "Demon",
+        "z": "Desolace"
+       }
+      }
+     },
+     "name": "Mana Eater",
+     "spells": {
+      "8131": {
+       "at": "2026-11-26",
+       "build": "1.60.1",
+       "n": 4,
+       "spawns": 1
+      }
+     }
+    },
+    "4679": {
+     "levels": {
+      "37": {
+       "at": 1795750047,
+       "v": {
+        "class": "PALADIN",
+        "n": "Nether Maiden",
+        "run": 8,
+        "spd": 2,
+        "ty": "Demon",
+        "z": "Desolace"
+       }
+      },
+      "38": {
+       "at": 1795750394,
+       "v": {
+        "class": "PALADIN",
+        "n": "Nether Maiden",
+        "run": 8,
+        "spd": 2,
+        "ty": "Demon",
+        "z": "Desolace"
+       }
+      }
+     },
+     "name": "Nether Maiden",
+     "spells": {}
+    },
+    "4680": {
+     "levels": {
+      "39": {
+       "at": 1795750139,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Doomwarder Captain",
+        "run": 8,
+        "spd": 2,
+        "ty": "Demon",
+        "z": "Desolace"
+       }
+      }
+     },
+     "name": "Doomwarder Captain",
      "spells": {}
     },
     "4681": {
@@ -13432,6 +14009,23 @@
       }
      }
     },
+    "4682": {
+     "levels": {
+      "38": {
+       "at": 1795750284,
+       "v": {
+        "class": "PALADIN",
+        "n": "Nether Sister",
+        "run": 8,
+        "spd": 2,
+        "ty": "Demon",
+        "z": "Desolace"
+       }
+      }
+     },
+     "name": "Nether Sister",
+     "spells": {}
+    },
     "4688": {
      "levels": {
       "33": {
@@ -13450,6 +14044,43 @@
      "name": "Bonepaw Hyena",
      "spells": {}
     },
+    "4692": {
+     "levels": {
+      "32": {
+       "at": 1795750425,
+       "v": {
+        "class": "WARRIOR",
+        "fam": "Carrion Bird",
+        "n": "Dread Swoop",
+        "run": 8,
+        "spd": 2,
+        "ty": "Beast",
+        "z": "Desolace"
+       }
+      },
+      "33": {
+       "at": 1795749995,
+       "v": {
+        "class": "WARRIOR",
+        "fam": "Carrion Bird",
+        "n": "Dread Swoop",
+        "run": 8,
+        "spd": 2,
+        "ty": "Beast",
+        "z": "Desolace"
+       }
+      }
+     },
+     "name": "Dread Swoop",
+     "spells": {
+      "5708": {
+       "at": "2026-11-26",
+       "build": "1.60.1",
+       "n": 2,
+       "spawns": 1
+      }
+     }
+    },
     "4694": {
      "levels": {
       "39": {
@@ -13466,6 +14097,72 @@
       }
      },
      "name": "Dread Ripper",
+     "spells": {}
+    },
+    "4695": {
+     "levels": {
+      "35": {
+       "at": 1795750991,
+       "v": {
+        "class": "WARRIOR",
+        "fam": "Carrion Bird",
+        "n": "Carrion Horror",
+        "run": 8,
+        "spd": 2,
+        "ty": "Beast",
+        "z": "Desolace"
+       }
+      },
+      "37": {
+       "at": 1795750992,
+       "v": {
+        "class": "WARRIOR",
+        "fam": "Carrion Bird",
+        "n": "Carrion Horror",
+        "run": 8,
+        "spd": 2,
+        "ty": "Beast",
+        "z": "Desolace"
+       }
+      }
+     },
+     "name": "Carrion Horror",
+     "spells": {}
+    },
+    "4696": {
+     "levels": {
+      "31": {
+       "at": 1795750323,
+       "v": {
+        "class": "WARRIOR",
+        "fam": "Scorpid",
+        "n": "Scorpashi Snapper",
+        "run": 8,
+        "spd": 2,
+        "ty": "Beast",
+        "z": "Desolace"
+       }
+      }
+     },
+     "name": "Scorpashi Snapper",
+     "spells": {}
+    },
+    "4697": {
+     "levels": {
+      "35": {
+       "at": 1795749993,
+       "v": {
+        "class": "WARRIOR",
+        "fam": "Scorpid",
+        "n": "Scorpashi Lasher",
+        "run": 8,
+        "spd": 2,
+        "ty": "Beast",
+        "z": "Desolace"
+       }
+      }
+     },
+     "name": "Scorpashi Lasher",
      "spells": {}
     },
     "4699": {
@@ -13496,6 +14193,23 @@
       }
      },
      "name": "Scorpashi Venomlash",
+     "spells": {}
+    },
+    "4702": {
+     "levels": {
+      "36": {
+       "at": 1795750991,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Ancient Kodo",
+        "run": 8,
+        "spd": 3,
+        "ty": "Beast",
+        "z": "Desolace"
+       }
+      }
+     },
+     "name": "Ancient Kodo",
      "spells": {}
     },
     "4708": {
@@ -14719,6 +15433,23 @@
      "name": "Craven Drok",
      "spells": {}
     },
+    "5641": {
+     "levels": {
+      "40": {
+       "at": 1795751099,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Takata Steelblade",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Desolace"
+       }
+      }
+     },
+     "name": "Takata Steelblade",
+     "spells": {}
+    },
     "5658": {
      "levels": {
       "20": {
@@ -14878,6 +15609,31 @@
      },
      "name": "Leo Sarn",
      "spells": {}
+    },
+    "5760": {
+     "levels": {
+      "40": {
+       "at": 1795750491,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Lord Azrethoc",
+        "rk": "ELITE",
+        "run": 8,
+        "spd": 2,
+        "ty": "Demon",
+        "z": "Desolace"
+       }
+      }
+     },
+     "name": "Lord Azrethoc",
+     "spells": {
+      "13737": {
+       "at": "2026-11-26",
+       "build": "1.60.1",
+       "n": 24,
+       "spawns": 1
+      }
+     }
     },
     "5774": {
      "levels": {
@@ -15489,6 +16245,60 @@
      },
      "name": "School of Fish",
      "spells": {}
+    },
+    "6176": {
+     "levels": {
+      "35": {
+       "at": 1795747319,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Bath'rah the Windwatcher",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Alterac Mountains"
+       }
+      }
+     },
+     "name": "Bath'rah the Windwatcher",
+     "spells": {}
+    },
+    "6239": {
+     "levels": {
+      "40": {
+       "at": 1795747410,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Cyclonian",
+        "rk": "ELITE",
+        "run": 8,
+        "spd": 2,
+        "ty": "Elemental",
+        "z": "Alterac Mountains"
+       }
+      }
+     },
+     "name": "Cyclonian",
+     "spells": {
+      "17207": {
+       "at": "2026-11-26",
+       "build": "1.60.1",
+       "n": 6,
+       "spawns": 1
+      },
+      "18670": {
+       "at": "2026-11-26",
+       "build": "1.60.1",
+       "n": 2,
+       "spawns": 1
+      },
+      "6982": {
+       "at": "2026-11-26",
+       "build": "1.60.1",
+       "n": 12,
+       "spawns": 1
+      }
+     }
     },
     "6243": {
      "name": "Gelihast",
@@ -16636,6 +17446,40 @@
      "name": "Cornish Rex",
      "spells": {}
     },
+    "7386": {
+     "levels": {
+      "1": {
+       "at": 1795748388,
+       "v": {
+        "class": "WARRIOR",
+        "n": "White Kitten",
+        "run": 8,
+        "spd": 2,
+        "ty": "Non-combat Pet",
+        "z": "Orgrimmar"
+       }
+      }
+     },
+     "name": "White Kitten",
+     "spells": {}
+    },
+    "7387": {
+     "levels": {
+      "1": {
+       "at": 1795754542,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Green Wing Macaw",
+        "run": 8,
+        "spd": 2,
+        "ty": "Non-combat Pet",
+        "z": "Orgrimmar"
+       }
+      }
+     },
+     "name": "Green Wing Macaw",
+     "spells": {}
+    },
     "7389": {
      "levels": {
       "57": {
@@ -17053,6 +17897,23 @@
       }
      },
      "name": "Krazek",
+     "spells": {}
+    },
+    "7730": {
+     "levels": {
+      "40": {
+       "at": 1795747945,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Stonetalon Grunt",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Stonetalon Mountains"
+       }
+      }
+     },
+     "name": "Stonetalon Grunt",
      "spells": {}
     },
     "7733": {
@@ -17538,6 +18399,40 @@
      "name": "Camp Mojache Brave",
      "spells": {}
     },
+    "8152": {
+     "levels": {
+      "40": {
+       "at": 1795751114,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Harnor",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Desolace"
+       }
+      }
+     },
+     "name": "Harnor",
+     "spells": {}
+    },
+    "8154": {
+     "levels": {
+      "50": {
+       "at": 1795751192,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Ghost Walker Brave",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Desolace"
+       }
+      }
+     },
+     "name": "Ghost Walker Brave",
+     "spells": {}
+    },
     "8158": {
      "levels": {
       "49": {
@@ -17774,6 +18669,23 @@
       }
      },
      "name": "Buzzek Bracketswing",
+     "spells": {}
+    },
+    "8878": {
+     "levels": {
+      "40": {
+       "at": 1795751079,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Muuran",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Desolace"
+       }
+      }
+     },
+     "name": "Muuran",
      "spells": {}
     },
     "8883": {
@@ -18045,6 +18957,30 @@
      "name": "Gadgetzan Bruiser",
      "spells": {}
     },
+    "9523": {
+     "levels": {},
+     "name": "Kolkar Stormseer",
+     "spells": {
+      "9532": {
+       "at": "2026-11-26",
+       "build": "1.60.1",
+       "n": 1,
+       "spawns": 1
+      }
+     }
+    },
+    "9524": {
+     "levels": {},
+     "name": "Kolkar Invader",
+     "spells": {
+      "8014": {
+       "at": "2026-11-26",
+       "build": "1.60.1",
+       "n": 1,
+       "spawns": 1
+      }
+     }
+    },
     "9525": {
      "levels": {
       "45": {
@@ -18145,6 +19081,23 @@
       }
      },
      "name": "Zapetta",
+     "spells": {}
+    },
+    "9636": {
+     "levels": {
+      "41": {
+       "at": 1795751134,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Kireena",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Desolace"
+       }
+      }
+     },
+     "name": "Kireena",
      "spells": {}
     },
     "9662": {
@@ -18435,6 +19388,7 @@
     "13443": "Rend",
     "13444": "Sunder Armor",
     "13728": "Earth Shock",
+    "13737": "Mortal Strike",
     "14102": "Head Smash",
     "14868": "Curse of Agony",
     "14873": "Sinister Strike",
@@ -18444,15 +19398,19 @@
     "15531": "Frost Nova",
     "16583": "Shadow Shock",
     "172": "Corruption",
+    "17207": "Whirlwind",
     "18070": "Earthborer Acid",
     "18072": "Uppercut",
     "18266": "Curse of Agony",
     "18267": "Curse of Weakness",
     "184": "Fire Shield II",
+    "18670": "Knock Away",
     "19030": "Bear Form",
     "20791": "Shadow Bolt",
     "20798": "Demon Skin",
     "20800": "Immolate",
+    "20801": "Firebolt",
+    "20825": "Shadow Bolt",
     "21335": "Thorns",
     "22540": "Cleave",
     "22766": "Sneak",
@@ -18487,6 +19445,7 @@
     "5588": "Hammer of Justice",
     "5605": "Healing Ward",
     "5708": "Swoop",
+    "5781": "Threatening Growl",
     "6016": "Pierce Armor",
     "6063": "Heal",
     "6136": "Chilled",
@@ -18503,6 +19462,7 @@
     "6713": "Disarm",
     "676": "Disarm",
     "6958": "Blood Leech",
+    "6982": "Gust of Wind",
     "7": "Suicide",
     "7054": "Forsaken Skills",
     "7057": "Haunting Spirits",
@@ -18535,9 +19495,11 @@
     "7741": "Summoned Demon",
     "7750": "Consuming Rage",
     "7803": "Thundershock",
+    "8014": "Tetanus",
     "8046": "Earth Shock",
     "8052": "Flame Shock",
     "8056": "Frost Shock",
+    "8131": "Mana Burn",
     "8139": "Fevered Fatigue",
     "8140": "Befuddlement",
     "8242": "Shield Slam",
