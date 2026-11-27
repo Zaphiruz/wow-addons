@@ -2009,7 +2009,7 @@ GanderData = {
         [14] = { at = 1795575159, v = { class = "PALADIN", n = "Kolkar Stormer", run = 8, spd = 2, ty = "Humanoid", z = "The Barrens" } },
       },
       [3296] = {
-        [55] = { at = 1795701689, v = { armor = 3292, class = "WARRIOR", dmax = 249.39, dmin = 188.07, n = "Orgrimmar Grunt", run = 8, spd = 2, ty = "Humanoid", z = "Orgrimmar" } },
+        [55] = { at = 1795754469, v = { armor = 3292, class = "WARRIOR", dmax = 249.39, dmin = 188.07, n = "Orgrimmar Grunt", run = 8, spd = 2, ty = "Humanoid", z = "Orgrimmar" } },
       },
       [3300] = {
         [1] = { at = 1795709947, v = { class = "WARRIOR", n = "Adder", run = 6, spd = 2, ty = "Critter", z = "Durotar" } },
@@ -2439,6 +2439,10 @@ GanderData = {
       },
       [4661] = {
         [30] = { at = 1795649982, v = { class = "WARRIOR", n = "Gelkis Rumbler", run = 10, spd = 2, ty = "Elemental", z = "Desolace" } },
+      },
+      [4681] = {
+        [38] = { at = 1795750867, v = { class = "PALADIN", n = "Mage Hunter", run = 8, spd = 2, ty = "Demon", z = "Desolace" } },
+        [39] = { at = 1795750925, v = { class = "PALADIN", n = "Mage Hunter", run = 8, spd = 2, ty = "Demon", z = "Desolace" } },
       },
       [4688] = {
         [33] = { at = 1795649451, v = { class = "WARRIOR", fam = "Hyena", n = "Bonepaw Hyena", run = 8, spd = 2, ty = "Beast", z = "Desolace" } },
@@ -2927,6 +2931,7 @@ GanderData = {
         [50] = { at = 1795614163, v = { class = "WARRIOR", n = "Auctioneer Grimful", run = 8, spd = 2, ty = "Humanoid", z = "Orgrimmar" } },
       },
       [9936] = {
+        [34] = { at = 1795751881, v = { class = "WARRIOR", n = "Corrupted Kitten", run = 8, spd = 2, ty = "Non-combat Pet", z = "Orgrimmar" } },
         [41] = { at = 1795661669, v = { class = "WARRIOR", n = "Corrupted Kitten", ty = "Non-combat Pet", z = "Riverglades" } },
       },
       [9983] = {
@@ -3036,9 +3041,11 @@ GanderData = {
         [34] = { at = 1795649957, v = { class = "PALADIN", n = "Drysnap Crawler", run = 8, spd = 2, ty = "Humanoid", z = "Desolace" } },
       },
       [11563] = {
+        [34] = { at = 1795749721, v = { class = "WARRIOR", n = "Drysnap Pincer", run = 8, spd = 2, ty = "Humanoid", z = "Desolace" } },
         [35] = { at = 1795649955, v = { class = "WARRIOR", n = "Drysnap Pincer", run = 8, spd = 2, ty = "Humanoid", z = "Desolace" } },
       },
       [11578] = {
+        [32] = { at = 1795749903, v = { class = "WARRIOR", n = "Whirlwind Shredder", run = 8, spd = 1.4, ty = "Elemental", z = "Desolace" } },
         [33] = { at = 1795610674, v = { class = "WARRIOR", n = "Whirlwind Shredder", run = 8, spd = 1.4, ty = "Elemental", z = "Desolace" } },
       },
       [11624] = {
@@ -3578,6 +3585,7 @@ GanderData = {
         [2] = { at = 1795706449, v = { class = "WARRIOR", n = "Ivory Galestrider", run = 9.7, spd = 2, ty = "Beast", z = "Zephras Isle" } },
       },
       [259842] = {
+        [1] = { at = 1795751673, v = { class = "WARRIOR", n = "Musical Gustjumper", run = 8, spd = 2, ty = "Non-combat Pet", z = "Orgrimmar" } },
         [38] = { at = 1795577438, v = { class = "WARRIOR", n = "Musical Gustjumper", run = 8, spd = 2, ty = "Non-combat Pet", z = "Desolace" } },
       },
       [260343] = {
@@ -3690,8 +3698,10 @@ GanderData = {
         [9] = { at = 1795438843, v = { class = "WARRIOR", n = "Mini Diablo", run = 8, spd = 2, ty = "Non-combat Pet", z = "Orgrimmar" } },
         [12] = { at = 1795701600, v = { class = "WARRIOR", n = "Mini Diablo", run = 8, spd = 2, ty = "Non-combat Pet", z = "Orgrimmar" } },
         [16] = { at = 1795717556, v = { class = "WARRIOR", n = "Mini Diablo", run = 8, spd = 2, ty = "Non-combat Pet", z = "Orgrimmar" } },
+        [19] = { at = 1795754279, v = { class = "WARRIOR", n = "Mini Diablo", run = 8, spd = 2, ty = "Non-combat Pet", z = "Orgrimmar" } },
         [32] = { at = 1795566820, v = { class = "WARRIOR", n = "Mini Diablo", run = 8, spd = 2, ty = "Non-combat Pet", z = "Ashenvale" } },
         [54] = { at = 1795659999, v = { class = "WARRIOR", n = "Mini Diablo", run = 8, spd = 2, ty = "Non-combat Pet", z = "Orgrimmar" } },
+        [60] = { at = 1795754342, v = { class = "WARRIOR", n = "Mini Diablo", run = 8, spd = 2, ty = "Non-combat Pet", z = "Orgrimmar" } },
       },
       [272329] = {
         [10] = { at = 1795659991, v = { class = "WARRIOR", n = "Zergling", run = 8, spd = 2, ty = "Non-combat Pet", z = "Orgrimmar" } },
@@ -3735,7 +3745,7 @@ GanderData = {
         [12] = { at = 1795707013, v = { class = "WARRIOR", n = "Amandriel", run = 8, spd = 2, ty = "Humanoid", z = "Zephras Isle" } },
       },
       [274974] = {
-        [55] = { at = 1795709051, v = { class = "WARRIOR", n = "Enraged Orgrimmar Grunt", run = 8, spd = 1.54, ty = "Humanoid", z = "Orgrimmar" } },
+        [55] = { at = 1795754296, v = { class = "WARRIOR", n = "Enraged Orgrimmar Grunt", run = 8, spd = 1.54, ty = "Humanoid", z = "Orgrimmar" } },
       },
       [275270] = {
         [10] = { at = 1795707576, v = { class = "PALADIN", n = "Windshapers Dockmaster", run = 6, spd = 2, ty = "Humanoid", z = "Zephras Isle" } },

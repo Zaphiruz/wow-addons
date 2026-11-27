@@ -1284,6 +1284,17 @@
     },
     "11563": {
      "levels": {
+      "34": {
+       "at": 1795749721,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Drysnap Pincer",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Desolace"
+       }
+      },
       "35": {
        "at": 1795649955,
        "v": {
@@ -1314,6 +1325,17 @@
     },
     "11578": {
      "levels": {
+      "32": {
+       "at": 1795749903,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Whirlwind Shredder",
+        "run": 8,
+        "spd": 1.4,
+        "ty": "Elemental",
+        "z": "Desolace"
+       }
+      },
       "33": {
        "at": 1795610674,
        "v": {
@@ -7027,6 +7049,17 @@
     },
     "259842": {
      "levels": {
+      "1": {
+       "at": 1795751673,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Musical Gustjumper",
+        "run": 8,
+        "spd": 2,
+        "ty": "Non-combat Pet",
+        "z": "Orgrimmar"
+       }
+      },
       "38": {
        "at": 1795577438,
        "v": {
@@ -8016,6 +8049,17 @@
         "z": "Orgrimmar"
        }
       },
+      "19": {
+       "at": 1795754279,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Mini Diablo",
+        "run": 8,
+        "spd": 2,
+        "ty": "Non-combat Pet",
+        "z": "Orgrimmar"
+       }
+      },
       "32": {
        "at": 1795566820,
        "v": {
@@ -8029,6 +8073,17 @@
       },
       "54": {
        "at": 1795659999,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Mini Diablo",
+        "run": 8,
+        "spd": 2,
+        "ty": "Non-combat Pet",
+        "z": "Orgrimmar"
+       }
+      },
+      "60": {
+       "at": 1795754342,
        "v": {
         "class": "WARRIOR",
         "n": "Mini Diablo",
@@ -8353,7 +8408,7 @@
     "274974": {
      "levels": {
       "55": {
-       "at": 1795709051,
+       "at": 1795754296,
        "v": {
         "class": "WARRIOR",
         "n": "Enraged Orgrimmar Grunt",
@@ -9978,7 +10033,7 @@
     "3296": {
      "levels": {
       "55": {
-       "at": 1795701689,
+       "at": 1795754469,
        "v": {
         "armor": 3292,
         "class": "WARRIOR",
@@ -13336,7 +13391,30 @@
      "spells": {}
     },
     "4681": {
-     "levels": {},
+     "levels": {
+      "38": {
+       "at": 1795750867,
+       "v": {
+        "class": "PALADIN",
+        "n": "Mage Hunter",
+        "run": 8,
+        "spd": 2,
+        "ty": "Demon",
+        "z": "Desolace"
+       }
+      },
+      "39": {
+       "at": 1795750925,
+       "v": {
+        "class": "PALADIN",
+        "n": "Mage Hunter",
+        "run": 8,
+        "spd": 2,
+        "ty": "Demon",
+        "z": "Desolace"
+       }
+      }
+     },
      "name": "Mage Hunter",
      "spells": {
       "3429": {
@@ -18229,6 +18307,17 @@
     },
     "9936": {
      "levels": {
+      "34": {
+       "at": 1795751881,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Corrupted Kitten",
+        "run": 8,
+        "spd": 2,
+        "ty": "Non-combat Pet",
+        "z": "Orgrimmar"
+       }
+      },
       "41": {
        "at": 1795661669,
        "v": {
