@@ -492,6 +492,7 @@ GanderData = {
       [3500] = "Tarhus",
       [3501] = "Horde Guard",
       [3527] = "Healing Stream Totem",
+      [3538] = "Overwatch Mark I",
       [3549] = "Shelene Rhobart",
       [3550] = "Martine Tramblay",
       [3566] = "Flatland Prowler",
@@ -692,6 +693,7 @@ GanderData = {
       [5624] = "Undercity Guardian",
       [5639] = "Craven Drok",
       [5641] = "Takata Steelblade",
+      [5651] = "Patrick Garrett",
       [5658] = "Chloe Curthas",
       [5659] = "Andrew Hartwell",
       [5660] = "Riley Walker",
@@ -1002,6 +1004,7 @@ GanderData = {
       [254296] = "Windshaper Shaman",
       [254344] = "Endaria Mistgaze",
       [254560] = "Twilight Shadowmancer",
+      [254588] = "Windsong Crawler",
       [254626] = "Al'Aketh Assassin",
       [255002] = "Ryff",
       [255679] = "Corswyn Aseril",
@@ -1011,6 +1014,7 @@ GanderData = {
       [255979] = "Thendal Grove Ranger",
       [255993] = "Grakna",
       [255996] = "Rog'mar Grunt",
+      [256076] = "Damaged Construct",
       [256386] = "Dokimi",
       [256389] = "Tamelyn Aldridge",
       [256398] = "Off-Duty Pack Kodo",
@@ -2024,10 +2028,10 @@ GanderData = {
         [10] = { at = 1795802086, v = { class = "WARRIOR", fam = "Carrion Bird", n = "Taloned Swoop", run = 6, spd = 2, ty = "Beast", z = "Mulgore" } },
       },
       [2995] = {
-        [55] = { at = 1795719018, v = { armor = 3292, class = "WARRIOR", dmax = 436.44, dmin = 329.12, n = "Tal", rk = "ELITE", run = 8, spd = 2, ty = "Humanoid", z = "Thunder Bluff" } },
+        [55] = { at = 1795719018, v = { armor = 3292, class = "WARRIOR", dmax = 436.44, dmin = 329.12, n = "Tal", r2 = 20, r3 = 20, r4 = 20, r5 = 20, r6 = 20, rk = "ELITE", run = 8, spd = 2, ty = "Humanoid", z = "Thunder Bluff" } },
       },
       [3011] = {
-        [35] = { at = 1795718790, v = { class = "WARRIOR", n = "Teg Dawnstrider", run = 8, spd = 2, ty = "Humanoid", z = "Thunder Bluff" } },
+        [35] = { at = 1795798605, v = { armor = 1387, class = "WARRIOR", dmax = 64.44, dmin = 48.58, n = "Teg Dawnstrider", run = 8, spd = 2, ty = "Humanoid", z = "Thunder Bluff" } },
       },
       [3037] = {
         [30] = { at = 1795708394, v = { class = "WARRIOR", n = "Sheza Wildmane", run = 8, spd = 2, ty = "Humanoid", z = "Thunder Bluff" } },
@@ -2036,30 +2040,36 @@ GanderData = {
         [-1] = { at = 1795718973, v = { armor = 3731, class = "WARRIOR", dmax = 3437.06, dmin = 3204.53, n = "Cairne Bloodhoof", rk = "WORLDBOSS", run = 8, spd = 2, ty = "Humanoid", z = "Thunder Bluff" } },
       },
       [3083] = {
-        [60] = { at = 1795719007, v = { class = "WARRIOR", n = "Honor Guard", rk = "ELITE", run = 8, spd = 2, ty = "Humanoid", z = "Thunder Bluff" } },
+        [60] = { at = 1795800915, v = { class = "WARRIOR", n = "Honor Guard", rk = "ELITE", run = 8, spd = 2, ty = "Humanoid", z = "Thunder Bluff" } },
       },
       [3098] = {
-        [1] = { at = 1795392758, v = { class = "WARRIOR", fam = "Boar", n = "Mottled Boar", run = 6, spd = 2, ty = "Beast", z = "Durotar" } },
+        [1] = { at = 1795541413, v = { class = "WARRIOR", fam = "Boar", n = "Mottled Boar", run = 6, spd = 2, ty = "Beast", z = "Durotar" } },
+        [2] = { at = 1795541292, v = { class = "WARRIOR", fam = "Boar", n = "Mottled Boar", run = 6, spd = 2, ty = "Beast", z = "Durotar" } },
       },
       [3100] = {
-        [8] = { at = 1795664283, v = { class = "WARRIOR", fam = "Boar", n = "Elder Mottled Boar", run = 6, spd = 2, ty = "Beast", z = "Durotar" } },
-        [9] = { at = 1795524286, v = { class = "WARRIOR", fam = "Boar", n = "Elder Mottled Boar", run = 6, spd = 2, ty = "Beast", z = "Durotar" } },
+        [8] = { at = 1795715755, v = { class = "WARRIOR", fam = "Boar", n = "Elder Mottled Boar", run = 6, spd = 2, ty = "Beast", z = "Durotar" } },
+        [9] = { at = 1795716131, v = { class = "WARRIOR", fam = "Boar", n = "Elder Mottled Boar", run = 6, spd = 2, ty = "Beast", z = "Durotar" } },
       },
       [3123] = {
-        [10] = { at = 1795709350, v = { class = "WARRIOR", fam = "Raptor", n = "Bloodtalon Scythemaw", run = 6, spd = 2, ty = "Beast", z = "Durotar" } },
+        [8] = { at = 1795715912, v = { class = "WARRIOR", fam = "Raptor", n = "Bloodtalon Scythemaw", run = 6, spd = 2, ty = "Beast", z = "Durotar" } },
+        [9] = { at = 1795716023, v = { class = "WARRIOR", fam = "Raptor", n = "Bloodtalon Scythemaw", run = 6, spd = 2, ty = "Beast", z = "Durotar" } },
+        [10] = { at = 1795716117, v = { class = "WARRIOR", fam = "Raptor", n = "Bloodtalon Scythemaw", run = 6, spd = 2, ty = "Beast", z = "Durotar" } },
       },
       [3125] = {
-        [5] = { at = 1795392733, v = { class = "WARRIOR", fam = "Scorpid", n = "Clattering Scorpid", run = 6, spd = 2, ty = "Beast", z = "Durotar" } },
+        [5] = { at = 1795585025, v = { class = "WARRIOR", fam = "Scorpid", n = "Clattering Scorpid", run = 6, spd = 2, ty = "Beast", z = "Durotar" } },
+        [6] = { at = 1795636747, v = { class = "WARRIOR", fam = "Scorpid", n = "Clattering Scorpid", run = 6, spd = 2, ty = "Beast", z = "Durotar" } },
       },
       [3127] = {
-        [9] = { at = 1795709946, v = { class = "WARRIOR", fam = "Scorpid", n = "Venomtail Scorpid", run = 6, spd = 2, ty = "Beast", z = "Durotar" } },
+        [9] = { at = 1795716000, v = { class = "WARRIOR", fam = "Scorpid", n = "Venomtail Scorpid", run = 6, spd = 2, ty = "Beast", z = "Durotar" } },
+        [10] = { at = 1795715777, v = { class = "WARRIOR", fam = "Scorpid", n = "Venomtail Scorpid", run = 6, spd = 2, ty = "Beast", z = "Durotar" } },
       },
       [3130] = {
         [9] = { at = 1795664295, v = { class = "WARRIOR", n = "Thunder Lizard", run = 6, spd = 2, ty = "Beast", z = "Durotar" } },
         [10] = { at = 1795664292, v = { class = "WARRIOR", n = "Thunder Lizard", run = 6, spd = 2, ty = "Beast", z = "Durotar" } },
       },
       [3131] = {
-        [10] = { at = 1795614785, v = { class = "WARRIOR", n = "Lightning Hide", run = 8, spd = 2, ty = "Beast", z = "Durotar" } },
+        [10] = { at = 1795635525, v = { class = "WARRIOR", n = "Lightning Hide", run = 8, spd = 2, ty = "Beast", z = "Durotar" } },
+        [11] = { at = 1795635323, v = { class = "WARRIOR", n = "Lightning Hide", run = 8, spd = 2, ty = "Beast", z = "Durotar" } },
       },
       [3144] = {
         [20] = { at = 1795708894, v = { armor = 861, class = "WARRIOR", dmax = 39.02, dmin = 29.39, n = "Eitrigg", run = 8, spd = 2, ty = "Humanoid", z = "Orgrimmar" } },
@@ -2075,8 +2085,11 @@ GanderData = {
         [10] = { at = 1795709821, v = { class = "MAGE", n = "Burning Blade Apprentice", run = 8, spd = 2, ty = "Humanoid", z = "Durotar" } },
         [11] = { at = 1795709835, v = { class = "MAGE", n = "Burning Blade Apprentice", run = 8, spd = 2, ty = "Humanoid", z = "Durotar" } },
       },
+      [3204] = {
+        [14] = { at = 1795583359, v = { class = "MAGE", n = "Gazz'uz", run = 8, spd = 2, ty = "Humanoid", z = "Durotar" } },
+      },
       [3216] = {
-        [37] = { at = 1795718008, v = { armor = 1607, class = "WARRIOR", dmax = 68.07, dmin = 51.34, n = "Neeru Fireblade", run = 8, spd = 2, ty = "Humanoid", z = "Orgrimmar" } },
+        [37] = { at = 1795754159, v = { armor = 1607, class = "WARRIOR", dmax = 68.07, dmin = 51.34, n = "Neeru Fireblade", run = 8, spd = 2, ty = "Humanoid", z = "Orgrimmar" } },
       },
       [3230] = {
         [62] = { at = 1795718113, v = { armor = 3677, class = "WARRIOR", dmax = 1430.91, dmin = 1079.18, n = "Nazgrel", run = 8, spd = 2, ty = "Humanoid", z = "Orgrimmar" } },
@@ -2084,52 +2097,62 @@ GanderData = {
       [3231] = {
         [12] = { at = 1795563898, v = { class = "WARRIOR", fam = "Crocolisk", n = "Corrupted Dreadmaw Crocolisk", run = 8, spd = 2, ty = "Beast", z = "The Barrens" } },
       },
+      [3232] = {
+        [9] = { at = 1795800264, v = { class = "WARRIOR", n = "Bristleback Interloper", run = 6, spd = 2, ty = "Humanoid", z = "Mulgore" } },
+        [10] = { at = 1795800244, v = { class = "WARRIOR", n = "Bristleback Interloper", run = 6, spd = 2, ty = "Humanoid", z = "Mulgore" } },
+      },
       [3234] = {
         [14] = { at = 1795575146, v = { class = "WARRIOR", n = "Lost Barrens Kodo", run = 8, spd = 3, ty = "Beast", z = "The Barrens" } },
+        [15] = { at = 1795750402, v = { class = "WARRIOR", n = "Lost Barrens Kodo", run = 8, spd = 3, ty = "Beast", z = "The Barrens" } },
       },
       [3236] = {
-        [19] = { at = 1795575412, v = { class = "WARRIOR", n = "Barrens Kodo", run = 8, spd = 3, ty = "Beast", z = "The Barrens" } },
+        [19] = { at = 1795652075, v = { class = "WARRIOR", n = "Barrens Kodo", run = 8, spd = 3, ty = "Beast", z = "The Barrens" } },
         [20] = { at = 1795576024, v = { class = "WARRIOR", n = "Barrens Kodo", run = 8, spd = 3, ty = "Beast", z = "The Barrens" } },
       },
       [3238] = {
-        [22] = { at = 1795396923, v = { class = "WARRIOR", n = "Stormhide", run = 8, spd = 2, ty = "Beast", z = "The Barrens" } },
+        [22] = { at = 1795578720, v = { class = "WARRIOR", n = "Stormhide", run = 8, spd = 2, ty = "Beast", z = "The Barrens" } },
+        [23] = { at = 1795752335, v = { class = "WARRIOR", n = "Stormhide", run = 8, spd = 2, ty = "Beast", z = "The Barrens" } },
       },
       [3239] = {
-        [20] = { at = 1795576578, v = { class = "WARRIOR", n = "Thunderhead", run = 8, spd = 2, ty = "Beast", z = "The Barrens" } },
-        [21] = { at = 1795576067, v = { class = "WARRIOR", n = "Thunderhead", run = 8, spd = 2, ty = "Beast", z = "The Barrens" } },
+        [20] = { at = 1795756665, v = { class = "WARRIOR", n = "Thunderhead", run = 8, spd = 2, ty = "Beast", z = "The Barrens" } },
+        [21] = { at = 1795752070, v = { class = "WARRIOR", n = "Thunderhead", run = 8, spd = 2, ty = "Beast", z = "The Barrens" } },
       },
       [3240] = {
         [18] = { at = 1795575352, v = { class = "WARRIOR", n = "Stormsnout", run = 8, spd = 2, ty = "Beast", z = "The Barrens" } },
-        [19] = { at = 1795575343, v = { class = "WARRIOR", n = "Stormsnout", run = 8, spd = 2, ty = "Beast", z = "The Barrens" } },
+        [19] = { at = 1795756638, v = { class = "WARRIOR", n = "Stormsnout", run = 8, spd = 2, ty = "Beast", z = "The Barrens" } },
       },
       [3241] = {
         [15] = { at = 1795563761, v = { class = "WARRIOR", fam = "Cat", n = "Savannah Patriarch", run = 10, spd = 1.3, ty = "Beast", z = "The Barrens" } },
+        [16] = { at = 1795410690, v = { class = "WARRIOR", fam = "Cat", n = "Savannah Patriarch", run = 10, spd = 1.3 } },
       },
       [3242] = {
-        [14] = { at = 1795563792, v = { class = "WARRIOR", n = "Zhevra Runner", run = 9.03, spd = 2, ty = "Beast", z = "The Barrens" } },
+        [13] = { at = 1795756599, v = { class = "WARRIOR", n = "Zhevra Runner", run = 9.03, spd = 2, ty = "Beast", z = "The Barrens" } },
+        [14] = { at = 1795749449, v = { class = "WARRIOR", n = "Zhevra Runner", run = 9.03, spd = 2, ty = "Beast", z = "The Barrens" } },
       },
       [3244] = {
-        [11] = { at = 1795393825, v = { class = "WARRIOR", fam = "Tallstrider", n = "Greater Plainstrider", run = 10, spd = 2, ty = "Beast", z = "The Barrens" } },
-        [12] = { at = 1795563795, v = { class = "WARRIOR", fam = "Tallstrider", n = "Greater Plainstrider", run = 10, spd = 2, ty = "Beast", z = "The Barrens" } },
+        [11] = { at = 1795750369, v = { class = "WARRIOR", fam = "Tallstrider", n = "Greater Plainstrider", run = 10, spd = 2, ty = "Beast", z = "The Barrens" } },
+        [12] = { at = 1795716288, v = { class = "WARRIOR", fam = "Tallstrider", n = "Greater Plainstrider", run = 10, spd = 2, ty = "Beast", z = "The Barrens" } },
       },
       [3245] = {
-        [16] = { at = 1795575224, v = { class = "WARRIOR", fam = "Tallstrider", n = "Ornery Plainstrider", run = 10, spd = 1.3, ty = "Beast", z = "The Barrens" } },
-        [17] = { at = 1795392801, v = { class = "WARRIOR", fam = "Tallstrider", n = "Ornery Plainstrider", run = 10, spd = 1.3, ty = "Beast", z = "The Barrens" } },
+        [16] = { at = 1795752032, v = { class = "WARRIOR", fam = "Tallstrider", n = "Ornery Plainstrider", run = 10, spd = 1.3, ty = "Beast", z = "The Barrens" } },
+        [17] = { at = 1795749638, v = { class = "WARRIOR", fam = "Tallstrider", n = "Ornery Plainstrider", run = 10, spd = 1.3, ty = "Beast", z = "The Barrens" } },
       },
       [3246] = {
         [12] = { at = 1795708625, v = { class = "WARRIOR", fam = "Tallstrider", n = "Fleeting Plainstrider", run = 10, spd = 2, ty = "Beast", z = "The Barrens" } },
-        [13] = { at = 1795573238, v = { class = "WARRIOR", fam = "Tallstrider", n = "Fleeting Plainstrider", run = 10, spd = 2, ty = "Beast", z = "The Barrens" } },
+        [13] = { at = 1795749838, v = { class = "WARRIOR", fam = "Tallstrider", n = "Fleeting Plainstrider", run = 10, spd = 2, ty = "Beast", z = "The Barrens" } },
       },
       [3247] = {
-        [19] = { at = 1795396858, v = { class = "PALADIN", fam = "Wind Serpent", n = "Thunderhawk Hatchling", run = 8, spd = 2, ty = "Beast", z = "The Barrens" } },
+        [18] = { at = 1795756644, v = { class = "PALADIN", fam = "Wind Serpent", n = "Thunderhawk Hatchling", run = 8, spd = 2, ty = "Beast", z = "The Barrens" } },
+        [19] = { at = 1795575253, v = { class = "PALADIN", fam = "Wind Serpent", n = "Thunderhawk Hatchling", run = 8, spd = 2, ty = "Beast", z = "The Barrens" } },
+        [20] = { at = 1795574535, v = { class = "PALADIN", fam = "Wind Serpent", n = "Thunderhawk Hatchling", run = 8, spd = 2, ty = "Beast", z = "The Barrens" } },
       },
       [3248] = {
         [15] = { at = 1795575147, v = { class = "WARRIOR", n = "Barrens Giraffe", run = 8, spd = 2, ty = "Beast", z = "The Barrens" } },
-        [16] = { at = 1795563774, v = { class = "WARRIOR", n = "Barrens Giraffe", run = 8, spd = 2, ty = "Beast", z = "The Barrens" } },
+        [16] = { at = 1795651923, v = { class = "WARRIOR", n = "Barrens Giraffe", run = 8, spd = 2, ty = "Beast", z = "The Barrens" } },
       },
       [3249] = {
-        [23] = { at = 1795575919, v = { class = "PALADIN", fam = "Wind Serpent", n = "Greater Thunderhawk", run = 8, spd = 2, ty = "Beast", z = "The Barrens" } },
-        [24] = { at = 1795575922, v = { class = "PALADIN", fam = "Wind Serpent", n = "Greater Thunderhawk", run = 8, spd = 2, ty = "Beast", z = "The Barrens" } },
+        [23] = { at = 1795578462, v = { class = "PALADIN", fam = "Wind Serpent", n = "Greater Thunderhawk", run = 8, spd = 2, ty = "Beast", z = "The Barrens" } },
+        [24] = { at = 1795578461, v = { class = "PALADIN", fam = "Wind Serpent", n = "Greater Thunderhawk", run = 8, spd = 2, ty = "Beast", z = "The Barrens" } },
       },
       [3250] = {
         [20] = { at = 1795575853, v = { class = "WARRIOR", fam = "Scorpid", n = "Silithid Creeper", run = 8, spd = 2, ty = "Beast", z = "The Barrens" } },
@@ -2138,40 +2161,52 @@ GanderData = {
       [3251] = {
         [20] = { at = 1795575848, v = { class = "WARRIOR", n = "Silithid Grub", run = 8, spd = 2, ty = "Beast", z = "The Barrens" } },
       },
+      [3252] = {
+        [21] = { at = 1795575825, v = { class = "WARRIOR", fam = "Scorpid", n = "Silithid Swarmer", run = 8, spd = 2, ty = "Beast", z = "The Barrens" } },
+        [22] = { at = 1795575780, v = { class = "WARRIOR", fam = "Scorpid", n = "Silithid Swarmer", run = 8, spd = 2, ty = "Beast", z = "The Barrens" } },
+      },
       [3255] = {
         [13] = { at = 1795575123, v = { class = "WARRIOR", fam = "Raptor", n = "Sunscale Screecher", run = 8, spd = 2, ty = "Beast", z = "The Barrens" } },
-        [14] = { at = 1795718605, v = { class = "WARRIOR", fam = "Raptor", n = "Sunscale Screecher", run = 8, spd = 2, ty = "Beast", z = "The Barrens" } },
+        [14] = { at = 1795754393, v = { class = "WARRIOR", fam = "Raptor", n = "Sunscale Screecher", run = 8, spd = 2, ty = "Beast", z = "The Barrens" } },
+        [15] = { at = 1795756548, v = { class = "WARRIOR", fam = "Raptor", n = "Sunscale Screecher", run = 8, spd = 2, ty = "Beast", z = "The Barrens" } },
       },
       [3256] = {
+        [16] = { at = 1795500220, v = { class = "WARRIOR", fam = "Raptor", n = "Sunscale Scytheclaw", run = 8, spd = 2, ty = "Beast", z = "The Barrens" } },
         [17] = { at = 1795563848, v = { class = "WARRIOR", fam = "Raptor", n = "Sunscale Scytheclaw", run = 8, spd = 2, ty = "Beast", z = "The Barrens" } },
+        [18] = { at = 1795495842, v = { class = "WARRIOR", fam = "Raptor", n = "Sunscale Scytheclaw", run = 8, spd = 2, ty = "Beast", z = "The Barrens" } },
       },
       [3272] = {
         [12] = { at = 1795575204, v = { class = "WARRIOR", n = "Kolkar Wrangler", run = 8, spd = 2, ty = "Humanoid", z = "The Barrens" } },
+        [13] = { at = 1795750392, v = { class = "WARRIOR", n = "Kolkar Wrangler", run = 8, spd = 2, ty = "Humanoid", z = "The Barrens" } },
       },
       [3273] = {
-        [13] = { at = 1795393787, v = { class = "PALADIN", n = "Kolkar Stormer", run = 8, spd = 2, ty = "Humanoid", z = "The Barrens" } },
+        [13] = { at = 1795573469, v = { class = "PALADIN", n = "Kolkar Stormer", run = 8, spd = 2, ty = "Humanoid", z = "The Barrens" } },
         [14] = { at = 1795575159, v = { class = "PALADIN", n = "Kolkar Stormer", run = 8, spd = 2, ty = "Humanoid", z = "The Barrens" } },
       },
+      [3282] = {
+        [15] = { at = 1795403876, v = { class = "WARRIOR", n = "Venture Co. Mercenary", run = 8, spd = 2 } },
+        [16] = { at = 1795404026, v = { class = "WARRIOR", n = "Venture Co. Mercenary", run = 8, spd = 2 } },
+      },
       [3296] = {
-        [55] = { at = 1795785476, v = { armor = 3292, class = "WARRIOR", dmax = 266.82, dmin = 205.5, n = "Orgrimmar Grunt", run = 8, spd = 2, ty = "Humanoid", z = "Orgrimmar" } },
+        [55] = { at = 1795803545, v = { armor = 3292, class = "WARRIOR", dmax = 249.39, dmin = 188.07, n = "Orgrimmar Grunt", run = 8, spd = 2, ty = "Humanoid", z = "Orgrimmar" } },
       },
       [3300] = {
-        [1] = { at = 1795709947, v = { class = "WARRIOR", n = "Adder", run = 6, spd = 2, ty = "Critter", z = "Durotar" } },
+        [1] = { at = 1795749455, v = { class = "WARRIOR", n = "Adder", run = 6, spd = 2, ty = "Critter", z = "Durotar" } },
       },
       [3309] = {
-        [45] = { at = 1795701575, v = { armor = 2742, class = "WARRIOR", dmax = 100.32, dmin = 75.65, n = "Karus", run = 8, spd = 2, ty = "Humanoid", z = "Orgrimmar" } },
+        [45] = { at = 1795747763, v = { armor = 2742, class = "WARRIOR", dmax = 100.32, dmin = 75.65, n = "Karus", run = 8, spd = 2, ty = "Humanoid", z = "Orgrimmar" } },
       },
       [3310] = {
-        [55] = { at = 1795664236, v = { armor = 3292, class = "WARRIOR", dmax = 436.44, dmin = 329.12, n = "Doras", rk = "ELITE", run = 8, spd = 2, ty = "Humanoid", z = "Orgrimmar" } },
+        [55] = { at = 1795754337, v = { armor = 3292, class = "WARRIOR", dmax = 436.44, dmin = 329.12, n = "Doras", rk = "ELITE", run = 8, spd = 2, ty = "Humanoid", z = "Orgrimmar" } },
       },
       [3315] = {
         [30] = { at = 1795665118, v = { class = "WARRIOR", n = "Tor'phan", run = 8, spd = 2, ty = "Humanoid", z = "Orgrimmar" } },
       },
       [3320] = {
-        [45] = { at = 1795700439, v = { armor = 2742, class = "WARRIOR", dmax = 100.32, dmin = 75.65, n = "Soran", r2 = 14, r3 = 14, r4 = 14, r5 = 14, r6 = 14, run = 8, spd = 2, ty = "Humanoid", z = "Orgrimmar" } },
+        [45] = { at = 1795750114, v = { armor = 2742, class = "WARRIOR", dmax = 100.32, dmin = 75.65, n = "Soran", r2 = 14, r3 = 14, r4 = 14, r5 = 14, r6 = 14, run = 8, spd = 2, ty = "Humanoid", z = "Orgrimmar" } },
       },
       [3329] = {
-        [30] = { at = 1795717596, v = { class = "WARRIOR", n = "Kor'jus", run = 8, spd = 2, ty = "Humanoid", z = "Orgrimmar" } },
+        [30] = { at = 1795754227, v = { class = "WARRIOR", n = "Kor'jus", run = 8, spd = 2, ty = "Humanoid", z = "Orgrimmar" } },
       },
       [3332] = {
         [35] = { at = 1795718284, v = { class = "WARRIOR", n = "Lumak", run = 8, spd = 2, ty = "Humanoid", z = "Orgrimmar" } },
@@ -2180,10 +2215,10 @@ GanderData = {
         [30] = { at = 1795718284, v = { class = "WARRIOR", n = "Shankys", run = 8, spd = 2, ty = "Humanoid", z = "Orgrimmar" } },
       },
       [3338] = {
-        [60] = { at = 1795575039, v = { class = "WARRIOR", n = "Sergra Darkthorn", rk = "ELITE", run = 8, spd = 2, ty = "Humanoid", z = "The Barrens" } },
+        [60] = { at = 1795751988, v = { armor = 3566, class = "WARRIOR", dmax = 1378.58, dmin = 1039.53, n = "Sergra Darkthorn", rk = "ELITE", run = 8, spd = 2, ty = "Humanoid", z = "The Barrens" } },
       },
       [3341] = {
-        [18] = { at = 1795375322, v = { class = "WARRIOR", run = 8, spd = 2 } },
+        [18] = { at = 1795756704, v = { armor = 791, class = "WARRIOR", dmax = 34.78, dmin = 26.23, run = 8, spd = 2, ty = "Humanoid", z = "The Barrens" } },
       },
       [3342] = {
         [35] = { at = 1795719379, v = { class = "WARRIOR", n = "Shan'ti", run = 8, spd = 2, ty = "Humanoid", z = "Orgrimmar" } },
@@ -2216,72 +2251,74 @@ GanderData = {
         [30] = { at = 1795700359, v = { class = "WARRIOR", n = "Borya", run = 8, spd = 2, ty = "Humanoid", z = "Orgrimmar" } },
       },
       [3367] = {
-        [30] = { at = 1795388534, v = { class = "WARRIOR", n = "Felika", run = 8, spd = 2, ty = "Humanoid", z = "Orgrimmar" } },
+        [30] = { at = 1795669990, v = { class = "WARRIOR", n = "Felika", run = 8, spd = 2, ty = "Humanoid", z = "Orgrimmar" } },
       },
       [3368] = {
-        [30] = { at = 1795388518, v = { armor = 1212, class = "WARRIOR", dmax = 56.32, dmin = 42.45, n = "Borstan", run = 8, spd = 2, ty = "Humanoid", z = "Orgrimmar" } },
+        [30] = { at = 1795489490, v = { armor = 1212, class = "WARRIOR", dmax = 56.32, dmin = 42.45, n = "Borstan", run = 8, spd = 2, ty = "Humanoid", z = "Orgrimmar" } },
       },
       [3383] = {
         [14] = { at = 1795392794, v = { class = "WARRIOR", n = "Southsea Cutthroat", run = 8, spd = 2, ty = "Humanoid", z = "The Barrens" } },
       },
       [3387] = {
-        [32] = { at = 1795376725, v = { armor = 1283, class = "WARRIOR", dmax = 59.49, dmin = 44.85, n = "Jorn Skyseer", run = 8, spd = 2, ty = "Humanoid", z = "The Barrens" } },
+        [32] = { at = 1795578964, v = { armor = 1283, class = "WARRIOR", dmax = 59.49, dmin = 44.85, n = "Jorn Skyseer", run = 8, spd = 2, ty = "Humanoid", z = "The Barrens" } },
       },
       [3399] = {
-        [35] = { at = 1795388281, v = { class = "WARRIOR", n = "Zamja", run = 8, spd = 2, ty = "Humanoid", z = "Orgrimmar" } },
+        [35] = { at = 1795489488, v = { class = "WARRIOR", n = "Zamja", run = 8, spd = 2, ty = "Humanoid", z = "Orgrimmar" } },
       },
       [3400] = {
         [30] = { at = 1795388518, v = { class = "WARRIOR", n = "Xen'to", run = 8, spd = 2, ty = "Humanoid", z = "Orgrimmar" } },
       },
       [3403] = {
-        [40] = { at = 1795711314, v = { class = "WARRIOR", n = "Sian'tsu", run = 8, spd = 2, ty = "Humanoid", z = "Orgrimmar" } },
+        [40] = { at = 1795711314, v = { armor = 1980, class = "WARRIOR", dmax = 74.32, dmin = 56.02, n = "Sian'tsu", run = 8, spd = 2, ty = "Humanoid", z = "Orgrimmar" } },
       },
       [3418] = {
         [22] = { at = 1795576879, v = { armor = 932, class = "WARRIOR", dmax = 42.41, dmin = 31.99, n = "Kirge Sternhorn", run = 8, spd = 2, ty = "Humanoid", z = "The Barrens" } },
       },
       [3424] = {
+        [21] = { at = 1795499806, v = { class = "PALADIN", fam = "Wind Serpent", n = "Thunderhawk Cloudscraper", run = 8, spd = 2, ty = "Beast", z = "The Barrens" } },
         [22] = { at = 1795575557, v = { class = "PALADIN", fam = "Wind Serpent", n = "Thunderhawk Cloudscraper", run = 8, spd = 2, ty = "Beast", z = "The Barrens" } },
       },
       [3426] = {
-        [18] = { at = 1795374875, v = { class = "WARRIOR", run = 9.03, spd = 2 } },
+        [17] = { at = 1795575033, v = { class = "WARRIOR", run = 9.03, spd = 2, ty = "Beast", z = "The Barrens" } },
+        [18] = { at = 1795750407, v = { class = "WARRIOR", run = 9.03, spd = 2, ty = "Beast", z = "The Barrens" } },
       },
       [3428] = {
-        [12] = { at = 1795574943, v = { class = "WARRIOR", n = "Korran", run = 8, spd = 2, ty = "Humanoid", z = "The Barrens" } },
+        [12] = { at = 1795751900, v = { armor = 580, class = "WARRIOR", dmax = 22.43, dmin = 16.91, n = "Korran", run = 8, spd = 2, ty = "Humanoid", z = "The Barrens" } },
       },
       [3430] = {
         [17] = { at = 1795576896, v = { armor = 756, class = "WARRIOR", dmax = 33.21, dmin = 25.05, n = "Mangletooth", run = 8, spd = 2, ty = "Humanoid", z = "The Barrens" } },
       },
       [3432] = {
-        [15] = { at = 1795575045, v = { class = "WARRIOR", n = "Mankrik", run = 8, spd = 2, ty = "Humanoid", z = "The Barrens" } },
+        [15] = { at = 1795749215, v = { class = "WARRIOR", n = "Mankrik", run = 8, spd = 2, ty = "Humanoid", z = "The Barrens" } },
       },
       [3433] = {
-        [14] = { at = 1795576874, v = { armor = 650, class = "WARRIOR", dmax = 26.94, dmin = 20.29, n = "Tatternack Steelforge", run = 8, spd = 2, ty = "Humanoid", z = "The Barrens" } },
+        [14] = { at = 1795749756, v = { armor = 650, class = "WARRIOR", dmax = 26.94, dmin = 20.29, n = "Tatternack Steelforge", run = 8, spd = 2, ty = "Humanoid", z = "The Barrens" } },
       },
       [3442] = {
-        [15] = { at = 1795563739, v = { class = "WARRIOR", n = "Sputtervalve", run = 8, spd = 2, ty = "Humanoid", z = "The Barrens" } },
+        [15] = { at = 1795670988, v = { armor = 685, class = "WARRIOR", dmax = 29.34, dmin = 22.08, n = "Sputtervalve", run = 8, spd = 2, ty = "Humanoid", z = "The Barrens" } },
       },
       [3444] = {
-        [1] = { at = 1795388202, v = { class = "WARRIOR", n = "Dig Rat", run = 6, spd = 2, ty = "Critter", z = "Orgrimmar" } },
+        [1] = { at = 1795577712, v = { class = "WARRIOR", n = "Dig Rat", run = 6, spd = 2, ty = "Critter", z = "Orgrimmar" } },
       },
       [3453] = {
-        [15] = { at = 1795393898, v = { class = "WARRIOR", n = "Wharfmaster Dizzywig", run = 8, spd = 2, ty = "Humanoid", z = "The Barrens" } },
+        [15] = { at = 1795670303, v = { armor = 685, class = "WARRIOR", dmax = 29.34, dmin = 22.08, n = "Wharfmaster Dizzywig", run = 8, spd = 2, ty = "Humanoid", z = "The Barrens" } },
       },
       [3463] = {
         [18] = { at = 1795575249, v = { class = "WARRIOR", n = "Wandering Barrens Giraffe", run = 8, spd = 2, ty = "Beast", z = "The Barrens" } },
         [19] = { at = 1795575362, v = { class = "WARRIOR", n = "Wandering Barrens Giraffe", run = 8, spd = 2, ty = "Beast", z = "The Barrens" } },
       },
       [3464] = {
-        [25] = { at = 1795747656, v = { class = "WARRIOR", n = "Gazrog", run = 8, spd = 2, ty = "Humanoid", z = "The Barrens" } },
+        [25] = { at = 1795751965, v = { armor = 1037, class = "WARRIOR", dmax = 47.5, dmin = 35.81, n = "Gazrog", run = 8, spd = 2, ty = "Humanoid", z = "The Barrens" } },
       },
       [3466] = {
-        [20] = { at = 1795575872, v = { class = "WARRIOR", n = "Zhevra Courser", run = 9.03, spd = 2, ty = "Beast", z = "The Barrens" } },
-        [21] = { at = 1795575870, v = { class = "WARRIOR", n = "Zhevra Courser", run = 9.03, spd = 2, ty = "Beast", z = "The Barrens" } },
+        [20] = { at = 1795752068, v = { class = "WARRIOR", n = "Zhevra Courser", run = 9.03, spd = 2, ty = "Beast", z = "The Barrens" } },
+        [21] = { at = 1795752068, v = { class = "WARRIOR", n = "Zhevra Courser", run = 9.03, spd = 2, ty = "Beast", z = "The Barrens" } },
       },
       [3473] = {
         [24] = { at = 1795396866, v = { class = "WARRIOR", n = "Owatanka", run = 8, spd = 2, ty = "Beast", z = "The Barrens" } },
       },
       [3474] = {
-        [22] = { at = 1795393765, v = { class = "WARRIOR", n = "Lakota'mani", run = 8, spd = 3, ty = "Beast", z = "The Barrens" } },
+        [22] = { at = 1795575283, v = { class = "WARRIOR", n = "Lakota'mani", run = 8, spd = 3, ty = "Beast", z = "The Barrens" } },
       },
       [3476] = {
         [27] = { at = 1795664388, v = { class = "WARRIOR", n = "Isha Awak", run = 8, spd = 2, ty = "Beast", z = "The Barrens" } },
@@ -2290,19 +2327,24 @@ GanderData = {
         [18] = { at = 1795396794, v = { class = "WARRIOR", n = "Hraq", run = 8, spd = 2, ty = "Humanoid", z = "The Barrens" } },
       },
       [3480] = {
-        [18] = { at = 1795575036, v = { class = "WARRIOR", n = "Moorane Hearthgrain", run = 8, spd = 2, ty = "Humanoid", z = "The Barrens" } },
+        [18] = { at = 1795750360, v = { class = "WARRIOR", n = "Moorane Hearthgrain", run = 8, spd = 2, ty = "Humanoid", z = "The Barrens" } },
       },
       [3482] = {
-        [14] = { at = 1795575028, v = { class = "WARRIOR", n = "Tari'qa", run = 8, spd = 2, ty = "Humanoid", z = "The Barrens" } },
+        [14] = { at = 1795751967, v = { class = "WARRIOR", n = "Tari'qa", run = 8, spd = 2, ty = "Humanoid", z = "The Barrens" } },
       },
       [3500] = {
         [52] = { at = 1795650211, v = { class = "WARRIOR", n = "Tarhus", run = 8, spd = 2, ty = "Humanoid", z = "Feralas" } },
       },
       [3501] = {
-        [40] = { at = 1795576873, v = { class = "WARRIOR", n = "Horde Guard", run = 8, spd = 2, ty = "Humanoid", z = "The Barrens" } },
+        [40] = { at = 1795751987, v = { class = "WARRIOR", n = "Horde Guard", run = 8, spd = 2, ty = "Humanoid", z = "The Barrens" } },
       },
       [3527] = {
         [27] = { at = 1795564923, v = { class = "WARRIOR", n = "Healing Stream Totem", run = 7, spd = 2, ty = "Totem", z = "Blackfathom Deeps" } },
+        [28] = { at = 1795576970, v = { class = "WARRIOR", n = "Healing Stream Totem", run = 7, spd = 2, ty = "Totem", z = "The Barrens" } },
+        [29] = { at = 1795655522, v = { class = "WARRIOR", n = "Healing Stream Totem", run = 7, spd = 2, ty = "Totem", z = "Thousand Needles" } },
+      },
+      [3538] = {
+        [32] = { at = 1795802655, v = { class = "WARRIOR", n = "Overwatch Mark I", run = 8, spd = 2, ty = "Mechanical", z = "Hillsbrad Foothills" } },
       },
       [3549] = {
         [25] = { at = 1795697497, v = { class = "WARRIOR", n = "Shelene Rhobart", run = 8, spd = 2, ty = "Humanoid", z = "Tirisfal Glades" } },
@@ -2311,20 +2353,24 @@ GanderData = {
         [15] = { at = 1795697500, v = { class = "WARRIOR", n = "Martine Tramblay", run = 8, spd = 2, ty = "Humanoid", z = "Tirisfal Glades" } },
       },
       [3566] = {
-        [9] = { at = 1795708266, v = { class = "WARRIOR", fam = "Cat", n = "Flatland Prowler", run = 6, spd = 2, ty = "Beast", z = "Mulgore" } },
+        [9] = { at = 1795800476, v = { class = "WARRIOR", fam = "Cat", n = "Flatland Prowler", run = 6, spd = 2, ty = "Beast", z = "Mulgore" } },
       },
       [3573] = {
-        [27] = { at = 1795567505, v = { class = "WARRIOR", n = "Mana Spring Totem", run = 7, spd = 2, ty = "Totem", z = "Blackfathom Deeps" } },
+        [26] = { at = 1795498781, v = { class = "WARRIOR", n = "Mana Spring Totem", run = 7, spd = 2, ty = "Totem", z = "The Barrens" } },
+        [27] = { at = 1795567524, v = { class = "WARRIOR", n = "Mana Spring Totem", run = 7, spd = 2, ty = "Totem", z = "Blackfathom Deeps" } },
+        [28] = { at = 1795577758, v = { class = "WARRIOR", n = "Mana Spring Totem", ty = "Totem", z = "The Barrens" } },
         [29] = { at = 1795567555, v = { class = "WARRIOR", n = "Mana Spring Totem", run = 7, spd = 2, ty = "Totem", z = "Blackfathom Deeps" } },
         [30] = { at = 1795746397, v = { class = "WARRIOR", n = "Mana Spring Totem", run = 7, spd = 2, ty = "Totem", z = "Arathi Highlands" } },
+        [31] = { at = 1795756981, v = { class = "WARRIOR", n = "Mana Spring Totem", run = 7, spd = 2, ty = "Totem", z = "Thousand Needles" } },
+        [33] = { at = 1795656606, v = { class = "WARRIOR", n = "Mana Spring Totem", run = 7, spd = 2, ty = "Totem", z = "Thousand Needles" } },
         [34] = { at = 1795525691, v = { class = "WARRIOR", n = "Mana Spring Totem", run = 7, spd = 2, ty = "Totem", z = "Stranglethorn Vale" } },
-        [37] = { at = 1795374582, v = { class = "WARRIOR", run = 7, spd = 2 } },
+        [37] = { at = 1795807029, v = { class = "WARRIOR", run = 7, spd = 2, ty = "Totem", z = "Stranglethorn Vale" } },
       },
       [3624] = {
         [40] = { at = 1795705112, v = { armor = 1980, class = "WARRIOR", dmax = 74.32, dmin = 56.02, n = "Zudd", run = 8, spd = 2, ty = "Humanoid", z = "Stranglethorn Vale" } },
       },
       [3689] = {
-        [42] = { at = 1795398054, v = { class = "WARRIOR", n = "Laer Stepperunner", run = 8, spd = 2, ty = "Humanoid", z = "Thousand Needles" } },
+        [42] = { at = 1795659180, v = { class = "WARRIOR", n = "Laer Stepperunner", run = 8, spd = 2, ty = "Humanoid", z = "Thousand Needles" } },
       },
       [3703] = {
         [42] = { at = 1795375056, v = { armor = 2262, class = "WARRIOR", dmax = 82.74, dmin = 62.4, run = 8, spd = 2 } },
@@ -2340,14 +2386,15 @@ GanderData = {
         [20] = { at = 1795572897, v = { class = "PALADIN", n = "Wrathtail Razortail", run = 8, spd = 2, ty = "Humanoid", z = "Ashenvale" } },
       },
       [3713] = {
-        [18] = { at = 1795572839, v = { class = "WARRIOR", n = "Wrathtail Wave Rider", run = 8, spd = 2, ty = "Humanoid", z = "Ashenvale" } },
+        [18] = { at = 1795572883, v = { class = "WARRIOR", n = "Wrathtail Wave Rider", run = 8, spd = 2, ty = "Humanoid", z = "Ashenvale" } },
         [19] = { at = 1795572842, v = { class = "WARRIOR", n = "Wrathtail Wave Rider", run = 8, spd = 2, ty = "Humanoid", z = "Ashenvale" } },
       },
       [3715] = {
         [19] = { at = 1795565237, v = { class = "PALADIN", n = "Wrathtail Sea Witch", run = 8, spd = 2, ty = "Humanoid", z = "Ashenvale" } },
+        [20] = { at = 1795564107, v = { class = "PALADIN", n = "Wrathtail Sea Witch", run = 8, spd = 2, ty = "Humanoid", z = "Ashenvale" } },
       },
       [3717] = {
-        [18] = { at = 1795567263, v = { class = "MAGE", n = "Wrathtail Sorceress", run = 8, spd = 2, ty = "Humanoid", z = "Ashenvale" } },
+        [18] = { at = 1795567282, v = { class = "MAGE", n = "Wrathtail Sorceress", run = 8, spd = 2, ty = "Humanoid", z = "Ashenvale" } },
         [19] = { at = 1795567256, v = { class = "MAGE", n = "Wrathtail Sorceress", run = 8, spd = 2, ty = "Humanoid", z = "Ashenvale" } },
       },
       [3721] = {
@@ -2358,8 +2405,8 @@ GanderData = {
         [22] = { at = 1795564260, v = { class = "WARRIOR", fam = "Bear", n = "Ashenvale Bear", run = 8, spd = 2, ty = "Beast", z = "Ashenvale" } },
       },
       [3812] = {
-        [19] = { at = 1795566491, v = { class = "WARRIOR", fam = "Crab", n = "Clattering Crawler", run = 8, spd = 2, ty = "Beast", z = "Ashenvale" } },
-        [20] = { at = 1795567250, v = { class = "WARRIOR", fam = "Crab", n = "Clattering Crawler", run = 8, spd = 2, ty = "Beast", z = "Ashenvale" } },
+        [19] = { at = 1795567262, v = { class = "WARRIOR", fam = "Crab", n = "Clattering Crawler", run = 8, spd = 2, ty = "Beast", z = "Ashenvale" } },
+        [20] = { at = 1795567299, v = { class = "WARRIOR", fam = "Crab", n = "Clattering Crawler", run = 8, spd = 2, ty = "Beast", z = "Ashenvale" } },
       },
       [3814] = {
         [20] = { at = 1795566650, v = { class = "WARRIOR", fam = "Crab", n = "Spined Crawler", run = 8, spd = 2, ty = "Beast", z = "Ashenvale" } },
@@ -2373,7 +2420,7 @@ GanderData = {
         [20] = { at = 1795572867, v = { class = "WARRIOR", fam = "Wolf", n = "Ghostpaw Runner", run = 8, spd = 2, ty = "Beast", z = "Ashenvale" } },
       },
       [3903] = {
-        [37] = { at = 1795374185, v = { class = "WARRIOR", run = 7, spd = 2 } },
+        [37] = { at = 1795662392, v = { class = "WARRIOR", run = 7, spd = 2, ty = "Totem", z = "Thousand Needles" } },
       },
       [3906] = {
         [36] = { at = 1795395407, v = { class = "WARRIOR", n = "Healing Stream Totem II", run = 7, spd = 2, ty = "Totem", z = "Stranglethorn Vale" } },
@@ -2388,16 +2435,16 @@ GanderData = {
         [8] = { at = 1795718352, v = { class = "WARRIOR", n = "Galthuk", run = 8, spd = 2, ty = "Humanoid", z = "Orgrimmar" } },
       },
       [4046] = {
-        [62] = { at = 1795718842, v = { class = "WARRIOR", n = "Magatha Grimtotem", run = 8, spd = 2, ty = "Humanoid", z = "Thunder Bluff" } },
+        [62] = { at = 1795796580, v = { armor = 3677, class = "WARRIOR", dmax = 134.3, dmin = 116.71, n = "Magatha Grimtotem", run = 8, spd = 2, ty = "Humanoid", z = "Thunder Bluff" } },
       },
       [4047] = {
         [62] = { at = 1795718176, v = { armor = 3677, class = "WARRIOR", dmax = 134.3, dmin = 116.71, n = "Zor Lonetree", run = 8, spd = 2, ty = "Humanoid", z = "Orgrimmar" } },
       },
       [4075] = {
-        [1] = { at = 1795394329, v = { class = "WARRIOR", n = "Rat", run = 6, spd = 2, ty = "Critter", z = "Stranglethorn Vale" } },
+        [1] = { at = 1795755490, v = { class = "WARRIOR", n = "Rat", run = 6, spd = 2, ty = "Critter", z = "Stranglethorn Vale" } },
       },
       [4095] = {
-        [27] = { at = 1795398248, v = { class = "WARRIOR", n = "Galak Mauler", run = 8, spd = 2.6, ty = "Humanoid", z = "Thousand Needles" } },
+        [27] = { at = 1795655780, v = { class = "WARRIOR", n = "Galak Mauler", run = 8, spd = 2.6, ty = "Humanoid", z = "Thousand Needles" } },
         [28] = { at = 1795398245, v = { class = "WARRIOR", n = "Galak Mauler", run = 8, spd = 2.6, ty = "Humanoid", z = "Thousand Needles" } },
       },
       [4099] = {
@@ -2405,62 +2452,71 @@ GanderData = {
         [27] = { at = 1795398332, v = { class = "WARRIOR", n = "Galak Marauder", run = 8, spd = 2, ty = "Humanoid", z = "Thousand Needles" } },
       },
       [4111] = {
-        [26] = { at = 1795398012, v = { class = "WARRIOR", n = "Gravelsnout Kobold", run = 8, spd = 2, ty = "Humanoid", z = "Thousand Needles" } },
+        [26] = { at = 1795657324, v = { class = "WARRIOR", n = "Gravelsnout Kobold", run = 8, spd = 2, ty = "Humanoid", z = "Thousand Needles" } },
+        [27] = { at = 1795657131, v = { class = "WARRIOR", n = "Gravelsnout Kobold", run = 8, spd = 2, ty = "Humanoid", z = "Thousand Needles" } },
       },
       [4113] = {
-        [28] = { at = 1795397659, v = { class = "WARRIOR", n = "Gravelsnout Digger", run = 8, spd = 2, ty = "Humanoid", z = "Thousand Needles" } },
-        [29] = { at = 1795397681, v = { class = "WARRIOR", n = "Gravelsnout Digger", run = 8, spd = 2, ty = "Humanoid", z = "Thousand Needles" } },
+        [28] = { at = 1795759256, v = { class = "WARRIOR", n = "Gravelsnout Digger", run = 8, spd = 2, ty = "Humanoid", z = "Thousand Needles" } },
+        [29] = { at = 1795759223, v = { class = "WARRIOR", n = "Gravelsnout Digger", run = 8, spd = 2, ty = "Humanoid", z = "Thousand Needles" } },
       },
       [4116] = {
-        [29] = { at = 1795397573, v = { class = "MAGE", n = "Gravelsnout Surveyor", run = 8, spd = 2, ty = "Humanoid", z = "Thousand Needles" } },
+        [29] = { at = 1795759200, v = { class = "MAGE", n = "Gravelsnout Surveyor", run = 8, spd = 2, ty = "Humanoid", z = "Thousand Needles" } },
+        [30] = { at = 1795759049, v = { class = "MAGE", n = "Gravelsnout Surveyor", run = 8, spd = 2, ty = "Humanoid", z = "Thousand Needles" } },
       },
       [4117] = {
-        [26] = { at = 1795397738, v = { class = "PALADIN", fam = "Wind Serpent", n = "Cloud Serpent", run = 8, spd = 2, ty = "Beast", z = "Thousand Needles" } },
+        [25] = { at = 1795658109, v = { class = "PALADIN", fam = "Wind Serpent", n = "Cloud Serpent", run = 8, spd = 2, ty = "Beast", z = "Thousand Needles" } },
+        [26] = { at = 1795756840, v = { class = "PALADIN", fam = "Wind Serpent", n = "Cloud Serpent", run = 8, spd = 2, ty = "Beast", z = "Thousand Needles" } },
       },
       [4119] = {
-        [29] = { at = 1795398095, v = { class = "PALADIN", fam = "Wind Serpent", n = "Elder Cloud Serpent", run = 8, spd = 2, ty = "Beast", z = "Thousand Needles" } },
+        [27] = { at = 1795653008, v = { class = "PALADIN", fam = "Wind Serpent", n = "Elder Cloud Serpent", run = 8, spd = 2, ty = "Beast", z = "Thousand Needles" } },
+        [28] = { at = 1795658846, v = { class = "PALADIN", fam = "Wind Serpent", n = "Elder Cloud Serpent", run = 8, spd = 2, ty = "Beast", z = "Thousand Needles" } },
+        [29] = { at = 1795659503, v = { class = "PALADIN", fam = "Wind Serpent", n = "Elder Cloud Serpent", run = 8, spd = 2, ty = "Beast", z = "Thousand Needles" } },
       },
       [4124] = {
-        [27] = { at = 1795398781, v = { class = "WARRIOR", fam = "Cat", n = "Needles Cougar", run = 10, spd = 1.2, ty = "Beast", z = "Thousand Needles" } },
-        [28] = { at = 1795397690, v = { class = "WARRIOR", fam = "Cat", n = "Needles Cougar", run = 10, spd = 1.2, ty = "Beast", z = "Thousand Needles" } },
+        [27] = { at = 1795759146, v = { class = "WARRIOR", fam = "Cat", n = "Needles Cougar", run = 10, spd = 1.2, ty = "Beast", z = "Thousand Needles" } },
+        [28] = { at = 1795759084, v = { class = "WARRIOR", fam = "Cat", n = "Needles Cougar", run = 10, spd = 1.2, ty = "Beast", z = "Thousand Needles" } },
       },
       [4127] = {
-        [15] = { at = 1795575135, v = { class = "WARRIOR", fam = "Hyena", n = "Hecklefang Hyena", run = 8, spd = 2, ty = "Beast", z = "The Barrens" } },
-        [16] = { at = 1795575187, v = { class = "WARRIOR", fam = "Hyena", n = "Hecklefang Hyena", run = 8, spd = 2, ty = "Beast", z = "The Barrens" } },
+        [15] = { at = 1795749544, v = { class = "WARRIOR", fam = "Hyena", n = "Hecklefang Hyena", run = 8, spd = 2, ty = "Beast", z = "The Barrens" } },
+        [16] = { at = 1795752426, v = { class = "WARRIOR", fam = "Hyena", n = "Hecklefang Hyena", run = 8, spd = 2, ty = "Beast", z = "The Barrens" } },
       },
       [4128] = {
-        [22] = { at = 1795375344, v = { class = "WARRIOR", fam = "Hyena", n = "Hecklefang Stalker", run = 8, spd = 2, ty = "Beast", z = "The Barrens" } },
-        [23] = { at = 1795375324, v = { class = "WARRIOR", fam = "Hyena", run = 8, spd = 2 } },
+        [22] = { at = 1795578475, v = { class = "WARRIOR", fam = "Hyena", n = "Hecklefang Stalker", run = 8, spd = 2, ty = "Beast", z = "The Barrens" } },
+        [23] = { at = 1795578500, v = { class = "WARRIOR", fam = "Hyena", run = 8, spd = 2, ty = "Beast", z = "The Barrens" } },
       },
       [4129] = {
         [18] = { at = 1795575282, v = { class = "WARRIOR", fam = "Hyena", n = "Hecklefang Snarler", run = 8, spd = 2, ty = "Beast", z = "The Barrens" } },
+        [19] = { at = 1795575206, v = { class = "WARRIOR", fam = "Hyena", n = "Hecklefang Snarler", run = 8, spd = 2, ty = "Beast", z = "The Barrens" } },
       },
       [4133] = {
         [33] = { at = 1795398987, v = { class = "WARRIOR", n = "Silithid Hive Drone", run = 8, spd = 2, ty = "Not specified", z = "Thousand Needles" } },
       },
       [4140] = {
-        [31] = { at = 1795398949, v = { class = "WARRIOR", fam = "Scorpid", n = "Scorpid Reaver", run = 8, spd = 2, ty = "Beast", z = "Thousand Needles" } },
+        [31] = { at = 1795758443, v = { class = "WARRIOR", fam = "Scorpid", n = "Scorpid Reaver", run = 8, spd = 2, ty = "Beast", z = "Thousand Needles" } },
+        [32] = { at = 1795758591, v = { class = "WARRIOR", fam = "Scorpid", n = "Scorpid Reaver", run = 8, spd = 2, ty = "Beast", z = "Thousand Needles" } },
       },
       [4143] = {
-        [34] = { at = 1795398985, v = { class = "WARRIOR", fam = "Turtle", n = "Sparkleshell Snapper", run = 8, spd = 2, ty = "Beast", z = "Thousand Needles" } },
+        [34] = { at = 1795758681, v = { class = "WARRIOR", fam = "Turtle", n = "Sparkleshell Snapper", run = 8, spd = 2, ty = "Beast", z = "Thousand Needles" } },
+        [35] = { at = 1795669500, v = { class = "WARRIOR", fam = "Turtle", n = "Sparkleshell Snapper", run = 8, spd = 2, ty = "Beast", z = "Thousand Needles" } },
       },
       [4150] = {
-        [35] = { at = 1795399013, v = { class = "WARRIOR", n = "Saltstone Gazer", run = 8, spd = 2, ty = "Beast", z = "Thousand Needles" } },
+        [34] = { at = 1795667974, v = { class = "WARRIOR", n = "Saltstone Gazer", run = 8, spd = 2, ty = "Beast", z = "Thousand Needles" } },
+        [35] = { at = 1795668157, v = { class = "WARRIOR", n = "Saltstone Gazer", run = 8, spd = 2, ty = "Beast", z = "Thousand Needles" } },
       },
       [4196] = {
         [21] = { at = 1795575825, v = { class = "WARRIOR", n = "Silithid Swarm", run = 6, spd = 1.5, ty = "Not specified", z = "The Barrens" } },
-        [22] = { at = 1795575768, v = { class = "WARRIOR", n = "Silithid Swarm", run = 6, spd = 1.5, ty = "Not specified", z = "The Barrens" } },
+        [22] = { at = 1795575777, v = { class = "WARRIOR", n = "Silithid Swarm", run = 6, spd = 1.5, ty = "Not specified", z = "The Barrens" } },
       },
       [4198] = {
         [30] = { at = 1795747913, v = { class = "MAGE", n = "Braelyn Firehand", run = 8, spd = 1.5, ty = "Humanoid", z = "Stonetalon Mountains" } },
       },
       [4248] = {
-        [26] = { at = 1795398394, v = { class = "WARRIOR", fam = "Hyena", n = "Pesterhide Hyena", run = 8, spd = 2, ty = "Beast", z = "Thousand Needles" } },
-        [27] = { at = 1795398004, v = { class = "WARRIOR", fam = "Hyena", n = "Pesterhide Hyena", ty = "Beast", z = "Thousand Needles" } },
+        [26] = { at = 1795657111, v = { class = "WARRIOR", fam = "Hyena", n = "Pesterhide Hyena", run = 8, spd = 2, ty = "Beast", z = "Thousand Needles" } },
+        [27] = { at = 1795662360, v = { class = "WARRIOR", fam = "Hyena", n = "Pesterhide Hyena", run = 8, spd = 2, ty = "Beast", z = "Thousand Needles" } },
       },
       [4249] = {
-        [28] = { at = 1795397676, v = { class = "WARRIOR", fam = "Hyena", n = "Pesterhide Snarler", run = 8, spd = 2, ty = "Beast", z = "Thousand Needles" } },
-        [29] = { at = 1795398189, v = { class = "WARRIOR", fam = "Hyena", n = "Pesterhide Snarler", ty = "Beast", z = "Thousand Needles" } },
+        [28] = { at = 1795756926, v = { class = "WARRIOR", fam = "Hyena", n = "Pesterhide Snarler", run = 8, spd = 2, ty = "Beast", z = "Thousand Needles" } },
+        [29] = { at = 1795759256, v = { class = "WARRIOR", fam = "Hyena", n = "Pesterhide Snarler", run = 8, spd = 2, ty = "Beast", z = "Thousand Needles" } },
       },
       [4260] = {
         [37] = { at = 1795391317, v = { class = "WARRIOR", n = "Venture Co. Shredder", run = 8, spd = 2, ty = "Mechanical", z = "Stranglethorn Vale" } },
@@ -2475,19 +2531,19 @@ GanderData = {
         [31] = { at = 1795697935, v = { class = "PALADIN", n = "Scarlet Augur", rk = "ELITE", run = 8, spd = 2, ty = "Humanoid", z = "Tirisfal Glades" } },
       },
       [4309] = {
-        [62] = { at = 1795718842, v = { class = "WARRIOR", n = "Gorm Grimtotem", run = 8, spd = 2, ty = "Humanoid", z = "Thunder Bluff" } },
+        [62] = { at = 1795800869, v = { class = "WARRIOR", n = "Gorm Grimtotem", run = 8, spd = 2, ty = "Humanoid", z = "Thunder Bluff" } },
       },
       [4310] = {
-        [62] = { at = 1795718842, v = { class = "WARRIOR", n = "Cor Grimtotem", run = 8, spd = 2, ty = "Humanoid", z = "Thunder Bluff" } },
+        [62] = { at = 1795800869, v = { class = "WARRIOR", n = "Cor Grimtotem", run = 8, spd = 2, ty = "Humanoid", z = "Thunder Bluff" } },
       },
       [4311] = {
         [30] = { at = 1795663763, v = { class = "WARRIOR", n = "Holgar Stormaxe", run = 8, spd = 2, ty = "Humanoid", z = "Durotar" } },
       },
       [4312] = {
-        [55] = { at = 1795747977, v = { armor = 3292, class = "WARRIOR", dmax = 436.44, dmin = 329.12, n = "Tharm", rk = "ELITE", run = 8, spd = 2, ty = "Humanoid", z = "Stonetalon Mountains" } },
+        [55] = { at = 1795756436, v = { armor = 3292, class = "WARRIOR", dmax = 436.44, dmin = 329.12, n = "Tharm", rk = "ELITE", run = 8, spd = 2, ty = "Humanoid", z = "Stonetalon Mountains" } },
       },
       [4317] = {
-        [55] = { at = 1795398707, v = { class = "WARRIOR", n = "Nyse", rk = "ELITE", run = 8, spd = 2, ty = "Humanoid", z = "Thousand Needles" } },
+        [55] = { at = 1795752270, v = { class = "WARRIOR", n = "Nyse", rk = "ELITE", run = 8, spd = 2, ty = "Humanoid", z = "Thousand Needles" } },
       },
       [4341] = {
         [36] = { at = 1795614926, v = { class = "WARRIOR", fam = "Crocolisk", n = "Drywallow Crocolisk", run = 8, spd = 2, ty = "Beast", z = "Dustwallow Marsh" } },
@@ -2552,7 +2608,7 @@ GanderData = {
         [36] = { at = 1795389050, v = { class = "WARRIOR", n = "Murkgill Warrior", run = 8, spd = 2, ty = "Humanoid", z = "Stranglethorn Vale" } },
       },
       [4486] = {
-        [32] = { at = 1795710645, v = { class = "WARRIOR", n = "Genavie Callow", run = 8, spd = 2, ty = "Humanoid", z = "Undercity" } },
+        [32] = { at = 1795747082, v = { armor = 1283, class = "WARRIOR", dmax = 59.49, dmin = 44.85, n = "Genavie Callow", run = 8, spd = 2, ty = "Humanoid", z = "Undercity" } },
       },
       [4498] = {
         [35] = { at = 1795751192, v = { armor = 1387, class = "WARRIOR", dmax = 64.44, dmin = 48.58, n = "Maurin Bonesplitter", run = 8, spd = 2, ty = "Humanoid", z = "Desolace" } },
@@ -2561,13 +2617,13 @@ GanderData = {
         [45] = { at = 1795664482, v = { class = "WARRIOR", n = "Overlord Mok'Morokk", rk = "ELITE", run = 8, spd = 3, ty = "Humanoid", z = "Dustwallow Marsh" } },
       },
       [4548] = {
-        [30] = { at = 1795398217, v = { class = "WARRIOR", fam = "Hyena", n = "Steelsnap", run = 8, spd = 2, ty = "Beast", z = "Thousand Needles" } },
+        [30] = { at = 1795655979, v = { class = "WARRIOR", fam = "Hyena", n = "Steelsnap", run = 8, spd = 2, ty = "Beast", z = "Thousand Needles" } },
       },
       [4550] = {
         [45] = { at = 1795697273, v = { class = "WARRIOR", n = "Ophelia Montague", run = 8, spd = 2, ty = "Undead", z = "Undercity" } },
       },
       [4551] = {
-        [55] = { at = 1795710653, v = { class = "WARRIOR", n = "Michael Garrett", rk = "ELITE", run = 8, spd = 2, ty = "Humanoid", z = "Undercity" } },
+        [55] = { at = 1795747083, v = { armor = 3292, class = "WARRIOR", dmax = 436.44, dmin = 329.12, n = "Michael Garrett", rk = "ELITE", run = 8, spd = 2, ty = "Humanoid", z = "Undercity" } },
       },
       [4554] = {
         [30] = { at = 1795697284, v = { class = "WARRIOR", n = "Tawny Grisette", run = 8, spd = 2, ty = "Humanoid", z = "Undercity" } },
@@ -2582,10 +2638,10 @@ GanderData = {
         [30] = { at = 1795720412, v = { class = "WARRIOR", n = "Boyle", run = 8, spd = 2, ty = "Undead", z = "Undercity" } },
       },
       [4624] = {
-        [57] = { at = 1795563533, v = { class = "WARRIOR", n = "Booty Bay Bruiser", run = 8, spd = 2, ty = "Humanoid", z = "Stranglethorn Vale" } },
+        [57] = { at = 1795794197, v = { class = "WARRIOR", n = "Booty Bay Bruiser", run = 8, spd = 2, ty = "Humanoid", z = "Stranglethorn Vale" } },
       },
       [4631] = {
-        [35] = { at = 1795563533, v = { class = "WARRIOR", n = "Wharfmaster Lozgil", run = 8, spd = 2, ty = "Humanoid", z = "Stranglethorn Vale" } },
+        [35] = { at = 1795563533, v = { armor = 1387, class = "WARRIOR", dmax = 64.44, dmin = 48.58, n = "Wharfmaster Lozgil", run = 8, spd = 2, ty = "Humanoid", z = "Stranglethorn Vale" } },
       },
       [4646] = {
         [33] = { at = 1795649979, v = { class = "WARRIOR", n = "Gelkis Outrunner", run = 10, spd = 2, ty = "Humanoid", z = "Desolace" } },
@@ -2660,7 +2716,7 @@ GanderData = {
         [39] = { at = 1795573653, v = { class = "WARRIOR", n = "Shreev", run = 8, spd = 2, ty = "Humanoid", z = "Tanaris" } },
       },
       [4722] = {
-        [30] = { at = 1795397324, v = { armor = 1212, class = "WARRIOR", dmax = 56.32, dmin = 42.45, n = "Rau Cliffrunner", run = 8, spd = 2, ty = "Humanoid", z = "Thousand Needles" } },
+        [30] = { at = 1795760744, v = { armor = 1212, class = "WARRIOR", dmax = 56.32, dmin = 42.45, n = "Rau Cliffrunner", run = 8, spd = 2, ty = "Humanoid", z = "Thousand Needles" } },
       },
       [4725] = {
         [37] = { at = 1795649976, v = { class = "WARRIOR", fam = "Tallstrider", n = "Crazed Sandstrider", run = 8, spd = 2, ty = "Beast", z = "Desolace" } },
@@ -2676,38 +2732,38 @@ GanderData = {
         [38] = { at = 1795610677, v = { class = "WARRIOR", n = "Elder Thunder Lizard", run = 8, spd = 2, ty = "Beast", z = "Desolace" } },
       },
       [4775] = {
-        [30] = { at = 1795710641, v = { class = "WARRIOR", n = "Felicia Doan", run = 8, spd = 2, ty = "Humanoid", z = "Undercity" } },
+        [30] = { at = 1795746962, v = { class = "WARRIOR", n = "Felicia Doan", run = 8, spd = 2, ty = "Humanoid", z = "Undercity" } },
       },
       [4788] = {
         [20] = { at = 1795567491, v = { class = "WARRIOR", n = "Fallenroot Satyr", rk = "ELITE", run = 8, spd = 2, ty = "Demon", z = "Blackfathom Deeps" } },
-        [21] = { at = 1795567364, v = { class = "WARRIOR", n = "Fallenroot Satyr", rk = "ELITE", run = 8, spd = 2, ty = "Demon", z = "Blackfathom Deeps" } },
+        [21] = { at = 1795567469, v = { class = "WARRIOR", n = "Fallenroot Satyr", rk = "ELITE", run = 8, spd = 2, ty = "Demon", z = "Blackfathom Deeps" } },
       },
       [4789] = {
-        [21] = { at = 1795567617, v = { class = "WARRIOR", n = "Fallenroot Rogue", rk = "ELITE", run = 4, spd = 2, ty = "Demon", z = "Blackfathom Deeps" } },
+        [21] = { at = 1795572763, v = { class = "WARRIOR", n = "Fallenroot Rogue", rk = "ELITE", run = 4, spd = 2, ty = "Demon", z = "Blackfathom Deeps" } },
         [22] = { at = 1795567870, v = { class = "WARRIOR", n = "Fallenroot Rogue", rk = "ELITE", run = 4, spd = 2, ty = "Demon", z = "Blackfathom Deeps" } },
       },
       [4791] = {
         [48] = { at = 1795614973, v = { class = "WARRIOR", n = "Nazeer Bloodpike", run = 8, spd = 2, ty = "Humanoid", z = "Dustwallow Marsh" } },
       },
       [4802] = {
-        [20] = { at = 1795567885, v = { class = "PALADIN", n = "Blackfathom Tide Priestess", rk = "ELITE", run = 8, spd = 2, ty = "Humanoid", z = "Blackfathom Deeps" } },
-        [21] = { at = 1795567613, v = { class = "PALADIN", n = "Blackfathom Tide Priestess", rk = "ELITE", run = 8, spd = 2, ty = "Humanoid", z = "Blackfathom Deeps" } },
+        [20] = { at = 1795572778, v = { class = "PALADIN", n = "Blackfathom Tide Priestess", rk = "ELITE", run = 8, spd = 2, ty = "Humanoid", z = "Blackfathom Deeps" } },
+        [21] = { at = 1795572800, v = { class = "PALADIN", n = "Blackfathom Tide Priestess", rk = "ELITE", run = 8, spd = 2, ty = "Humanoid", z = "Blackfathom Deeps" } },
       },
       [4803] = {
-        [21] = { at = 1795564917, v = { class = "PALADIN", n = "Blackfathom Oracle", rk = "ELITE", run = 8, spd = 2, ty = "Humanoid", z = "Blackfathom Deeps" } },
-        [22] = { at = 1795567568, v = { class = "PALADIN", n = "Blackfathom Oracle", rk = "ELITE", run = 8, spd = 2, ty = "Humanoid", z = "Blackfathom Deeps" } },
+        [21] = { at = 1795572763, v = { class = "PALADIN", n = "Blackfathom Oracle", rk = "ELITE", run = 8, spd = 2, ty = "Humanoid", z = "Blackfathom Deeps" } },
+        [22] = { at = 1795572769, v = { class = "PALADIN", n = "Blackfathom Oracle", rk = "ELITE", run = 8, spd = 2, ty = "Humanoid", z = "Blackfathom Deeps" } },
       },
       [4875] = {
-        [40] = { at = 1795397291, v = { class = "WARRIOR", n = "Turhaw", run = 8, spd = 2, ty = "Humanoid", z = "Thousand Needles" } },
+        [40] = { at = 1795759401, v = { class = "WARRIOR", n = "Turhaw", run = 8, spd = 2, ty = "Humanoid", z = "Thousand Needles" } },
       },
       [4876] = {
-        [35] = { at = 1795393597, v = { class = "WARRIOR", n = "Jawn Highmesa", run = 8, spd = 2, ty = "Humanoid", z = "Thousand Needles" } },
+        [35] = { at = 1795660215, v = { class = "WARRIOR", n = "Jawn Highmesa", run = 8, spd = 2, ty = "Humanoid", z = "Thousand Needles" } },
       },
       [4877] = {
-        [37] = { at = 1795398688, v = { armor = 1607, class = "WARRIOR", dmax = 68.07, dmin = 51.34, n = "Jandia", run = 8, spd = 2, ty = "Humanoid", z = "Thousand Needles" } },
+        [37] = { at = 1795760730, v = { armor = 1607, class = "WARRIOR", dmax = 68.07, dmin = 51.34, n = "Jandia", run = 8, spd = 2, ty = "Humanoid", z = "Thousand Needles" } },
       },
       [4878] = {
-        [36] = { at = 1795397105, v = { class = "WARRIOR", n = "Montarr", run = 8, spd = 2, ty = "Humanoid", z = "Thousand Needles" } },
+        [36] = { at = 1795760648, v = { class = "WARRIOR", n = "Montarr", run = 8, spd = 2, ty = "Humanoid", z = "Thousand Needles" } },
       },
       [4879] = {
         [40] = { at = 1795664489, v = { class = "WARRIOR", n = "Ogg'marr", run = 8, spd = 2, ty = "Humanoid", z = "Dustwallow Marsh" } },
@@ -2733,6 +2789,7 @@ GanderData = {
       },
       [5268] = {
         [41] = { at = 1795610841, v = { class = "WARRIOR", fam = "Bear", n = "Ironfur Bear", run = 8, spd = 2, ty = "Beast", z = "Feralas" } },
+        [42] = { at = 1795659883, v = { class = "WARRIOR", fam = "Bear", n = "Ironfur Bear", run = 8, spd = 2, ty = "Beast", z = "Feralas" } },
       },
       [5272] = {
         [44] = { at = 1795610814, v = { class = "WARRIOR", fam = "Bear", n = "Grizzled Ironfur Bear", run = 8, spd = 2, ty = "Beast", z = "Feralas" } },
@@ -2752,7 +2809,7 @@ GanderData = {
         [46] = { at = 1795650077, v = { class = "WARRIOR", fam = "Wind Serpent", n = "Rogue Vale Screecher", run = 10, spd = 2, ty = "Beast", z = "Feralas" } },
       },
       [5411] = {
-        [40] = { at = 1795573637, v = { armor = 1980, class = "WARRIOR", dmax = 74.32, dmin = 56.02, n = "Krinkle Goodsteel", run = 8, spd = 2, ty = "Humanoid", z = "Tanaris" } },
+        [40] = { at = 1795663383, v = { armor = 1980, class = "WARRIOR", dmax = 74.32, dmin = 56.02, n = "Krinkle Goodsteel", run = 8, spd = 2, ty = "Humanoid", z = "Tanaris" } },
       },
       [5416] = {
         [40] = { at = 1795662881, v = { armor = 1980, class = "WARRIOR", dmax = 74.32, dmin = 56.02, n = "Infiltrator Marksen", run = 8, spd = 2, ty = "Humanoid", z = "Swamp of Sorrows" } },
@@ -2790,31 +2847,34 @@ GanderData = {
         [38] = { at = 1795388577, v = { class = "WARRIOR", n = "Grunt Mojka", run = 8, spd = 2, ty = "Humanoid", z = "Orgrimmar" } },
       },
       [5606] = {
-        [12] = { at = 1795700543, v = { class = "WARRIOR", n = "Goma", run = 8, spd = 2, ty = "Humanoid", z = "Orgrimmar" } },
+        [12] = { at = 1795747738, v = { class = "WARRIOR", n = "Goma", run = 8, spd = 2, ty = "Humanoid", z = "Orgrimmar" } },
       },
       [5609] = {
-        [14] = { at = 1795701438, v = { class = "WARRIOR", n = "Zazo", run = 8, spd = 2, ty = "Humanoid", z = "Orgrimmar" } },
+        [14] = { at = 1795747738, v = { class = "WARRIOR", n = "Zazo", run = 8, spd = 2, ty = "Humanoid", z = "Orgrimmar" } },
       },
       [5610] = {
-        [12] = { at = 1795700056, v = { class = "WARRIOR", n = "Kozish", run = 8, spd = 2, ty = "Humanoid", z = "Orgrimmar" } },
+        [12] = { at = 1795748691, v = { class = "WARRIOR", n = "Kozish", run = 8, spd = 2, ty = "Humanoid", z = "Orgrimmar" } },
       },
       [5611] = {
-        [13] = { at = 1795701442, v = { class = "WARRIOR", n = "Barkeep Morag", run = 8, spd = 2, ty = "Humanoid", z = "Orgrimmar" } },
+        [13] = { at = 1795751358, v = { class = "WARRIOR", n = "Barkeep Morag", run = 8, spd = 2, ty = "Humanoid", z = "Orgrimmar" } },
       },
       [5613] = {
-        [11] = { at = 1795700542, v = { class = "WARRIOR", n = "Doyo'da", run = 8, spd = 2, ty = "Humanoid", z = "Orgrimmar" } },
+        [11] = { at = 1795751357, v = { class = "WARRIOR", n = "Doyo'da", run = 8, spd = 2, ty = "Humanoid", z = "Orgrimmar" } },
       },
       [5614] = {
-        [25] = { at = 1795700542, v = { class = "WARRIOR", n = "Sarok", run = 8, spd = 2, ty = "Humanoid", z = "Orgrimmar" } },
+        [25] = { at = 1795751356, v = { class = "WARRIOR", n = "Sarok", run = 8, spd = 2, ty = "Humanoid", z = "Orgrimmar" } },
       },
       [5624] = {
-        [55] = { at = 1795667575, v = { armor = 3292, class = "WARRIOR", dmax = 124.7, dmin = 94.04, n = "Undercity Guardian", run = 8, spd = 2, ty = "Undead", z = "Undercity" } },
+        [55] = { at = 1795746969, v = { armor = 3292, class = "WARRIOR", dmax = 124.7, dmin = 94.04, n = "Undercity Guardian", run = 8, spd = 2, ty = "Undead", z = "Undercity" } },
       },
       [5639] = {
         [35] = { at = 1795717795, v = { armor = 1387, class = "WARRIOR", dmax = 64.44, dmin = 48.58, n = "Craven Drok", run = 8, spd = 2, ty = "Humanoid", z = "Orgrimmar" } },
       },
       [5641] = {
         [40] = { at = 1795751099, v = { class = "WARRIOR", n = "Takata Steelblade", run = 8, spd = 2, ty = "Humanoid", z = "Desolace" } },
+      },
+      [5651] = {
+        [15] = { at = 1795785951, v = { armor = 685, class = "WARRIOR", dmax = 29.34, dmin = 22.08, n = "Patrick Garrett", run = 8, spd = 2, ty = "Humanoid", z = "Undercity" } },
       },
       [5658] = {
         [20] = { at = 1795667311, v = { class = "WARRIOR", n = "Chloe Curthas", run = 8, spd = 2, ty = "Humanoid", z = "Undercity" } },
@@ -2831,6 +2891,12 @@ GanderData = {
       [5669] = {
         [20] = { at = 1795667612, v = { class = "WARRIOR", n = "Helena Atwood", run = 8, spd = 2, ty = "Humanoid", z = "Undercity" } },
       },
+      [5676] = {
+        [10] = { at = 1795583963, v = { class = "WARRIOR", n = "Summoned Voidwalker", run = 8, spd = 2, ty = "Demon", z = "Orgrimmar" } },
+      },
+      [5677] = {
+        [20] = { at = 1795583771, v = { class = "PALADIN", n = "Summoned Succubus", run = 8, spd = 2, ty = "Demon", z = "Orgrimmar" } },
+      },
       [5679] = {
         [30] = { at = 1795667438, v = { class = "MAGE", n = "Lysta Bancroft", run = 8, spd = 2, ty = "Humanoid", z = "Undercity" } },
       },
@@ -2844,6 +2910,7 @@ GanderData = {
         [40] = { at = 1795750491, v = { class = "WARRIOR", n = "Lord Azrethoc", rk = "ELITE", run = 8, spd = 2, ty = "Demon", z = "Desolace" } },
       },
       [5774] = {
+        [1] = { at = 1795537494, v = { class = "WARRIOR", n = "Riding Wolf", run = 9.7, spd = 2, ty = "Beast", z = "The Barrens" } },
         [2] = { at = 1795573656, v = { class = "WARRIOR", n = "Riding Wolf", run = 9.7, spd = 2, ty = "Beast", z = "Tanaris" } },
       },
       [5797] = {
@@ -2862,7 +2929,10 @@ GanderData = {
         [30] = { at = 1795667605, v = { class = "WARRIOR", n = "Mirelle Tremayne", run = 8, spd = 2, ty = "Humanoid", z = "Undercity" } },
       },
       [5873] = {
+        [5] = { at = 1795382859, v = { class = "WARRIOR", n = "Stoneskin Totem", run = 7, spd = 2 } },
+        [12] = { at = 1795800095, v = { class = "WARRIOR", n = "Stoneskin Totem", run = 7, spd = 2, ty = "Totem", z = "Mulgore" } },
         [13] = { at = 1795706275, v = { class = "WARRIOR", n = "Stoneskin Totem", run = 7, spd = 2, ty = "Totem", z = "Zephras Isle" } },
+        [14] = { at = 1795409926, v = { class = "WARRIOR", n = "Stoneskin Totem", run = 7, spd = 2 } },
       },
       [5874] = {
         [13] = { at = 1795709778, v = { class = "WARRIOR", n = "Strength of Earth Totem", run = 7, spd = 2, ty = "Totem", z = "Durotar" } },
@@ -2882,39 +2952,51 @@ GanderData = {
         [34] = { at = 1795525695, v = { class = "WARRIOR", n = "Tremor Totem", run = 7, spd = 2, ty = "Totem", z = "Stranglethorn Vale" } },
       },
       [5920] = {
-        [27] = { at = 1795567509, v = { class = "WARRIOR", n = "Stoneskin Totem III", run = 7, spd = 2, ty = "Totem", z = "Blackfathom Deeps" } },
-        [30] = { at = 1795743799, v = { class = "WARRIOR", n = "Stoneskin Totem III", run = 7, spd = 2, ty = "Totem", z = "Arathi Highlands" } },
+        [26] = { at = 1795499578, v = { class = "WARRIOR", n = "Stoneskin Totem III", run = 7, spd = 2, ty = "Totem", z = "The Barrens" } },
+        [27] = { at = 1795567524, v = { class = "WARRIOR", n = "Stoneskin Totem III", run = 7, spd = 2, ty = "Totem", z = "Blackfathom Deeps" } },
+        [28] = { at = 1795577954, v = { class = "WARRIOR", n = "Stoneskin Totem III", run = 7, spd = 2, ty = "Totem", z = "The Barrens" } },
+        [29] = { at = 1795655629, v = { class = "WARRIOR", n = "Stoneskin Totem III", run = 7, spd = 2, ty = "Totem", z = "Thousand Needles" } },
+        [30] = { at = 1795743886, v = { class = "WARRIOR", n = "Stoneskin Totem III", run = 7, spd = 2, ty = "Totem", z = "Arathi Highlands" } },
         [34] = { at = 1795702358, v = { class = "WARRIOR", n = "Stoneskin Totem III", run = 7, spd = 2, ty = "Totem", z = "Stranglethorn Vale" } },
       },
       [5921] = {
-        [30] = { at = 1795746400, v = { class = "WARRIOR", n = "Strength of Earth Totem II", run = 7, spd = 2, ty = "Totem", z = "Arathi Highlands" } },
+        [30] = { at = 1795747344, v = { class = "WARRIOR", n = "Strength of Earth Totem II", run = 7, spd = 2, ty = "Totem", z = "Arathi Highlands" } },
         [31] = { at = 1795702042, v = { class = "WARRIOR", n = "Strength of Earth Totem II", run = 7, spd = 2, ty = "Totem", z = "Durotar" } },
+        [32] = { at = 1795668402, v = { class = "WARRIOR", n = "Strength of Earth Totem II", run = 7, spd = 2, ty = "Totem", z = "Thousand Needles" } },
+        [33] = { at = 1795657023, v = { class = "WARRIOR", n = "Strength of Earth Totem II", run = 7, spd = 2, ty = "Totem", z = "Thousand Needles" } },
         [34] = { at = 1795665775, v = { class = "WARRIOR", n = "Strength of Earth Totem II", run = 7, spd = 2, ty = "Totem", z = "Stranglethorn Vale" } },
+        [37] = { at = 1795662392, v = { class = "WARRIOR", n = "Strength of Earth Totem II", run = 7, spd = 2, ty = "Totem", z = "Thousand Needles" } },
       },
       [5927] = {
         [30] = { at = 1795745665, v = { class = "WARRIOR", n = "Fire Resistance Totem", run = 7, spd = 2, ty = "Totem", z = "Arathi Highlands" } },
       },
       [5950] = {
-        [30] = { at = 1795744168, v = { class = "WARRIOR", n = "Flametongue Totem", run = 7, spd = 2, ty = "Totem", z = "Stranglethorn Vale" } },
+        [28] = { at = 1795577569, v = { class = "WARRIOR", n = "Flametongue Totem", run = 7, spd = 2, ty = "Totem", z = "The Barrens" } },
+        [29] = { at = 1795655980, v = { class = "WARRIOR", n = "Flametongue Totem", run = 7, spd = 2, ty = "Totem", z = "Thousand Needles" } },
+        [30] = { at = 1795747344, v = { class = "WARRIOR", n = "Flametongue Totem", run = 7, spd = 2, ty = "Totem", z = "Stranglethorn Vale" } },
       },
       [5951] = {
-        [1] = { at = 1795664275, v = { class = "WARRIOR", n = "Hare", run = 6, spd = 2, ty = "Critter", z = "Durotar" } },
+        [1] = { at = 1795715834, v = { class = "WARRIOR", n = "Hare", run = 6, spd = 2, ty = "Critter", z = "Durotar" } },
       },
       [6020] = {
-        [18] = { at = 1795664387, v = { class = "WARRIOR", n = "Slimeshell Makrura", run = 8, spd = 2, ty = "Humanoid", z = "The Barrens" } },
+        [18] = { at = 1795670345, v = { class = "WARRIOR", n = "Slimeshell Makrura", run = 8, spd = 2, ty = "Humanoid", z = "The Barrens" } },
+        [19] = { at = 1795670929, v = { class = "WARRIOR", n = "Slimeshell Makrura", run = 8, spd = 2, ty = "Humanoid", z = "The Barrens" } },
       },
       [6026] = {
         [55] = { at = 1795663106, v = { armor = 3292, class = "WARRIOR", dmax = 436.44, dmin = 329.12, n = "Breyk", rk = "ELITE", run = 8, spd = 2, ty = "Humanoid", z = "Swamp of Sorrows" } },
       },
       [6112] = {
-        [37] = { at = 1795374005, v = { class = "WARRIOR", run = 7, spd = 2 } },
+        [33] = { at = 1795655457, v = { class = "WARRIOR", n = "Windfury Totem", run = 7, spd = 2, ty = "Totem", z = "Thousand Needles" } },
+        [36] = { at = 1795736037, v = { class = "WARRIOR", n = "Windfury Totem", ty = "Totem", z = "Stranglethorn Vale" } },
+        [37] = { at = 1795662392, v = { class = "WARRIOR", run = 7, spd = 2, ty = "Totem", z = "Thousand Needles" } },
+        [41] = { at = 1795740428, v = { class = "WARRIOR", n = "Windfury Totem", run = 7, spd = 2, ty = "Totem", z = "Arathi Highlands" } },
         [42] = { at = 1795560165, v = { class = "WARRIOR", n = "Windfury Totem", run = 7, spd = 2, ty = "Totem", z = "Stranglethorn Vale" } },
       },
       [6145] = {
-        [1] = { at = 1795615309, v = { class = "WARRIOR", n = "School of Fish", ty = "Critter", z = "Dustwallow Marsh" } },
+        [1] = { at = 1795615309, v = { class = "WARRIOR", n = "School of Fish", run = 6, spd = 2, ty = "Critter", z = "Dustwallow Marsh" } },
       },
       [6176] = {
-        [35] = { at = 1795747319, v = { class = "WARRIOR", n = "Bath'rah the Windwatcher", run = 8, spd = 2, ty = "Humanoid", z = "Alterac Mountains" } },
+        [35] = { at = 1795747627, v = { armor = 1387, class = "WARRIOR", dmax = 64.44, dmin = 48.58, n = "Bath'rah the Windwatcher", run = 8, spd = 2, ty = "Humanoid", z = "Alterac Mountains" } },
       },
       [6239] = {
         [40] = { at = 1795747410, v = { class = "WARRIOR", n = "Cyclonian", rk = "ELITE", run = 8, spd = 2, ty = "Elemental", z = "Alterac Mountains" } },
@@ -2923,16 +3005,16 @@ GanderData = {
         [13] = { at = 1795697496, v = { class = "WARRIOR", n = "Rand Rhobart", run = 8, spd = 2, ty = "Humanoid", z = "Tirisfal Glades" } },
       },
       [6387] = {
-        [15] = { at = 1795576812, v = { class = "WARRIOR", n = "Dranh", run = 8, spd = 2, ty = "Humanoid", z = "The Barrens" } },
+        [15] = { at = 1795749766, v = { class = "WARRIOR", n = "Dranh", run = 8, spd = 2, ty = "Humanoid", z = "The Barrens" } },
       },
       [6394] = {
         [30] = { at = 1795375054, v = { armor = 1212, class = "WARRIOR", dmax = 56.32, dmin = 42.45, run = 8, spd = 2 } },
       },
       [6466] = {
-        [12] = { at = 1795700008, v = { class = "WARRIOR", n = "Gamon", run = 8, spd = 2, ty = "Humanoid", z = "Orgrimmar" } },
+        [12] = { at = 1795748668, v = { class = "WARRIOR", n = "Gamon", run = 8, spd = 2, ty = "Humanoid", z = "Orgrimmar" } },
       },
       [6491] = {
-        [60] = { at = 1795699069, v = { armor = 3566, class = "WARRIOR", dmax = 137.86, dmin = 103.95, n = "Spirit Healer", run = 7, spd = 2, ty = "Humanoid", z = "The Barrens" } },
+        [60] = { at = 1795736192, v = { armor = 3566, class = "WARRIOR", dmax = 137.86, dmin = 103.95, n = "Spirit Healer", run = 7, spd = 2, ty = "Humanoid", z = "The Barrens" } },
       },
       [6497] = {
         [13] = { at = 1795642950, v = { class = "WARRIOR", n = "Astor Hadren", run = 8, spd = 2, ty = "Humanoid", z = "Silverpine Forest" } },
@@ -2941,7 +3023,7 @@ GanderData = {
         [43] = { at = 1795614970, v = { class = "WARRIOR", n = "Ghok'kah", run = 8, spd = 2, ty = "Humanoid", z = "Dustwallow Marsh" } },
       },
       [6568] = {
-        [50] = { at = 1795573667, v = { class = "WARRIOR", n = "Vizzklick", run = 8, spd = 2, ty = "Humanoid", z = "Tanaris" } },
+        [50] = { at = 1795662805, v = { armor = 3018, class = "WARRIOR", dmax = 112.2, dmin = 84.61, n = "Vizzklick", run = 8, spd = 2, ty = "Humanoid", z = "Tanaris" } },
       },
       [6726] = {
         [55] = { at = 1795649952, v = { armor = 3292, class = "WARRIOR", dmax = 436.44, dmin = 329.12, n = "Thalon", rk = "ELITE", run = 8, spd = 2, ty = "Humanoid", z = "Desolace" } },
@@ -2950,7 +3032,7 @@ GanderData = {
         [46] = { at = 1795733164, v = { armor = 2798, class = "WARRIOR", dmax = 51.19, dmin = 38.6, n = "Innkeeper Skindle", run = 8, spd = 1, ty = "Humanoid", z = "Stranglethorn Vale" } },
       },
       [6929] = {
-        [30] = { at = 1795700535, v = { armor = 1212, class = "WARRIOR", dmax = 56.32, dmin = 42.45, n = "Innkeeper Gryshka", run = 8, spd = 2, ty = "Humanoid", z = "Orgrimmar" } },
+        [30] = { at = 1795748691, v = { armor = 1212, class = "WARRIOR", dmax = 56.32, dmin = 42.45, n = "Innkeeper Gryshka", run = 8, spd = 2, ty = "Humanoid", z = "Orgrimmar" } },
       },
       [6930] = {
         [30] = { at = 1795662994, v = { armor = 1212, class = "WARRIOR", dmax = 56.32, dmin = 42.45, n = "Innkeeper Karakul", run = 8, spd = 2, ty = "Humanoid", z = "Swamp of Sorrows" } },
@@ -2963,21 +3045,29 @@ GanderData = {
         [36] = { at = 1795376379, v = { class = "MAGE", n = "Death's Head Geomancer", rk = "ELITE", run = 8, spd = 2, ty = "Humanoid", z = "Razorfen Downs" } },
       },
       [7366] = {
-        [37] = { at = 1795374491, v = { class = "WARRIOR", run = 7, spd = 2 } },
+        [37] = { at = 1795807029, v = { class = "WARRIOR", run = 7, spd = 2, ty = "Totem", z = "Stranglethorn Vale" } },
       },
       [7384] = {
         [36] = { at = 1795396199, v = { class = "WARRIOR", n = "Cornish Rex", run = 8, spd = 2, ty = "Non-combat Pet", z = "Stranglethorn Vale" } },
       },
       [7386] = {
         [1] = { at = 1795748388, v = { class = "WARRIOR", n = "White Kitten", run = 8, spd = 2, ty = "Non-combat Pet", z = "Orgrimmar" } },
+        [7] = { at = 1795548438, v = { class = "WARRIOR", n = "White Kitten", run = 8, spd = 2, ty = "Non-combat Pet", z = "Durotar" } },
+        [8] = { at = 1795561058, v = { class = "WARRIOR", n = "White Kitten", run = 8, spd = 2, ty = "Non-combat Pet", z = "Durotar" } },
+        [10] = { at = 1795582604, v = { class = "WARRIOR", n = "White Kitten", run = 8, spd = 2, ty = "Non-combat Pet", z = "Durotar" } },
+        [11] = { at = 1795377112, v = { class = "WARRIOR", n = "White Kitten", run = 8, spd = 2 } },
+        [17] = { at = 1795491034, v = { class = "WARRIOR", n = "White Kitten", run = 8, spd = 2, ty = "Non-combat Pet", z = "Tirisfal Glades" } },
       },
       [7387] = {
         [1] = { at = 1795754542, v = { class = "WARRIOR", n = "Green Wing Macaw", run = 8, spd = 2, ty = "Non-combat Pet", z = "Orgrimmar" } },
+        [30] = { at = 1795572806, v = { class = "WARRIOR", n = "Green Wing Macaw", ty = "Non-combat Pet", z = "Blackfathom Deeps" } },
       },
       [7389] = {
         [57] = { at = 1795614524, v = { class = "WARRIOR", n = "Senegal", run = 8, spd = 2, ty = "Non-combat Pet", z = "Orgrimmar" } },
       },
       [7390] = {
+        [28] = { at = 1795398023, v = { class = "WARRIOR", n = "Cockatiel", run = 8, spd = 2 } },
+        [38] = { at = 1795805423, v = { class = "WARRIOR", n = "Cockatiel", run = 8, spd = 2, ty = "Non-combat Pet", z = "Stranglethorn Vale" } },
         [39] = { at = 1795563167, v = { class = "WARRIOR", n = "Cockatiel", run = 8, spd = 2, ty = "Non-combat Pet", z = "Stranglethorn Vale" } },
       },
       [7408] = {
@@ -3011,7 +3101,7 @@ GanderData = {
         [44] = { at = 1795573657, v = { class = "WARRIOR", n = "Senior Surveyor Fizzledowser", run = 8, spd = 2, ty = "Humanoid", z = "Tanaris" } },
       },
       [7730] = {
-        [40] = { at = 1795747945, v = { class = "WARRIOR", n = "Stonetalon Grunt", run = 8, spd = 2, ty = "Humanoid", z = "Stonetalon Mountains" } },
+        [40] = { at = 1795756374, v = { class = "WARRIOR", n = "Stonetalon Grunt", run = 8, spd = 2, ty = "Humanoid", z = "Stonetalon Mountains" } },
       },
       [7733] = {
         [30] = { at = 1795573624, v = { armor = 1212, class = "WARRIOR", dmax = 56.32, dmin = 42.45, n = "Innkeeper Fizzgrimble", run = 8, spd = 2, ty = "Humanoid", z = "Tanaris" } },
@@ -3026,16 +3116,16 @@ GanderData = {
         [40] = { at = 1795614073, v = { armor = 1980, class = "WARRIOR", dmax = 702.32, dmin = 529.41, n = "Rok Orhan", run = 8, spd = 2, ty = "Humanoid", z = "Feralas" } },
       },
       [7790] = {
-        [45] = { at = 1795718314, v = { class = "WARRIOR", n = "Orokk Omosh", run = 8, spd = 2, ty = "Humanoid", z = "Orgrimmar" } },
+        [45] = { at = 1795718314, v = { armor = 2742, class = "WARRIOR", dmax = 100.32, dmin = 75.65, n = "Orokk Omosh", run = 8, spd = 2, ty = "Humanoid", z = "Orgrimmar" } },
       },
       [7804] = {
-        [55] = { at = 1795573638, v = { armor = 3292, class = "WARRIOR", dmax = 124.7, dmin = 94.04, n = "Trenton Lighthammer", run = 8, spd = 2, ty = "Humanoid", z = "Tanaris" } },
+        [55] = { at = 1795663387, v = { armor = 3292, class = "WARRIOR", dmax = 124.7, dmin = 94.04, n = "Trenton Lighthammer", run = 8, spd = 2, ty = "Humanoid", z = "Tanaris" } },
       },
       [7823] = {
         [55] = { at = 1795399264, v = { class = "WARRIOR", n = "Bera Stonehammer", rk = "ELITE", run = 8, spd = 2, ty = "Humanoid", z = "Tanaris" } },
       },
       [7824] = {
-        [55] = { at = 1795393428, v = { class = "WARRIOR", n = "Bulkrek Ragefist", rk = "ELITE", run = 8, spd = 2, ty = "Humanoid", z = "Tanaris" } },
+        [55] = { at = 1795662758, v = { class = "WARRIOR", n = "Bulkrek Ragefist", rk = "ELITE", run = 8, spd = 2, ty = "Humanoid", z = "Tanaris" } },
       },
       [7853] = {
         [30] = { at = 1795528181, v = { armor = 1212, class = "WARRIOR", dmax = 56.32, dmin = 42.45, n = "Scooty", run = 8, spd = 2, ty = "Humanoid", z = "Stranglethorn Vale" } },
@@ -3057,25 +3147,25 @@ GanderData = {
         [51] = { at = 1795573872, v = { class = "WARRIOR", n = "Security Chief Bilgewhizzle", run = 8, spd = 2, ty = "Humanoid", z = "Tanaris" } },
       },
       [8020] = {
-        [55] = { at = 1795610857, v = { class = "WARRIOR", n = "Shyn", rk = "ELITE", run = 8, spd = 2, ty = "Humanoid", z = "Feralas" } },
+        [55] = { at = 1795660056, v = { armor = 3292, class = "WARRIOR", dmax = 436.44, dmin = 329.12, n = "Shyn", rk = "ELITE", run = 8, spd = 2, ty = "Humanoid", z = "Feralas" } },
       },
       [8021] = {
         [50] = { at = 1795613436, v = { armor = 3018, class = "WARRIOR", dmax = 286.11, dmin = 215.75, n = "Orwin Gizzmick", run = 8, spd = 2, ty = "Humanoid", z = "Feralas" } },
       },
       [8123] = {
-        [55] = { at = 1795529010, v = { class = "WARRIOR", n = "Rickle Goldgrubber", run = 8, spd = 2, ty = "Humanoid", z = "Stranglethorn Vale" } },
+        [55] = { at = 1795794150, v = { class = "WARRIOR", n = "Rickle Goldgrubber", run = 8, spd = 2, ty = "Humanoid", z = "Stranglethorn Vale" } },
       },
       [8125] = {
         [43] = { at = 1795573586, v = { armor = 2414, class = "WARRIOR", dmax = 88.27, dmin = 66.56, n = "Dirge Quikcleave", run = 8, spd = 2, ty = "Humanoid", z = "Tanaris" } },
       },
       [8126] = {
-        [55] = { at = 1795573566, v = { class = "WARRIOR", n = "Nixx Sprocketspring", run = 8, spd = 2, ty = "Humanoid", z = "Tanaris" } },
+        [55] = { at = 1795662773, v = { class = "WARRIOR", n = "Nixx Sprocketspring", run = 8, spd = 2, ty = "Humanoid", z = "Tanaris" } },
       },
       [8137] = {
         [40] = { at = 1795573915, v = { class = "WARRIOR", n = "Gikkix", run = 8, spd = 2, ty = "Humanoid", z = "Tanaris" } },
       },
       [8143] = {
-        [49] = { at = 1795613446, v = { class = "WARRIOR", n = "Loorana", run = 8, spd = 2, ty = "Humanoid", z = "Feralas" } },
+        [49] = { at = 1795660047, v = { class = "WARRIOR", n = "Loorana", run = 8, spd = 2, ty = "Humanoid", z = "Feralas" } },
       },
       [8144] = {
         [51] = { at = 1795650189, v = { class = "WARRIOR", n = "Kulleg Stonehorn", run = 8, spd = 2, ty = "Humanoid", z = "Feralas" } },
@@ -3084,10 +3174,10 @@ GanderData = {
         [50] = { at = 1795650191, v = { class = "WARRIOR", n = "Sheendra Tallgrass", run = 8, spd = 2, ty = "Humanoid", z = "Feralas" } },
       },
       [8146] = {
-        [50] = { at = 1795614134, v = { class = "WARRIOR", n = "Ruw", run = 8, spd = 2, ty = "Humanoid", z = "Feralas" } },
+        [50] = { at = 1795660010, v = { class = "WARRIOR", n = "Ruw", run = 8, spd = 2, ty = "Humanoid", z = "Feralas" } },
       },
       [8147] = {
-        [55] = { at = 1795650234, v = { class = "WARRIOR", n = "Camp Mojache Brave", run = 8, spd = 2, ty = "Humanoid", z = "Feralas" } },
+        [55] = { at = 1795660054, v = { class = "WARRIOR", n = "Camp Mojache Brave", run = 8, spd = 2, ty = "Humanoid", z = "Feralas" } },
       },
       [8152] = {
         [40] = { at = 1795751114, v = { class = "WARRIOR", n = "Harnor", run = 8, spd = 2, ty = "Humanoid", z = "Desolace" } },
@@ -3096,7 +3186,7 @@ GanderData = {
         [50] = { at = 1795751192, v = { class = "WARRIOR", n = "Ghost Walker Brave", run = 8, spd = 2, ty = "Humanoid", z = "Desolace" } },
       },
       [8158] = {
-        [49] = { at = 1795613751, v = { class = "WARRIOR", n = "Bronk", run = 8, spd = 2, ty = "Humanoid", z = "Feralas" } },
+        [49] = { at = 1795660010, v = { class = "WARRIOR", n = "Bronk", run = 8, spd = 2, ty = "Humanoid", z = "Feralas" } },
       },
       [8159] = {
         [50] = { at = 1795650201, v = { class = "WARRIOR", n = "Worb Strongstitch", run = 8, spd = 2, ty = "Humanoid", z = "Feralas" } },
@@ -3108,13 +3198,13 @@ GanderData = {
         [50] = { at = 1795399686, v = { class = "WARRIOR", n = "Auctioneer Beardo", run = 8, spd = 2, ty = "Humanoid", z = "Tanaris" } },
       },
       [8673] = {
-        [50] = { at = 1795700138, v = { class = "WARRIOR", n = "Auctioneer Thathung", run = 8, spd = 2, ty = "Humanoid", z = "Orgrimmar" } },
+        [50] = { at = 1795751413, v = { class = "WARRIOR", n = "Auctioneer Thathung", run = 8, spd = 2, ty = "Humanoid", z = "Orgrimmar" } },
       },
       [8724] = {
-        [50] = { at = 1795648142, v = { class = "WARRIOR", n = "Auctioneer Wabang", run = 8, spd = 2, ty = "Humanoid", z = "Orgrimmar" } },
+        [50] = { at = 1795715617, v = { class = "WARRIOR", n = "Auctioneer Wabang", run = 8, spd = 2, ty = "Humanoid", z = "Orgrimmar" } },
       },
       [8736] = {
-        [53] = { at = 1795438781, v = { armor = 3183, class = "WARRIOR", dmax = 119.43, dmin = 90.05, n = "Buzzek Bracketswing", run = 8, spd = 2, ty = "Humanoid", z = "Tanaris" } },
+        [53] = { at = 1795663353, v = { armor = 3183, class = "WARRIOR", dmax = 119.43, dmin = 90.05, n = "Buzzek Bracketswing", run = 8, spd = 2, ty = "Humanoid", z = "Tanaris" } },
       },
       [8878] = {
         [40] = { at = 1795751079, v = { class = "WARRIOR", n = "Muuran", run = 8, spd = 2, ty = "Humanoid", z = "Desolace" } },
@@ -3130,22 +3220,25 @@ GanderData = {
         [41] = { at = 1795399349, v = { class = "WARRIOR", n = "Ground Pounder", run = 8, spd = 2, ty = "Elemental", z = "Tanaris" } },
       },
       [9460] = {
-        [57] = { at = 1795573704, v = { class = "WARRIOR", n = "Gadgetzan Bruiser", run = 8, spd = 2, ty = "Humanoid", z = "Tanaris" } },
+        [57] = { at = 1795663396, v = { class = "WARRIOR", n = "Gadgetzan Bruiser", run = 8, spd = 2, ty = "Humanoid", z = "Tanaris" } },
+      },
+      [9524] = {
+        [17] = { at = 1795402546, v = { class = "WARRIOR", n = "Kolkar Invader", run = 8, spd = 2 } },
       },
       [9525] = {
-        [45] = { at = 1795398704, v = { class = "WARRIOR", n = "Freewind Brave", run = 8, spd = 2, ty = "Humanoid", z = "Thousand Needles" } },
+        [45] = { at = 1795759420, v = { class = "WARRIOR", n = "Freewind Brave", run = 8, spd = 2, ty = "Humanoid", z = "Thousand Needles" } },
       },
       [9551] = {
-        [37] = { at = 1795397105, v = { class = "WARRIOR", n = "Starn", run = 8, spd = 2, ty = "Humanoid", z = "Thousand Needles" } },
+        [37] = { at = 1795760653, v = { class = "WARRIOR", n = "Starn", run = 8, spd = 2, ty = "Humanoid", z = "Thousand Needles" } },
       },
       [9552] = {
         [43] = { at = 1795614977, v = { class = "WARRIOR", n = "Zanara", run = 8, spd = 2, ty = "Humanoid", z = "Dustwallow Marsh" } },
       },
       [9558] = {
-        [45] = { at = 1795393901, v = { class = "WARRIOR", n = "Grimble", run = 8, spd = 1, ty = "Humanoid", z = "The Barrens" } },
+        [45] = { at = 1795561922, v = { class = "WARRIOR", n = "Grimble", run = 8, spd = 1, ty = "Humanoid", z = "The Barrens" } },
       },
       [9559] = {
-        [45] = { at = 1795563533, v = { class = "WARRIOR", n = "Grizzlowe", run = 8, spd = 1, ty = "Humanoid", z = "Stranglethorn Vale" } },
+        [45] = { at = 1795563533, v = { armor = 2742, class = "WARRIOR", dmax = 50.16, dmin = 37.82, n = "Grizzlowe", run = 8, spd = 1, ty = "Humanoid", z = "Stranglethorn Vale" } },
       },
       [9566] = {
         [45] = { at = 1795710806, v = { class = "WARRIOR", n = "Zapetta", run = 8, spd = 1, ty = "Humanoid", z = "Tirisfal Glades" } },
@@ -3154,25 +3247,30 @@ GanderData = {
         [41] = { at = 1795751134, v = { class = "WARRIOR", n = "Kireena", run = 8, spd = 2, ty = "Humanoid", z = "Desolace" } },
       },
       [9662] = {
+        [1] = { at = 1795747772, v = { class = "WARRIOR", n = "Sprite Darter Hatchling", run = 8, spd = 2, ty = "Non-combat Pet", z = "Orgrimmar" } },
+        [18] = { at = 1795489716, v = { class = "WARRIOR", n = "Sprite Darter Hatchling", run = 8, spd = 2, ty = "Non-combat Pet", z = "The Barrens" } },
         [45] = { at = 1795613430, v = { class = "WARRIOR", n = "Sprite Darter Hatchling", run = 8, spd = 2, ty = "Non-combat Pet", z = "Feralas" } },
+        [47] = { at = 1795642679, v = { class = "WARRIOR", n = "Sprite Darter Hatchling", run = 8, spd = 2, ty = "Non-combat Pet", z = "Orgrimmar" } },
+        [51] = { at = 1795643604, v = { class = "WARRIOR", n = "Sprite Darter Hatchling", run = 8, spd = 2, ty = "Non-combat Pet", z = "Undercity" } },
         [55] = { at = 1795663871, v = { class = "WARRIOR", n = "Sprite Darter Hatchling", run = 8, spd = 2, ty = "Non-combat Pet", z = "Orgrimmar" } },
         [56] = { at = 1795710188, v = { class = "WARRIOR", n = "Sprite Darter Hatchling", run = 8, spd = 2, ty = "Non-combat Pet", z = "Tirisfal Glades" } },
       },
       [9687] = {
-        [37] = { at = 1795374350, v = { class = "WARRIOR", run = 7, spd = 2 } },
+        [37] = { at = 1795806356, v = { class = "WARRIOR", run = 7, spd = 2, ty = "Totem", z = "Stranglethorn Vale" } },
       },
       [9706] = {
         [53] = { at = 1795573873, v = { class = "WARRIOR", n = "Yorba Screwspigot", run = 8, spd = 2, ty = "Humanoid", z = "Tanaris" } },
       },
       [9856] = {
-        [50] = { at = 1795614163, v = { class = "WARRIOR", n = "Auctioneer Grimful", run = 8, spd = 2, ty = "Humanoid", z = "Orgrimmar" } },
+        [50] = { at = 1795760801, v = { class = "WARRIOR", n = "Auctioneer Grimful", run = 8, spd = 2, ty = "Humanoid", z = "Orgrimmar" } },
       },
       [9936] = {
+        [1] = { at = 1795579156, v = { class = "WARRIOR", n = "Corrupted Kitten", run = 8, spd = 2, ty = "Non-combat Pet", z = "Orgrimmar" } },
         [34] = { at = 1795751881, v = { class = "WARRIOR", n = "Corrupted Kitten", run = 8, spd = 2, ty = "Non-combat Pet", z = "Orgrimmar" } },
         [41] = { at = 1795661669, v = { class = "WARRIOR", n = "Corrupted Kitten", ty = "Non-combat Pet", z = "Riverglades" } },
       },
       [9983] = {
-        [30] = { at = 1795576816, v = { class = "WARRIOR", n = "Kelsuwa", run = 8, spd = 2, ty = "Humanoid", z = "The Barrens" } },
+        [30] = { at = 1795749762, v = { class = "WARRIOR", n = "Kelsuwa", run = 8, spd = 2, ty = "Humanoid", z = "The Barrens" } },
       },
       [9985] = {
         [30] = { at = 1795573570, v = { class = "WARRIOR", n = "Laziphus", run = 8, spd = 2, ty = "Humanoid", z = "Tanaris" } },
@@ -3187,7 +3285,7 @@ GanderData = {
         [30] = { at = 1795663106, v = { class = "WARRIOR", n = "Hekkru", run = 8, spd = 2, ty = "Humanoid", z = "Swamp of Sorrows" } },
       },
       [10060] = {
-        [46] = { at = 1795529089, v = { class = "WARRIOR", n = "Grimestack", run = 8, spd = 1, ty = "Humanoid", z = "Stranglethorn Vale" } },
+        [46] = { at = 1795536948, v = { class = "WARRIOR", n = "Grimestack", run = 8, spd = 1, ty = "Humanoid", z = "Stranglethorn Vale" } },
       },
       [10181] = {
         [-1] = { at = 1795710469, v = { armor = 3022, class = "PALADIN", dmax = 2827.69, dmin = 2636.3, n = "Lady Sylvanas Windrunner", rk = "WORLDBOSS", run = 8, spd = 2, ty = "Humanoid", z = "Undercity" } },
@@ -3196,25 +3294,25 @@ GanderData = {
         [-1] = { at = 1795750326, v = { class = "WARRIOR", n = "Rexxar", rk = "ELITE", run = 8, spd = 2, ty = "Humanoid", z = "Desolace" } },
       },
       [10377] = {
-        [28] = { at = 1795396990, v = { class = "WARRIOR", n = "Elu", run = 8, spd = 2, ty = "Humanoid", z = "Thousand Needles" } },
+        [28] = { at = 1795752272, v = { armor = 1142, class = "WARRIOR", dmax = 52.45, dmin = 39.54, n = "Elu", run = 8, spd = 2, ty = "Humanoid", z = "Thousand Needles" } },
       },
       [10378] = {
-        [55] = { at = 1795576896, v = { armor = 3292, class = "WARRIOR", dmax = 436.44, dmin = 329.12, n = "Omusa Thunderhorn", rk = "ELITE", run = 8, spd = 2, ty = "Humanoid", z = "The Barrens" } },
+        [55] = { at = 1795749773, v = { armor = 3292, class = "WARRIOR", dmax = 436.44, dmin = 329.12, n = "Omusa Thunderhorn", rk = "ELITE", run = 8, spd = 2, ty = "Humanoid", z = "The Barrens" } },
       },
       [10380] = {
-        [15] = { at = 1795576818, v = { class = "WARRIOR", n = "Sanuye Runetotem", run = 8, spd = 2, ty = "Humanoid", z = "The Barrens" } },
+        [15] = { at = 1795749766, v = { class = "WARRIOR", n = "Sanuye Runetotem", run = 8, spd = 2, ty = "Humanoid", z = "The Barrens" } },
       },
       [10428] = {
-        [28] = { at = 1795398052, v = { class = "WARRIOR", n = "Motega Firemane", run = 8, spd = 2, ty = "Humanoid", z = "Thousand Needles" } },
+        [28] = { at = 1795659176, v = { armor = 1142, class = "WARRIOR", dmax = 52.45, dmin = 39.54, n = "Motega Firemane", run = 8, spd = 2, ty = "Humanoid", z = "Thousand Needles" } },
       },
       [10460] = {
         [48] = { at = 1795573864, v = { class = "WARRIOR", n = "Prospector Ironboot", run = 8, spd = 2, ty = "Humanoid", z = "Tanaris" } },
       },
       [10537] = {
-        [55] = { at = 1795398732, v = { armor = 3434, class = "WARRIOR", dmax = 124.7, dmin = 94.04, n = "Cliffwatcher Longhorn", run = 8, spd = 2, ty = "Humanoid", z = "Thousand Needles" } },
+        [55] = { at = 1795760646, v = { armor = 3434, class = "WARRIOR", dmax = 124.7, dmin = 94.04, n = "Cliffwatcher Longhorn", run = 8, spd = 2, ty = "Humanoid", z = "Thousand Needles" } },
       },
       [10539] = {
-        [30] = { at = 1795397113, v = { armor = 1212, class = "WARRIOR", dmax = 56.32, dmin = 42.45, n = "Hagar Lightninghoof", run = 8, spd = 2, ty = "Humanoid", z = "Thousand Needles" } },
+        [30] = { at = 1795658529, v = { armor = 1212, class = "WARRIOR", dmax = 56.32, dmin = 42.45, n = "Hagar Lightninghoof", run = 8, spd = 2, ty = "Humanoid", z = "Thousand Needles" } },
       },
       [10540] = {
         [-1] = { at = 1795711355, v = { armor = 2888, class = "PALADIN", dmax = 1281.88, dmin = 966.97, n = "Vol'jin", rk = "WORLDBOSS", run = 8, spd = 2, ty = "Humanoid", z = "Orgrimmar" } },
@@ -3223,34 +3321,37 @@ GanderData = {
         [10] = { at = 1795393538, v = { class = "WARRIOR", n = "Dog", run = 8, spd = 2, ty = "Critter", z = "Thousand Needles" } },
       },
       [10612] = {
-        [45] = { at = 1795397386, v = { class = "WARRIOR", n = "Guard Wachabe", run = 8, spd = 2, ty = "Humanoid", z = "Thousand Needles" } },
+        [45] = { at = 1795759418, v = { class = "WARRIOR", n = "Guard Wachabe", run = 8, spd = 2, ty = "Humanoid", z = "Thousand Needles" } },
       },
       [10617] = {
-        [26] = { at = 1795398420, v = { class = "WARRIOR", n = "Galak Messenger", run = 8, spd = 2, ty = "Humanoid", z = "Thousand Needles" } },
+        [26] = { at = 1795657388, v = { class = "WARRIOR", n = "Galak Messenger", run = 8, spd = 2, ty = "Humanoid", z = "Thousand Needles" } },
       },
       [10636] = {
-        [30] = { at = 1795398057, v = { class = "WARRIOR", n = "Pack Kodo", run = 8, spd = 2, ty = "Beast", z = "Thousand Needles" } },
+        [30] = { at = 1795659182, v = { class = "WARRIOR", n = "Pack Kodo", run = 8, spd = 2, ty = "Beast", z = "Thousand Needles" } },
       },
       [10638] = {
-        [30] = { at = 1795398053, v = { class = "WARRIOR", n = "Kanati Greycloud", run = 8, spd = 2, ty = "Humanoid", z = "Thousand Needles" } },
+        [30] = { at = 1795659158, v = { armor = 1212, class = "WARRIOR", dmax = 56.32, dmin = 42.45, n = "Kanati Greycloud", run = 8, spd = 2, ty = "Humanoid", z = "Thousand Needles" } },
       },
       [10645] = {
-        [30] = { at = 1795397323, v = { armor = 1212, class = "WARRIOR", dmax = 56.32, dmin = 42.45, n = "Thalia Amberhide", run = 8, spd = 2, ty = "Humanoid", z = "Thousand Needles" } },
+        [30] = { at = 1795760631, v = { armor = 1212, class = "WARRIOR", dmax = 56.32, dmin = 42.45, n = "Thalia Amberhide", run = 8, spd = 2, ty = "Humanoid", z = "Thousand Needles" } },
       },
       [10696] = {
-        [41] = { at = 1795744376, v = { class = "WARRIOR", n = "Refuge Pointe Defender", run = 8, spd = 2, ty = "Humanoid", z = "Arathi Highlands" } },
+        [41] = { at = 1795746512, v = { class = "WARRIOR", n = "Refuge Pointe Defender", run = 8, spd = 2, ty = "Humanoid", z = "Arathi Highlands" } },
+        [42] = { at = 1795744375, v = { class = "WARRIOR", n = "Refuge Pointe Defender", run = 8, spd = 2, ty = "Humanoid", z = "Arathi Highlands" } },
+        [44] = { at = 1795744391, v = { class = "WARRIOR", n = "Refuge Pointe Defender", ty = "Humanoid", z = "Arathi Highlands" } },
+        [45] = { at = 1795746511, v = { class = "WARRIOR", n = "Refuge Pointe Defender", run = 8, spd = 2, ty = "Humanoid", z = "Arathi Highlands" } },
       },
       [10719] = {
         [50] = { at = 1795718139, v = { class = "WARRIOR", n = "Herald of Thrall", run = 8, spd = 2, ty = "Humanoid", z = "Orgrimmar" } },
       },
       [10880] = {
-        [3] = { at = 1795614729, v = { class = "WARRIOR", n = "Warcaller Gorlach", run = 8, spd = 2, ty = "Humanoid", z = "Orgrimmar" } },
+        [3] = { at = 1795642671, v = { armor = 46, class = "WARRIOR", dmax = 3.74, dmin = 2.78, n = "Warcaller Gorlach", run = 8, spd = 2, ty = "Humanoid", z = "Orgrimmar" } },
       },
       [10928] = {
         [43] = { at = 1795733661, v = { class = "PALADIN", fam = "Succubus", n = "Succubus Minion", run = 8, spd = 2, ty = "Demon", z = "Stranglethorn Vale" } },
       },
       [10941] = {
-        [31] = { at = 1795398051, v = { class = "WARRIOR", n = "Wizlo Bearingshiner", run = 8, spd = 2, ty = "Humanoid", z = "Thousand Needles" } },
+        [31] = { at = 1795659170, v = { armor = 1247, class = "WARRIOR", dmax = 57.73, dmin = 43.53, n = "Wizlo Bearingshiner", run = 8, spd = 2, ty = "Humanoid", z = "Thousand Needles" } },
       },
       [10996] = {
         [59] = { at = 1795740454, v = { class = "WARRIOR", n = "Fallen Hero", rk = "ELITE", run = 8, spd = 2, ty = "Undead", z = "Tirisfal Glades" } },
@@ -3268,10 +3369,10 @@ GanderData = {
         [30] = { at = 1795610078, v = { armor = 1212, class = "WARRIOR", dmax = 56.32, dmin = 42.45, n = "Innkeeper Sikewa", run = 8, spd = 2, ty = "Humanoid", z = "Desolace" } },
       },
       [11116] = {
-        [30] = { at = 1795398690, v = { armor = 1212, class = "WARRIOR", dmax = 56.32, dmin = 42.45, n = "Innkeeper Abeqwa", run = 8, spd = 2, ty = "Humanoid", z = "Thousand Needles" } },
+        [30] = { at = 1795760744, v = { armor = 1212, class = "WARRIOR", dmax = 56.32, dmin = 42.45, n = "Innkeeper Abeqwa", run = 8, spd = 2, ty = "Humanoid", z = "Thousand Needles" } },
       },
       [11117] = {
-        [30] = { at = 1795398679, v = { class = "WARRIOR", n = "Awenasa", run = 8, spd = 2, ty = "Humanoid", z = "Thousand Needles" } },
+        [30] = { at = 1795760627, v = { class = "WARRIOR", n = "Awenasa", run = 8, spd = 2, ty = "Humanoid", z = "Thousand Needles" } },
       },
       [11176] = {
         [53] = { at = 1795718317, v = { class = "WARRIOR", n = "Krathok Moltenfist", run = 8, spd = 2, ty = "Humanoid", z = "Orgrimmar" } },
@@ -3313,7 +3414,7 @@ GanderData = {
         [20] = { at = 1795718912, v = { armor = 861, class = "WARRIOR", dmax = 39.02, dmin = 29.39, n = "Rahauro", run = 8, spd = 2, ty = "Humanoid", z = "Thunder Bluff" } },
       },
       [11864] = {
-        [25] = { at = 1795747817, v = { class = "WARRIOR", n = "Tammra Windfield", run = 8, spd = 2, ty = "Humanoid", z = "Stonetalon Mountains" } },
+        [25] = { at = 1795754631, v = { armor = 1037, class = "WARRIOR", dmax = 47.5, dmin = 35.81, n = "Tammra Windfield", run = 8, spd = 2, ty = "Humanoid", z = "Stonetalon Mountains" } },
       },
       [11868] = {
         [50] = { at = 1795718360, v = { armor = 3018, class = "WARRIOR", dmax = 785.39, dmin = 592.26, n = "Sayoc", rk = "ELITE", run = 8, spd = 2, ty = "Humanoid", z = "Orgrimmar" } },
@@ -3328,7 +3429,7 @@ GanderData = {
         [55] = { at = 1795614966, v = { class = "WARRIOR", n = "Shardi", rk = "ELITE", run = 8, spd = 2, ty = "Humanoid", z = "Dustwallow Marsh" } },
       },
       [11901] = {
-        [55] = { at = 1795573034, v = { armor = 3292, class = "WARRIOR", dmax = 436.44, dmin = 329.12, n = "Andruk", rk = "ELITE", run = 8, spd = 2, ty = "Humanoid", z = "Ashenvale" } },
+        [55] = { at = 1795573183, v = { armor = 3292, class = "WARRIOR", dmax = 436.44, dmin = 329.12, n = "Andruk", rk = "ELITE", run = 8, spd = 2, ty = "Humanoid", z = "Ashenvale" } },
       },
       [12027] = {
         [30] = { at = 1795577579, v = { class = "WARRIOR", n = "Tukk", run = 8, spd = 2, ty = "Humanoid", z = "Desolace" } },
@@ -3349,19 +3450,19 @@ GanderData = {
         [30] = { at = 1795577294, v = { class = "WARRIOR", n = "Wulan", run = 8, spd = 2, ty = "Humanoid", z = "Desolace" } },
       },
       [12043] = {
-        [32] = { at = 1795747975, v = { class = "WARRIOR", n = "Kulwia", run = 8, spd = 2, ty = "Humanoid", z = "Stonetalon Mountains" } },
+        [32] = { at = 1795756417, v = { class = "WARRIOR", n = "Kulwia", run = 8, spd = 2, ty = "Humanoid", z = "Stonetalon Mountains" } },
       },
       [12045] = {
         [30] = { at = 1795577311, v = { class = "WARRIOR", n = "Hae'Wilani", run = 8, spd = 2, ty = "Humanoid", z = "Desolace" } },
       },
       [12136] = {
-        [45] = { at = 1795660386, v = { class = "WARRIOR", n = "Snurk Bucksquick", run = 8, spd = 1, ty = "Humanoid", z = "Durotar" } },
+        [45] = { at = 1795803560, v = { class = "WARRIOR", n = "Snurk Bucksquick", run = 8, spd = 1, ty = "Humanoid", z = "Durotar" } },
       },
       [12137] = {
         [45] = { at = 1795666630, v = { armor = 2742, class = "WARRIOR", dmax = 50.16, dmin = 37.82, n = "Squibby Overspeck", run = 8, spd = 1, ty = "Humanoid", z = "Stranglethorn Vale" } },
       },
       [12296] = {
-        [3] = { at = 1795393830, v = { class = "WARRIOR", n = "Sickly Gazelle", run = 6, spd = 2, ty = "Critter", z = "The Barrens" } },
+        [3] = { at = 1795749436, v = { class = "WARRIOR", n = "Sickly Gazelle", run = 6, spd = 2, ty = "Critter", z = "The Barrens" } },
       },
       [12338] = {
         [55] = { at = 1795610201, v = { class = "WARRIOR", n = "Shadowprey Guardian", run = 8, spd = 2, ty = "Humanoid", z = "Desolace" } },
@@ -3379,16 +3480,16 @@ GanderData = {
         [31] = { at = 1795572923, v = { armor = 1247, class = "WARRIOR", dmax = 57.73, dmin = 43.53, n = "Mitsuwa", run = 8, spd = 2, ty = "Humanoid", z = "Ashenvale" } },
       },
       [12736] = {
-        [25] = { at = 1795573027, v = { armor = 528, class = "MAGE", dmax = 34.69, dmin = 26.13, n = "Je'neu Sancrea", run = 8, spd = 2, ty = "Humanoid", z = "Ashenvale" } },
+        [25] = { at = 1795573060, v = { armor = 528, class = "MAGE", dmax = 34.69, dmin = 26.13, n = "Je'neu Sancrea", run = 8, spd = 2, ty = "Humanoid", z = "Ashenvale" } },
       },
       [12757] = {
-        [35] = { at = 1795567003, v = { armor = 1387, class = "WARRIOR", dmax = 64.44, dmin = 48.58, n = "Karang Amakkar", run = 8, spd = 2, ty = "Humanoid", z = "Ashenvale" } },
+        [35] = { at = 1795573069, v = { armor = 1387, class = "WARRIOR", dmax = 64.44, dmin = 48.58, n = "Karang Amakkar", run = 8, spd = 2, ty = "Humanoid", z = "Ashenvale" } },
       },
       [12863] = {
-        [29] = { at = 1795566891, v = { armor = 953, class = "PALADIN", dmax = 50.51, dmin = 38.1, n = "Warsong Runner", run = 8, spd = 2, ty = "Humanoid", z = "Ashenvale" } },
+        [29] = { at = 1795573071, v = { armor = 953, class = "PALADIN", dmax = 50.51, dmin = 38.1, n = "Warsong Runner", run = 8, spd = 2, ty = "Humanoid", z = "Ashenvale" } },
       },
       [12903] = {
-        [40] = { at = 1795572923, v = { class = "WARRIOR", n = "Splintertree Guard", run = 8, spd = 2, ty = "Humanoid", z = "Ashenvale" } },
+        [40] = { at = 1795573072, v = { class = "WARRIOR", n = "Splintertree Guard", run = 8, spd = 2, ty = "Humanoid", z = "Ashenvale" } },
       },
       [12919] = {
         [45] = { at = 1795664841, v = { class = "WARRIOR", n = "Nat Pagle", run = 8, spd = 2, ty = "Humanoid", z = "Dustwallow Marsh" } },
@@ -3397,13 +3498,14 @@ GanderData = {
         [48] = { at = 1795740684, v = { class = "WARRIOR", n = "Doctor Gregory Victor", run = 8, spd = 2, ty = "Humanoid", z = "Arathi Highlands" } },
       },
       [12922] = {
+        [9] = { at = 1795539419, v = { class = "MAGE", fam = "Imp", n = "Imp Minion", run = 8, spd = 2, ty = "Demon", z = "Durotar" } },
         [39] = { at = 1795750266, v = { class = "MAGE", fam = "Imp", n = "Imp Minion", run = 8, spd = 2, ty = "Demon", z = "Desolace" } },
       },
       [12961] = {
-        [30] = { at = 1795567185, v = { armor = 1212, class = "WARRIOR", dmax = 56.32, dmin = 42.45, n = "Kil'Hiwana", run = 8, spd = 2, ty = "Humanoid", z = "Ashenvale" } },
+        [30] = { at = 1795567187, v = { armor = 1212, class = "WARRIOR", dmax = 56.32, dmin = 42.45, n = "Kil'Hiwana", run = 8, spd = 2, ty = "Humanoid", z = "Ashenvale" } },
       },
       [12962] = {
-        [30] = { at = 1795572935, v = { class = "WARRIOR", n = "Wik'Tar", run = 8, spd = 2, ty = "Humanoid", z = "Ashenvale" } },
+        [30] = { at = 1795573138, v = { class = "WARRIOR", n = "Wik'Tar", run = 8, spd = 2, ty = "Humanoid", z = "Ashenvale" } },
       },
       [13417] = {
         [50] = { at = 1795711374, v = { armor = 3018, class = "WARRIOR", dmax = 112.2, dmin = 84.61, n = "Sagorne Creststrider", run = 8, spd = 2, ty = "Humanoid", z = "Orgrimmar" } },
@@ -3428,25 +3530,25 @@ GanderData = {
         [40] = { at = 1795662771, v = { class = "WARRIOR", n = "Sawfin Frenzy", run = 8, spd = 0.9, ty = "Beast", z = "Swamp of Sorrows" } },
       },
       [14373] = {
-        [59] = { at = 1795650164, v = { armor = 3512, class = "WARRIOR", dmax = 135.03, dmin = 101.83, n = "Sage Korolusk", run = 8, spd = 2, ty = "Humanoid", z = "Feralas" } },
+        [59] = { at = 1795660013, v = { armor = 3512, class = "WARRIOR", dmax = 135.03, dmin = 101.83, n = "Sage Korolusk", run = 8, spd = 2, ty = "Humanoid", z = "Feralas" } },
       },
       [14375] = {
-        [60] = { at = 1795439788, v = { class = "WARRIOR", n = "Scout Stronghand", rk = "ELITE", run = 8, spd = 2, ty = "Humanoid", z = "Orgrimmar" } },
+        [60] = { at = 1795748589, v = { class = "WARRIOR", n = "Scout Stronghand", rk = "ELITE", run = 8, spd = 2, ty = "Humanoid", z = "Orgrimmar" } },
       },
       [14376] = {
-        [60] = { at = 1795665164, v = { class = "WARRIOR", n = "Scout Manslayer", rk = "ELITE", run = 8, spd = 2, ty = "Humanoid", z = "Orgrimmar" } },
+        [60] = { at = 1795754342, v = { class = "WARRIOR", n = "Scout Manslayer", rk = "ELITE", run = 8, spd = 2, ty = "Humanoid", z = "Orgrimmar" } },
       },
       [14377] = {
         [60] = { at = 1795665164, v = { class = "WARRIOR", n = "Scout Tharr", rk = "ELITE", run = 8, spd = 2, ty = "Humanoid", z = "Orgrimmar" } },
       },
       [14392] = {
-        [60] = { at = 1795663854, v = { armor = 3566, class = "WARRIOR", dmax = 1654.3, dmin = 1247.44, n = "Overlord Runthak", rk = "ELITE", run = 8, spd = 2, ty = "Humanoid", z = "Orgrimmar" } },
+        [60] = { at = 1795803377, v = { armor = 3566, class = "WARRIOR", dmax = 1654.3, dmin = 1247.44, n = "Overlord Runthak", rk = "ELITE", run = 8, spd = 2, ty = "Humanoid", z = "Orgrimmar" } },
       },
       [14403] = {
         [60] = { at = 1795667477, v = { class = "WARRIOR", n = "Seeker Nahr", rk = "ELITE", run = 8, spd = 2, ty = "Humanoid", z = "Undercity" } },
       },
       [14442] = {
-        [60] = { at = 1795708481, v = { class = "WARRIOR", n = "Hunter Thunderhorn", rk = "ELITE", run = 8, spd = 2, ty = "Humanoid", z = "Thunder Bluff" } },
+        [60] = { at = 1795794407, v = { class = "WARRIOR", n = "Hunter Thunderhorn", rk = "ELITE", run = 8, spd = 2, ty = "Humanoid", z = "Thunder Bluff" } },
       },
       [14451] = {
         [10] = { at = 1795718294, v = { class = "WARRIOR", n = "Orphan Matron Battlewail", run = 8, spd = 2, ty = "Humanoid", z = "Orgrimmar" } },
@@ -3455,25 +3557,25 @@ GanderData = {
         [3] = { at = 1795718294, v = { class = "WARRIOR", n = "Horde Orphan", run = 7, spd = 2, ty = "Humanoid", z = "Orgrimmar" } },
       },
       [14567] = {
-        [52] = { at = 1795573638, v = { armor = 3128, class = "WARRIOR", dmax = 117.18, dmin = 88.36, n = "Derotain Mudsipper", run = 8, spd = 2, ty = "Humanoid", z = "Tanaris" } },
+        [52] = { at = 1795662791, v = { armor = 3128, class = "WARRIOR", dmax = 117.18, dmin = 88.36, n = "Derotain Mudsipper", run = 8, spd = 2, ty = "Humanoid", z = "Tanaris" } },
       },
       [14720] = {
-        [62] = { at = 1795701134, v = { armor = 3677, class = "WARRIOR", dmax = 2146.36, dmin = 1618.76, n = "High Overlord Saurfang", rk = "ELITE", run = 16, spd = 2, ty = "Humanoid", z = "Orgrimmar" } },
+        [62] = { at = 1795715625, v = { armor = 3677, class = "WARRIOR", dmax = 2146.36, dmin = 1618.76, n = "High Overlord Saurfang", rk = "ELITE", run = 16, spd = 2, ty = "Humanoid", z = "Orgrimmar" } },
       },
       [14726] = {
         [35] = { at = 1795700247, v = { class = "WARRIOR", n = "Rashona Straglash", run = 8, spd = 2, ty = "Humanoid", z = "Orgrimmar" } },
       },
       [14743] = {
-        [50] = { at = 1795573566, v = { armor = 3018, class = "WARRIOR", dmax = 112.2, dmin = 84.61, n = "Jhordy Lapforge", run = 8, spd = 2, ty = "Humanoid", z = "Tanaris" } },
+        [50] = { at = 1795663409, v = { armor = 3018, class = "WARRIOR", dmax = 112.2, dmin = 84.61, n = "Jhordy Lapforge", run = 8, spd = 2, ty = "Humanoid", z = "Tanaris" } },
       },
       [14901] = {
         [4] = { at = 1795576901, v = { class = "WARRIOR", n = "Peon", run = 8, spd = 2, ty = "Humanoid", z = "The Barrens" } },
       },
       [14990] = {
-        [40] = { at = 1795701500, v = { armor = 1980, class = "WARRIOR", dmax = 74.32, dmin = 56.02, n = "Defilers Emissary", run = 8, spd = 2, ty = "Humanoid", z = "Orgrimmar" } },
+        [40] = { at = 1795800709, v = { armor = 1980, class = "WARRIOR", dmax = 74.32, dmin = 56.02, n = "Defilers Emissary", run = 8, spd = 2, ty = "Humanoid", z = "Orgrimmar" } },
       },
       [15076] = {
-        [55] = { at = 1795563462, v = { armor = 3292, class = "WARRIOR", dmax = 498.78, dmin = 376.14, n = "Zandalarian Emissary", rk = "ELITE", run = 8, spd = 2, ty = "Humanoid", z = "Stranglethorn Vale" } },
+        [55] = { at = 1795794091, v = { armor = 3292, class = "WARRIOR", dmax = 498.78, dmin = 376.14, n = "Zandalarian Emissary", rk = "ELITE", run = 8, spd = 2, ty = "Humanoid", z = "Stranglethorn Vale" } },
       },
       [15116] = {
         [50] = { at = 1795396642, v = { armor = 3018, class = "WARRIOR", dmax = 112.2, dmin = 84.61, n = "Grinkle", run = 8, spd = 2, ty = "Humanoid", z = "Orgrimmar" } },
@@ -3482,19 +3584,19 @@ GanderData = {
         [51] = { at = 1795573886, v = { class = "WARRIOR", n = "Haughty Modiste", run = 8, spd = 2, ty = "Humanoid", z = "Tanaris" } },
       },
       [15188] = {
-        [55] = { at = 1795564105, v = { armor = 1678, class = "MAGE", dmax = 91.03, dmin = 68.64, n = "Cenarion Emissary Blackhoof", run = 8, spd = 2, ty = "Humanoid", z = "Orgrimmar" } },
+        [55] = { at = 1795751455, v = { armor = 1678, class = "MAGE", dmax = 91.03, dmin = 68.64, n = "Cenarion Emissary Blackhoof", run = 8, spd = 2, ty = "Humanoid", z = "Orgrimmar" } },
       },
       [15350] = {
-        [60] = { at = 1795720455, v = { class = "WARRIOR", n = "Horde Warbringer", run = 8, spd = 2, ty = "Humanoid", z = "Undercity" } },
+        [60] = { at = 1795760935, v = { armor = 3566, class = "WARRIOR", dmax = 137.86, dmin = 103.95, n = "Horde Warbringer", run = 8, spd = 2, ty = "Humanoid", z = "Undercity" } },
       },
       [15677] = {
         [50] = { at = 1795394260, v = { class = "WARRIOR", n = "Auctioneer Graves", run = 8, spd = 2, ty = "Humanoid", z = "Stranglethorn Vale" } },
       },
       [15681] = {
-        [50] = { at = 1795529040, v = { class = "WARRIOR", n = "Auctioneer O'reely", run = 8, spd = 2, ty = "Humanoid", z = "Stranglethorn Vale" } },
+        [50] = { at = 1795794152, v = { class = "WARRIOR", n = "Auctioneer O'reely", run = 8, spd = 2, ty = "Humanoid", z = "Stranglethorn Vale" } },
       },
       [15682] = {
-        [50] = { at = 1795697200, v = { class = "WARRIOR", n = "Auctioneer Cain", run = 8, spd = 2, ty = "Humanoid", z = "Undercity" } },
+        [50] = { at = 1795747030, v = { class = "WARRIOR", n = "Auctioneer Cain", run = 8, spd = 2, ty = "Humanoid", z = "Undercity" } },
       },
       [16014] = {
         [60] = { at = 1795399830, v = { armor = 3566, class = "WARRIOR", dmax = 165.43, dmin = 124.74, n = "Mux Manascrambler", run = 8, spd = 2, ty = "Humanoid", z = "Tanaris" } },
@@ -3509,7 +3611,7 @@ GanderData = {
         [55] = { at = 1795665381, v = { class = "WARRIOR", n = "Steamwheedle Bruiser", rk = "ELITE", run = 8, spd = 2, ty = "Humanoid", z = "Durotar" } },
       },
       [16227] = {
-        [55] = { at = 1795563740, v = { class = "WARRIOR", n = "Bragok", rk = "ELITE", run = 8, spd = 2, ty = "Humanoid", z = "The Barrens" } },
+        [55] = { at = 1795670991, v = { class = "WARRIOR", n = "Bragok", rk = "ELITE", run = 8, spd = 2, ty = "Humanoid", z = "The Barrens" } },
       },
       [16417] = {
         [44] = { at = 1795573656, v = { class = "WARRIOR", n = "Rumsen Fizzlebrack", run = 8, spd = 2, ty = "Humanoid", z = "Tanaris" } },
@@ -3561,6 +3663,7 @@ GanderData = {
       },
       [251245] = {
         [5] = { at = 1795706168, v = { class = "WARRIOR", fam = "Cat", n = "Prideclaw", run = 10, spd = 2, ty = "Beast", z = "Zephras Isle" } },
+        [6] = { at = 1795563000, v = { class = "WARRIOR", fam = "Cat", n = "Prideclaw", run = 10, spd = 2, ty = "Beast", z = "Zephras Isle" } },
       },
       [251314] = {
         [7] = { at = 1795706992, v = { class = "PALADIN", n = "Skyhopper", run = 8, spd = 1.3, ty = "Beast", z = "Zephras Isle" } },
@@ -3698,6 +3801,9 @@ GanderData = {
         [39] = { at = 1795732267, v = { class = "MAGE", n = "Twilight Shadowmancer", run = 8, spd = 2, ty = "Humanoid", z = "Riverglades" } },
         [40] = { at = 1795732411, v = { class = "MAGE", n = "Twilight Shadowmancer", run = 8, spd = 2, ty = "Humanoid", z = "Riverglades" } },
       },
+      [254588] = {
+        [9] = { at = 1795789263, v = { class = "WARRIOR", fam = "Crab", n = "Windsong Crawler", run = 6, spd = 2, ty = "Beast", z = "Zephras Isle" } },
+      },
       [254626] = {
         [9] = { at = 1795706273, v = { class = "ROGUE", n = "Al'Aketh Assassin", run = 8, spd = 2, ty = "Humanoid", z = "Zephras Isle" } },
         [10] = { at = 1795706334, v = { class = "ROGUE", n = "Al'Aketh Assassin", run = 8, spd = 2, ty = "Humanoid", z = "Zephras Isle" } },
@@ -3723,8 +3829,11 @@ GanderData = {
       [255996] = {
         [55] = { at = 1795661508, v = { class = "WARRIOR", n = "Rog'mar Grunt", run = 8, spd = 2, ty = "Humanoid", z = "Riverglades" } },
       },
+      [256076] = {
+        [10] = { at = 1795788618, v = { class = "PALADIN", n = "Damaged Construct", run = 8, spd = 2, ty = "Elemental", z = "Zephras Isle" } },
+      },
       [256386] = {
-        [30] = { at = 1795574986, v = { armor = 1212, class = "WARRIOR", dmax = 56.32, dmin = 42.45, n = "Dokimi", run = 8, spd = 2, ty = "Humanoid", z = "The Barrens" } },
+        [30] = { at = 1795751920, v = { armor = 1212, class = "WARRIOR", dmax = 56.32, dmin = 42.45, n = "Dokimi", run = 8, spd = 2, ty = "Humanoid", z = "The Barrens" } },
       },
       [256389] = {
         [30] = { at = 1795661191, v = { class = "WARRIOR", n = "Tamelyn Aldridge", run = 8, spd = 2, ty = "Humanoid", z = "Redridge Mountains" } },
@@ -3850,7 +3959,9 @@ GanderData = {
       },
       [259842] = {
         [1] = { at = 1795751673, v = { class = "WARRIOR", n = "Musical Gustjumper", run = 8, spd = 2, ty = "Non-combat Pet", z = "Orgrimmar" } },
+        [14] = { at = 1795579157, v = { class = "WARRIOR", n = "Musical Gustjumper", run = 8, spd = 2, ty = "Non-combat Pet", z = "Orgrimmar" } },
         [38] = { at = 1795577438, v = { class = "WARRIOR", n = "Musical Gustjumper", run = 8, spd = 2, ty = "Non-combat Pet", z = "Desolace" } },
+        [60] = { at = 1795581938, v = { class = "WARRIOR", n = "Musical Gustjumper", run = 8, spd = 2, ty = "Non-combat Pet", z = "Orgrimmar" } },
       },
       [260343] = {
         [38] = { at = 1795661515, v = { class = "WARRIOR", n = "Maka", run = 8, spd = 2, ty = "Humanoid", z = "Riverglades" } },
@@ -3863,6 +3974,11 @@ GanderData = {
       },
       [261313] = {
         [36] = { at = 1795661520, v = { class = "WARRIOR", n = "Naluk", run = 8, spd = 2, ty = "Humanoid", z = "Riverglades" } },
+      },
+      [262397] = {
+        [36] = { at = 1795806954, v = { class = "WARRIOR", n = "Brinescale Skirmisher", run = 8, spd = 2, ty = "Humanoid", z = "Stranglethorn Vale" } },
+        [37] = { at = 1795807020, v = { class = "WARRIOR", n = "Brinescale Skirmisher", run = 8, spd = 2, ty = "Humanoid", z = "Stranglethorn Vale" } },
+        [38] = { at = 1795806991, v = { class = "WARRIOR", n = "Brinescale Skirmisher", run = 8, spd = 2, ty = "Humanoid", z = "Stranglethorn Vale" } },
       },
       [262502] = {
         [20] = { at = 1795708024, v = { class = "WARRIOR", n = "Brix Xizzix", run = 8, spd = 2, ty = "Humanoid", z = "Mulgore" } },
@@ -3893,12 +4009,14 @@ GanderData = {
       },
       [266025] = {
         [11] = { at = 1795641757, v = { class = "WARRIOR", n = "Rat Familiar", run = 8, spd = 2, ty = "Non-combat Pet", z = "Orgrimmar" } },
+        [12] = { at = 1795638955, v = { class = "WARRIOR", n = "Rat Familiar", run = 8, spd = 2, ty = "Non-combat Pet", z = "Durotar" } },
+        [20] = { at = 1795405317, v = { class = "WARRIOR", n = "Rat Familiar", run = 8, spd = 2 } },
       },
       [266484] = {
         [30] = { at = 1795710469, v = { armor = 1212, class = "WARRIOR", dmax = 56.32, dmin = 42.45, n = "Morbin Lightbane", run = 8, spd = 2, ty = "Undead", z = "Undercity" } },
       },
       [266735] = {
-        [30] = { at = 1795374561, v = { class = "WARRIOR" } },
+        [30] = { at = 1795402222, v = { class = "WARRIOR", run = 8, spd = 2 } },
         [43] = { at = 1795562973, v = { class = "WARRIOR", n = "Excitable Slime", run = 8, spd = 2, ty = "Non-combat Pet", z = "Stranglethorn Vale" } },
       },
       [266860] = {
@@ -3911,7 +4029,10 @@ GanderData = {
         [30] = { at = 1795524000, v = { armor = 981, class = "PALADIN", dmax = 52.37, dmin = 39.49, n = "Darkspear Emissary", run = 8, spd = 2, ty = "Humanoid", z = "Orgrimmar" } },
       },
       [268624] = {
-        [17] = { at = 1795396861, v = { class = "ROGUE", n = "Razormane Raider", run = 8, spd = 2, ty = "Humanoid", z = "The Barrens" } },
+        [16] = { at = 1795749653, v = { class = "ROGUE", n = "Razormane Raider", run = 8, spd = 2, ty = "Humanoid", z = "The Barrens" } },
+        [17] = { at = 1795574588, v = { class = "ROGUE", n = "Razormane Raider", run = 8, spd = 2, ty = "Humanoid", z = "The Barrens" } },
+        [18] = { at = 1795756645, v = { class = "ROGUE", n = "Razormane Raider", run = 8, spd = 2, ty = "Humanoid", z = "The Barrens" } },
+        [19] = { at = 1795496380, v = { class = "ROGUE", n = "Razormane Raider", run = 8, spd = 2, ty = "Humanoid", z = "The Barrens" } },
       },
       [268705] = {
         [34] = { at = 1795610171, v = { armor = 690, class = "MAGE", dmax = 45.8, dmin = 34.53, n = "Aka'rai", run = 8, spd = 2, ty = "Humanoid", z = "Desolace" } },
@@ -3920,18 +4041,22 @@ GanderData = {
         [1] = { at = 1795803041, v = { class = "WARRIOR", n = "Prairie Wolf Pup", run = 8, spd = 2, ty = "Non-combat Pet", z = "Orgrimmar" } },
         [21] = { at = 1795523962, v = { class = "WARRIOR", n = "Prairie Wolf Pup", run = 8, spd = 2, ty = "Non-combat Pet", z = "Orgrimmar" } },
         [22] = { at = 1795701837, v = { class = "WARRIOR", n = "Prairie Wolf Pup", run = 8, spd = 2, ty = "Non-combat Pet", z = "Durotar" } },
+        [29] = { at = 1795399235, v = { class = "WARRIOR", n = "Prairie Wolf Pup", run = 8, spd = 2 } },
+        [31] = { at = 1795761359, v = { class = "WARRIOR", n = "Prairie Wolf Pup", run = 8, spd = 2, ty = "Non-combat Pet", z = "Orgrimmar" } },
+        [32] = { at = 1795803438, v = { class = "WARRIOR", n = "Prairie Wolf Pup", run = 8, spd = 2, ty = "Non-combat Pet", z = "Orgrimmar" } },
         [33] = { at = 1795666461, v = { class = "WARRIOR", n = "Prairie Wolf Pup", run = 8, spd = 2, ty = "Non-combat Pet", z = "Stranglethorn Vale" } },
         [36] = { at = 1795564078, v = { class = "WARRIOR", n = "Prairie Wolf Pup", run = 8, spd = 2, ty = "Non-combat Pet", z = "Orgrimmar" } },
         [39] = { at = 1795720139, v = { class = "WARRIOR", n = "Prairie Wolf Pup", run = 8, spd = 2, ty = "Non-combat Pet", z = "Tirisfal Glades" } },
       },
       [268744] = {
         [34] = { at = 1795741169, v = { class = "WARRIOR", n = "Frog Familiar", run = 8, spd = 2, ty = "Non-combat Pet", z = "Arathi Highlands" } },
+        [35] = { at = 1795664535, v = { class = "WARRIOR", n = "Frog Familiar", run = 8, spd = 2, ty = "Non-combat Pet", z = "Thousand Needles" } },
       },
       [269138] = {
-        [1] = { at = 1795747801, v = { class = "WARRIOR", n = "White Riding Kodo", run = 9.7, spd = 2, ty = "Beast", z = "Stonetalon Mountains" } },
+        [1] = { at = 1795754645, v = { armor = 20, class = "WARRIOR", dmax = 1.76, dmin = 1.43, n = "White Riding Kodo", run = 9.7, spd = 2, ty = "Beast", z = "Stonetalon Mountains" } },
       },
       [269139] = {
-        [1] = { at = 1795747801, v = { class = "WARRIOR", n = "Grey Riding Kodo", run = 9.7, spd = 2, ty = "Beast", z = "Stonetalon Mountains" } },
+        [1] = { at = 1795754645, v = { armor = 20, class = "WARRIOR", dmax = 1.76, dmin = 1.43, n = "Grey Riding Kodo", run = 9.7, spd = 2, ty = "Beast", z = "Stonetalon Mountains" } },
       },
       [269140] = {
         [1] = { at = 1795747816, v = { class = "WARRIOR", n = "Brown Riding Kodo", run = 9.7, spd = 2, ty = "Beast", z = "Stonetalon Mountains" } },
@@ -3940,14 +4065,14 @@ GanderData = {
         [1] = { at = 1795747816, v = { class = "WARRIOR", n = "Lavender Riding Kodo", run = 9.7, spd = 2, ty = "Beast", z = "Stonetalon Mountains" } },
       },
       [269152] = {
-        [30] = { at = 1795747905, v = { class = "WARRIOR", n = "Tylana Clawhoof", run = 8, spd = 2, ty = "Humanoid", z = "Stonetalon Mountains" } },
+        [30] = { at = 1795754645, v = { armor = 1212, class = "WARRIOR", dmax = 56.32, dmin = 42.45, n = "Tylana Clawhoof", run = 8, spd = 2, ty = "Humanoid", z = "Stonetalon Mountains" } },
       },
       [269175] = {
         [37] = { at = 1795563303, v = { class = "MAGE", n = "Carnivorous Weed", run = 6.94, spd = 2, ty = "Elemental", z = "Stranglethorn Vale" } },
         [38] = { at = 1795702127, v = { class = "MAGE", n = "Carnivorous Weed", run = 6.94, spd = 2, ty = "Elemental", z = "Stranglethorn Vale" } },
       },
       [270094] = {
-        [30] = { at = 1795398810, v = { class = "WARRIOR", n = "Stormheart", rk = "ELITE", run = 8, spd = 2, ty = "Beast", z = "Thousand Needles" } },
+        [30] = { at = 1795759330, v = { class = "WARRIOR", n = "Stormheart", rk = "ELITE", run = 8, spd = 2, ty = "Beast", z = "Thousand Needles" } },
       },
       [271465] = {
         [5] = { at = 1795707422, v = { armor = 102, class = "PALADIN", dmax = 6.4, dmin = 4.79, n = "Falfaan Halfwind", run = 6, spd = 2, ty = "Humanoid", z = "Zephras Isle" } },
@@ -3965,11 +4090,13 @@ GanderData = {
         [25] = { at = 1795732987, v = { class = "WARRIOR", n = "Night Watch Guard", run = 10, spd = 2, ty = "Humanoid", z = "Duskwood" } },
       },
       [271867] = {
+        [9] = { at = 1795376788, v = { class = "WARRIOR", n = "Pachimari", run = 8, spd = 2 } },
         [11] = { at = 1795789419, v = { class = "WARRIOR", n = "Pachimari", ty = "Non-combat Pet", z = "Zephras Isle" } },
         [41] = { at = 1795662821, v = { class = "WARRIOR", n = "Pachimari", run = 8, spd = 2, ty = "Non-combat Pet", z = "Swamp of Sorrows" } },
       },
       [271913] = {
         [29] = { at = 1795664913, v = { class = "WARRIOR", n = "Plagued Cockroach", run = 8, spd = 2, ty = "Non-combat Pet", z = "Orgrimmar" } },
+        [34] = { at = 1795658781, v = { class = "WARRIOR", n = "Plagued Cockroach", run = 8, spd = 2, ty = "Non-combat Pet", z = "Thousand Needles" } },
         [41] = { at = 1795802481, v = { class = "WARRIOR", n = "Plagued Cockroach", run = 8, spd = 2, ty = "Non-combat Pet", z = "Hillsbrad Foothills" } },
       },
       [271929] = {
@@ -3977,26 +4104,37 @@ GanderData = {
         [2] = { at = 1795642391, v = { class = "PALADIN", n = "Shen'dorei Windwell", run = 6, spd = 2, ty = "Not specified", z = "Tanaris" } },
       },
       [272328] = {
-        [9] = { at = 1795438843, v = { class = "WARRIOR", n = "Mini Diablo", run = 8, spd = 2, ty = "Non-combat Pet", z = "Orgrimmar" } },
+        [9] = { at = 1795642677, v = { class = "WARRIOR", n = "Mini Diablo", run = 8, spd = 2, ty = "Non-combat Pet", z = "Orgrimmar" } },
+        [10] = { at = 1795389481, v = { class = "WARRIOR", n = "Mini Diablo", run = 8, spd = 2 } },
         [12] = { at = 1795701600, v = { class = "WARRIOR", n = "Mini Diablo", run = 8, spd = 2, ty = "Non-combat Pet", z = "Orgrimmar" } },
         [16] = { at = 1795717556, v = { class = "WARRIOR", n = "Mini Diablo", run = 8, spd = 2, ty = "Non-combat Pet", z = "Orgrimmar" } },
         [19] = { at = 1795754279, v = { class = "WARRIOR", n = "Mini Diablo", run = 8, spd = 2, ty = "Non-combat Pet", z = "Orgrimmar" } },
-        [32] = { at = 1795566820, v = { class = "WARRIOR", n = "Mini Diablo", run = 8, spd = 2, ty = "Non-combat Pet", z = "Ashenvale" } },
+        [32] = { at = 1795566862, v = { class = "WARRIOR", n = "Mini Diablo", run = 8, spd = 2, ty = "Non-combat Pet", z = "Ashenvale" } },
         [54] = { at = 1795659999, v = { class = "WARRIOR", n = "Mini Diablo", run = 8, spd = 2, ty = "Non-combat Pet", z = "Orgrimmar" } },
         [60] = { at = 1795754342, v = { class = "WARRIOR", n = "Mini Diablo", run = 8, spd = 2, ty = "Non-combat Pet", z = "Orgrimmar" } },
       },
       [272329] = {
         [10] = { at = 1795659991, v = { class = "WARRIOR", n = "Zergling", run = 8, spd = 2, ty = "Non-combat Pet", z = "Orgrimmar" } },
         [11] = { at = 1795574267, v = { class = "WARRIOR", n = "Zergling", run = 8, spd = 2, ty = "Non-combat Pet", z = "Orgrimmar" } },
+        [13] = { at = 1795489516, v = { class = "WARRIOR", n = "Zergling", run = 8, spd = 2, ty = "Non-combat Pet", z = "Orgrimmar" } },
         [14] = { at = 1795710650, v = { class = "WARRIOR", n = "Zergling", run = 8, spd = 2, ty = "Non-combat Pet", z = "Undercity" } },
+        [15] = { at = 1795537686, v = { class = "WARRIOR", n = "Zergling", run = 8, spd = 2, ty = "Non-combat Pet", z = "Orgrimmar" } },
         [20] = { at = 1795396617, v = { class = "WARRIOR", n = "Zergling", run = 8, spd = 2, ty = "Non-combat Pet", z = "Orgrimmar" } },
+        [21] = { at = 1795495028, v = { class = "WARRIOR", n = "Zergling", run = 8, spd = 2, ty = "Non-combat Pet", z = "Tirisfal Glades" } },
         [30] = { at = 1795439387, v = { class = "WARRIOR", n = "Zergling", run = 8, spd = 2, ty = "Non-combat Pet", z = "Orgrimmar" } },
         [34] = { at = 1795375384, v = { class = "WARRIOR", n = "Zergling", run = 8, spd = 2, ty = "Non-combat Pet", z = "The Barrens" } },
+        [45] = { at = 1795671560, v = { class = "WARRIOR", n = "Zergling", run = 8, spd = 2, ty = "Non-combat Pet", z = "Durotar" } },
+        [60] = { at = 1795583620, v = { class = "WARRIOR", n = "Zergling", run = 8, spd = 2, ty = "Non-combat Pet", z = "Orgrimmar" } },
       },
       [272330] = {
         [1] = { at = 1795438843, v = { class = "WARRIOR", n = "Panda Cub", run = 8, spd = 2, ty = "Non-combat Pet", z = "Orgrimmar" } },
+        [10] = { at = 1795548991, v = { class = "WARRIOR", n = "Panda Cub", run = 8, spd = 2, ty = "Non-combat Pet", z = "Durotar" } },
+        [16] = { at = 1795794372, v = { class = "WARRIOR", n = "Panda Cub", run = 8, spd = 2, ty = "Non-combat Pet", z = "Thunder Bluff" } },
+        [24] = { at = 1795649837, v = { class = "WARRIOR", n = "Panda Cub", run = 8, spd = 2, ty = "Non-combat Pet", z = "Stonetalon Mountains" } },
+        [36] = { at = 1795586937, v = { class = "WARRIOR", n = "Panda Cub", run = 8, spd = 2, ty = "Non-combat Pet", z = "Orgrimmar" } },
         [40] = { at = 1795697773, v = { class = "WARRIOR", n = "Panda Cub", run = 8, spd = 2, ty = "Non-combat Pet", z = "Tirisfal Glades" } },
-        [48] = { at = 1795399773, v = { class = "WARRIOR", n = "Panda Cub", run = 8, spd = 2, ty = "Non-combat Pet", z = "Tanaris" } },
+        [43] = { at = 1795585380, v = { class = "WARRIOR", n = "Panda Cub", run = 8, spd = 2, ty = "Non-combat Pet", z = "Durotar" } },
+        [48] = { at = 1795739727, v = { class = "WARRIOR", n = "Panda Cub", run = 8, spd = 2, ty = "Non-combat Pet", z = "Tanaris" } },
         [52] = { at = 1795573572, v = { class = "WARRIOR", n = "Panda Cub", run = 8, spd = 2, ty = "Non-combat Pet", z = "Tanaris" } },
       },
       [272633] = {
@@ -4009,16 +4147,17 @@ GanderData = {
         [38] = { at = 1795718790, v = { class = "WARRIOR", n = "Arrgrah Stonewall", run = 8, spd = 2, ty = "Humanoid", z = "Thunder Bluff" } },
       },
       [274334] = {
+        [30] = { at = 1795564389, v = { class = "WARRIOR", n = "Tallstrider Hatchling", run = 8, spd = 2, ty = "Non-combat Pet", z = "Ashenvale" } },
         [57] = { at = 1795648227, v = { class = "WARRIOR", n = "Tallstrider Hatchling", run = 8, spd = 2, ty = "Non-combat Pet", z = "Orgrimmar" } },
       },
       [274833] = {
-        [55] = { at = 1795708713, v = { class = "PALADIN", n = "An'drak", run = 8, spd = 2, ty = "Humanoid", z = "Orgrimmar" } },
+        [55] = { at = 1795754343, v = { class = "PALADIN", n = "An'drak", run = 8, spd = 2, ty = "Humanoid", z = "Orgrimmar" } },
       },
       [274834] = {
-        [55] = { at = 1795708713, v = { class = "WARRIOR", n = "Evermore", run = 8, spd = 2, ty = "Beast", z = "Orgrimmar" } },
+        [55] = { at = 1795754343, v = { class = "WARRIOR", n = "Evermore", run = 8, spd = 2, ty = "Beast", z = "Orgrimmar" } },
       },
       [274911] = {
-        [40] = { at = 1795665395, v = { class = "PALADIN", n = "Eshka P'ari", run = 8, spd = 2, ty = "Humanoid", z = "Stranglethorn Vale" } },
+        [40] = { at = 1795804115, v = { class = "PALADIN", n = "Eshka P'ari", run = 8, spd = 2, ty = "Humanoid", z = "Stranglethorn Vale" } },
       },
       [274931] = {
         [55] = { at = 1795394154, v = { class = "WARRIOR", n = "Elril Everlight", run = 8, spd = 2, ty = "Humanoid", z = "Stranglethorn Vale" } },
@@ -4033,12 +4172,19 @@ GanderData = {
         [10] = { at = 1795707576, v = { class = "PALADIN", n = "Windshapers Dockmaster", run = 6, spd = 2, ty = "Humanoid", z = "Zephras Isle" } },
       },
       [275487] = {
+        [1] = { at = 1795794372, v = { class = "WARRIOR", n = "Unknown", run = 8, spd = 2, ty = "Non-combat Pet", z = "Thunder Bluff" } },
+        [10] = { at = 1795649221, v = { class = "WARRIOR", n = "Unknown", run = 8, spd = 2, ty = "Non-combat Pet", z = "Orgrimmar" } },
         [12] = { at = 1795718878, v = { class = "WARRIOR", n = "Unknown", run = 8, spd = 2, ty = "Non-combat Pet", z = "Thunder Bluff" } },
+        [13] = { at = 1795587129, v = { class = "WARRIOR", n = "Unknown", run = 8, spd = 2, ty = "Non-combat Pet", z = "Orgrimmar" } },
+        [15] = { at = 1795562541, v = { class = "WARRIOR", n = "Unknown", run = 8, spd = 2, ty = "Non-combat Pet", z = "The Barrens" } },
+        [25] = { at = 1795378588, v = { class = "WARRIOR", n = "Unknown", run = 8, spd = 2 } },
         [27] = { at = 1795787967, v = { class = "WARRIOR", n = "Unknown", run = 8, spd = 2, ty = "Non-combat Pet", z = "Hillsbrad Foothills" } },
         [29] = { at = 1795439760, v = { class = "WARRIOR", n = "Unknown", run = 8, spd = 2, ty = "Non-combat Pet", z = "Orgrimmar" } },
         [32] = { at = 1795787047, v = { class = "WARRIOR", n = "Unknown", run = 8, spd = 2, ty = "Non-combat Pet", z = "Hillsbrad Foothills" } },
-        [35] = { at = 1795373745, v = { class = "WARRIOR", run = 8, spd = 2 } },
+        [35] = { at = 1795373753, v = { class = "WARRIOR", run = 8, spd = 2 } },
         [37] = { at = 1795710948, v = { class = "WARRIOR", n = "Unknown", run = 8, spd = 2, ty = "Non-combat Pet", z = "Tirisfal Glades" } },
+        [41] = { at = 1795560661, v = { class = "WARRIOR", n = "Unknown", run = 8, spd = 2, ty = "Non-combat Pet", z = "Durotar" } },
+        [42] = { at = 1795489594, v = { class = "WARRIOR", n = "Unknown", run = 8, spd = 2, ty = "Non-combat Pet", z = "Orgrimmar" } },
       },
       [276171] = {
         [35] = { at = 1795708122, v = { armor = 707, class = "MAGE", dmax = 47.05, dmin = 35.46, n = "Oura Stormspinner", run = 8, spd = 2, ty = "Humanoid", z = "Mulgore" } },
@@ -4054,6 +4200,7 @@ GanderData = {
       },
       [277882] = {
         [12] = { at = 1795642874, v = { class = "WARRIOR", fam = "Bat", n = "Foothills Duskbat", run = 10, spd = 2, ty = "Beast", z = "Tirisfal Glades" } },
+        [13] = { at = 1795746880, v = { class = "WARRIOR", fam = "Bat", n = "Foothills Duskbat", run = 10, spd = 2, ty = "Beast", z = "Silverpine Forest" } },
       },
     },
   },
