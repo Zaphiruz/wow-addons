@@ -1,23 +1,22 @@
-# Releases GanderData at most once a day.
+# Releases GanderData every four hours, when there is new data.
 #
 # Data from players is merged into main as it arrives (gander-data.yml)
 # without a new version, so players aren't sent an update for every
 # submission. This gives whatever was merged since the last release one new
 # patch version and a changelog line, then releases it like any other addon.
+# With nothing new it does nothing.
 #
 # A version that is already in the .toc but was never released (the importer
 # bumps it when it is run by hand) is released as it is.
 #
-# GitHub starts scheduled runs hours late, or not at all: the 09:17 UTC run
-# of 26 Nov 2026 came at 19:07, and the next day's hadn't come four hours on.
-# So this is tried every hour, and a scheduled try does nothing once there
-# has been a release since 09:00 UTC (gander_import.py --released-today).
-# A run started by hand always releases what is waiting.
+# GitHub starts scheduled runs hours late, or not at all: a 09:17 UTC run
+# on 26 Nov 2026 came at 19:07, and the next day's hadn't come four hours on.
+# So don't count on the times below; a run can also be started by hand.
 name: GanderData release
 
 on:
   schedule:
-    - cron: "17 * * * *"
+    - cron: "17 */4 * * *"
   workflow_dispatch:
 
 permissions:
@@ -35,7 +34,6 @@ jobs:
     env:
       ADDON: mods/classic/GanderData
       DATA: mods/classic/data/gander_data.json
-      EVENT: ${{ github.event_name }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -48,13 +46,6 @@ jobs:
       - name: Give new data a version
         id: plan
         run: |
-          if [ "$EVENT" = schedule ]; then
-            last=$(git for-each-ref --sort=-creatordate --count=1 --format='%(creatordate:unix)' 'refs/tags/GanderData/v*')
-            if [ "$(python mods/classic/tools/gander_import.py --released-today "$last")" = yes ]; then
-              echo "::notice::Already released today."
-              exit 0
-            fi
-          fi
           version=$(sed -n 's/^## Version: *//p' "$ADDON/GanderData.toc" | tr -d '\r' | head -1)
           tag="GanderData/v$version"
           if git rev-parse -q --verify "refs/tags/$tag" > /dev/null; then

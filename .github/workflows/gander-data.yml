@@ -7,7 +7,7 @@
 #      the owner can also comment "approve ..." or "drop ..." on it.
 # Nobody else's approval or comment does anything.
 #
-# A merge here is not a release: gander-release.yml does that once a day.
+# A merge here is not a release: gander-release.yml does that every four hours.
 #
 # Needs the repository setting "Allow GitHub Actions to create and approve
 # pull requests" (Settings, Actions, General). To pause all of this, disable
