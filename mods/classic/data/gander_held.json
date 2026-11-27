@@ -1,5 +1,2380 @@
 {
- "pending": [],
+ "pending": [
+  {
+   "game": "forever",
+   "instances": {},
+   "mobs": {
+    "10057": {
+     "levels": {
+      "30": {
+       "at": 1795802675,
+       "v": {
+        "class": "WARRIOR",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Hillsbrad Foothills"
+       }
+      }
+     },
+     "name": "Theodore Mont Claire",
+     "spells": {}
+    },
+    "14729": {
+     "levels": {
+      "35": {
+       "at": 1795785885,
+       "v": {
+        "class": "WARRIOR",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Undercity"
+       }
+      }
+     },
+     "name": "Ralston Farnsley",
+     "spells": {}
+    },
+    "1909": {
+     "levels": {
+      "18": {
+       "at": 1795786020,
+       "v": {
+        "class": "PALADIN",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Silverpine Forest"
+       }
+      }
+     },
+     "name": "Vile Fin Lakestalker",
+     "spells": {}
+    },
+    "1954": {
+     "levels": {
+      "16": {
+       "at": 1795786039,
+       "v": {
+        "class": "PALADIN",
+        "run": 8,
+        "spd": 2,
+        "ty": "Elemental",
+        "z": "Silverpine Forest"
+       }
+      }
+     },
+     "name": "Elder Lake Skulker",
+     "spells": {}
+    },
+    "2215": {
+     "levels": {
+      "60": {
+       "at": 1795802667,
+       "v": {
+        "armor": 3566,
+        "class": "WARRIOR",
+        "dmax": 1378.58,
+        "dmin": 1039.53,
+        "rk": "ELITE",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Hillsbrad Foothills"
+       }
+      }
+     },
+     "name": "High Executor Darthalia",
+     "spells": {}
+    },
+    "2216": {
+     "levels": {
+      "35": {
+       "at": 1795802381,
+       "v": {
+        "armor": 1387,
+        "class": "WARRIOR",
+        "dmax": 64.44,
+        "dmin": 48.58,
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Hillsbrad Foothills"
+       }
+      }
+     },
+     "name": "Apothecary Lydon",
+     "spells": {}
+    },
+    "2229": {
+     "levels": {
+      "25": {
+       "at": 1795802331,
+       "v": {
+        "armor": 1037,
+        "class": "WARRIOR",
+        "dmax": 47.5,
+        "dmin": 35.81,
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Hillsbrad Foothills"
+       }
+      }
+     },
+     "name": "Krusk",
+     "spells": {}
+    },
+    "2230": {
+     "levels": {
+      "1": {
+       "at": 1795802380,
+       "v": {
+        "armor": 20,
+        "class": "WARRIOR",
+        "dmax": 1.76,
+        "dmin": 1.43,
+        "run": 8,
+        "spd": 2,
+        "ty": "Beast",
+        "z": "Hillsbrad Foothills"
+       }
+      }
+     },
+     "name": "Umpi",
+     "spells": {}
+    },
+    "2238": {
+     "levels": {
+      "25": {
+       "at": 1795787974,
+       "v": {
+        "armor": 1037,
+        "class": "WARRIOR",
+        "dmax": 47.5,
+        "dmin": 35.81,
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Hillsbrad Foothills"
+       }
+      }
+     },
+     "name": "Tog'thar",
+     "spells": {}
+    },
+    "2239": {
+     "levels": {
+      "25": {
+       "at": 1795787814,
+       "v": {
+        "armor": 1037,
+        "class": "WARRIOR",
+        "dmax": 47.5,
+        "dmin": 35.81,
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Hillsbrad Foothills"
+       }
+      }
+     },
+     "name": "Drull",
+     "spells": {}
+    },
+    "2244": {
+     "levels": {
+      "21": {
+       "at": 1795787979,
+       "v": {
+        "class": "MAGE",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Hillsbrad Foothills"
+       }
+      },
+      "22": {
+       "at": 1795787930,
+       "v": {
+        "class": "MAGE",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Hillsbrad Foothills"
+       }
+      }
+     },
+     "name": "Syndicate Shadow Mage",
+     "spells": {}
+    },
+    "2250": {
+     "levels": {
+      "32": {
+       "at": 1795786617,
+       "v": {
+        "class": "WARRIOR",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Alterac Mountains"
+       }
+      }
+     },
+     "name": "Mountain Yeti",
+     "spells": {}
+    },
+    "2251": {
+     "levels": {
+      "33": {
+       "at": 1795786610,
+       "v": {
+        "class": "WARRIOR",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Alterac Mountains"
+       }
+      },
+      "34": {
+       "at": 1795786610,
+       "v": {
+        "class": "WARRIOR",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Alterac Mountains"
+       }
+      }
+     },
+     "name": "Giant Yeti",
+     "spells": {}
+    },
+    "2252": {
+     "levels": {
+      "34": {
+       "at": 1795786374,
+       "v": {
+        "class": "WARRIOR",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Alterac Mountains"
+       }
+      }
+     },
+     "name": "Crushridge Ogre",
+     "spells": {}
+    },
+    "2261": {
+     "levels": {
+      "20": {
+       "at": 1795787862,
+       "v": {
+        "class": "WARRIOR",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Hillsbrad Foothills"
+       }
+      },
+      "21": {
+       "at": 1795787976,
+       "v": {
+        "class": "WARRIOR",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Hillsbrad Foothills"
+       }
+      }
+     },
+     "name": "Syndicate Watchman",
+     "spells": {}
+    },
+    "2278": {
+     "levels": {
+      "25": {
+       "at": 1795802668,
+       "v": {
+        "armor": 1037,
+        "class": "WARRIOR",
+        "dmax": 47.5,
+        "dmin": 35.81,
+        "run": 8,
+        "spd": 2,
+        "ty": "Undead",
+        "z": "Hillsbrad Foothills"
+       }
+      }
+     },
+     "name": "Melisara",
+     "spells": {}
+    },
+    "2287": {
+     "levels": {
+      "39": {
+       "at": 1795786435,
+       "v": {
+        "class": "WARRIOR",
+        "rk": "ELITE",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Alterac Mountains"
+       }
+      }
+     },
+     "name": "Crushridge Warmonger",
+     "spells": {}
+    },
+    "2354": {
+     "levels": {
+      "22": {
+       "at": 1795787326,
+       "v": {
+        "class": "WARRIOR",
+        "fam": "Bear",
+        "run": 8,
+        "spd": 2,
+        "ty": "Beast",
+        "z": "Hillsbrad Foothills"
+       }
+      }
+     },
+     "name": "Vicious Gray Bear",
+     "spells": {}
+    },
+    "2388": {
+     "levels": {
+      "30": {
+       "at": 1795787116,
+       "v": {
+        "armor": 1212,
+        "class": "WARRIOR",
+        "dmax": 56.32,
+        "dmin": 42.45,
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Hillsbrad Foothills"
+       }
+      }
+     },
+     "name": "Innkeeper Shay",
+     "spells": {}
+    },
+    "2390": {
+     "levels": {
+      "29": {
+       "at": 1795802660,
+       "v": {
+        "class": "WARRIOR",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Hillsbrad Foothills"
+       }
+      }
+     },
+     "name": "Aranae Venomblood",
+     "spells": {}
+    },
+    "2391": {
+     "levels": {
+      "32": {
+       "at": 1795802380,
+       "v": {
+        "armor": 1283,
+        "class": "WARRIOR",
+        "dmax": 59.49,
+        "dmin": 44.85,
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Hillsbrad Foothills"
+       }
+      }
+     },
+     "name": "Serge Hinott",
+     "spells": {}
+    },
+    "2392": {
+     "levels": {
+      "32": {
+       "at": 1795802434,
+       "v": {
+        "class": "WARRIOR",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Hillsbrad Foothills"
+       }
+      }
+     },
+     "name": "Delia Verana",
+     "spells": {}
+    },
+    "2393": {
+     "levels": {
+      "32": {
+       "at": 1795787122,
+       "v": {
+        "armor": 1283,
+        "class": "WARRIOR",
+        "dmax": 59.49,
+        "dmin": 44.85,
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Hillsbrad Foothills"
+       }
+      }
+     },
+     "name": "Christoph Jeffcoat",
+     "spells": {}
+    },
+    "2394": {
+     "levels": {
+      "32": {
+       "at": 1795802679,
+       "v": {
+        "class": "WARRIOR",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Hillsbrad Foothills"
+       }
+      }
+     },
+     "name": "Mallen Swain",
+     "spells": {}
+    },
+    "2395": {
+     "levels": {
+      "32": {
+       "at": 1795787059,
+       "v": {
+        "class": "WARRIOR",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Hillsbrad Foothills"
+       }
+      }
+     },
+     "name": "Vinna Wayne",
+     "spells": {}
+    },
+    "2399": {
+     "levels": {
+      "56": {
+       "at": 1795787014,
+       "v": {
+        "armor": 3348,
+        "class": "WARRIOR",
+        "dmax": 127.15,
+        "dmin": 95.91,
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Hillsbrad Foothills"
+       }
+      }
+     },
+     "name": "Daryl Stack",
+     "spells": {}
+    },
+    "2401": {
+     "levels": {
+      "30": {
+       "at": 1795802671,
+       "v": {
+        "class": "WARRIOR",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Hillsbrad Foothills"
+       }
+      }
+     },
+     "name": "Kayren Soothallow",
+     "spells": {}
+    },
+    "2402": {
+     "levels": {
+      "32": {
+       "at": 1795787013,
+       "v": {
+        "armor": 1283,
+        "class": "WARRIOR",
+        "dmax": 59.49,
+        "dmin": 44.85,
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Hillsbrad Foothills"
+       }
+      }
+     },
+     "name": "Shara Blazen",
+     "spells": {}
+    },
+    "2410": {
+     "levels": {
+      "42": {
+       "at": 1795802474,
+       "v": {
+        "armor": 2262,
+        "class": "WARRIOR",
+        "dmax": 62.06,
+        "dmin": 46.8,
+        "run": 8,
+        "spd": 1.5,
+        "ty": "Humanoid",
+        "z": "Hillsbrad Foothills"
+       }
+      }
+     },
+     "name": "Magus Wordeen Voidglare",
+     "spells": {}
+    },
+    "2418": {
+     "levels": {
+      "32": {
+       "at": 1795802621,
+       "v": {
+        "armor": 1539,
+        "class": "WARRIOR",
+        "dmax": 59.49,
+        "dmin": 44.85,
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Hillsbrad Foothills"
+       }
+      }
+     },
+     "name": "Deathguard Samsa",
+     "spells": {}
+    },
+    "2419": {
+     "levels": {
+      "32": {
+       "at": 1795802668,
+       "v": {
+        "armor": 1539,
+        "class": "WARRIOR",
+        "dmax": 59.49,
+        "dmin": 44.85,
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Hillsbrad Foothills"
+       }
+      }
+     },
+     "name": "Deathguard Humbert",
+     "spells": {}
+    },
+    "2427": {
+     "levels": {
+      "24": {
+       "at": 1795787945,
+       "v": {
+        "class": "WARRIOR",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Hillsbrad Foothills"
+       }
+      }
+     },
+     "name": "Jailor Eston",
+     "spells": {}
+    },
+    "2428": {
+     "levels": {
+      "24": {
+       "at": 1795787962,
+       "v": {
+        "class": "WARRIOR",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Hillsbrad Foothills"
+       }
+      }
+     },
+     "name": "Jailor Marlgen",
+     "spells": {}
+    },
+    "2429": {
+     "levels": {
+      "30": {
+       "at": 1795787227,
+       "v": {
+        "armor": 1212,
+        "class": "WARRIOR",
+        "dmax": 56.32,
+        "dmin": 42.45,
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Hillsbrad Foothills"
+       }
+      }
+     },
+     "name": "Novice Thaivand",
+     "spells": {}
+    },
+    "2437": {
+     "levels": {
+      "34": {
+       "at": 1795802475,
+       "v": {
+        "armor": 1353,
+        "class": "WARRIOR",
+        "dmax": 47.06,
+        "dmin": 35.48,
+        "run": 8,
+        "spd": 1.5,
+        "ty": "Humanoid",
+        "z": "Hillsbrad Foothills"
+       }
+      }
+     },
+     "name": "Keeper Bel'varil",
+     "spells": {}
+    },
+    "250921": {
+     "levels": {
+      "7": {
+       "at": 1795791440,
+       "v": {
+        "armor": 245,
+        "class": "WARRIOR",
+        "dmax": 11.84,
+        "dmin": 8.89,
+        "run": 8,
+        "spd": 2,
+        "ty": "Not specified",
+        "z": "Zephras Isle"
+       }
+      },
+      "8": {
+       "at": 1795791310,
+       "v": {
+        "armor": 322,
+        "class": "WARRIOR",
+        "dmax": 13.74,
+        "dmin": 10.35,
+        "run": 8,
+        "spd": 2,
+        "ty": "Not specified",
+        "z": "Zephras Isle"
+       }
+      }
+     },
+     "name": "Forest Sprite",
+     "spells": {}
+    },
+    "250927": {
+     "levels": {
+      "10": {
+       "at": 1795789290,
+       "v": {
+        "class": "WARRIOR",
+        "fam": "Bear",
+        "run": 10,
+        "spd": 2,
+        "ty": "Beast",
+        "z": "Zephras Isle"
+       }
+      },
+      "11": {
+       "at": 1795789985,
+       "v": {
+        "class": "WARRIOR",
+        "fam": "Bear",
+        "run": 10,
+        "spd": 2,
+        "ty": "Beast",
+        "z": "Zephras Isle"
+       }
+      }
+     },
+     "name": "Shadowgale Ursera",
+     "spells": {}
+    },
+    "251559": {
+     "levels": {
+      "1": {
+       "at": 1795791744,
+       "v": {
+        "class": "WARRIOR",
+        "run": 6,
+        "spd": 2,
+        "ty": "Critter",
+        "z": "Zephras Isle"
+       }
+      }
+     },
+     "name": "Hoarder",
+     "spells": {}
+    },
+    "251676": {
+     "levels": {
+      "10": {
+       "at": 1795790158,
+       "v": {
+        "class": "WARRIOR",
+        "run": 8,
+        "spd": 2,
+        "ty": "Elemental",
+        "z": "Zephras Isle"
+       }
+      },
+      "11": {
+       "at": 1795790137,
+       "v": {
+        "class": "WARRIOR",
+        "run": 8,
+        "spd": 2,
+        "ty": "Elemental",
+        "z": "Zephras Isle"
+       }
+      }
+     },
+     "name": "Wind Hollow",
+     "spells": {}
+    },
+    "251684": {
+     "levels": {
+      "10": {
+       "at": 1795791444,
+       "v": {
+        "armor": 518,
+        "class": "WARRIOR",
+        "dmax": 17.37,
+        "dmin": 13.11,
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Zephras Isle"
+       }
+      }
+     },
+     "name": "Strange Hermit",
+     "spells": {}
+    },
+    "251968": {
+     "levels": {
+      "-1": {
+       "at": 1795793321,
+       "v": {
+        "armor": 554,
+        "class": "PALADIN",
+        "dmax": 27.26,
+        "dmin": 20.56,
+        "rk": "ELITE",
+        "run": 6,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Zephras Isle"
+       }
+      }
+     },
+     "name": "Ayessa Dawnsinger",
+     "spells": {}
+    },
+    "252476": {
+     "levels": {
+      "13": {
+       "at": 1795793210,
+       "v": {
+        "armor": 498,
+        "class": "PALADIN",
+        "dmax": 22.74,
+        "dmin": 17.11,
+        "run": 6,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Zephras Isle"
+       }
+      }
+     },
+     "name": "Talaanis Shadowsong",
+     "spells": {}
+    },
+    "252478": {
+     "levels": {
+      "10": {
+       "at": 1795792942,
+       "v": {
+        "armor": 419,
+        "class": "PALADIN",
+        "dmax": 16.18,
+        "dmin": 12.17,
+        "run": 6,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Zephras Isle"
+       }
+      }
+     },
+     "name": "Xy'aaria Streamrunner",
+     "spells": {}
+    },
+    "252664": {
+     "levels": {
+      "10": {
+       "at": 1795791138,
+       "v": {
+        "class": "PALADIN",
+        "run": 6,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Zephras Isle"
+       }
+      },
+      "11": {
+       "at": 1795791285,
+       "v": {
+        "armor": 441,
+        "class": "PALADIN",
+        "dmax": 20.08,
+        "dmin": 15.11,
+        "run": 6,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Zephras Isle"
+       }
+      }
+     },
+     "name": "Al'Aketh Stormchaser",
+     "spells": {}
+    },
+    "252665": {
+     "levels": {
+      "10": {
+       "at": 1795791143,
+       "v": {
+        "class": "ROGUE",
+        "run": 9.7,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Zephras Isle"
+       }
+      },
+      "11": {
+       "at": 1795791338,
+       "v": {
+        "armor": 545,
+        "class": "ROGUE",
+        "dmax": 23.53,
+        "dmin": 17.75,
+        "run": 9.7,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Zephras Isle"
+       }
+      }
+     },
+     "name": "Al'Aketh Footsoldier",
+     "spells": {}
+    },
+    "252762": {
+     "levels": {
+      "10": {
+       "at": 1795792289,
+       "v": {
+        "armor": 518,
+        "class": "WARRIOR",
+        "dmax": 13.03,
+        "dmin": 9.83,
+        "run": 9.7,
+        "spd": 1.5,
+        "ty": "Humanoid",
+        "z": "Zephras Isle"
+       }
+      },
+      "11": {
+       "at": 1795792326,
+       "v": {
+        "armor": 545,
+        "class": "WARRIOR",
+        "dmax": 14.71,
+        "dmin": 11.09,
+        "run": 9.7,
+        "spd": 1.5,
+        "ty": "Humanoid",
+        "z": "Zephras Isle"
+       }
+      }
+     },
+     "name": "Al'Aketh Guardian",
+     "spells": {}
+    },
+    "252763": {
+     "levels": {
+      "10": {
+       "at": 1795792325,
+       "v": {
+        "armor": 264,
+        "class": "MAGE",
+        "dmax": 13.96,
+        "dmin": 10.51,
+        "run": 6,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Zephras Isle"
+       }
+      }
+     },
+     "name": "Al'Aketh Spiritcaller",
+     "spells": {}
+    },
+    "252764": {
+     "levels": {
+      "10": {
+       "at": 1795792465,
+       "v": {
+        "armor": 419,
+        "class": "PALADIN",
+        "dmax": 16.18,
+        "dmin": 12.17,
+        "run": 6,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Zephras Isle"
+       }
+      },
+      "11": {
+       "at": 1795792510,
+       "v": {
+        "armor": 441,
+        "class": "PALADIN",
+        "dmax": 18.25,
+        "dmin": 13.74,
+        "run": 6,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Zephras Isle"
+       }
+      }
+     },
+     "name": "Al'Aketh Skypriest",
+     "spells": {}
+    },
+    "252765": {
+     "levels": {
+      "10": {
+       "at": 1795792314,
+       "v": {
+        "armor": 518,
+        "class": "WARRIOR",
+        "dmax": 20.85,
+        "dmin": 15.73,
+        "run": 9.7,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Zephras Isle"
+       }
+      }
+     },
+     "name": "Al'Aketh Blademaster",
+     "spells": {}
+    },
+    "252767": {
+     "levels": {
+      "10": {
+       "at": 1795792494,
+       "v": {
+        "armor": 518,
+        "class": "WARRIOR",
+        "dmax": 19.11,
+        "dmin": 14.42,
+        "run": 9.7,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Zephras Isle"
+       }
+      },
+      "11": {
+       "at": 1795792406,
+       "v": {
+        "class": "WARRIOR",
+        "ty": "Humanoid",
+        "z": "Zephras Isle"
+       }
+      }
+     },
+     "name": "Al'Aketh Honor Guard",
+     "spells": {}
+    },
+    "252957": {
+     "levels": {
+      "-1": {
+       "at": 1795792621,
+       "v": {
+        "class": "PALADIN",
+        "run": 6,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Zephras Isle"
+       }
+      }
+     },
+     "name": "High Priestess Lorthuna",
+     "spells": {}
+    },
+    "253576": {
+     "levels": {
+      "13": {
+       "at": 1795792353,
+       "v": {
+        "armor": 498,
+        "class": "PALADIN",
+        "dmax": 22.74,
+        "dmin": 17.11,
+        "run": 6,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Zephras Isle"
+       }
+      }
+     },
+     "name": "Hyusaa Quickbreeze",
+     "spells": {}
+    },
+    "253590": {
+     "levels": {
+      "13": {
+       "at": 1795792446,
+       "v": {
+        "armor": 498,
+        "class": "PALADIN",
+        "dmax": 22.74,
+        "dmin": 17.11,
+        "run": 6,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Zephras Isle"
+       }
+      }
+     },
+     "name": "Valennia Stormfist",
+     "spells": {}
+    },
+    "253622": {
+     "levels": {
+      "10": {
+       "at": 1795791220,
+       "v": {
+        "class": "PALADIN",
+        "run": 6,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Zephras Isle"
+       }
+      }
+     },
+     "name": "Commander Haalien",
+     "spells": {}
+    },
+    "253847": {
+     "levels": {
+      "-1": {
+       "at": 1795792768,
+       "v": {
+        "armor": 746,
+        "class": "PALADIN",
+        "dmax": 27.26,
+        "dmin": 20.56,
+        "rk": "ELITE",
+        "run": 6,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Zephras Isle"
+       }
+      }
+     },
+     "name": "Elaadrin Evengale",
+     "spells": {}
+    },
+    "253849": {
+     "levels": {
+      "-1": {
+       "at": 1795792767,
+       "v": {
+        "armor": 554,
+        "class": "PALADIN",
+        "dmax": 40.9,
+        "dmin": 30.83,
+        "rk": "ELITE",
+        "run": 6,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Zephras Isle"
+       }
+      }
+     },
+     "name": "Ayessa Dawnsinger",
+     "spells": {}
+    },
+    "254151": {
+     "levels": {
+      "10": {
+       "at": 1795791122,
+       "v": {
+        "class": "WARRIOR",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Zephras Isle"
+       }
+      }
+     },
+     "name": "Vayn Moongaze",
+     "spells": {}
+    },
+    "254588": {
+     "levels": {
+      "9": {
+       "at": 1795789263,
+       "v": {
+        "class": "WARRIOR",
+        "fam": "Crab",
+        "run": 6,
+        "spd": 2,
+        "ty": "Beast",
+        "z": "Zephras Isle"
+       }
+      }
+     },
+     "name": "Windsong Crawler",
+     "spells": {}
+    },
+    "255830": {
+     "levels": {
+      "12": {
+       "at": 1795792761,
+       "v": {
+        "armor": 295,
+        "class": "MAGE",
+        "dmax": 16.38,
+        "dmin": 12.35,
+        "run": 8,
+        "spd": 2,
+        "ty": "Elemental",
+        "z": "Zephras Isle"
+       }
+      }
+     },
+     "name": "Malevolent Storm",
+     "spells": {}
+    },
+    "255833": {
+     "levels": {
+      "60": {
+       "at": 1795792682,
+       "v": {
+        "class": "MAGE",
+        "run": 8,
+        "spd": 2,
+        "ty": "Elemental",
+        "z": "Zephras Isle"
+       }
+      }
+     },
+     "name": "Rohash",
+     "spells": {}
+    },
+    "256076": {
+     "levels": {
+      "10": {
+       "at": 1795788618,
+       "v": {
+        "class": "PALADIN",
+        "run": 8,
+        "spd": 2,
+        "ty": "Elemental",
+        "z": "Zephras Isle"
+       }
+      }
+     },
+     "name": "Damaged Construct",
+     "spells": {}
+    },
+    "256092": {
+     "levels": {
+      "10": {
+       "at": 1795791423,
+       "v": {
+        "class": "WARRIOR",
+        "fam": "Bird of Prey",
+        "run": 10,
+        "spd": 2,
+        "ty": "Beast",
+        "z": "Zephras Isle"
+       }
+      },
+      "11": {
+       "at": 1795791380,
+       "v": {
+        "armor": 545,
+        "class": "WARRIOR",
+        "dmax": 19.61,
+        "dmin": 14.79,
+        "fam": "Bird of Prey",
+        "run": 10,
+        "spd": 2,
+        "ty": "Beast",
+        "z": "Zephras Isle"
+       }
+      }
+     },
+     "name": "Shadowgale Shriekling",
+     "spells": {}
+    },
+    "256507": {
+     "levels": {
+      "30": {
+       "at": 1795792934,
+       "v": {
+        "class": "WARRIOR",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Zephras Isle"
+       }
+      }
+     },
+     "name": "Belann Windwood",
+     "spells": {}
+    },
+    "256617": {
+     "levels": {
+      "13": {
+       "at": 1795792723,
+       "v": {
+        "class": "MAGE",
+        "rk": "ELITE",
+        "run": 8,
+        "spd": 2,
+        "ty": "Elemental",
+        "z": "Zephras Isle"
+       }
+      }
+     },
+     "name": "Duke Anvillaxx",
+     "spells": {}
+    },
+    "256618": {
+     "levels": {
+      "10": {
+       "at": 1795792543,
+       "v": {
+        "class": "PALADIN",
+        "run": 6,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Zephras Isle"
+       }
+      }
+     },
+     "name": "Windshaper Shaman",
+     "spells": {}
+    },
+    "256619": {
+     "levels": {
+      "10": {
+       "at": 1795792572,
+       "v": {
+        "class": "PALADIN",
+        "run": 6,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Zephras Isle"
+       }
+      }
+     },
+     "name": "High Order Mage",
+     "spells": {}
+    },
+    "256620": {
+     "levels": {
+      "-1": {
+       "at": 1795792772,
+       "v": {
+        "armor": 3566,
+        "class": "WARRIOR",
+        "dmax": 137.86,
+        "dmin": 103.95,
+        "rk": "ELITE",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Zephras Isle"
+       }
+      }
+     },
+     "name": "Muln Earthfury",
+     "spells": {}
+    },
+    "256621": {
+     "levels": {
+      "-1": {
+       "at": 1795792715,
+       "v": {
+        "class": "MAGE",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Zephras Isle"
+       }
+      }
+     },
+     "name": "Archmage Ansirem Runeweaver",
+     "spells": {}
+    },
+    "256635": {
+     "levels": {
+      "12": {
+       "at": 1795792521,
+       "v": {
+        "armor": 469,
+        "class": "PALADIN",
+        "dmax": 20.87,
+        "dmin": 15.72,
+        "run": 6,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Zephras Isle"
+       }
+      }
+     },
+     "name": "Peacekeeper",
+     "spells": {}
+    },
+    "257008": {
+     "levels": {
+      "10": {
+       "at": 1795788573,
+       "v": {
+        "class": "PALADIN",
+        "run": 6,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Zephras Isle"
+       }
+      }
+     },
+     "name": "Baelann Swiftcurrent",
+     "spells": {}
+    },
+    "257281": {
+     "levels": {
+      "36": {
+       "at": 1795786438,
+       "v": {
+        "armor": 1494,
+        "class": "WARRIOR",
+        "dmax": 66.01,
+        "dmin": 49.77,
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Alterac Mountains"
+       }
+      }
+     },
+     "name": "Sos'mol",
+     "spells": {}
+    },
+    "257282": {
+     "levels": {
+      "28": {
+       "at": 1795786543,
+       "v": {
+        "armor": 1142,
+        "class": "WARRIOR",
+        "dmax": 52.45,
+        "dmin": 39.54,
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Alterac Mountains"
+       }
+      }
+     },
+     "name": "Alan Sneeks",
+     "spells": {}
+    },
+    "257862": {
+     "levels": {
+      "-1": {
+       "at": 1795792772,
+       "v": {
+        "armor": 3566,
+        "class": "WARRIOR",
+        "dmax": 137.86,
+        "dmin": 103.95,
+        "rk": "ELITE",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Zephras Isle"
+       }
+      }
+     },
+     "name": "Earthen Ring Shaman",
+     "spells": {}
+    },
+    "257866": {
+     "levels": {
+      "-1": {
+       "at": 1795792772,
+       "v": {
+        "armor": 1818,
+        "class": "MAGE",
+        "dmax": 100.63,
+        "dmin": 75.89,
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Zephras Isle"
+       }
+      }
+     },
+     "name": "Kirin Tor Mage",
+     "spells": {}
+    },
+    "257944": {
+     "levels": {
+      "10": {
+       "at": 1795791322,
+       "v": {
+        "armor": 419,
+        "class": "PALADIN",
+        "dmax": 16.18,
+        "dmin": 12.17,
+        "run": 6,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Zephras Isle"
+       }
+      }
+     },
+     "name": "Elegael Thornpaw",
+     "spells": {}
+    },
+    "258130": {
+     "levels": {
+      "10": {
+       "at": 1795790949,
+       "v": {
+        "armor": 419,
+        "class": "PALADIN",
+        "dmax": 16.18,
+        "dmin": 12.17,
+        "run": 6,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Zephras Isle"
+       }
+      }
+     },
+     "name": "Jorel Windsinger",
+     "spells": {}
+    },
+    "258133": {
+     "levels": {
+      "10": {
+       "at": 1795790827,
+       "v": {
+        "class": "PALADIN",
+        "run": 6,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Zephras Isle"
+       }
+      }
+     },
+     "name": "Naanel Shadowfoot",
+     "spells": {}
+    },
+    "258134": {
+     "levels": {
+      "10": {
+       "at": 1795790950,
+       "v": {
+        "armor": 419,
+        "class": "PALADIN",
+        "dmax": 16.18,
+        "dmin": 12.17,
+        "run": 6,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Zephras Isle"
+       }
+      }
+     },
+     "name": "Naaleos Leafwhisper",
+     "spells": {}
+    },
+    "258135": {
+     "levels": {
+      "10": {
+       "at": 1795790951,
+       "v": {
+        "armor": 419,
+        "class": "PALADIN",
+        "dmax": 16.18,
+        "dmin": 12.17,
+        "run": 6,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Zephras Isle"
+       }
+      }
+     },
+     "name": "Falleeah Gustrunner",
+     "spells": {}
+    },
+    "258136": {
+     "levels": {
+      "10": {
+       "at": 1795790806,
+       "v": {
+        "class": "PALADIN",
+        "run": 6,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Zephras Isle"
+       }
+      }
+     },
+     "name": "Hyneena Fiercefang",
+     "spells": {}
+    },
+    "258137": {
+     "levels": {
+      "10": {
+       "at": 1795790950,
+       "v": {
+        "armor": 419,
+        "class": "PALADIN",
+        "dmax": 16.18,
+        "dmin": 12.17,
+        "run": 6,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Zephras Isle"
+       }
+      }
+     },
+     "name": "Telenos Leafwhisper",
+     "spells": {}
+    },
+    "258138": {
+     "levels": {
+      "10": {
+       "at": 1795790949,
+       "v": {
+        "armor": 419,
+        "class": "PALADIN",
+        "dmax": 16.18,
+        "dmin": 12.17,
+        "run": 6,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Zephras Isle"
+       }
+      }
+     },
+     "name": "Nayeela Snarlfang",
+     "spells": {}
+    },
+    "258253": {
+     "levels": {
+      "10": {
+       "at": 1795790950,
+       "v": {
+        "class": "PALADIN",
+        "run": 6,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Zephras Isle"
+       }
+      }
+     },
+     "name": "Kaena Swiftpaw",
+     "spells": {}
+    },
+    "258260": {
+     "levels": {
+      "10": {
+       "at": 1795791039,
+       "v": {
+        "armor": 419,
+        "class": "PALADIN",
+        "dmax": 16.18,
+        "dmin": 12.17,
+        "run": 6,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Zephras Isle"
+       }
+      }
+     },
+     "name": "Thylonell Bitterwind",
+     "spells": {}
+    },
+    "258272": {
+     "levels": {
+      "10": {
+       "at": 1795790990,
+       "v": {
+        "armor": 419,
+        "class": "PALADIN",
+        "dmax": 16.18,
+        "dmin": 12.17,
+        "run": 6,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Zephras Isle"
+       }
+      }
+     },
+     "name": "Maeleneth Barrowbrother",
+     "spells": {}
+    },
+    "258275": {
+     "levels": {
+      "10": {
+       "at": 1795790976,
+       "v": {
+        "armor": 419,
+        "class": "PALADIN",
+        "dmax": 16.18,
+        "dmin": 12.17,
+        "run": 6,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Zephras Isle"
+       }
+      }
+     },
+     "name": "Neyasteel Mossmender",
+     "spells": {}
+    },
+    "258277": {
+     "levels": {
+      "10": {
+       "at": 1795790984,
+       "v": {
+        "armor": 419,
+        "class": "PALADIN",
+        "dmax": 16.18,
+        "dmin": 12.17,
+        "run": 6,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Zephras Isle"
+       }
+      }
+     },
+     "name": "Bryaes Galechaser",
+     "spells": {}
+    },
+    "258279": {
+     "levels": {
+      "10": {
+       "at": 1795790997,
+       "v": {
+        "armor": 419,
+        "class": "PALADIN",
+        "dmax": 16.18,
+        "dmin": 12.17,
+        "run": 6,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Zephras Isle"
+       }
+      }
+     },
+     "name": "Beyaa Gustbellow",
+     "spells": {}
+    },
+    "258284": {
+     "levels": {
+      "10": {
+       "at": 1795791038,
+       "v": {
+        "armor": 419,
+        "class": "PALADIN",
+        "dmax": 16.18,
+        "dmin": 12.17,
+        "run": 6,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Zephras Isle"
+       }
+      }
+     },
+     "name": "Holaan Glenprancer",
+     "spells": {}
+    },
+    "258288": {
+     "levels": {
+      "10": {
+       "at": 1795791083,
+       "v": {
+        "armor": 419,
+        "class": "PALADIN",
+        "dmax": 16.18,
+        "dmin": 12.17,
+        "run": 6,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Zephras Isle"
+       }
+      }
+     },
+     "name": "Mithraless Sterngale",
+     "spells": {}
+    },
+    "258289": {
+     "levels": {
+      "10": {
+       "at": 1795791088,
+       "v": {
+        "armor": 419,
+        "class": "PALADIN",
+        "dmax": 16.18,
+        "dmin": 12.17,
+        "run": 6,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Zephras Isle"
+       }
+      }
+     },
+     "name": "Baeo Sharpstrike",
+     "spells": {}
+    },
+    "258294": {
+     "levels": {
+      "10": {
+       "at": 1795791039,
+       "v": {
+        "armor": 419,
+        "class": "PALADIN",
+        "dmax": 16.18,
+        "dmin": 12.17,
+        "run": 6,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Zephras Isle"
+       }
+      }
+     },
+     "name": "Eelitha Fernstep",
+     "spells": {}
+    },
+    "258295": {
+     "levels": {
+      "10": {
+       "at": 1795791039,
+       "v": {
+        "armor": 419,
+        "class": "PALADIN",
+        "dmax": 16.18,
+        "dmin": 12.17,
+        "run": 6,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Zephras Isle"
+       }
+      }
+     },
+     "name": "Arnorea Shadowfoot",
+     "spells": {}
+    },
+    "266216": {
+     "levels": {
+      "24": {
+       "at": 1795787560,
+       "v": {
+        "class": "WARRIOR",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Hillsbrad Foothills"
+       }
+      }
+     },
+     "name": "Lord Tomas",
+     "spells": {}
+    },
+    "2770": {
+     "levels": {
+      "27": {
+       "at": 1795802660,
+       "v": {
+        "armor": 1108,
+        "class": "WARRIOR",
+        "dmax": 50.98,
+        "dmin": 38.41,
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Hillsbrad Foothills"
+       }
+      }
+     },
+     "name": "Tallow",
+     "spells": {}
+    },
+    "3296": {
+     "levels": {
+      "55": {
+       "at": 1795785476,
+       "v": {
+        "dmax": 249.39,
+        "dmin": 188.07
+       }
+      }
+     },
+     "name": "Orgrimmar Grunt",
+     "spells": {}
+    },
+    "3536": {
+     "levels": {
+      "32": {
+       "at": 1795802128,
+       "v": {
+        "armor": 1283,
+        "class": "WARRIOR",
+        "dmax": 59.49,
+        "dmin": 44.85,
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Hillsbrad Foothills"
+       }
+      }
+     },
+     "name": "Kris Legace",
+     "spells": {}
+    },
+    "3537": {
+     "levels": {
+      "32": {
+       "at": 1795802695,
+       "v": {
+        "armor": 1283,
+        "class": "WARRIOR",
+        "dmax": 59.49,
+        "dmin": 44.85,
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Hillsbrad Foothills"
+       }
+      }
+     },
+     "name": "Zixil",
+     "spells": {}
+    },
+    "3538": {
+     "levels": {
+      "32": {
+       "at": 1795802655,
+       "v": {
+        "class": "WARRIOR",
+        "run": 8,
+        "spd": 2,
+        "ty": "Mechanical",
+        "z": "Hillsbrad Foothills"
+       }
+      }
+     },
+     "name": "Overwatch Mark I",
+     "spells": {}
+    },
+    "3544": {
+     "levels": {
+      "40": {
+       "at": 1795802711,
+       "v": {
+        "class": "WARRIOR",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Hillsbrad Foothills"
+       }
+      }
+     },
+     "name": "Jason Lemieux",
+     "spells": {}
+    },
+    "3982": {
+     "levels": {
+      "7": {
+       "at": 1795787114,
+       "v": {
+        "armor": 245,
+        "class": "WARRIOR",
+        "dmax": 11.1,
+        "dmin": 9.63,
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Hillsbrad Foothills"
+       }
+      }
+     },
+     "name": "Monika Sengutz",
+     "spells": {}
+    },
+    "4504": {
+     "levels": {
+      "37": {
+       "at": 1795786608,
+       "v": {
+        "class": "WARRIOR",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Alterac Mountains"
+       }
+      }
+     },
+     "name": "Frostmaw",
+     "spells": {}
+    },
+    "4576": {
+     "levels": {
+      "45": {
+       "at": 1795785889,
+       "v": {
+        "armor": 2742,
+        "class": "WARRIOR",
+        "dmax": 100.32,
+        "dmin": 75.65,
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Undercity"
+       }
+      }
+     },
+     "name": "Josef Gregorian",
+     "spells": {}
+    },
+    "4577": {
+     "levels": {
+      "30": {
+       "at": 1795785883,
+       "v": {
+        "class": "WARRIOR",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Undercity"
+       }
+      }
+     },
+     "name": "Millie Gregorian",
+     "spells": {}
+    },
+    "5651": {
+     "levels": {
+      "15": {
+       "at": 1795785951,
+       "v": {
+        "class": "WARRIOR",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Undercity"
+       }
+      }
+     },
+     "name": "Patrick Garrett",
+     "spells": {}
+    },
+    "5668": {
+     "levels": {
+      "20": {
+       "at": 1795785862,
+       "v": {
+        "class": "WARRIOR",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Undercity"
+       }
+      }
+     },
+     "name": "Mattie Alred",
+     "spells": {}
+    },
+    "9564": {
+     "levels": {
+      "45": {
+       "at": 1795785518,
+       "v": {
+        "class": "WARRIOR",
+        "run": 8,
+        "spd": 1,
+        "ty": "Humanoid",
+        "z": "Durotar"
+       }
+      }
+     },
+     "name": "Frezza",
+     "spells": {}
+    }
+   },
+   "received": "2026-11-27",
+   "sender": "acd0d078eb62",
+   "spells": {}
+  },
+  {
+   "game": "forever",
+   "instances": {},
+   "mobs": {
+    "2244": {
+     "levels": {},
+     "name": "Syndicate Shadow Mage",
+     "spells": {
+      "20791": {
+       "at": "2026-11-27",
+       "build": "1.60.1",
+       "n": 123,
+       "spawns": 22
+      },
+      "6909": {
+       "at": "2026-11-27",
+       "build": "1.60.1",
+       "n": 2,
+       "spawns": 1
+      }
+     }
+    },
+    "2251": {
+     "levels": {},
+     "name": "Giant Yeti",
+     "spells": {
+      "3131": {
+       "at": "2026-11-27",
+       "build": "1.60.1",
+       "n": 4,
+       "spawns": 2
+      }
+     }
+    },
+    "2260": {
+     "levels": {},
+     "name": "Syndicate Rogue",
+     "spells": {
+      "2589": {
+       "at": "2026-11-27",
+       "build": "1.60.1",
+       "n": 2,
+       "spawns": 1
+      }
+     }
+    },
+    "2261": {
+     "levels": {},
+     "name": "Syndicate Watchman",
+     "spells": {
+      "3602": {
+       "at": "2026-11-27",
+       "build": "1.60.1",
+       "n": 8,
+       "spawns": 8
+      }
+     }
+    },
+    "2428": {
+     "levels": {},
+     "name": "Jailor Marlgen",
+     "spells": {
+      "6533": {
+       "at": "2026-11-27",
+       "build": "1.60.1",
+       "n": 2,
+       "spawns": 1
+      },
+      "6660": {
+       "at": "2026-11-27",
+       "build": "1.60.1",
+       "n": 7,
+       "spawns": 2
+      }
+     }
+    },
+    "251676": {
+     "levels": {},
+     "name": "Wind Hollow",
+     "spells": {
+      "1263979": {
+       "at": "2026-11-27",
+       "build": "1.60.1",
+       "n": 53,
+       "spawns": 13
+      }
+     }
+    },
+    "252664": {
+     "levels": {},
+     "name": "Al'Aketh Stormchaser",
+     "spells": {
+      "11986": {
+       "at": "2026-11-27",
+       "build": "1.60.1",
+       "n": 7,
+       "spawns": 6
+      },
+      "20802": {
+       "at": "2026-11-27",
+       "build": "1.60.1",
+       "n": 54,
+       "spawns": 20
+      }
+     }
+    },
+    "252665": {
+     "levels": {},
+     "name": "Al'Aketh Footsoldier",
+     "spells": {
+      "25710": {
+       "at": "2026-11-27",
+       "build": "1.60.1",
+       "n": 8,
+       "spawns": 5
+      }
+     }
+    },
+    "252762": {
+     "levels": {},
+     "name": "Al'Aketh Guardian",
+     "spells": {
+      "11972": {
+       "at": "2026-11-27",
+       "build": "1.60.1",
+       "n": 3,
+       "spawns": 3
+      },
+      "1270400": {
+       "at": "2026-11-27",
+       "build": "1.60.1",
+       "n": 16,
+       "spawns": 13
+      }
+     }
+    },
+    "252763": {
+     "levels": {},
+     "name": "Al'Aketh Spiritcaller",
+     "spells": {
+      "1301404": {
+       "at": "2026-11-27",
+       "build": "1.60.1",
+       "n": 3,
+       "spawns": 2
+      },
+      "6535": {
+       "at": "2026-11-27",
+       "build": "1.60.1",
+       "n": 8,
+       "spawns": 5
+      },
+      "9532": {
+       "at": "2026-11-27",
+       "build": "1.60.1",
+       "n": 38,
+       "spawns": 13
+      }
+     }
+    },
+    "252764": {
+     "levels": {},
+     "name": "Al'Aketh Skypriest",
+     "spells": {
+      "11986": {
+       "at": "2026-11-27",
+       "build": "1.60.1",
+       "n": 3,
+       "spawns": 2
+      },
+      "20802": {
+       "at": "2026-11-27",
+       "build": "1.60.1",
+       "n": 19,
+       "spawns": 7
+      }
+     }
+    },
+    "252765": {
+     "levels": {},
+     "name": "Al'Aketh Blademaster",
+     "spells": {
+      "1270400": {
+       "at": "2026-11-27",
+       "build": "1.60.1",
+       "n": 22,
+       "spawns": 15
+      },
+      "9080": {
+       "at": "2026-11-27",
+       "build": "1.60.1",
+       "n": 18,
+       "spawns": 11
+      }
+     }
+    },
+    "252767": {
+     "levels": {},
+     "name": "Al'Aketh Honor Guard",
+     "spells": {
+      "1270400": {
+       "at": "2026-11-27",
+       "build": "1.60.1",
+       "n": 24,
+       "spawns": 7
+      }
+     }
+    },
+    "253622": {
+     "levels": {},
+     "name": "Commander Haalien",
+     "spells": {
+      "1259652": {
+       "at": "2026-11-27",
+       "build": "1.60.1",
+       "n": 7,
+       "spawns": 5
+      }
+     }
+    },
+    "253847": {
+     "levels": {},
+     "name": "Elaadrin Evengale",
+     "spells": {
+      "12544": {
+       "at": "2026-11-27",
+       "build": "1.60.1",
+       "n": 2,
+       "spawns": 1
+      }
+     }
+    },
+    "255833": {
+     "levels": {},
+     "name": "Rohash",
+     "spells": {
+      "1266395": {
+       "at": "2026-11-27",
+       "build": "1.60.1",
+       "n": 1,
+       "spawns": 1
+      },
+      "1266401": {
+       "at": "2026-11-27",
+       "build": "1.60.1",
+       "n": 2,
+       "spawns": 1
+      }
+     }
+    },
+    "256092": {
+     "levels": {},
+     "name": "Shadowgale Shriekling",
+     "spells": {
+      "5422": {
+       "at": "2026-11-27",
+       "build": "1.60.1",
+       "n": 98,
+       "spawns": 48
+      }
+     }
+    },
+    "256617": {
+     "levels": {},
+     "name": "Duke Anvillaxx",
+     "spells": {
+      "1269323": {
+       "at": "2026-11-27",
+       "build": "1.60.1",
+       "n": 1,
+       "spawns": 1
+      }
+     }
+    },
+    "256619": {
+     "levels": {},
+     "name": "High Order Mage",
+     "spells": {
+      "9672": {
+       "at": "2026-11-27",
+       "build": "1.60.1",
+       "n": 5,
+       "spawns": 1
+      }
+     }
+    },
+    "256621": {
+     "levels": {},
+     "name": "Archmage Ansirem Runeweaver",
+     "spells": {
+      "1269457": {
+       "at": "2026-11-27",
+       "build": "1.60.1",
+       "n": 1,
+       "spawns": 1
+      }
+     }
+    }
+   },
+   "received": "2026-11-27",
+   "sender": "acd0d078eb62",
+   "spells": {
+    "11972": "Shield Bash",
+    "11986": "Healing Wave",
+    "12544": "Frost Armor",
+    "1259652": "Shock",
+    "1263979": "Wind Cleave",
+    "1266395": "Zephras Finale Convo Trigger",
+    "1266401": "Elemental Smite",
+    "1269323": "Lightning Cloud",
+    "1269457": "Fireball Volley",
+    "1270400": "Wind Strike",
+    "1301404": "Lightning Cloud",
+    "20791": "Shadow Bolt",
+    "20802": "Lightning Bolt",
+    "25710": "Heroic Strike",
+    "2589": "Backstab",
+    "3131": "Frost Breath",
+    "3602": "Torch Burst",
+    "5422": "Lacerate",
+    "6533": "Net",
+    "6535": "Lightning Cloud",
+    "6660": "Shoot",
+    "6909": "Curse of Thorns",
+    "9080": "Hamstring",
+    "9532": "Lightning Bolt",
+    "9672": "Frostbolt"
+   }
+  }
+ ],
  "seen": [
   "6aeebeba80aca3df",
   "d546a197f4d54166",
@@ -20,7 +2395,9 @@
   "6a53a5b6502c5842",
   "1fe8567ec42494f1",
   "0770f140240901cb",
-  "5deb7bffc6639d1f"
+  "5deb7bffc6639d1f",
+  "253fe07a68e14452",
+  "c60dfeaf1ed31237"
  ],
  "version": 1
 }

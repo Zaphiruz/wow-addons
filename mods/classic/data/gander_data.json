@@ -3388,10 +3388,10 @@
      "name": "Vile Fin Tidehunter",
      "spells": {
       "12544": {
-       "at": "2026-11-25",
+       "at": "2026-11-27",
        "build": "1.60.1",
-       "n": 6,
-       "spawns": 6
+       "n": 14,
+       "spawns": 11
       }
      }
     },
@@ -4110,6 +4110,17 @@
     },
     "2260": {
      "levels": {
+      "21": {
+       "at": 1795787501,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Syndicate Rogue",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Hillsbrad Foothills"
+       }
+      },
       "22": {
        "at": 1795740595,
        "v": {
@@ -4123,7 +4134,14 @@
       }
      },
      "name": "Syndicate Rogue",
-     "spells": {}
+     "spells": {
+      "744": {
+       "at": "2026-11-27",
+       "build": "1.60.1",
+       "n": 4,
+       "spawns": 3
+      }
+     }
     },
     "230317": {
      "levels": {
@@ -4223,20 +4241,44 @@
         "ty": "Beast",
         "z": "Hillsbrad Foothills"
        }
+      },
+      "21": {
+       "at": 1795787335,
+       "v": {
+        "class": "WARRIOR",
+        "fam": "Spider",
+        "n": "Forest Moss Creeper",
+        "run": 8,
+        "spd": 2,
+        "ty": "Beast",
+        "z": "Hillsbrad Foothills"
+       }
       }
      },
      "name": "Forest Moss Creeper",
      "spells": {
       "3396": {
-       "at": "2026-11-26",
+       "at": "2026-11-27",
        "build": "1.60.1",
-       "n": 2,
-       "spawns": 1
+       "n": 8,
+       "spawns": 4
       }
      }
     },
     "2351": {
      "levels": {
+      "21": {
+       "at": 1795787238,
+       "v": {
+        "class": "WARRIOR",
+        "fam": "Bear",
+        "n": "Gray Bear",
+        "run": 8,
+        "spd": 2,
+        "ty": "Beast",
+        "z": "Hillsbrad Foothills"
+       }
+      },
       "22": {
        "at": 1795747011,
        "v": {
@@ -4286,9 +4328,12 @@
     "2389": {
      "levels": {
       "55": {
-       "at": 1795746931,
+       "at": 1795802699,
        "v": {
+        "armor": 3292,
         "class": "WARRIOR",
+        "dmax": 436.44,
+        "dmin": 329.12,
         "n": "Zarise",
         "rk": "ELITE",
         "run": 8,
@@ -4322,6 +4367,18 @@
      "levels": {
       "32": {
        "at": 1795747385,
+       "v": {
+        "class": "WARRIOR",
+        "fam": "Cat",
+        "n": "Mountain Lion",
+        "run": 10,
+        "spd": 1.4,
+        "ty": "Beast",
+        "z": "Alterac Mountains"
+       }
+      },
+      "33": {
+       "at": 1795786058,
        "v": {
         "class": "WARRIOR",
         "fam": "Cat",
@@ -5347,10 +5404,10 @@
      "name": "Ornery Galestrider",
      "spells": {
       "7272": {
-       "at": "2026-11-26",
+       "at": "2026-11-27",
        "build": "1.60.1",
-       "n": 2,
-       "spawns": 1
+       "n": 4,
+       "spawns": 2
       }
      }
     },
@@ -5438,6 +5495,28 @@
         "z": "Zephras Isle"
        }
       },
+      "15": {
+       "at": 1795789201,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Searing Totem",
+        "run": 7,
+        "spd": 2,
+        "ty": "Totem",
+        "z": "Zephras Isle"
+       }
+      },
+      "16": {
+       "at": 1795792719,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Searing Totem",
+        "run": 7,
+        "spd": 2,
+        "ty": "Totem",
+        "z": "Zephras Isle"
+       }
+      },
       "20": {
        "at": 1795708821,
        "v": {
@@ -5467,9 +5546,12 @@
     "252359": {
      "levels": {
       "10": {
-       "at": 1795705654,
+       "at": 1795791575,
        "v": {
+        "armor": 419,
         "class": "PALADIN",
+        "dmax": 16.18,
+        "dmin": 12.17,
         "n": "Lotheluum Starbreeze",
         "run": 6,
         "spd": 2,
@@ -5484,9 +5566,12 @@
     "252382": {
      "levels": {
       "10": {
-       "at": 1795707027,
+       "at": 1795793346,
        "v": {
+        "armor": 419,
         "class": "PALADIN",
+        "dmax": 16.18,
+        "dmin": 12.17,
         "n": "Sessaria Skystride",
         "run": 6,
         "spd": 2,
@@ -5796,9 +5881,12 @@
     "254100": {
      "levels": {
       "10": {
-       "at": 1795706608,
+       "at": 1795793241,
        "v": {
+        "armor": 419,
         "class": "PALADIN",
+        "dmax": 16.18,
+        "dmin": 12.17,
         "n": "Zephras Citizen",
         "run": 6,
         "spd": 2,
@@ -5853,9 +5941,12 @@
     "254287": {
      "levels": {
       "12": {
-       "at": 1795705803,
+       "at": 1795792344,
        "v": {
+        "armor": 469,
         "class": "PALADIN",
+        "dmax": 20.87,
+        "dmin": 15.72,
         "n": "Peacekeeper Elite",
         "run": 6,
         "spd": 2,
@@ -5907,9 +5998,12 @@
     "254344": {
      "levels": {
       "10": {
-       "at": 1795707026,
+       "at": 1795791709,
        "v": {
+        "armor": 419,
         "class": "PALADIN",
+        "dmax": 16.18,
+        "dmin": 12.17,
         "n": "Endaria Mistgaze",
         "run": 6,
         "spd": 2,
@@ -7056,9 +7150,12 @@
     "259058": {
      "levels": {
       "10": {
-       "at": 1795707556,
+       "at": 1795792854,
        "v": {
+        "armor": 419,
         "class": "PALADIN",
+        "dmax": 16.18,
+        "dmin": 12.17,
         "n": "Windshaper Shaman",
         "run": 6,
         "spd": 2,
@@ -7647,10 +7744,10 @@
      "name": "High Priestess Lorthuna",
      "spells": {
       "1269135": {
-       "at": "2026-11-26",
+       "at": "2026-11-27",
        "build": "1.60.1",
-       "n": 2,
-       "spawns": 2
+       "n": 3,
+       "spawns": 3
       }
      }
     },
@@ -7659,10 +7756,10 @@
      "name": "Commander Haalien",
      "spells": {
       "1269135": {
-       "at": "2026-11-26",
+       "at": "2026-11-27",
        "build": "1.60.1",
-       "n": 2,
-       "spawns": 2
+       "n": 3,
+       "spawns": 3
       }
      }
     },
@@ -7865,6 +7962,17 @@
     },
     "268707": {
      "levels": {
+      "1": {
+       "at": 1795803041,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Prairie Wolf Pup",
+        "run": 8,
+        "spd": 2,
+        "ty": "Non-combat Pet",
+        "z": "Orgrimmar"
+       }
+      },
       "21": {
        "at": 1795523962,
        "v": {
@@ -8241,6 +8349,15 @@
     },
     "271867": {
      "levels": {
+      "11": {
+       "at": 1795789419,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Pachimari",
+        "ty": "Non-combat Pet",
+        "z": "Zephras Isle"
+       }
+      },
       "41": {
        "at": 1795662821,
        "v": {
@@ -8267,6 +8384,17 @@
         "spd": 2,
         "ty": "Non-combat Pet",
         "z": "Orgrimmar"
+       }
+      },
+      "41": {
+       "at": 1795802481,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Plagued Cockroach",
+        "run": 8,
+        "spd": 2,
+        "ty": "Non-combat Pet",
+        "z": "Hillsbrad Foothills"
        }
       }
      },
@@ -8667,9 +8795,12 @@
     "274934": {
      "levels": {
       "12": {
-       "at": 1795707013,
+       "at": 1795792881,
        "v": {
+        "armor": 580,
         "class": "WARRIOR",
+        "dmax": 22.43,
+        "dmin": 16.91,
         "n": "Amandriel",
         "run": 8,
         "spd": 2,
@@ -8728,6 +8859,17 @@
         "z": "Thunder Bluff"
        }
       },
+      "27": {
+       "at": 1795787967,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Unknown",
+        "run": 8,
+        "spd": 2,
+        "ty": "Non-combat Pet",
+        "z": "Hillsbrad Foothills"
+       }
+      },
       "29": {
        "at": 1795439760,
        "v": {
@@ -8737,6 +8879,17 @@
         "spd": 2,
         "ty": "Non-combat Pet",
         "z": "Orgrimmar"
+       }
+      },
+      "32": {
+       "at": 1795787047,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Unknown",
+        "run": 8,
+        "spd": 2,
+        "ty": "Non-combat Pet",
+        "z": "Hillsbrad Foothills"
        }
       },
       "35": {
@@ -9536,10 +9689,10 @@
      "name": "Bloodtalon Scythemaw",
      "spells": {
       "6268": {
-       "at": "2026-11-25",
+       "at": "2026-11-27",
        "build": "1.60.1",
-       "n": 2,
-       "spawns": 1
+       "n": 4,
+       "spawns": 2
       }
      }
     },
@@ -10357,7 +10510,7 @@
     "3296": {
      "levels": {
       "55": {
-       "at": 1795754469,
+       "at": 1795785476,
        "v": {
         "armor": 3292,
         "class": "WARRIOR",
@@ -15858,6 +16011,28 @@
         "spd": 2,
         "ty": "Totem",
         "z": "Durotar"
+       }
+      },
+      "15": {
+       "at": 1795789347,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Strength of Earth Totem",
+        "run": 7,
+        "spd": 2,
+        "ty": "Totem",
+        "z": "Zephras Isle"
+       }
+      },
+      "16": {
+       "at": 1795792719,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Strength of Earth Totem",
+        "run": 7,
+        "spd": 2,
+        "ty": "Totem",
+        "z": "Zephras Isle"
        }
       }
      },
