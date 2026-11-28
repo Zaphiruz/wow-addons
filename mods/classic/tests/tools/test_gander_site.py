@@ -213,9 +213,13 @@ class SiteReader(unittest.TestCase):
                              {mob: entry["spells"] for mob, entry in data[game]["mobs"].items()})
             self.assertEqual({mob: entry["name"] for mob, entry in clean["mobs"].items()},
                              {mob: entry["name"] for mob, entry in data[game]["mobs"].items()})
+            self.assertEqual({mob: entry.get("in") for mob, entry in clean["mobs"].items()},
+                             {mob: entry.get("in") for mob, entry in data[game]["mobs"].items()})
             self.assertEqual(clean["spells"], data[game]["spells"])
             self.assertEqual(sorted(clean["instances"]), sorted(data[game]["instances"]))
         self.assertEqual(games["forever"]["instances"]["48"]["name"], "Blackfathom Deeps")
+        self.assertEqual(games["forever"]["mobs"]["4832"]["in"], ["48"])
+        self.assertNotIn("in", games["forever"]["mobs"]["3273"], "the open world is no dungeon")
 
     def test_a_block_names_no_player(self):
         page = self.by_page([[fight()], [awkward()]])

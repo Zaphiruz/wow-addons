@@ -76,6 +76,13 @@ local function loadSettings()
     if not placed[key] then order[#order + 1] = key end
   end
   db.order = order
+  -- The zones you met mobs in while inside a dungeon or raid: the bestiary
+  -- lists those under Dungeons.
+  local dungeons = {}
+  for name, yes in pairs(type(db.dungeons) == "table" and db.dungeons or dungeons) do
+    if type(name) == "string" and yes == true then dungeons[name] = true end
+  end
+  db.dungeons = dungeons
   if type(db.minimap) ~= "table" then db.minimap = {} end
   if type(db.minimap.hide) ~= "boolean" then db.minimap.hide = false end
   if type(db.minimap.angle) ~= "number" then db.minimap.angle = 225 end  -- bottom left
@@ -210,9 +217,11 @@ local queueSend, askAbout  -- set below, in Sharing
 -- stats other players have seen. It's a separate addon so its data can be
 -- updated without a new Gander; Gander works without it. Each game has its
 -- own part. Its stats have the shape of our own sightings, { at, v }, by
--- mob and level, and count as a third source after "seen" and "heard".
+-- mob and level, and count as a third source after "seen" and "heard". It
+-- also names the dungeons (by instance ID) and says which of them each mob
+-- was logged in, for the bestiary's places.
 local GAME = (select(4, GetBuildInfo()) or 0) >= 16000 and "forever" or "classic"
-local shipped = { instances = {}, spells = {}, names = {}, casts = {}, stats = {} }
+local shipped = { instances = {}, dungeons = {}, spells = {}, names = {}, casts = {}, inside = {}, stats = {} }
 local shippedVersion      -- nil when GanderData isn't installed
 if type(GanderData) == "table" then
   shippedVersion = type(GanderData.version) == "string" and GanderData.version or "?"
@@ -249,6 +258,12 @@ end
 -- Store what we just saw ourselves, and pass it on if it brought something new.
 local function remember(id, level, v)
   if next(v) == nil then return end  -- nothing was visible: not a sighting
+  if v.z and not db.dungeons[v.z] then
+    local inside, kind = call("IsInInstance")
+    if not isSecret(inside) and not isSecret(kind) and inside and (kind == "party" or kind == "raid") then
+      db.dungeons[v.z] = true
+    end
+  end
   local mob = db.mobs[id]
   local old = mob and mob.lv[level]
   local values, changed = {}, false
@@ -1568,292 +1583,799 @@ local function buildPanel()
 end
 
 ---------------------------------------------------------------------------
--- The bestiary (/gander): every remembered mob, and all that's known of it
+-- The bestiary (/gander): every known mob, to search, sort and filter, and
+-- all that's known of the one that's clicked
+--
+-- On the left are the places: the dungeons, then the zones. A mob's places
+-- are the zones it was seen in and the dungeons the database logged it in.
+-- A place is a dungeon when the database names it as one, or when you met a
+-- mob there yourself while inside an instance (GanderDB.dungeons).
+--
+-- GanderDB.bestiary holds the choices that are remembered: the column the
+-- list is sorted by and which way, and the filters. The search isn't kept.
+--
+-- Everything here lives in one block, so its locals don't count towards the
+-- 200 a file may have.
 ---------------------------------------------------------------------------
-local ROWS = 10           -- mobs visible at once
-local WHEEL_STEP = 3      -- rows per notch of the mouse wheel
-local SHOW = { { "all", "All", 64 }, { "seen", "Seen by me", 92 }, { "heard", "Heard", 64 },
-               { "database", "Database", 80 } }
-local bestiary
-local showing, searching, offset, selected = "all", "", 0, nil
+local openSettings, toggleBestiary
+do
+  local ROWS, PLACE_ROWS = 12, 27   -- mobs and places visible at once
+  local WHEEL_STEP = 3              -- rows per notch of the mouse wheel
+  local NOWHERE = "?"               -- the place filter for mobs with no known place
+  local SOURCES = { { "all", "All" }, { "seen", "Seen by me" }, { "heard", "Heard" }, { "database", "Database" } }
+  local RANKS = { "NORMAL", "ELITE", "RARE", "RAREELITE", "WORLDBOSS" }
+  -- The list's columns: key, heading, where it starts and how wide it is.
+  local COLUMNS = { { "name", "Name", 0, 250 }, { "level", "Level", 256, 44 }, { "kind", "Type", 306, 94 },
+                    { "zone", "Place", 406, 160 } }
+  local ARROW_UP, ARROW_DOWN = "Interface\\Buttons\\UI-ScrollBar-ScrollUpButton-Up",
+                               "Interface\\Buttons\\UI-ScrollBar-ScrollDownButton-Up"
+  local bestiary, entries
+  -- What isn't remembered between sessions: the search, how far the lists
+  -- are scrolled, the mob that's clicked, and what the last look at the data
+  -- found (which places are dungeons, every place's name, each mob by ID).
+  local view = { search = "", offset = 0, placeOffset = 0, dungeons = {}, byId = {} }
+  local B = {}
 
-local function openSettings()
-  openPage(category, "the settings window isn't available here.")
-end
-
--- The newest value of one field for a mob, from any level: ours, heard, or
--- the database's sightings (base).
-local function info(mob, key, base)
-  local rec = newer(key, newestWith(mob.lv or NOTHING, key), newestWith(mob.heard or NOTHING, key),
-                    newestWith(base, key))
-  return rec and rec.v[key]
-end
-
--- "30", "30-32" or "??" for the levels a mob is known at.
-local function levelText(mob, base)
-  local lo, hi
-  for _, records in ipairs({ mob.lv or NOTHING, mob.heard or NOTHING, base }) do
-    for level in pairs(records) do
-      if level > 0 then
-        lo = math.min(lo or level, level)
-        hi = math.max(hi or level, level)
-      end
-    end
+  openSettings = function()
+    openPage(category, "the settings window isn't available here.")
   end
-  if not lo then return "??" end
-  return lo == hi and tostring(lo) or (lo .. "-" .. hi)
-end
 
--- Every known mob as a list entry, named ones first by name: the ones
--- Gander remembers, and the ones only the database knows.
-local function allEntries()
-  local list, ids = {}, {}
-  for id in pairs(db.mobs) do ids[id] = true end
-  for id in pairs(shipped.stats) do ids[id] = true end
-  for id in pairs(shipped.casts) do ids[id] = true end
-  for id in pairs(ids) do
-    local mob, base = db.mobs[id] or NOTHING, baseOf(id)
-    local name, rank = info(mob, "n", base) or shipped.names[id], info(mob, "rk", base)
-    local seen = next(mob.lv or NOTHING) ~= nil
-    list[#list + 1] = {
-      id = id, named = name ~= nil, seen = seen, heard = not seen and db.mobs[id] ~= nil,
-      base = base ~= NOTHING or shipped.casts[id] ~= nil,
-      name = (name or ("Mob #" .. id)) .. (rank and RANK[rank] and (" (" .. RANK[rank] .. ")") or ""),
-      level = levelText(mob, base), kind = info(mob, "ty", base) or "", zone = info(mob, "z", base) or "",
+  local function rankLabel(rank) return RANK[rank] or "Normal" end
+
+  -- Make sense of the saved choices, whatever is in there.
+  function B.loadChoices()
+    local b = type(db.bestiary) == "table" and db.bestiary or {}
+    local function text(value)
+      return type(value) == "string" and value ~= "" and #value <= MAX_TEXT and value or nil
+    end
+    local function level(value)
+      return type(value) == "number" and value >= 1 and value <= 99 and math.floor(value) or nil
+    end
+    db.bestiary = {
+      sort = ({ name = true, level = true, kind = true, zone = true })[b.sort] and b.sort or "name",
+      reverse = b.reverse == true,
+      source = ({ seen = true, heard = true, database = true })[b.source] and b.source or "all",
+      type = text(b.type), place = text(b.place),
+      rank = type(b.rank) == "string" and (b.rank == "NORMAL" or RANK[b.rank]) and b.rank or nil,
+      min = level(b.min), max = level(b.max), casts = b.casts == true,
     }
   end
-  table.sort(list, function(a, b)
+
+  -- The newest value of one field for a mob, from any level: ours, heard, or
+  -- the database's sightings (base).
+  local function info(mob, key, base)
+    local rec = newer(key, newestWith(mob.lv or NOTHING, key), newestWith(mob.heard or NOTHING, key),
+                      newestWith(base, key))
+    return rec and rec.v[key]
+  end
+
+  -- Order two mobs by the chosen column. A mob with nothing in that column
+  -- (no name, level, type or place) goes last whichever way it's turned.
+  function B.before(a, b)
+    local f = db.bestiary
+    local x, y
+    if f.sort == "level" then
+      if f.reverse then x, y = a.hi, b.hi else x, y = a.lo, b.lo end
+    elseif f.sort == "kind" then
+      x, y = a.kind ~= "" and a.kind:lower() or nil, b.kind ~= "" and b.kind:lower() or nil
+    elseif f.sort == "zone" then
+      x, y = a.zone ~= "" and a.zone:lower() or nil, b.zone ~= "" and b.zone:lower() or nil
+    else
+      x, y = a.named and a.sortName or nil, b.named and b.sortName or nil
+    end
+    if (x == nil) ~= (y == nil) then return y == nil end
+    if x ~= y then
+      if f.reverse then return x > y end
+      return x < y
+    end
     if a.named ~= b.named then return a.named end
-    if a.named and a.name:lower() ~= b.name:lower() then return a.name:lower() < b.name:lower() end
+    if a.sortName ~= b.sortName then return a.sortName < b.sortName end
     return a.id < b.id
-  end)
-  return list
-end
+  end
 
-local function matches(entry)
-  if showing == "seen" and not entry.seen then return false end
-  if showing == "heard" and not entry.heard then return false end
-  if showing == "database" and not entry.base then return false end
-  if searching == "" then return true end
-  local haystack = (entry.name .. "\n" .. entry.zone .. "\n" .. entry.kind .. "\n" .. entry.id):lower()
-  return haystack:find(searching:lower(), 1, true) ~= nil
-end
+  -- Every known mob as a list entry, in the chosen order: the ones Gander
+  -- remembers, and the ones only the database knows. Kept until something
+  -- new is learned.
+  function B.entries()
+    if entries then
+      if view.resort then table.sort(entries, B.before) end
+      view.resort = false
+      return entries
+    end
+    local dungeons, isPlace, kinds = {}, {}, {}
+    for _, name in pairs(shipped.dungeons) do
+      if type(name) == "string" then dungeons[name] = true end
+    end
+    for name in pairs(db.dungeons) do dungeons[name] = true end
+    local list, ids, byId = {}, {}, {}
+    for id in pairs(db.mobs) do ids[id] = true end
+    for id in pairs(shipped.stats) do ids[id] = true end
+    for id in pairs(shipped.casts) do ids[id] = true end
+    for id in pairs(ids) do
+      local mob, base = db.mobs[id] or NOTHING, baseOf(id)
+      local name, rank = info(mob, "n", base) or shipped.names[id], info(mob, "rk", base)
+      local seen = next(mob.lv or NOTHING) ~= nil
+      local places, there = {}, {}
+      local function at(place)
+        if type(place) == "string" and place ~= "" and not there[place] then
+          there[place], isPlace[place] = true, true
+          places[#places + 1] = place
+        end
+      end
+      at(info(mob, "z", base))   -- where it was seen last comes first: the list shows that one
+      local lo, hi, sighted
+      for _, records in ipairs({ mob.lv or NOTHING, mob.heard or NOTHING, base }) do
+        for level, rec in pairs(records) do
+          sighted = true
+          if level > 0 then
+            lo = math.min(lo or level, level)
+            hi = math.max(hi or level, level)
+          end
+          at(rec.v.z)
+        end
+      end
+      local logged = shipped.inside[id]
+      for _, instance in ipairs(type(logged) == "table" and logged or NOTHING) do
+        at(shipped.dungeons[instance])
+      end
+      local kind = info(mob, "ty", base) or ""
+      if kind ~= "" then kinds[kind] = true end
+      rank = rank and RANK[rank] and rank or nil
+      local display = (name or ("Mob #" .. id)) .. (rank and (" (" .. RANK[rank] .. ")") or "")
+      local casts = shipped.casts[id]
+      local hay = { display, tostring(id), kind, table.concat(places, "\n") }
+      for _, spell in ipairs(type(casts) == "table" and casts or NOTHING) do hay[#hay + 1] = spellName(spell) end
+      local entry = {
+        id = id, named = name ~= nil, name = display, sortName = display:lower(),
+        seen = seen, heard = not seen and db.mobs[id] ~= nil, base = base ~= NOTHING or casts ~= nil,
+        level = lo and (lo == hi and tostring(lo) or (lo .. "-" .. hi)) or "??", lo = lo, hi = hi,
+        -- A mob known only for what it casts was never looked at: its rank isn't known.
+        kind = kind, rank = rank or (sighted and "NORMAL" or nil),
+        places = places, there = there, zone = places[1] or "",
+        casts = type(casts) == "table" and #casts > 0,
+        hay = table.concat(hay, "\n"):lower(),
+      }
+      list[#list + 1], byId[id] = entry, entry
+    end
+    table.sort(list, B.before)
+    local dungeonNames, zoneNames, kindNames = {}, {}, {}
+    for place in pairs(isPlace) do
+      local names = dungeons[place] and dungeonNames or zoneNames
+      names[#names + 1] = place
+    end
+    for kind in pairs(kinds) do kindNames[#kindNames + 1] = kind end
+    table.sort(dungeonNames); table.sort(zoneNames); table.sort(kindNames)
+    view.dungeons, view.dungeonNames, view.zoneNames, view.kinds = dungeons, dungeonNames, zoneNames, kindNames
+    view.byId, view.resort = byId, false
+    entries = list
+    return entries
+  end
 
-local function when(at) return tonumber(date("%d", at)) .. " " .. date("%b", at) end
+  -- Does a mob pass every filter but the place?
+  function B.passes(e)
+    local f = db.bestiary
+    if f.source == "seen" and not e.seen then return false end
+    if f.source == "heard" and not e.heard then return false end
+    if f.source == "database" and not e.base then return false end
+    if f.type and e.kind ~= f.type then return false end
+    if f.rank and e.rank ~= f.rank then return false end
+    if f.casts and not e.casts then return false end
+    if f.min or f.max then
+      if not e.lo then return false end   -- a level we don't know is in no range
+      if f.min and e.hi < f.min then return false end
+      if f.max and e.lo > f.max then return false end
+    end
+    return view.search == "" or e.hay:find(view.search, 1, true) ~= nil
+  end
 
--- One record's stats on a line: "Defense 150 · Attack speed 1.3".
-local function statsLine(level, rec)
-  local parts = {}
-  local function get(key) return rec.v[key] end
-  for _, lineKey in ipairs(db.order) do
-    local line = LINE[lineKey]
-    if line and line.key ~= "family" then
-      if firstOf(line.fields, get) then
-        local label, value = line.text(get)
-        parts[#parts + 1] = label .. " " .. value
-      elseif line.key == "defense" and ruleDefense(level) then
-        parts[#parts + 1] = "Defense " .. commas(ruleDefense(level))
+  -- Is a mob in the chosen place?
+  function B.there(e)
+    local place = db.bestiary.place
+    if not place then return true end
+    if place == NOWHERE then return #e.places == 0 end
+    return e.there[place] == true
+  end
+
+  -- The lines of the places list. counts says how many of the mobs that pass
+  -- the other filters are in each place; nowhere, how many have no place.
+  function B.placeList(total, counts, nowhere, unplaced)
+    local list = { { label = "Everywhere", count = total } }
+    local function add(heading, names)
+      if #names == 0 then return end
+      list[#list + 1] = { label = heading, header = true }
+      for _, name in ipairs(names) do list[#list + 1] = { label = name, key = name, count = counts[name] or 0 } end
+    end
+    add("Dungeons", view.dungeonNames)
+    add("Zones", view.zoneNames)
+    if unplaced then
+      list[#list + 1] = { label = "Other", header = true }
+      list[#list + 1] = { label = "Place not known", key = NOWHERE, count = nowhere }
+    end
+    return list
+  end
+
+  -- The filters in use, for the chips: { which filter, what the chip says }.
+  function B.active()
+    local f, list = db.bestiary, {}
+    if f.place then list[#list + 1] = { "place", "Place: " .. (f.place == NOWHERE and "not known" or f.place) } end
+    if f.type then list[#list + 1] = { "type", "Type: " .. f.type } end
+    if f.rank then list[#list + 1] = { "rank", "Rank: " .. rankLabel(f.rank) } end
+    for _, source in ipairs(SOURCES) do
+      if f.source == source[1] and source[1] ~= "all" then list[#list + 1] = { "source", "Source: " .. source[2] } end
+    end
+    if f.min and f.max then
+      list[#list + 1] = { "level", "Level " .. (f.min == f.max and f.min or (f.min .. "-" .. f.max)) }
+    elseif f.min then
+      list[#list + 1] = { "level", "Level " .. f.min .. "+" }
+    elseif f.max then
+      list[#list + 1] = { "level", "Level up to " .. f.max }
+    end
+    if f.casts then list[#list + 1] = { "casts", "Casts known" } end
+    return list
+  end
+
+  -- What a dropdown offers: "All" first, then each choice.
+  function B.options(which)
+    local list = { { label = "All" } }
+    if which == "type" then
+      for _, kind in ipairs(view.kinds) do list[#list + 1] = { value = kind, label = kind } end
+    elseif which == "rank" then
+      for _, rank in ipairs(RANKS) do list[#list + 1] = { value = rank, label = rankLabel(rank) } end
+    else
+      list = {}
+      for _, source in ipairs(SOURCES) do list[#list + 1] = { value = source[1], label = source[2] } end
+    end
+    return list
+  end
+
+  local function when(at) return tonumber(date("%d", at)) .. " " .. date("%b", at) end
+
+  -- One record's stats on a line: "Defense 150 · Attack speed 1.3".
+  local function statsLine(level, rec)
+    local parts = {}
+    local function get(key) return rec.v[key] end
+    for _, lineKey in ipairs(db.order) do
+      local line = LINE[lineKey]
+      if line and line.key ~= "family" then
+        if firstOf(line.fields, get) then
+          local label, value = line.text(get)
+          parts[#parts + 1] = label .. " " .. value
+        elseif line.key == "defense" and ruleDefense(level) then
+          parts[#parts + 1] = "Defense " .. commas(ruleDefense(level))
+        end
       end
     end
+    if not hasStats(rec.v) then parts[#parts + 1] = "(its stats were hidden)" end
+    return table.concat(parts, "  ·  ")
   end
-  if not hasStats(rec.v) then parts[#parts + 1] = "(its stats were hidden)" end
-  return table.concat(parts, "  ·  ")
-end
 
--- Everything known about one mob, as text for the lower pane.
-local function detailText(id)
-  local base = baseOf(id)
-  local mob = id and db.mobs[id]
-  if not mob and id and (base ~= NOTHING or shipped.casts[id]) then mob = NOTHING end  -- only the database knows it
-  if not mob then return GREY .. "Click a mob to see everything known about it.|r" end
-  local out = {}
-  local rank = info(mob, "rk", base)
-  local name = info(mob, "n", base) or shipped.names[id] or ("Mob #" .. id)
-  out[#out + 1] = LABEL .. name .. "|r" .. GREY .. "  (id " .. id .. ")|r"
-  local about = {}
-  local kind, family, zone = info(mob, "ty", base), info(mob, "fam", base), info(mob, "z", base)
-  if kind or family then about[#about + 1] = (kind or "") .. ((kind and family) and ", " or "") .. (family or "") end
-  if rank and RANK[rank] then about[#about + 1] = RANK[rank] end
-  if zone then about[#about + 1] = zone end
-  if #about > 0 then out[#out + 1] = table.concat(about, "  ·  ") end
-  local casts = castsText(id)
-  if casts then out[#out + 1] = LABEL .. "Casts:|r " .. VALUE .. casts .. "|r" end
-  local levels = {}
-  for _, records in ipairs({ mob.lv or NOTHING, mob.heard or NOTHING, base }) do
-    for level in pairs(records) do levels[level] = true end
+  -- Everything known about one mob, as text for the lower pane.
+  function B.detailText(id)
+    local base = baseOf(id)
+    local mob = id and db.mobs[id]
+    if not mob and id and (base ~= NOTHING or shipped.casts[id]) then mob = NOTHING end  -- only the database knows it
+    if not mob then return GREY .. "Click a mob to see everything known about it.|r" end
+    local out = {}
+    local rank = info(mob, "rk", base)
+    local name = info(mob, "n", base) or shipped.names[id] or ("Mob #" .. id)
+    out[#out + 1] = LABEL .. name .. "|r" .. GREY .. "  (id " .. id .. ")|r"
+    local about = {}
+    local kind, family = info(mob, "ty", base), info(mob, "fam", base)
+    if kind or family then about[#about + 1] = (kind or "") .. ((kind and family) and ", " or "") .. (family or "") end
+    if rank and RANK[rank] then about[#about + 1] = RANK[rank] end
+    local entry = view.byId[id]
+    for _, place in ipairs(entry and entry.places or NOTHING) do
+      about[#about + 1] = place .. (view.dungeons[place] and " (dungeon)" or "")
+    end
+    if #about > 0 then out[#out + 1] = table.concat(about, "  ·  ") end
+    local casts = castsText(id)
+    if casts then out[#out + 1] = LABEL .. "Casts:|r " .. VALUE .. casts .. "|r" end
+    local levels = {}
+    for _, records in ipairs({ mob.lv or NOTHING, mob.heard or NOTHING, base }) do
+      for level in pairs(records) do levels[level] = true end
+    end
+    local sorted = {}
+    for level in pairs(levels) do sorted[#sorted + 1] = level end
+    table.sort(sorted)
+    for _, level in ipairs(sorted) do
+      local title = "Level " .. (level > 0 and level or "??")
+      local seen, heard = mob.lv and mob.lv[level], mob.heard and mob.heard[level]
+      if seen then
+        out[#out + 1] = " "
+        out[#out + 1] = LABEL .. title .. " - seen " .. when(seen.at) .. "|r"
+        out[#out + 1] = statsLine(level, seen)
+      end
+      if heard then
+        out[#out + 1] = " "
+        out[#out + 1] = LABEL .. title .. " - from " .. heard.by .. ", " .. when(heard.at) .. "|r"
+        out[#out + 1] = statsLine(level, heard)
+      end
+      if base[level] then
+        out[#out + 1] = " "
+        out[#out + 1] = LABEL .. title .. " - from the database, seen " .. when(base[level].at) .. "|r"
+        out[#out + 1] = statsLine(level, base[level])
+      end
+    end
+    return table.concat(out, "\n")
   end
-  local sorted = {}
-  for level in pairs(levels) do sorted[#sorted + 1] = level end
-  table.sort(sorted)
-  for _, level in ipairs(sorted) do
-    local title = "Level " .. (level > 0 and level or "??")
-    local seen, heard = mob.lv and mob.lv[level], mob.heard and mob.heard[level]
-    if seen then
-      out[#out + 1] = " "
-      out[#out + 1] = LABEL .. title .. " - seen " .. when(seen.at) .. "|r"
-      out[#out + 1] = statsLine(level, seen)
-    end
-    if heard then
-      out[#out + 1] = " "
-      out[#out + 1] = LABEL .. title .. " - from " .. heard.by .. ", " .. when(heard.at) .. "|r"
-      out[#out + 1] = statsLine(level, heard)
-    end
-    if base[level] then
-      out[#out + 1] = " "
-      out[#out + 1] = LABEL .. title .. " - from the database, seen " .. when(base[level].at) .. "|r"
-      out[#out + 1] = statsLine(level, base[level])
-    end
-  end
-  return table.concat(out, "\n")
-end
 
-local function drawBestiary()
-  local all, shown = allEntries(), {}
-  for _, entry in ipairs(all) do
-    if matches(entry) then shown[#shown + 1] = entry end
+  function B.closeMenu()
+    bestiary.menu:Hide()
+    bestiary.catcher:Hide()
   end
-  offset = math.max(0, math.min(offset, #shown - ROWS))
-  for i, row in ipairs(bestiary.rows) do
-    local entry = shown[offset + i]
-    if entry then
-      row.id = entry.id
-      row.name:SetText(entry.name)
-      row.level:SetText(entry.level)
-      row.kind:SetText(entry.kind)
-      row.zone:SetText(entry.zone)
-      row.picked:SetShown(entry.id == selected)
-      row:Show()
+
+  function B.draw()
+    local f, all = db.bestiary, B.entries()
+    local shown, counts, total, nowhere, unplaced = {}, {}, 0, 0, false
+    for _, e in ipairs(all) do
+      if #e.places == 0 then unplaced = true end
+      if B.passes(e) then
+        total = total + 1
+        if #e.places == 0 then nowhere = nowhere + 1 end
+        for _, place in ipairs(e.places) do counts[place] = (counts[place] or 0) + 1 end
+        if B.there(e) then shown[#shown + 1] = e end
+      end
+    end
+
+    -- The mobs.
+    view.offset = math.max(0, math.min(view.offset, #shown - ROWS))
+    for i, row in ipairs(bestiary.rows) do
+      local entry = shown[view.offset + i]
+      if entry then
+        row.id = entry.id
+        row.name:SetText(entry.name)
+        row.level:SetText(entry.level)
+        row.kind:SetText(entry.kind)
+        row.zone:SetText(entry.zone)
+        row.picked:SetShown(entry.id == view.selected)
+        row:Show()
+      else
+        row.id = nil
+        row:Hide()
+      end
+    end
+    local noun = #all == 1 and "mob" or "mobs"
+    if #shown == #all then
+      bestiary.count:SetText(format("%s %s", commas(#all), noun))
     else
-      row.id = nil
-      row:Hide()
+      bestiary.count:SetText(format("%s of %s %s", commas(#shown), commas(#all), noun))
+    end
+    if #all == 0 then
+      bestiary.empty:SetText("No mobs yet. Mouse over a mob and it will be listed here.")
+    else
+      bestiary.empty:SetText("No mobs match. Change the search or the filters, or click Clear all.")
+    end
+    bestiary.empty:SetShown(#shown == 0)
+    view.syncing = true   -- moving the bar here mustn't scroll the list again
+    bestiary.bar:SetMinMaxValues(0, math.max(0, #shown - ROWS))
+    bestiary.bar:SetValue(view.offset)
+    bestiary.bar:SetShown(#shown > ROWS)
+    view.syncing = false
+    for _, column in ipairs(COLUMNS) do
+      local header = bestiary.headers[column[1]]
+      header.arrow:SetTexture(f.reverse and ARROW_DOWN or ARROW_UP)
+      header.arrow:SetShown(f.sort == column[1])
+    end
+
+    -- The places.
+    local list = B.placeList(total, counts, nowhere, unplaced)
+    view.placeOffset = math.max(0, math.min(view.placeOffset, #list - PLACE_ROWS))
+    for i, row in ipairs(bestiary.placeRows) do
+      local item = list[view.placeOffset + i]
+      row.item = item or NOTHING
+      row.header = item ~= nil and item.header == true
+      if not item then
+        row:Hide()
+      else
+        local some = item.header or item.count > 0
+        row.label:SetText((item.header and LABEL or some and VALUE or GREY) .. item.label .. "|r")
+        row.count:SetText(not item.header and item.count > 0 and (GREY .. commas(item.count) .. "|r") or "")
+        row.picked:SetShown(not item.header and item.key == f.place)
+        row:Show()
+      end
+    end
+
+    -- The filters.
+    bestiary.drops.type:SetText("Type: " .. (f.type or "All"))
+    bestiary.drops.rank:SetText("Rank: " .. (f.rank and rankLabel(f.rank) or "All"))
+    for _, source in ipairs(SOURCES) do
+      if f.source == source[1] then bestiary.drops.source:SetText("Source: " .. source[2]) end
+    end
+    local active, x = B.active(), 0
+    for i, chip in ipairs(bestiary.chips) do
+      local one = active[i]
+      chip.which, chip.label = one and one[1] or "", one and one[2] or ""
+      if one then
+        chip:SetText(one[2] .. "  |cffff6060x|r")
+        local width = (chip:GetTextWidth() or 60) + 18
+        chip:SetWidth(width)
+        chip:ClearAllPoints()
+        chip:SetPoint("TOPLEFT", 196 + x, -82)
+        x = x + width + 4
+      end
+      chip:SetShown(one ~= nil and x <= 596)   -- one that doesn't fit is still cleared by Clear all
+    end
+    bestiary.clear:SetShown(#active > 0 or view.search ~= "")
+
+    bestiary.detail:SetText(B.detailText(view.selected))
+    bestiary.child:SetHeight(math.max(10, (bestiary.detail:GetStringHeight() or 0) + 10))
+  end
+
+  -- Start the list from the top and draw it: a filter changed.
+  function B.filtered()
+    view.offset = 0
+    B.draw()
+  end
+
+  -- Switch one filter off, and empty the control that set it.
+  function B.drop(which)
+    local f = db.bestiary
+    if which == "place" then f.place = nil
+    elseif which == "type" then f.type = nil
+    elseif which == "rank" then f.rank = nil
+    elseif which == "source" then f.source = "all"
+    elseif which == "level" then
+      f.min, f.max = nil, nil
+      bestiary.minLevel:SetText("")
+      bestiary.maxLevel:SetText("")
+    elseif which == "casts" then
+      f.casts = false
+      bestiary.casts:SetChecked(false)
     end
   end
-  local total = #all
-  local noun = total == 1 and "mob" or "mobs"
-  if #shown == total then
-    bestiary.count:SetText(format("%s %s", commas(total), noun))
-  else
-    bestiary.count:SetText(format("%s of %s %s", commas(#shown), commas(total), noun))
-  end
-  for key, button in pairs(bestiary.filters) do button:SetEnabled(key ~= showing) end
-  bestiary.detail:SetText(detailText(selected))
-  bestiary.child:SetHeight(math.max(10, (bestiary.detail:GetStringHeight() or 0) + 10))
-end
 
-local function buildBestiary()
-  bestiary = CreateFrame("Frame", "GanderBestiary", UIParent, "BasicFrameTemplateWithInset")
-  bestiary:Hide()
-  bestiary:SetSize(640, 540)
-  bestiary:SetPoint("CENTER")
-  bestiary:SetFrameStrata("HIGH")
-  bestiary:SetClampedToScreen(true)
-  bestiary:SetMovable(true)
-  bestiary:EnableMouse(true)
-  bestiary:RegisterForDrag("LeftButton")
-  bestiary:SetScript("OnDragStart", bestiary.StartMoving)
-  bestiary:SetScript("OnDragStop", bestiary.StopMovingOrSizing)
-  if type(bestiary.TitleText) == "table" then bestiary.TitleText:SetText("Gander: Bestiary") end
-  tinsert(UISpecialFrames, "GanderBestiary")  -- Escape closes it
-
-  local label = bestiary:CreateFontString(nil, "ARTWORK", "GameFontNormal")
-  label:SetPoint("TOPLEFT", 16, -36)
-  label:SetText("Search")
-  bestiary.search = CreateFrame("EditBox", "GanderBestiarySearch", bestiary, "InputBoxTemplate")
-  bestiary.search:SetSize(150, 22)
-  bestiary.search:SetPoint("LEFT", label, "RIGHT", 12, 0)
-  bestiary.search:SetAutoFocus(false)
-  bestiary.search:SetMaxLetters(40)
-  bestiary.search:SetScript("OnTextChanged", function(self)
-    searching, offset = strtrim(self:GetText() or ""), 0
-    drawBestiary()
-  end)
-  bestiary.search:SetScript("OnEnterPressed", function(self) self:ClearFocus() end)
-  bestiary.search:SetScript("OnEscapePressed", function(self) self:ClearFocus() end)
-
-  bestiary.filters = {}
-  local x = 232
-  for _, f in ipairs(SHOW) do
-    local b = CreateFrame("Button", nil, bestiary, "UIPanelButtonTemplate")
-    b:SetSize(f[3], 22)
-    b:SetPoint("TOPLEFT", x, -31)
-    b:SetText(f[2])
-    b:SetScript("OnClick", function()
-      showing, offset = f[1], 0
-      drawBestiary()
-    end)
-    bestiary.filters[f[1]] = b
-    x = x + f[3] + 4
-  end
-  bestiary.settings = CreateFrame("Button", nil, bestiary, "UIPanelButtonTemplate")
-  bestiary.settings:SetSize(76, 22)
-  bestiary.settings:SetPoint("TOPRIGHT", -14, -31)
-  bestiary.settings:SetText("Settings")
-  bestiary.settings:SetScript("OnClick", openSettings)
-
-  local columns = { name = 20, level = 280, kind = 330, zone = 420 }
-  for key, title in pairs({ name = "Name", level = "Level", kind = "Type", zone = "Zone" }) do
-    local h = bestiary:CreateFontString(nil, "ARTWORK", "GameFontNormalSmall")
-    h:SetPoint("TOPLEFT", columns[key], -64)
-    h:SetText(title)
-  end
-  bestiary.count = bestiary:CreateFontString(nil, "ARTWORK", "GameFontDisableSmall")
-  bestiary.count:SetPoint("TOPRIGHT", -18, -64)
-
-  -- The list: fixed rows, moved through with the mouse wheel.
-  bestiary.list = CreateFrame("Frame", nil, bestiary)
-  bestiary.list:SetPoint("TOPLEFT", 12, -80)
-  bestiary.list:SetSize(616, ROWS * 20)
-  bestiary.list:EnableMouseWheel(true)
-  bestiary.list:SetScript("OnMouseWheel", function(_, delta)
-    offset = offset - delta * WHEEL_STEP
-    drawBestiary()
-  end)
-  bestiary.rows = {}
-  for i = 1, ROWS do
-    local row = CreateFrame("Button", nil, bestiary.list)
-    row:SetSize(616, 20)
-    row:SetPoint("TOPLEFT", 0, -(i - 1) * 20)
-    row:SetHighlightTexture("Interface\\QuestFrame\\UI-QuestTitleHighlight", "ADD")
-    row.picked = row:CreateTexture(nil, "BACKGROUND")
-    row.picked:SetAllPoints()
-    row.picked:SetColorTexture(1, 0.82, 0, 0.18)
-    row.picked:Hide()
-    for key, font in pairs({ name = "GameFontHighlight", level = "GameFontHighlight",
-                             kind = "GameFontHighlightSmall", zone = "GameFontHighlightSmall" }) do
-      row[key] = row:CreateFontString(nil, "ARTWORK", font)
-      row[key]:SetPoint("LEFT", columns[key] - 12, 0)
-      row[key]:SetJustifyH("LEFT")
+  -- Open a dropdown's menu under it, or close it if it's the one that's open.
+  function B.openMenu(which)
+    local menu = bestiary.menu
+    if menu:IsShown() and menu.which == which then
+      B.closeMenu()
+      return
     end
-    row.name:SetWidth(252)
-    row.zone:SetWidth(206)
-    row:SetScript("OnClick", function(self)
-      selected = self.id
-      drawBestiary()
-    end)
-    bestiary.rows[i] = row
+    local f, options = db.bestiary, B.options(which)
+    menu.which = which
+    local shown = 0
+    for i, item in ipairs(menu.items) do
+      local option = options[i]
+      item.option = option or NOTHING
+      if option then
+        shown = shown + 1
+        local current = option.value == f[which]
+        item:SetText((current and LABEL or VALUE) .. option.label .. "|r")
+        item:Show()
+      else
+        item:Hide()
+      end
+    end
+    menu:ClearAllPoints()
+    menu:SetPoint("TOPLEFT", bestiary.drops[which], "BOTTOMLEFT", 0, -2)
+    menu:SetSize(150, shown * 18 + 8)
+    bestiary.catcher:Show()
+    menu:Show()
   end
 
-  -- Everything known about the mob that was clicked.
-  local scroll = CreateFrame("ScrollFrame", "GanderBestiaryScroll", bestiary, "UIPanelScrollFrameTemplate")
-  scroll:SetPoint("TOPLEFT", 16, -(80 + ROWS * 20 + 12))
-  scroll:SetPoint("BOTTOMRIGHT", -34, 12)
-  bestiary.child = CreateFrame("Frame", nil, scroll)
-  bestiary.child:SetSize(580, 10)
-  scroll:SetScrollChild(bestiary.child)
-  bestiary.detail = bestiary.child:CreateFontString(nil, "ARTWORK", "GameFontHighlight")
-  bestiary.detail:SetPoint("TOPLEFT")
-  bestiary.detail:SetWidth(580)
-  bestiary.detail:SetJustifyH("LEFT")
-  bestiary.detail:SetJustifyV("TOP")
-  bestiary.detail:SetSpacing(3)
+  local function build()
+    B.loadChoices()
+    local f = db.bestiary
+    bestiary = CreateFrame("Frame", "GanderBestiary", UIParent, "BasicFrameTemplateWithInset")
+    bestiary:Hide()
+    bestiary:SetSize(800, 580)
+    bestiary:SetPoint("CENTER")
+    bestiary:SetFrameStrata("HIGH")
+    bestiary:SetClampedToScreen(true)
+    bestiary:SetMovable(true)
+    bestiary:EnableMouse(true)
+    bestiary:RegisterForDrag("LeftButton")
+    bestiary:SetScript("OnDragStart", bestiary.StartMoving)
+    bestiary:SetScript("OnDragStop", bestiary.StopMovingOrSizing)
+    if type(bestiary.TitleText) == "table" then bestiary.TitleText:SetText("Gander: Bestiary") end
+    tinsert(UISpecialFrames, "GanderBestiary")  -- Escape closes it
 
-  bestiary:SetScript("OnShow", drawBestiary)
-  refreshBestiary = function() if bestiary:IsShown() then drawBestiary() end end
-end
+    -- The places, on the left: fixed rows, moved through with the mouse wheel.
+    bestiary.places = CreateFrame("Frame", nil, bestiary)
+    bestiary.places:SetPoint("TOPLEFT", 12, -30)
+    bestiary.places:SetSize(176, PLACE_ROWS * 18)
+    bestiary.places:EnableMouseWheel(true)
+    bestiary.places:SetScript("OnMouseWheel", function(_, delta)
+      view.placeOffset = view.placeOffset - delta * WHEEL_STEP
+      B.draw()
+    end)
+    local shade = bestiary.places:CreateTexture(nil, "BACKGROUND")
+    shade:SetAllPoints()
+    shade:SetColorTexture(0, 0, 0, 0.25)
+    bestiary.placeRows = {}
+    for i = 1, PLACE_ROWS do
+      local row = CreateFrame("Button", nil, bestiary.places)
+      row:SetSize(176, 18)
+      row:SetPoint("TOPLEFT", 0, -(i - 1) * 18)
+      row:SetHighlightTexture("Interface\\QuestFrame\\UI-QuestTitleHighlight", "ADD")
+      row.picked = row:CreateTexture(nil, "BACKGROUND")
+      row.picked:SetAllPoints()
+      row.picked:SetColorTexture(1, 0.82, 0, 0.18)
+      row.picked:Hide()
+      row.label = row:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall")
+      row.label:SetPoint("LEFT", 6, 0)
+      row.label:SetWidth(134)
+      row.label:SetJustifyH("LEFT")
+      row.label:SetWordWrap(false)
+      row.count = row:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall")
+      row.count:SetPoint("RIGHT", -6, 0)
+      row.item, row.header = NOTHING, false
+      row:SetScript("OnClick", function(self)
+        if self.header then return end
+        f.place = self.item.key
+        B.filtered()
+      end)
+      bestiary.placeRows[i] = row
+    end
+    bestiary.settings = CreateFrame("Button", nil, bestiary, "UIPanelButtonTemplate")
+    bestiary.settings:SetSize(90, 22)
+    bestiary.settings:SetPoint("BOTTOMLEFT", 12, 12)
+    bestiary.settings:SetText("Settings")
+    bestiary.settings:SetScript("OnClick", openSettings)
 
-local function toggleBestiary()
-  if not bestiary then buildBestiary() end
-  if bestiary:IsShown() then bestiary:Hide() else bestiary:Show() end
+    -- The search, and the dropdowns beside it.
+    bestiary.search = CreateFrame("EditBox", "GanderBestiarySearch", bestiary, "SearchBoxTemplate")
+    bestiary.search:SetSize(166, 20)
+    bestiary.search:SetPoint("TOPLEFT", 202, -31)
+    bestiary.search:SetAutoFocus(false)
+    bestiary.search:SetMaxLetters(40)
+    if type(bestiary.search.Instructions) == "table" then
+      bestiary.search.Instructions:SetText("Name, spell, zone or ID")
+    end
+    -- Hooked, not set: the box's own script shows its hint and its clear button.
+    bestiary.search:HookScript("OnTextChanged", function(self)
+      local text = strtrim(self:GetText() or ""):lower()
+      if text == view.search then return end
+      view.search = text
+      B.filtered()
+    end)
+    bestiary.drops = {}
+    for _, drop in ipairs({ { "type", 376, 140 }, { "rank", 520, 124 }, { "source", 648, 140 } }) do
+      local b = CreateFrame("Button", nil, bestiary, "UIPanelButtonTemplate")
+      b:SetSize(drop[3], 22)
+      b:SetPoint("TOPLEFT", drop[2], -30)
+      b:SetScript("OnClick", function() B.openMenu(drop[1]) end)
+      local arrow = b:CreateTexture(nil, "OVERLAY")
+      arrow:SetSize(14, 14)
+      arrow:SetPoint("RIGHT", -3, 0)
+      arrow:SetTexture(ARROW_DOWN)
+      arrow:SetTexCoord(0.2, 0.8, 0.2, 0.8)
+      bestiary.drops[drop[1]] = b
+    end
+
+    -- The menu a dropdown opens, and a sheet under it that catches a click
+    -- anywhere else and closes it.
+    bestiary.catcher = CreateFrame("Button", nil, bestiary)
+    bestiary.catcher:SetAllPoints(UIParent)
+    bestiary.catcher:SetFrameStrata("DIALOG")
+    bestiary.catcher:SetFrameLevel(100)
+    bestiary.catcher:RegisterForClicks("AnyUp")
+    bestiary.catcher:SetScript("OnClick", B.closeMenu)
+    bestiary.catcher:Hide()
+    local menu = CreateFrame("Frame", nil, bestiary)
+    menu:SetFrameStrata("DIALOG")
+    menu:SetFrameLevel(110)
+    menu:EnableMouse(true)
+    menu:Hide()
+    local edge = menu:CreateTexture(nil, "BACKGROUND")
+    edge:SetAllPoints()
+    edge:SetColorTexture(0.6, 0.5, 0.2, 1)
+    local fill = menu:CreateTexture(nil, "BORDER")
+    fill:SetPoint("TOPLEFT", 1, -1)
+    fill:SetPoint("BOTTOMRIGHT", -1, 1)
+    fill:SetColorTexture(0.05, 0.05, 0.05, 1)
+    menu.which = ""
+    menu.items = {}
+    for i = 1, 20 do
+      local item = CreateFrame("Button", nil, menu)
+      item:SetSize(142, 18)
+      item:SetPoint("TOPLEFT", 4, -4 - (i - 1) * 18)
+      item:SetHighlightTexture("Interface\\QuestFrame\\UI-QuestTitleHighlight", "ADD")
+      item:SetNormalFontObject("GameFontHighlightSmall")
+      item:SetText(" ")
+      local text = item:GetFontString()
+      if type(text) == "table" then
+        text:ClearAllPoints()
+        text:SetPoint("LEFT", 6, 0)
+      end
+      item.option = NOTHING
+      item:SetScript("OnClick", function(self)
+        if menu.which == "source" then
+          f.source = self.option.value or "all"
+        else
+          f[menu.which] = self.option.value
+        end
+        B.closeMenu()
+        B.filtered()
+      end)
+      menu.items[i] = item
+    end
+    bestiary.menu = menu
+
+    -- The level range, the casts tick box and Clear all.
+    local label = bestiary:CreateFontString(nil, "ARTWORK", "GameFontNormalSmall")
+    label:SetPoint("TOPLEFT", 198, -61)
+    label:SetText("Level")
+    local function levelBox(key, x)
+      local box = CreateFrame("EditBox", nil, bestiary, "InputBoxTemplate")
+      box:SetSize(30, 20)
+      box:SetPoint("TOPLEFT", x, -56)
+      box:SetAutoFocus(false)
+      box:SetNumeric(true)
+      box:SetMaxLetters(2)
+      box:SetText(f[key] and tostring(f[key]) or "")
+      box:HookScript("OnTextChanged", function(self)
+        local n = tonumber(self:GetText())
+        n = n and n >= 1 and n <= 99 and math.floor(n) or nil
+        if n == f[key] then return end
+        f[key] = n
+        B.filtered()
+      end)
+      box:SetScript("OnEnterPressed", function(self) self:ClearFocus() end)
+      return box
+    end
+    bestiary.minLevel = levelBox("min", 240)
+    local to = bestiary:CreateFontString(nil, "ARTWORK", "GameFontNormalSmall")
+    to:SetPoint("TOPLEFT", 277, -61)
+    to:SetText("to")
+    bestiary.maxLevel = levelBox("max", 298)
+    bestiary.casts = CreateFrame("CheckButton", nil, bestiary, "UICheckButtonTemplate")
+    bestiary.casts:SetSize(24, 24)
+    bestiary.casts:SetPoint("TOPLEFT", 340, -54)
+    bestiary.casts:SetChecked(f.casts)
+    bestiary.casts:SetScript("OnClick", function(self)
+      f.casts = self:GetChecked() and true or false
+      B.filtered()
+    end)
+    local castsLabel = bestiary:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall")
+    castsLabel:SetPoint("LEFT", bestiary.casts, "RIGHT", 2, 0)
+    castsLabel:SetText("Casts known")
+    bestiary.clear = CreateFrame("Button", nil, bestiary, "UIPanelButtonTemplate")
+    bestiary.clear:SetSize(76, 22)
+    bestiary.clear:SetPoint("TOPRIGHT", -12, -55)
+    bestiary.clear:SetText("Clear all")
+    bestiary.clear:SetScript("OnClick", function()
+      for _, which in ipairs({ "place", "type", "rank", "source", "level", "casts" }) do B.drop(which) end
+      view.search = ""
+      bestiary.search:SetText("")
+      B.filtered()
+    end)
+    bestiary.count = bestiary:CreateFontString(nil, "ARTWORK", "GameFontDisableSmall")
+    bestiary.count:SetPoint("RIGHT", bestiary.clear, "LEFT", -8, 0)
+
+    -- A chip for each filter in use: click one to switch that filter off.
+    bestiary.chips = {}
+    for i = 1, 6 do
+      local chip = CreateFrame("Button", nil, bestiary, "UIPanelButtonTemplate")
+      chip:SetSize(78, 20)
+      chip:SetNormalFontObject("GameFontHighlightSmall")
+      chip:SetHighlightFontObject("GameFontHighlightSmall")
+      chip.which, chip.label = "", ""
+      chip:SetScript("OnClick", function(self)
+        B.drop(self.which)
+        B.filtered()
+      end)
+      chip:Hide()
+      bestiary.chips[i] = chip
+    end
+
+    -- The column headings: click one to sort by it, again to turn it round.
+    bestiary.headers = {}
+    for _, column in ipairs(COLUMNS) do
+      local header = CreateFrame("Button", nil, bestiary)
+      header:SetSize(column[4], 16)
+      header:SetPoint("TOPLEFT", 200 + column[3], -108)
+      header:SetHighlightTexture("Interface\\QuestFrame\\UI-QuestTitleHighlight", "ADD")
+      local text = header:CreateFontString(nil, "ARTWORK", "GameFontNormalSmall")
+      text:SetPoint("LEFT")
+      text:SetText(column[2])
+      header.arrow = header:CreateTexture(nil, "OVERLAY")
+      header.arrow:SetSize(12, 12)
+      header.arrow:SetPoint("LEFT", text, "RIGHT", 2, 0)
+      header.arrow:SetTexCoord(0.2, 0.8, 0.2, 0.8)
+      header.arrow:Hide()
+      header:SetScript("OnClick", function()
+        if f.sort == column[1] then
+          f.reverse = not f.reverse
+        else
+          f.sort, f.reverse = column[1], false
+        end
+        view.resort = true
+        B.filtered()
+      end)
+      bestiary.headers[column[1]] = header
+    end
+
+    -- The mobs: fixed rows, moved through with the mouse wheel or the bar.
+    bestiary.list = CreateFrame("Frame", nil, bestiary)
+    bestiary.list:SetPoint("TOPLEFT", 196, -126)
+    bestiary.list:SetSize(572, ROWS * 20)
+    bestiary.list:EnableMouseWheel(true)
+    bestiary.list:SetScript("OnMouseWheel", function(_, delta)
+      view.offset = view.offset - delta * WHEEL_STEP
+      B.draw()
+    end)
+    bestiary.rows = {}
+    for i = 1, ROWS do
+      local row = CreateFrame("Button", nil, bestiary.list)
+      row:SetSize(572, 20)
+      row:SetPoint("TOPLEFT", 0, -(i - 1) * 20)
+      row:SetHighlightTexture("Interface\\QuestFrame\\UI-QuestTitleHighlight", "ADD")
+      row.picked = row:CreateTexture(nil, "BACKGROUND")
+      row.picked:SetAllPoints()
+      row.picked:SetColorTexture(1, 0.82, 0, 0.18)
+      row.picked:Hide()
+      for _, column in ipairs(COLUMNS) do
+        local key = column[1]
+        row[key] = row:CreateFontString(nil, "ARTWORK", (key == "name" or key == "level") and "GameFontHighlight"
+                                                        or "GameFontHighlightSmall")
+        row[key]:SetPoint("LEFT", 4 + column[3], 0)
+        row[key]:SetWidth(column[4])
+        row[key]:SetJustifyH("LEFT")
+        row[key]:SetWordWrap(false)
+      end
+      row:SetScript("OnClick", function(self)
+        view.selected = self.id
+        B.draw()
+      end)
+      bestiary.rows[i] = row
+    end
+    bestiary.empty = bestiary.list:CreateFontString(nil, "ARTWORK", "GameFontDisable")
+    bestiary.empty:SetPoint("TOP", 0, -40)
+    bestiary.empty:SetWidth(420)
+    bestiary.empty:Hide()
+    bestiary.bar = CreateFrame("Slider", nil, bestiary)
+    bestiary.bar:SetPoint("TOPLEFT", bestiary.list, "TOPRIGHT", 4, 0)
+    bestiary.bar:SetSize(16, ROWS * 20)
+    bestiary.bar:SetOrientation("VERTICAL")
+    bestiary.bar:EnableMouse(true)
+    bestiary.bar:SetThumbTexture("Interface\\Buttons\\UI-ScrollBar-Knob")
+    local knob = bestiary.bar:GetThumbTexture()
+    if type(knob) == "table" then   -- cut to the size the game's own scroll bars use
+      knob:SetSize(16, 24)
+      knob:SetTexCoord(0.2, 0.8, 0.125, 0.875)
+    end
+    bestiary.bar:SetValueStep(1)
+    bestiary.bar:SetObeyStepOnDrag(true)
+    local track = bestiary.bar:CreateTexture(nil, "BACKGROUND")
+    track:SetAllPoints()
+    track:SetColorTexture(0, 0, 0, 0.35)
+    bestiary.bar:SetScript("OnValueChanged", function(_, value)
+      if view.syncing then return end
+      view.offset = math.floor(value + 0.5)
+      B.draw()
+    end)
+
+    -- Everything known about the mob that was clicked.
+    local scroll = CreateFrame("ScrollFrame", "GanderBestiaryScroll", bestiary, "UIPanelScrollFrameTemplate")
+    scroll:SetPoint("TOPLEFT", 200, -(126 + ROWS * 20 + 10))
+    scroll:SetPoint("BOTTOMRIGHT", -34, 12)
+    bestiary.child = CreateFrame("Frame", nil, scroll)
+    bestiary.child:SetSize(560, 10)
+    scroll:SetScrollChild(bestiary.child)
+    bestiary.detail = bestiary.child:CreateFontString(nil, "ARTWORK", "GameFontHighlight")
+    bestiary.detail:SetPoint("TOPLEFT")
+    bestiary.detail:SetWidth(560)
+    bestiary.detail:SetJustifyH("LEFT")
+    bestiary.detail:SetJustifyV("TOP")
+    bestiary.detail:SetSpacing(3)
+
+    bestiary:SetScript("OnShow", function()
+      entries = nil   -- look at the data afresh each time it's opened
+      B.draw()
+    end)
+    bestiary:SetScript("OnHide", B.closeMenu)
+  end
+
+  refreshBestiary = function()
+    entries = nil
+    if bestiary and bestiary:IsShown() then B.draw() end
+  end
+
+  toggleBestiary = function()
+    if not bestiary then build() end
+    if bestiary:IsShown() then bestiary:Hide() else bestiary:Show() end
+  end
 end
 
 ---------------------------------------------------------------------------
@@ -2191,6 +2713,18 @@ SlashCmdList.GANDER = function(msg)
     if debugging then
       describeTarget()
       describeChannel()
+      -- Where the game says you are: the bestiary files a zone under
+      -- Dungeons when you met a mob there while inside a dungeon or raid.
+      local zone = call("GetRealZoneText")
+      local inside, kind = call("IsInInstance")
+      if isSecret(zone) or isSecret(inside) or isSecret(kind) then
+        say("the game hides where you are right now.")
+      elseif inside then
+        say("you are in zone %s, inside an instance (%s): the bestiary lists it under %s.", tostring(zone),
+            tostring(kind), (kind == "party" or kind == "raid") and "Dungeons" or "Zones")
+      else
+        say("you are in zone %s, not inside an instance.", tostring(zone))
+      end
     end
     setProbe(debugging)
   elseif word == "help" then

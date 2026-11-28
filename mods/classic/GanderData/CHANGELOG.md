@@ -1,5 +1,9 @@
 # GanderData changelog
 
+## 1.0.7 (2026-11-28)
+
+- Dungeon names, for the places list in Gander 0.12.0's bestiary. Combat logs sent from now on also say which dungeon each mob was fought in; logs sent before today didn't keep that. Forever: 2 more abilities for mobs already listed and stats for 2 more mobs.
+
 ## 1.0.6 (2026-11-27)
 
 - Forever: what 69 more mobs cast and stats for 801 more mobs.

@@ -132,6 +132,20 @@ test("tidy keeps a good block whole", () => {
     { format: 1, game: "classic", mobs: {}, spells: {}, instances: { "389": { minutes: 3 } } });
 });
 
+test("tidy keeps the dungeons a mob was logged in, as ids only", () => {
+  const cast = { "5401": { n: 1, spawns: 1, at: "2026-11-24" } };
+  const sent = tidy({ format: 1, game: "forever", mobs: {
+    "3238": { spells: cast, in: ["48", "33"] },
+    "3239": { spells: cast, in: ["Blackfathom Deeps", "@someone", 48, null, "0", "48"] },
+    "3240": { spells: cast, in: "48" },
+    "3241": { spells: cast, in: Array.from({ length: 60 }, (_, i) => String(i + 1)) },
+  } });
+  assert.deepEqual(sent.mobs["3238"].in, ["48", "33"]);
+  assert.deepEqual(sent.mobs["3239"].in, ["48"]);
+  assert.equal("in" in sent.mobs["3240"], false);
+  assert.equal(sent.mobs["3241"].in.length, 20);
+});
+
 test("tidy keeps the record of which combat logs a block came from", () => {
   const logs = { "0123456789abcdef": [0, 5000], "fedcba9876543210": [120, 121] };
   assert.deepEqual(tidy({ ...BLOCK, logs }), { ...BLOCK, logs });

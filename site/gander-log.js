@@ -22,6 +22,7 @@
   var GAP = 30;            // seconds: a longer pause between log lines isn't counted as fighting
   var FORMAT = 1;          // the submission format, as in gander_submit.py
   var BLOCK_SIZE = 30000;  // characters in one submission, as in Gander's /gander send
+  var MAX_PLACES = 20;     // dungeons one mob may be listed in
 
   var LINE = /^(\d+)\/(\d+)(?:\/(\d+))? (\d+):(\d+):(\d+)\.(\d+)\S*  (.*)$/;
   var DIGITS = /^\d+$/;
@@ -64,6 +65,20 @@
     var entry = g.mobs[mob];
     if (name) entry.name = name;
     return entry;
+  }
+
+  // Note the dungeons (instance IDs) a mob was logged in: each once, in
+  // number order, and never more than a mob could really be found in.
+  function addPlaces(entry, instances) {
+    var have = (entry["in"] || []).slice();
+    for (var i = 0; i < instances.length; i++) {
+      var instance = instances[i];
+      if (typeof instance === "string" && DIGITS.test(instance) && have.indexOf(instance) === -1 &&
+          have.length < MAX_PLACES) {
+        have.push(instance);
+      }
+    }
+    if (have.length) entry["in"] = have.sort(function (a, b) { return Number(a) - Number(b); });
   }
 
   // One line's fields. A field in quotes can hold commas, and a doubled
@@ -228,6 +243,7 @@
     mob = String(mob);
     g.spells[spell] = f[10];
     var entry = mobEntry(g, mob, name);
+    if (this.ctx.instance) addPlaces(entry, [this.ctx.instance]);
     if (!Object.prototype.hasOwnProperty.call(entry.spells, spell)) entry.spells[spell] = { n: 0, spawns: 0 };
     var seen = entry.spells[spell];
     seen.n += 1;
@@ -251,6 +267,7 @@
       }
       for (key in other.mobs) {
         var entry = mobEntry(g, key, other.mobs[key].name);
+        addPlaces(entry, other.mobs[key]["in"] || []);
         for (var spell in other.mobs[key].spells) {
           var seen = other.mobs[key].spells[spell];
           if (!Object.prototype.hasOwnProperty.call(entry.spells, spell)) entry.spells[spell] = { n: 0, spawns: 0 };
@@ -338,6 +355,7 @@
       casters(g).forEach(function (mob) {
         var entry = { spells: {} }, names = {}, extra = 0;
         if (english && g.mobs[mob].name) entry.name = g.mobs[mob].name;
+        if (g.mobs[mob]["in"]) entry["in"] = g.mobs[mob]["in"].slice();
         numbered(Object.keys(g.mobs[mob].spells)).forEach(function (spell) {
           var seen = g.mobs[mob].spells[spell];
           entry.spells[spell] = { n: seen.n, spawns: seen.spawns, at: seen.at };

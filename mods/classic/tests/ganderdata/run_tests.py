@@ -51,7 +51,7 @@ SCENARIOS = {
     local g = GanderData[game]
     if g ~= nil then
       games = games + 1
-      for _, key in ipairs({ "instances", "spells", "names", "casts", "stats" }) do
+      for _, key in ipairs({ "instances", "dungeons", "spells", "names", "casts", "inside", "stats" }) do
         ok(type(g[key]) == "table", game .. " has no " .. key .. " table")
       end
     end
@@ -121,6 +121,23 @@ SCENARIOS = {
   for _, game in ipairs(GAMES) do
     for id, minutes in pairs((GanderData[game] or { instances = {} }).instances) do
       ok(type(id) == "number" and type(minutes) == "number" and minutes >= 0, game .. ": instance " .. tostring(id))
+    end
+  end
+''',
+"dungeons have names, and each mob's dungeons are ones that are named": r'''
+  load()
+  for _, game in ipairs(GAMES) do
+    local g = GanderData[game] or { dungeons = {}, inside = {}, instances = {}, names = {} }
+    for id, name in pairs(g.dungeons) do
+      ok(type(id) == "number" and type(name) == "string" and name ~= "" and #name <= TEXTS.z, game .. ": dungeon " .. tostring(id))
+      ok(g.instances[id] ~= nil, game .. ": dungeon " .. id .. " isn't among the instances")
+    end
+    for mob, list in pairs(g.inside) do
+      ok(type(mob) == "number" and g.names[mob] ~= nil, game .. ": mob " .. tostring(mob) .. " is in a dungeon but not on the list")
+      ok(type(list) == "table" and #list > 0 and #list == count(list), game .. ": mob " .. mob .. "'s dungeons")
+      for _, id in ipairs(list) do
+        ok(g.dungeons[id] ~= nil, game .. ": mob " .. mob .. " is in dungeon " .. tostring(id) .. ", which has no name")
+      end
     end
   end
 ''',

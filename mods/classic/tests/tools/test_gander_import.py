@@ -177,6 +177,41 @@ class ImportTest(unittest.TestCase):
         self.assertAlmostEqual(data["instances"]["48"]["minutes"], 86 / 60, places=2)
         self.assertEqual(data["mobs"]["4832"]["spells"]["8399"]["n"], 4)  # the casts still count
 
+    # ---- which dungeon a mob was logged in ----
+    def test_a_mob_logged_in_a_dungeon_remembers_which(self):
+        self.write(fight())
+        mobs = self.run_import()["games"]["forever"]["mobs"]
+        self.assertEqual(mobs["4798"]["in"], ["48"])
+        self.assertEqual(mobs["4832"]["in"], ["48"])
+
+    def test_a_mob_logged_in_the_open_world_has_no_dungeon(self):
+        wolf = 'Creature-0-6834-1-3652-3823-0000063119,"Ghostpaw Runner",0xa48,0x80000000'
+        self.write([HEADER, '11/24/2026 20:20:06.000-5  ZONE_CHANGE,1,"Ashenvale",0',
+                    line("20:20:10", "SPELL_CAST_SUCCESS", wolf, PLAYER, 3149, "Furious Howl")])
+        self.assertNotIn("in", self.run_import()["games"]["forever"]["mobs"]["3823"])
+
+    def test_a_mob_logged_in_two_dungeons_lists_both_once(self):
+        self.write(fight() + ['11/24/2026 20:40:00.000-5  ZONE_CHANGE,33,"Shadowfang Keep",1',
+                              line("20:40:10", "SPELL_CAST_SUCCESS", KELRIS, PLAYER, 8399, "Sleep"),
+                              line("20:40:20", "SPELL_CAST_SUCCESS", KELRIS, PLAYER, 8399, "Sleep")])
+        mobs = self.run_import()["games"]["forever"]["mobs"]
+        self.assertEqual(mobs["4832"]["in"], ["33", "48"])
+        self.assertEqual(mobs["4798"]["in"], ["48"])
+
+    def test_the_addon_file_names_the_dungeons_and_who_was_logged_in_them(self):
+        self.write(fight())
+        self.run_import([("forever", self.saved)])
+        forever = self.load_lua().forever
+        self.assertEqual(forever.dungeons[48], "Blackfathom Deeps")
+        self.assertEqual(list(forever.inside[4798].values()), [48])
+        self.assertIsNone(forever.inside[3239], "a mob only seen in person has no logged dungeon")
+
+    def test_a_dungeon_the_database_has_no_name_for_is_left_out_of_the_addon_file(self):
+        self.write(fight())
+        data = self.run_import()
+        data["games"]["forever"]["mobs"]["4798"]["in"] = ["48", "777"]
+        self.assertIn("[4798] = { 48 },", gander_import.to_lua(data, "1.0.0"))
+
     # ---- the record of logs, shared with the page ----
     def test_a_log_is_known_by_its_first_line(self):
         ident = gander_import.log_id(HEADER.encode("utf-8"))

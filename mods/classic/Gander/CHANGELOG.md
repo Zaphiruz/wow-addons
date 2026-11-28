@@ -1,5 +1,16 @@
 # Gander changelog
 
+## 0.12.0 (2026-11-27)
+
+- The bestiary is rebuilt. Down the left is a list of places: dungeons first, then zones, each with how many mobs are known there. Click a place to see only its mobs.
+- Search now also finds mobs by what they cast: type "frost nova" to see everything that casts it (needs GanderData).
+- New filters: creature type, rank (normal, elite, rare, boss), where the knowledge came from, a level range, and "Casts known". Each filter in use shows as a chip you can click to switch it off, and "Clear all" resets everything.
+- Click a column heading (Name, Level, Type, Place) to sort by it, and again to turn the order round.
+- The mob list has a scroll bar as well as the mouse wheel, and the window is bigger to fit it all.
+- Your filters and sort order are remembered between sessions.
+- A zone is listed as a dungeon when GanderData knows it as one, or once you have looked at a mob inside it. Mobs known only from combat logs sent before GanderData 1.0.7 are under "Place not known" until their dungeon is logged again.
+- `/gander debug` now also prints the zone and the kind of instance the game says you are in.
+
 ## 0.11.0 (2026-11-26)
 
 - `/gander send` now points to a new page that needs no GitHub account. Paste the block there and it is sent at once: with several pages, it's one paste for each.

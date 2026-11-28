@@ -179,7 +179,8 @@ local noop = function() end
 local widgetMT = { __index = function() return noop end }
 function widget(kind, name, parent, template)
   local w = setmetatable({ kind = kind, name = name, parent = parent, template = template, scripts = {},
-                           hooks = {}, shown = true, text = "", checked = false, enabled = true }, widgetMT)
+                           hooks = {}, shown = true, text = "", checked = false, enabled = true,
+                           value = 0, low = 0, high = 0 }, widgetMT)
   function w:SetScript(s, fn) self.scripts[s] = fn end
   function w:GetScript(s) return self.scripts[s] end
   function w:HookScript(s, fn) self.hooks[s] = self.hooks[s] or {}; table.insert(self.hooks[s], fn) end
@@ -191,7 +192,21 @@ function widget(kind, name, parent, template)
   function w:SetChecked(v) self.checked = not not v end
   function w:GetChecked() return self.checked end
   function w:Show() self.shown = true; if self.scripts.OnShow then self.scripts.OnShow(self) end end
-  function w:Hide() self.shown = false end
+  function w:Hide()
+    local was = self.shown
+    self.shown = false
+    if was and self.scripts.OnHide then self.scripts.OnHide(self) end
+  end
+  -- A slider: setting a new value tells its script, as the game does.
+  function w:SetMinMaxValues(low, high) self.low, self.high = low, high end
+  function w:GetMinMaxValues() return self.low, self.high end
+  function w:GetValue() return self.value end
+  function w:SetValue(v)
+    v = math.max(self.low, math.min(self.high, v))
+    if v == self.value then return end
+    self.value = v
+    if self.scripts.OnValueChanged then self.scripts.OnValueChanged(self, v) end
+  end
   function w:IsShown() return self.shown end
   function w:SetShown(v) if v then self:Show() else self:Hide() end end
   function w:ClearAllPoints() self.point = nil end
@@ -208,6 +223,7 @@ function widget(kind, name, parent, template)
     if limit and limit > 0 and #t > limit then t = t:sub(1, limit) end
     self.text = t
     if self.scripts.OnTextChanged then self.scripts.OnTextChanged(self, true) end
+    self:RunHooks("OnTextChanged", true)
   end
   function w:CreateFontString(n) return widget("FontString", n, self) end
   function w:CreateTexture(n) return widget("Texture", n, self) end
@@ -220,6 +236,12 @@ function widget(kind, name, parent, template)
 end
 function CreateFrame(kind, name, parent, template)
   local w = widget(kind, name, parent, template)
+  -- The game's search box has its own script for typing: it hides the grey
+  -- "Search" hint and shows the clear button. An addon must hook it, not replace it.
+  if template == "SearchBoxTemplate" then
+    w.Instructions = widget("FontString", nil, w)
+    w.scripts.OnTextChanged = function(self) self.templateSaw = self.text end
+  end
   if name then _G[name] = w end
   return w
 end
@@ -294,6 +316,8 @@ function withData()
     version = "1.0.7",
     forever = {
       instances = { [48] = 12, [36] = 95 },   -- minutes logged: Blackfathom Deeps, The Deadmines
+      dungeons = { [48] = "Blackfathom Deeps", [36] = "The Deadmines" },
+      inside = { [4832] = { 48 }, [12902] = { 48 } },   -- the dungeons each mob was logged in
       spells = { [8399] = "Sleep (list)", [9999] = "Listed Only", "S1", "S2", "S3", "S4", "S5", "S6", "S7" },
       names = { [4832] = "Twilight Lord Kelris", [777] = "Caster", [12902] = "Lorgus Jett", [9100] = "Database Boar" },
       casts = { [4832] = { 8399, 9999 }, [777] = { 1, 2, 3, 4, 5, 6, 7 }, [12902] = { 12167, 12168, 744 } },
@@ -405,6 +429,57 @@ function reminders()
 end
 function rowText(r) return r.name:GetText() .. " / " .. r.level:GetText() .. " / " .. r.kind:GetText() .. " / " .. r.zone:GetText() end
 function today() return tonumber(os.date("%d", clock)) .. " " .. os.date("%b", clock) end
+-- The bestiary. Pick a choice from one of its dropdowns: "type", "rank" or "source".
+function pick(which, label)
+  local w = GanderBestiary
+  w.drops[which]:Click()
+  ok(w.menu:IsShown(), "the menu didn't open")
+  for _, item in ipairs(w.menu.items) do
+    if item:IsShown() and plain(item:GetText()) == label then item:Click() return end
+  end
+  error("no choice called " .. label .. " under " .. which, 2)
+end
+-- What a dropdown offers.
+function choices(which)
+  local w, t = GanderBestiary, {}
+  w.drops[which]:Click()
+  for _, item in ipairs(w.menu.items) do if item:IsShown() then t[#t + 1] = plain(item:GetText()) end end
+  w.drops[which]:Click()   -- a second click closes it
+  return table.concat(t, " | ")
+end
+-- The places list as text: headings in brackets, each place with its count.
+function places()
+  local t = {}
+  for _, r in ipairs(GanderBestiary.placeRows) do
+    if r:IsShown() then
+      local label, n = plain(r.label:GetText()), plain(r.count:GetText())
+      t[#t + 1] = r.header and ("[" .. label .. "]") or (label .. (n ~= "" and (" " .. n) or ""))
+    end
+  end
+  return table.concat(t, " | ")
+end
+function placeRow(label)
+  for _, r in ipairs(GanderBestiary.placeRows) do
+    if r:IsShown() and not r.header and plain(r.label:GetText()) == label then return r end
+  end
+  error("no place called " .. label, 2)
+end
+-- The names in the mob list, top to bottom.
+function names()
+  local t = {}
+  for _, r in ipairs(GanderBestiary.rows) do if r:IsShown() then t[#t + 1] = r.name:GetText() end end
+  return table.concat(t, " | ")
+end
+-- The filters shown as chips under the dropdowns.
+function chips()
+  local t = {}
+  for _, c in ipairs(GanderBestiary.chips) do if c:IsShown() then t[#t + 1] = c.label end end
+  return table.concat(t, " | ")
+end
+function chip(label)
+  for _, c in ipairs(GanderBestiary.chips) do if c:IsShown() and c.label == label then return c end end
+  error("no chip called " .. label, 2)
+end
 '''
 
 SCENARIOS = {
@@ -1570,15 +1645,15 @@ SCENARIOS = {
   cmd("")
   local w = GanderBestiary
   ok(w.count:GetText() == "7 mobs", w.count:GetText())
-  w.filters.database:Click()
+  pick("source", "Database")
   ok(w.count:GetText() == "4 of 7 mobs", w.count:GetText())
   ok(w.rows[1].name:GetText() == "Caster" and w.rows[2].name:GetText() == "Database Boar", w.rows[1].name:GetText())
   ok(w.rows[2].level:GetText() == "12" and w.rows[2].kind:GetText() == "Beast" and w.rows[2].zone:GetText() == "Durotar",
      "a database mob's row: " .. w.rows[2].level:GetText() .. " " .. w.rows[2].kind:GetText())
   ok(w.rows[4].name:GetText() == "Twilight Lord Kelris" and not w.rows[5]:IsShown(), "the rest of the list")
-  w.filters.seen:Click()
+  pick("source", "Seen by me")
   ok(w.count:GetText() == "2 of 7 mobs", "Seen by me includes database mobs: " .. w.count:GetText())
-  w.filters.heard:Click()
+  pick("source", "Heard")
   ok(w.count:GetText() == "1 of 7 mobs", "Heard includes database mobs: " .. w.count:GetText())
 ''',
 "a database mob's page shows its stats and where they came from": r'''
@@ -1602,7 +1677,7 @@ SCENARIOS = {
   cmd("")
   local w = GanderBestiary
   ok(w.count:GetText() == "4 mobs", w.count:GetText())
-  w.filters.seen:Click()
+  pick("source", "Seen by me")
   ok(w.count:GetText() == "1 of 4 mobs" and w.rows[1].name:GetText() == "Database Boar", w.count:GetText())
   w.rows[1]:Click()
   local d = plain(w.detail:GetText())
@@ -1623,7 +1698,7 @@ SCENARIOS = {
   ok(panel().count:GetText():find("GanderData isn't installed", 1, true), panel().count:GetText())
   cmd("")
   ok(GanderBestiary.count:GetText() == "3 mobs", GanderBestiary.count:GetText())
-  GanderBestiary.filters.database:Click()
+  pick("source", "Database")
   ok(GanderBestiary.count:GetText() == "0 of 3 mobs", GanderBestiary.count:GetText())
 ''',
 # ---- what mobs cast ----
@@ -1688,8 +1763,7 @@ SCENARIOS = {
   units.mouseover = KELRIS(); hover("mouseover")
   units.mouseover = mob(777, { name = "Caster", level = 10, speed = 3 }); hover("mouseover")
   cmd("")
-  GanderBestiary.search:SetText("Caster")
-  GanderBestiary.search:GetScript("OnTextChanged")(GanderBestiary.search)
+  GanderBestiary.search:Type("Caster")
   GanderBestiary.rows[1]:Click()
   local d = plain(GanderBestiary.detail:GetText())
   ok(d:find("Casts: S1, S2, S3, S4, S5, S6, S7", 1, true), d)
@@ -2178,6 +2252,7 @@ SCENARIOS = {
   w.search:Type("TIGER")
   ok(w.rows[1].name:GetText() == "Young Stranglethorn Tiger" and not w.rows[2]:IsShown(), "by name")
   ok(w.count:GetText() == "1 of 3 mobs", w.count:GetText())
+  ok(w.search.templateSaw == "TIGER", "the search box's own script must still run, for its hint and clear button")
   w.search:Type("westfall")
   ok(w.rows[1].name:GetText() == "Defias Wizard" and not w.rows[2]:IsShown(), "by zone")
   w.search:Type("beast")
@@ -2188,21 +2263,44 @@ SCENARIOS = {
   ok(w.rows[1]:IsShown() and w.rows[1].name:GetText() == "Mistvale Gorilla (Elite)", "a bracket is plain text, not a pattern")
   w.search:Type("zzz")
   ok(not w.rows[1]:IsShown() and w.count:GetText() == "0 of 3 mobs", w.count:GetText())
+  ok(w.empty:IsShown() and w.empty:GetText():find("No mobs match"), "an empty list says why: " .. w.empty:GetText())
   w.search:Type("")
   ok(w.rows[3]:IsShown() and w.count:GetText() == "3 mobs", "cleared")
+  ok(not w.empty:IsShown(), "the empty note stays up")
+''',
+"searching also finds mobs by what they cast": r'''
+  withData()
+  login(nil)
+  sampleMobs()
+  cmd("")
+  local w = GanderBestiary
+  w.search:Type("lightning bolt")
+  ok(names() == "Lorgus Jett", names())
+  w.search:Type("listed only")
+  ok(names() == "Twilight Lord Kelris", names())
+  w.search:Type("blackfathom")
+  ok(names() == "Lorgus Jett | Twilight Lord Kelris", "by the dungeon it was logged in: " .. names())
+''',
+"an empty bestiary says how mobs get listed": r'''
+  login(nil)
+  cmd("")
+  local w = GanderBestiary
+  ok(w.empty:IsShown() and w.empty:GetText():find("Mouse over a mob"), w.empty:GetText())
 ''',
 "the list can show everything, only what you saw, or only what you heard": r'''
   login(nil)
   sampleMobs()
   cmd("")
   local w = GanderBestiary
-  ok(w.filters.all:IsEnabled() == false and w.filters.seen:IsEnabled() == true, "All is the one picked")
-  w.filters.heard:Click()
-  ok(w.rows[1].name:GetText() == "Defias Wizard" and not w.rows[2]:IsShown(), "heard")
-  ok(w.filters.heard:IsEnabled() == false and w.filters.all:IsEnabled() == true, "Heard is the one picked")
-  w.filters.seen:Click()
-  ok(w.rows[1].name:GetText() == "Mistvale Gorilla (Elite)" and w.rows[2]:IsShown() and not w.rows[3]:IsShown(), "seen")
-  w.filters.all:Click()
+  ok(w.drops.source:GetText() == "Source: All", w.drops.source:GetText())
+  ok(choices("source") == "All | Seen by me | Heard | Database", choices("source"))
+  pick("source", "Heard")
+  ok(names() == "Defias Wizard", "heard: " .. names())
+  ok(w.drops.source:GetText() == "Source: Heard", w.drops.source:GetText())
+  ok(not w.menu:IsShown(), "choosing closes the menu")
+  pick("source", "Seen by me")
+  ok(names() == "Mistvale Gorilla (Elite) | Young Stranglethorn Tiger", "seen: " .. names())
+  pick("source", "All")
   ok(w.rows[3]:IsShown(), "all")
 ''',
 "clicking a mob shows everything known about it": r'''
@@ -2243,6 +2341,316 @@ SCENARIOS = {
   w.search:Type("Mob 2")
   ok(w.rows[1].name:GetText() == "Mob 20", "a search starts from the top: " .. w.rows[1].name:GetText())
 ''',
+"the places list groups dungeons and zones, with how many mobs are in each": r'''
+  withData()
+  login(nil)
+  sampleMobs()
+  cmd("")
+  ok(places() == "Everywhere 7 | [Dungeons] | Blackfathom Deeps 2 | [Zones] | Durotar 1 | Stranglethorn Vale 2 | Westfall 1"
+               .. " | [Other] | Place not known 1", places())
+''',
+"clicking a place lists only the mobs found there": r'''
+  withData()
+  login(nil)
+  sampleMobs()
+  cmd("")
+  local w = GanderBestiary
+  ok(placeRow("Everywhere").picked:IsShown(), "Everywhere is picked to begin with")
+  placeRow("Blackfathom Deeps"):Click()
+  ok(names() == "Lorgus Jett | Twilight Lord Kelris", names())
+  ok(w.count:GetText() == "2 of 7 mobs", w.count:GetText())
+  ok(placeRow("Blackfathom Deeps").picked:IsShown() and not placeRow("Everywhere").picked:IsShown(), "the place is marked")
+  ok(rowText(w.rows[1]) == "Lorgus Jett / ?? /  / Blackfathom Deeps", rowText(w.rows[1]))
+  placeRow("Stranglethorn Vale"):Click()
+  ok(names() == "Mistvale Gorilla (Elite) | Young Stranglethorn Tiger", names())
+  placeRow("Place not known"):Click()
+  ok(names() == "Caster", names())
+  placeRow("Everywhere"):Click()
+  ok(w.count:GetText() == "7 mobs", w.count:GetText())
+  w.headers.zone:Click()
+  ok(names():find("^Lorgus Jett | Twilight Lord Kelris | Database Boar | "), "sorted by place: " .. names())
+''',
+"a zone you met mobs in while inside a dungeon is listed under Dungeons": r'''
+  login(nil)
+  sampleMobs()
+  instance = { id = 129, name = "Razorfen Downs", kind = "party" }
+  zoneName = "Razorfen Downs"
+  units.mouseover = mob(7335, { name = "Death's Head Geomancer", level = 37, def = 185, speed = 2, type = "Humanoid" })
+  hover("mouseover")
+  instance = { id = 30, name = "Alterac Valley", kind = "pvp" }
+  zoneName = "Alterac Valley"
+  units.mouseover = mob(11600, { name = "Irondeep Shaman", level = 54, def = 270, speed = 2, type = "Humanoid" })
+  hover("mouseover")
+  cmd("")
+  ok(places() == "Everywhere 5 | [Dungeons] | Razorfen Downs 1 | [Zones] | Alterac Valley 1 | Stranglethorn Vale 2 | Westfall 1",
+     places())
+  GanderBestiary.rows[1]:Click()
+  local d = plain(GanderBestiary.detail:GetText())
+  ok(d:find("Razorfen Downs (dungeon)", 1, true), d)
+  login(GanderDB)
+  cmd("")
+  ok(places():find("[Dungeons] | Razorfen Downs 1", 1, true), "remembered after logging in again: " .. places())
+''',
+"the places list counts what the other filters leave": r'''
+  withData()
+  login(nil)
+  sampleMobs()
+  cmd("")
+  local w = GanderBestiary
+  w.search:Type("tiger")
+  ok(places() == "Everywhere 1 | [Dungeons] | Blackfathom Deeps | [Zones] | Durotar | Stranglethorn Vale 1 | Westfall"
+               .. " | [Other] | Place not known", places())
+  placeRow("Westfall"):Click()
+  ok(w.count:GetText() == "0 of 7 mobs", w.count:GetText())
+  ok(places():find("Everywhere 1 |", 1, true) and places():find("Stranglethorn Vale 1", 1, true),
+     "picking a place doesn't change the other places' counts: " .. places())
+''',
+"a mob's page names the dungeon it was logged in": r'''
+  withData()
+  login(nil)
+  cmd("")
+  local w = GanderBestiary
+  w.search:Type("Kelris")
+  w.rows[1]:Click()
+  local d = plain(w.detail:GetText())
+  ok(d:find("Twilight Lord Kelris  (id 4832)", 1, true) and d:find("Blackfathom Deeps (dungeon)", 1, true), d)
+''',
+"a database from before dungeons were recorded still lists its mobs": r'''
+  withData()
+  GanderData.forever.dungeons, GanderData.forever.inside = nil, nil
+  login(nil)
+  cmd("")
+  ok(places() == "Everywhere 4 | [Zones] | Durotar 1 | [Other] | Place not known 3", places())
+''',
+"more places than fit are scrolled with the mouse wheel": r'''
+  login(nil)
+  for i = 1, 40 do known(100 + i, 9, { spd = 2, n = "Mob " .. i, z = string.format("Zone %02d", i) }) end
+  cmd("")
+  local w = GanderBestiary
+  local last = #w.placeRows
+  ok(last >= 12 and last < 40, "place rows: " .. last)
+  ok(plain(w.placeRows[1].label:GetText()) == "Everywhere" and plain(w.placeRows[3].label:GetText()) == "Zone 01", places())
+  w.places:GetScript("OnMouseWheel")(w.places, -1)
+  ok(plain(w.placeRows[1].label:GetText()) == "Zone 02", "one notch down: " .. plain(w.placeRows[1].label:GetText()))
+  for i = 1, 30 do w.places:GetScript("OnMouseWheel")(w.places, -1) end
+  ok(plain(w.placeRows[last].label:GetText()) == "Zone 40" and w.placeRows[last]:IsShown(), "stops at the end")
+  for i = 1, 30 do w.places:GetScript("OnMouseWheel")(w.places, 1) end
+  ok(plain(w.placeRows[1].label:GetText()) == "Everywhere", "stops at the top")
+''',
+"the list can be narrowed to one type of creature": r'''
+  login(nil)
+  sampleMobs()
+  cmd("")
+  local w = GanderBestiary
+  ok(w.drops.type:GetText() == "Type: All", w.drops.type:GetText())
+  ok(choices("type") == "All | Beast | Humanoid", choices("type"))
+  pick("type", "Humanoid")
+  ok(names() == "Defias Wizard" and w.drops.type:GetText() == "Type: Humanoid", names())
+  pick("type", "All")
+  ok(w.count:GetText() == "3 mobs", w.count:GetText())
+''',
+"the list can be narrowed by rank": r'''
+  withData()
+  login(nil)
+  sampleMobs()
+  units.mouseover = mob(11502, { name = "Ragnaros", level = -1, speed = 2, rank = "worldboss" })
+  hover("mouseover")
+  cmd("")
+  ok(choices("rank") == "All | Normal | Elite | Rare | Rare elite | Boss", choices("rank"))
+  pick("rank", "Elite")
+  ok(names() == "Mistvale Gorilla (Elite)", names())
+  pick("rank", "Boss")
+  ok(names() == "Ragnaros (Boss)", names())
+  pick("rank", "Normal")
+  ok(names() == "Database Boar | Defias Wizard | Young Stranglethorn Tiger",
+     "a mob known only for what it casts has no known rank: " .. names())
+''',
+"the list can be narrowed to a range of levels": r'''
+  login(nil)
+  sampleMobs()
+  units.mouseover = mob(681, { name = "Young Stranglethorn Tiger", level = 32, def = 160, speed = 1.3, type = "Beast" })
+  hover("mouseover")
+  units.mouseover = mob(11502, { name = "Ragnaros", level = -1, speed = 2, rank = "worldboss" })
+  hover("mouseover")
+  cmd("")
+  local w = GanderBestiary
+  w.minLevel:Type("31")
+  ok(names() == "Mistvale Gorilla (Elite) | Young Stranglethorn Tiger", "31 and up; a level range that reaches in counts: " .. names())
+  w.maxLevel:Type("32")
+  ok(names() == "Young Stranglethorn Tiger", "31 to 32: " .. names())
+  w.minLevel:Type("")
+  ok(names() == "Defias Wizard | Young Stranglethorn Tiger", "up to 32; a mob of unknown level is left out: " .. names())
+  w.maxLevel:Type("")
+  ok(w.count:GetText() == "4 mobs", w.count:GetText())
+  w.minLevel:Type("abc")
+  ok(w.count:GetText() == "4 mobs", "letters aren't a level: " .. w.count:GetText())
+''',
+"the list can be narrowed to mobs whose casts are known": r'''
+  withData()
+  login(nil)
+  sampleMobs()
+  cmd("")
+  local w = GanderBestiary
+  ok(w.casts:GetChecked() == false, "off to begin with")
+  w.casts:Click()
+  ok(names() == "Caster | Lorgus Jett | Twilight Lord Kelris", names())
+  w.casts:Click()
+  ok(w.count:GetText() == "7 mobs", w.count:GetText())
+''',
+"each filter in use shows as a chip, and clicking a chip removes it": r'''
+  withData()
+  login(nil)
+  sampleMobs()
+  cmd("")
+  local w = GanderBestiary
+  ok(chips() == "" and not w.clear:IsShown(), "nothing to clear to begin with: " .. chips())
+  placeRow("Stranglethorn Vale"):Click()
+  pick("type", "Beast")
+  pick("rank", "Elite")
+  pick("source", "Seen by me")
+  w.minLevel:Type("30")
+  w.maxLevel:Type("40")
+  ok(chips() == "Place: Stranglethorn Vale | Type: Beast | Rank: Elite | Source: Seen by me | Level 30-40", chips())
+  ok(w.clear:IsShown() and names() == "Mistvale Gorilla (Elite)", names())
+  chip("Rank: Elite"):Click()
+  ok(chips() == "Place: Stranglethorn Vale | Type: Beast | Source: Seen by me | Level 30-40", chips())
+  ok(w.drops.rank:GetText() == "Rank: All" and names() == "Mistvale Gorilla (Elite) | Young Stranglethorn Tiger", names())
+  chip("Level 30-40"):Click()
+  ok(w.minLevel:GetText() == "" and w.maxLevel:GetText() == "", "the level boxes are emptied")
+  w.maxLevel:Type("25")
+  ok(chips():find("Level up to 25", 1, true), chips())
+  w.maxLevel:Type("")
+  w.minLevel:Type("31")
+  ok(chips():find("Level 31+", 1, true), chips())
+  chip("Place: Stranglethorn Vale"):Click()
+  ok(placeRow("Everywhere").picked:IsShown(), "back to everywhere")
+  w.casts:Click()
+  ok(chips():find("Casts known", 1, true), chips())
+  chip("Casts known"):Click()
+  ok(w.casts:GetChecked() == false, "the box is unticked")
+''',
+"Clear all removes every filter and the search": r'''
+  withData()
+  login(nil)
+  sampleMobs()
+  cmd("")
+  local w = GanderBestiary
+  placeRow("Stranglethorn Vale"):Click()
+  pick("type", "Beast")
+  pick("rank", "Elite")
+  pick("source", "Seen by me")
+  w.minLevel:Type("30")
+  w.casts:Click()
+  w.search:Type("gorilla")
+  w.clear:Click()
+  ok(w.count:GetText() == "7 mobs" and chips() == "", w.count:GetText() .. " " .. chips())
+  ok(w.search:GetText() == "" and w.minLevel:GetText() == "" and w.casts:GetChecked() == false, "the boxes are emptied")
+  ok(w.drops.type:GetText() == "Type: All" and w.drops.rank:GetText() == "Rank: All"
+     and w.drops.source:GetText() == "Source: All", "the dropdowns are back to All")
+  ok(not w.clear:IsShown(), "nothing left to clear")
+  w.search:Type("gorilla")
+  ok(w.clear:IsShown(), "a search alone can be cleared too")
+''',
+"clicking a column heading sorts by it, and again turns it round": r'''
+  login(nil)
+  sampleMobs()
+  units.mouseover = mob(11502, { name = "Ragnaros", level = -1, speed = 2, rank = "worldboss" })
+  hover("mouseover")
+  known(9, 5, { spd = 2 })
+  cmd("")
+  local w = GanderBestiary
+  ok(names() == "Defias Wizard | Mistvale Gorilla (Elite) | Ragnaros (Boss) | Young Stranglethorn Tiger | Mob #9", names())
+  ok(w.headers.name.arrow:IsShown() and not w.headers.level.arrow:IsShown(), "the arrow marks the sorted column")
+  w.headers.name:Click()
+  ok(names() == "Young Stranglethorn Tiger | Ragnaros (Boss) | Mistvale Gorilla (Elite) | Defias Wizard | Mob #9",
+     "Z to A, with unnamed mobs still last: " .. names())
+  w.headers.level:Click()
+  ok(names() == "Mob #9 | Defias Wizard | Young Stranglethorn Tiger | Mistvale Gorilla (Elite) | Ragnaros (Boss)",
+     "lowest level first, unknown levels last: " .. names())
+  ok(w.headers.level.arrow:IsShown() and not w.headers.name.arrow:IsShown(), "the arrow moved")
+  w.headers.level:Click()
+  ok(names() == "Mistvale Gorilla (Elite) | Young Stranglethorn Tiger | Defias Wizard | Mob #9 | Ragnaros (Boss)",
+     "highest first, unknown levels still last: " .. names())
+  w.headers.kind:Click()
+  ok(names() == "Mistvale Gorilla (Elite) | Young Stranglethorn Tiger | Defias Wizard | Ragnaros (Boss) | Mob #9",
+     "by type, then name; no type last: " .. names())
+  w.headers.zone:Click()
+  ok(names() == "Mistvale Gorilla (Elite) | Ragnaros (Boss) | Young Stranglethorn Tiger | Defias Wizard | Mob #9",
+     "by place, then name: " .. names())
+''',
+"a mob seen at several levels sorts by its lowest, or its highest when turned round": r'''
+  login(nil)
+  known(1, 10, { spd = 2, n = "Wide" }); known(1, 30, { spd = 2, n = "Wide" })
+  known(2, 20, { spd = 2, n = "Middle" })
+  cmd("")
+  local w = GanderBestiary
+  w.headers.level:Click()
+  ok(names() == "Wide | Middle", names())
+  w.headers.level:Click()
+  ok(names() == "Wide | Middle", "30 is above 20: " .. names())
+''',
+"the sort order and filters are remembered, the search is not": r'''
+  withData()
+  login(nil)
+  sampleMobs()
+  cmd("")
+  local w = GanderBestiary
+  placeRow("Stranglethorn Vale"):Click()
+  pick("type", "Beast")
+  pick("source", "Seen by me")
+  w.minLevel:Type("30")
+  w.headers.level:Click(); w.headers.level:Click()
+  w.search:Type("tiger")
+  ok(names() == "Young Stranglethorn Tiger", names())
+  login(GanderDB)
+  cmd("")
+  w = GanderBestiary
+  ok(names() == "Mistvale Gorilla (Elite) | Young Stranglethorn Tiger", "filters and sort kept, search gone: " .. names())
+  ok(chips() == "Place: Stranglethorn Vale | Type: Beast | Source: Seen by me | Level 30+", chips())
+  ok(w.minLevel:GetText() == "30" and w.drops.type:GetText() == "Type: Beast", "the controls show what was kept")
+  ok(w.headers.level.arrow:IsShown(), "the sort arrow too")
+''',
+"saved bestiary choices that make no sense are put right": r'''
+  login({ bestiary = { sort = "banana", reverse = "yes", source = 7, type = {}, rank = "QUEEN", place = 3,
+                       min = "low", max = -4, casts = "on" } })
+  sampleMobs()
+  cmd("")
+  ok(GanderBestiary.count:GetText() == "3 mobs" and chips() == "", GanderBestiary.count:GetText() .. " " .. chips())
+  ok(names() == "Defias Wizard | Mistvale Gorilla (Elite) | Young Stranglethorn Tiger", names())
+  login({ bestiary = "broken" })
+  cmd("")
+  ok(GanderBestiary.count:GetText() == "0 mobs", GanderBestiary.count:GetText())
+''',
+"a dropdown's menu closes on a click elsewhere, and with the window": r'''
+  login(nil)
+  sampleMobs()
+  cmd("")
+  local w = GanderBestiary
+  ok(not w.menu:IsShown() and not w.catcher:IsShown(), "closed to begin with")
+  w.drops.type:Click()
+  ok(w.menu:IsShown() and w.catcher:IsShown(), "open")
+  w.catcher:Click()
+  ok(not w.menu:IsShown() and not w.catcher:IsShown(), "a click elsewhere closes it")
+  w.drops.type:Click()
+  w.drops.rank:Click()
+  ok(w.menu:IsShown() and plain(w.menu.items[2]:GetText()) == "Normal", "another dropdown takes the menu over")
+  cmd("")
+  ok(not w.menu:IsShown() and not w.catcher:IsShown(), "closing the window closes it")
+''',
+"the mob list has a scroll bar that follows the wheel": r'''
+  login(nil)
+  for i = 1, 25 do known(100 + i, 9, { spd = 2, n = string.format("Mob %02d", i) }) end
+  cmd("")
+  local w = GanderBestiary
+  local low, high = w.bar:GetMinMaxValues()
+  ok(low == 0 and high == 25 - #w.rows, "its range is what doesn't fit: " .. tostring(high))
+  w.bar:SetValue(5)
+  ok(w.rows[1].name:GetText() == "Mob 06", "dragging it scrolls: " .. w.rows[1].name:GetText())
+  w.list:GetScript("OnMouseWheel")(w.list, -1)
+  ok(w.bar:GetValue() == 8, "the wheel moves it: " .. w.bar:GetValue())
+  w.search:Type("Mob 01")
+  ok(not w.bar:IsShown(), "hidden when everything fits")
+''',
 "the open list updates when something is learned or heard": r'''
   login(nil)
   cmd("")
@@ -2277,6 +2685,21 @@ SCENARIOS = {
   out = {}
   hear("2:M:3100:9:spd=3")
   ok(table.concat(out, "\n"):find("Bob"), "debug prints what it hears: " .. table.concat(out, "\n"))
+''',
+"/gander debug says where the game thinks you are, for the bestiary's places": r'''
+  login(nil)
+  zoneName = "Razorfen Downs"
+  instance = { id = 129, name = "Razorfen Downs", kind = "party" }
+  local o = cmd("debug")
+  ok(o:find("zone Razorfen Downs", 1, true) and o:find("inside an instance (party)", 1, true)
+     and o:find("lists it under Dungeons", 1, true), o)
+  instance = { id = 30, name = "Alterac Valley", kind = "pvp" }
+  cmd("debug"); o = cmd("debug")
+  ok(o:find("inside an instance (pvp)", 1, true) and o:find("lists it under Zones", 1, true), o)
+  instance = nil
+  zoneName = "Durotar"
+  cmd("debug"); o = cmd("debug")
+  ok(o:find("zone Durotar", 1, true) and o:find("not inside an instance", 1, true), o)
 ''',
 "/gander says so if loading failed": r'''
   login(nil)

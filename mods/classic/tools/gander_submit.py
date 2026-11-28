@@ -43,7 +43,7 @@ import sys
 import time
 
 import gander_import as gi
-from gander_import import IGNORED_SPELLS, NUMBERS, TEXTS
+from gander_import import IGNORED_SPELLS, MAX_PLACES, NUMBERS, TEXTS
 
 HELD = gi.ROOT / "data" / "gander_held.json"
 FORMAT = 1
@@ -242,6 +242,12 @@ def validate(sub, now):
             if isinstance(cast.get("build"), str) and BUILD.match(cast["build"]):
                 kept["build"] = cast["build"]
             out["spells"][spell] = kept
+        # The dungeons it was logged in: instance IDs, never names.
+        places = mob_in.get("in")
+        places = {as_id(place) for place in places} if isinstance(places, list) else set()
+        places = sorted(places - {None}, key=int)[:MAX_PLACES]
+        if places:
+            out["in"] = places
         if out["levels"] or out["spells"]:
             mobs[mob] = out
     cast_spells = {spell for mob in mobs.values() for spell in mob["spells"]}
@@ -468,6 +474,7 @@ def apply_payload(data, payload, table, approve, words):
                 continue
         entry = gi.mob_entry(g, mob)
         entry["name"] = entry["name"] or name or ""
+        gi.add_places(entry, sub.pop("in", []))
         for level in list(sub["levels"]):
             seen = sub["levels"][level]
             for key in list(seen["v"]):

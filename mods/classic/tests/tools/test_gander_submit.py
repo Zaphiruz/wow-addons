@@ -132,6 +132,20 @@ class Checks(unittest.TestCase):
         self.assertEqual(clean["spells"], {"5401": "Lizard Bolt", "6205": "Curse of Weakness"})
         self.assertEqual(dropped, 3)
 
+    def test_the_dungeons_a_mob_was_logged_in_are_kept_as_ids_only(self):
+        cast = {"5401": {"n": 1, "spawns": 1, "at": "2026-11-24"}}
+        clean, dropped, _ = self.clean(sub({
+            "3238": {"spells": cast, "in": ["48", "33", "48", "048"]},
+            "3239": {"spells": cast, "in": ["Blackfathom Deeps", "0", 48, None, "@x", "99999999999"]},
+            "3240": {"spells": cast, "in": "48"},
+            "3241": {"spells": cast, "in": [str(n) for n in range(1, 60)]},
+            "3242": {"spells": cast}}))
+        self.assertEqual(clean["mobs"]["3238"]["in"], ["33", "48"])
+        for mob in ("3239", "3240", "3242"):
+            self.assertNotIn("in", clean["mobs"][mob], mob)
+        self.assertEqual(len(clean["mobs"]["3241"]["in"]), gs.MAX_PLACES)
+        self.assertEqual(dropped, 0, "a dungeon left out isn't a fact left out")
+
     def test_junk_in_any_shape_never_breaks_the_check(self):
         junk = [None, 7, "x", [], [1], {"a": 1}, True, 1e400]
         for thing in junk:
@@ -140,6 +154,8 @@ class Checks(unittest.TestCase):
                             sub({"3273": {"levels": {"12": {"at": thing, "v": thing}}}}),
                             sub({"3273": {"levels": {"12": seen(spd=thing, ty=thing, z=thing)}}}),
                             sub({"3273": {"spells": {"5401": {"n": thing, "spawns": thing, "at": thing, "build": thing}}}}),
+                            sub({"3238": {"spells": {"5401": {"n": 1, "at": "2026-11-24"}}, "in": thing}}),
+                            sub({"3238": {"spells": {"5401": {"n": 1, "at": "2026-11-24"}}, "in": [thing]}}),
                             sub(STORMER, spells=thing), sub(STORMER, instances=thing),
                             sub(STORMER, instances={"48": thing}), sub(STORMER, instances={"48": {"minutes": thing, "name": thing}}),
                             sub(STORMER, locale=thing, sender=thing), sub(thing), {"format": thing, "game": thing}):
@@ -184,6 +200,29 @@ class Intake(unittest.TestCase):
         self.assertEqual(self.forever()["mobs"]["3238"]["spells"]["5401"],
                          {"n": 7, "spawns": 3, "at": "2026-11-25", "build": "1.60.2"})
         self.assertEqual(self.forever()["spells"]["5401"], "Lizard Bolt", "a listed name is never replaced")
+
+    def test_the_dungeon_a_listed_mob_was_logged_in_goes_in_with_its_casts(self):
+        cast = {"5401": {"n": 1, "spawns": 1, "at": "2026-11-25"}}
+        self.go([issue(1, sub({"3238": {"spells": cast, "in": ["48"]}}))])
+        self.assertEqual(self.forever()["mobs"]["3238"]["in"], ["48"])
+        self.go([issue(2, sub({"3238": {"spells": cast, "in": ["33", "48"]}}), user=200)])
+        self.assertEqual(self.forever()["mobs"]["3238"]["in"], ["33", "48"])
+        self.assertEqual(self.held["pending"], [])
+
+    def test_a_mob_is_never_listed_in_more_dungeons_than_a_mob_could_be_in(self):
+        cast = {"5401": {"n": 1, "spawns": 1, "at": "2026-11-25"}}
+        for n in range(3):
+            self.go([issue(n + 1, sub({"3238": {"spells": cast, "in": [str(100 * n + i) for i in range(1, 15)]}}),
+                           user=100 + n)])
+        self.assertEqual(len(self.forever()["mobs"]["3238"]["in"]), gs.MAX_PLACES)
+
+    def test_a_new_mobs_dungeon_waits_with_it(self):
+        mob = {"4832": {"name": "Twilight Lord Kelris", "in": ["48"],
+                        "spells": {"5401": {"n": 1, "spawns": 1, "at": "2026-11-25"}}}}
+        self.go([issue(1, sub(mob))])
+        self.assertNotIn("4832", self.forever()["mobs"])
+        self.go([issue(2, sub(mob), user=200)])
+        self.assertEqual(self.forever()["mobs"]["4832"]["in"], ["48"])
 
     def test_a_listed_name_is_never_replaced(self):
         self.go([issue(1, sub({"3238": {"name": "Something Rude", "levels": {"22": seen(armor=950)}}}))])

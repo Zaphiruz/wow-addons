@@ -128,9 +128,14 @@ confirmations (`ConfirmBindOnUse`) and Logout in Downcast and Hawker 0.2.0.
 - Chat lines are capped at 255 characters; refuse longer ones when they're added.
 - Lua 5.1 allows 200 local variables in one function, and a file's top level
   is one function. Over that, the file doesn't load at all ("main function
-  has more than 200 local variables"). Gander.lua has about 194, so put a new
-  section's locals inside `do ... end` and declare only what the rest of the
-  file calls outside it, as "Sending to the database" does.
+  has more than 200 local variables"). Gander.lua has about 171 at its fullest
+  point, so put a new section's locals inside `do ... end` and declare only
+  what the rest of the file calls outside it, as "Sending to the database"
+  and the bestiary do.
+- A template's own scripts are replaced by `SetScript`. `SearchBoxTemplate`
+  (in both games) shows its grey hint and clear button from `OnTextChanged`,
+  so add to it with `HookScript`. The bestiary's dropdowns are Gander's own
+  frames: Blizzard's dropdown templates differ between the two games.
 
 ### Classic Era behaviour we verified in game
 
@@ -187,6 +192,17 @@ confirmations (`ConfirmBindOnUse`) and Logout in Downcast and Hawker 0.2.0.
   Worker says it passes `logs` on (`"logs": true` on a GET).
 - Data only ever grows: a later import adds spells, counts and newer
   sightings, it never removes a mob or a spell.
+- A mob's `in` is the dungeons (instance IDs, never names) a combat log
+  caught it casting in. The importer and the page write it; the generated Lua
+  gives it to Gander as `inside`, with the dungeons' names in `dungeons`, and
+  only for instances the database has a name for. Logs read before
+  GanderData 1.0.7 didn't keep it, so those mobs have no dungeon until the
+  dungeon is logged again. Gander's own sightings carry the zone (`z`), which
+  is the dungeon's name when the mob was seen inside one.
+- The bestiary files a place under Dungeons when its name is one of
+  GanderData's `dungeons`, or when the player met a mob there while
+  `IsInInstance()` said `party` or `raid` (`GanderDB.dungeons`). `/gander
+  debug` prints the zone and instance kind the game reports.
 - Account folder names are private: the importer finds the saved database by
   pattern and never writes its path anywhere.
 - Other players send data as issues (label `gander-data`). The "Gander data"

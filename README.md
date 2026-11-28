@@ -98,10 +98,15 @@ A submission is one JSON block, shaped like one game's part of
 {"format": 1, "game": "forever", "locale": "enUS",
  "mobs": {"3238": {"name": "Stormhide",
                    "levels": {"22": {"at": 1795396923, "v": {"spd": 2, "ty": "Beast"}}},
-                   "spells": {"5401": {"n": 4, "spawns": 2, "at": "2026-11-24", "build": "1.60.1"}}}},
+                   "spells": {"5401": {"n": 4, "spawns": 2, "at": "2026-11-24", "build": "1.60.1"}},
+                   "in": ["48"]}},
  "spells": {"5401": "Lizard Bolt"},
  "instances": {"48": {"minutes": 24.7, "name": "Blackfathom Deeps"}}}
 ```
+
+`in` lists the dungeons (instance IDs) a combat log caught the mob casting in. It is
+optional, and only the page and the importer write it: Gander's own sightings carry
+the zone (`z`) instead.
 
 ### Combat logs from other players
 
