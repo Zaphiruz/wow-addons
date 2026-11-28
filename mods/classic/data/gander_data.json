@@ -4282,9 +4282,12 @@
     "1495": {
      "levels": {
       "22": {
-       "at": 1795697497,
+       "at": 1795841786,
        "v": {
+        "armor": 1118,
         "class": "WARRIOR",
+        "dmax": 42.41,
+        "dmin": 31.99,
         "n": "Deathguard Linnea",
         "run": 8,
         "spd": 2,
@@ -4843,7 +4846,7 @@
     "15684": {
      "levels": {
       "50": {
-       "at": 1795491275,
+       "at": 1795840858,
        "v": {
         "class": "WARRIOR",
         "n": "Auctioneer Tricket",
@@ -5168,6 +5171,17 @@
         "ty": "Humanoid",
         "z": "Silverpine Forest"
        }
+      },
+      "12": {
+       "at": 1795835772,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Moonrage Darkrunner",
+        "run": 10,
+        "spd": 1.5,
+        "ty": "Humanoid",
+        "z": "Silverpine Forest"
+       }
       }
      },
      "name": "Moonrage Darkrunner",
@@ -5225,6 +5239,17 @@
     },
     "1779": {
      "levels": {
+      "12": {
+       "at": 1795835697,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Moonrage Glutton",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Silverpine Forest"
+       }
+      },
       "13": {
        "at": 1795643071,
        "v": {
@@ -5329,7 +5354,7 @@
        }
       },
       "13": {
-       "at": 1795709053,
+       "at": 1795833754,
        "v": {
         "class": "PALADIN",
         "fam": "Voidwalker",
@@ -5548,7 +5573,20 @@
      }
     },
     "1891": {
-     "levels": {},
+     "levels": {
+      "14": {
+       "at": 1795837819,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Pyrewood Watcher",
+        "rk": "ELITE",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Silverpine Forest"
+       }
+      }
+     },
      "name": "Pyrewood Watcher",
      "spells": {
       "6660": {
@@ -5572,13 +5610,50 @@
         "ty": "Humanoid",
         "z": "Silverpine Forest"
        }
+      },
+      "14": {
+       "at": 1795837862,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Moonrage Watcher",
+        "rk": "ELITE",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Silverpine Forest"
+       }
       }
      },
      "name": "Moonrage Watcher",
      "spells": {}
     },
     "1894": {
-     "levels": {},
+     "levels": {
+      "14": {
+       "at": 1795837781,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Pyrewood Sentry",
+        "rk": "ELITE",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Silverpine Forest"
+       }
+      },
+      "15": {
+       "at": 1795837865,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Pyrewood Sentry",
+        "rk": "ELITE",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Silverpine Forest"
+       }
+      }
+     },
      "name": "Pyrewood Sentry",
      "spells": {
       "7164": {
@@ -5825,14 +5900,16 @@
     "1937": {
      "levels": {
       "14": {
-       "at": 1795381893,
+       "at": 1795838090,
        "v": {
         "armor": 650,
         "class": "WARRIOR",
         "dmax": 26.94,
         "dmin": 20.29,
         "run": 8,
-        "spd": 2
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Silverpine Forest"
        }
       }
      },
@@ -5859,7 +5936,18 @@
     "1953": {
      "levels": {
       "15": {
-       "at": 1795747167,
+       "at": 1795839343,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Lake Skulker",
+        "run": 8,
+        "spd": 2,
+        "ty": "Elemental",
+        "z": "Silverpine Forest"
+       }
+      },
+      "16": {
+       "at": 1795839340,
        "v": {
         "class": "WARRIOR",
         "n": "Lake Skulker",
@@ -5877,6 +5965,17 @@
      "levels": {
       "16": {
        "at": 1795786039,
+       "v": {
+        "class": "PALADIN",
+        "n": "Elder Lake Skulker",
+        "run": 8,
+        "spd": 2,
+        "ty": "Elemental",
+        "z": "Silverpine Forest"
+       }
+      },
+      "17": {
+       "at": 1795839374,
        "v": {
         "class": "PALADIN",
         "n": "Elder Lake Skulker",
@@ -5958,7 +6057,7 @@
     "211022": {
      "levels": {
       "40": {
-       "at": 1795820107,
+       "at": 1795837026,
        "v": {
         "armor": 1980,
         "class": "WARRIOR",
@@ -5997,6 +6096,16 @@
         "class": "WARRIOR",
         "run": 8,
         "spd": 2
+       }
+      },
+      "19": {
+       "at": 1795838341,
+       "v": {
+        "class": "WARRIOR",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Silverpine Forest"
        }
       }
      },
@@ -6214,7 +6323,7 @@
     "2226": {
      "levels": {
       "55": {
-       "at": 1795648300,
+       "at": 1795837238,
        "v": {
         "armor": 3292,
         "class": "WARRIOR",
@@ -6714,7 +6823,7 @@
     "2308": {
      "levels": {
       "40": {
-       "at": 1795820108,
+       "at": 1795837025,
        "v": {
         "armor": 1980,
         "class": "WARRIOR",
@@ -7529,11 +7638,13 @@
     "248198": {
      "levels": {
       "60": {
-       "at": 1795402468,
+       "at": 1795885118,
        "v": {
         "class": "WARRIOR",
         "run": 8,
-        "spd": 2
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "The Barrens"
        }
       }
      },
@@ -7543,14 +7654,16 @@
     "248202": {
      "levels": {
       "60": {
-       "at": 1795402468,
+       "at": 1795885042,
        "v": {
         "armor": 3566,
         "class": "WARRIOR",
         "dmax": 137.86,
         "dmin": 103.95,
         "run": 8,
-        "spd": 2
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "The Barrens"
        }
       }
      },
@@ -8777,6 +8890,17 @@
         "spd": 2,
         "ty": "Totem",
         "z": "Zephras Isle"
+       }
+      },
+      "17": {
+       "at": 1795840292,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Searing Totem",
+        "run": 7,
+        "spd": 2,
+        "ty": "Totem",
+        "z": "Silverpine Forest"
        }
       },
       "20": {
@@ -13852,12 +13976,34 @@
     },
     "266735": {
      "levels": {
+      "20": {
+       "at": 1795838317,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Excitable Slime",
+        "run": 8,
+        "spd": 2,
+        "ty": "Non-combat Pet",
+        "z": "Silverpine Forest"
+       }
+      },
       "30": {
        "at": 1795402222,
        "v": {
         "class": "WARRIOR",
         "run": 8,
         "spd": 2
+       }
+      },
+      "33": {
+       "at": 1795885231,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Excitable Slime",
+        "run": 8,
+        "spd": 2,
+        "ty": "Non-combat Pet",
+        "z": "The Barrens"
        }
       },
       "43": {
@@ -15117,6 +15263,17 @@
     },
     "271913": {
      "levels": {
+      "1": {
+       "at": 1795841022,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Plagued Cockroach",
+        "run": 8,
+        "spd": 2,
+        "ty": "Non-combat Pet",
+        "z": "Undercity"
+       }
+      },
       "29": {
        "at": 1795664913,
        "v": {
@@ -15508,6 +15665,17 @@
         "spd": 2,
         "ty": "Non-combat Pet",
         "z": "Stonetalon Mountains"
+       }
+      },
+      "35": {
+       "at": 1795836030,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Panda Cub",
+        "run": 8,
+        "spd": 2,
+        "ty": "Non-combat Pet",
+        "z": "Silverpine Forest"
        }
       },
       "36": {
@@ -15924,6 +16092,17 @@
         "spd": 2,
         "ty": "Non-combat Pet",
         "z": "Orgrimmar"
+       }
+      },
+      "14": {
+       "at": 1795836178,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Unknown",
+        "run": 8,
+        "spd": 2,
+        "ty": "Non-combat Pet",
+        "z": "Silverpine Forest"
        }
       },
       "15": {
@@ -16709,7 +16888,7 @@
        }
       },
       "13": {
-       "at": 1795746880,
+       "at": 1795835430,
        "v": {
         "class": "WARRIOR",
         "fam": "Bat",
@@ -22332,7 +22511,7 @@
     "3319": {
      "levels": {
       "30": {
-       "at": 1795642574,
+       "at": 1795877798,
        "v": {
         "class": "WARRIOR",
         "n": "Sana",
@@ -24981,9 +25160,12 @@
     "3549": {
      "levels": {
       "25": {
-       "at": 1795820440,
+       "at": 1795841786,
        "v": {
+        "armor": 1037,
         "class": "WARRIOR",
+        "dmax": 47.5,
+        "dmin": 35.81,
         "n": "Shelene Rhobart",
         "run": 8,
         "spd": 2,
@@ -25015,11 +25197,13 @@
     "3551": {
      "levels": {
       "20": {
-       "at": 1795381899,
+       "at": 1795838289,
        "v": {
         "class": "WARRIOR",
         "run": 8,
-        "spd": 2
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Silverpine Forest"
        }
       }
      },
@@ -29620,7 +29804,7 @@
     "4486": {
      "levels": {
       "32": {
-       "at": 1795785944,
+       "at": 1795837108,
        "v": {
         "armor": 1283,
         "class": "WARRIOR",
@@ -29836,7 +30020,7 @@
     "4551": {
      "levels": {
       "55": {
-       "at": 1795785953,
+       "at": 1795837108,
        "v": {
         "armor": 3292,
         "class": "WARRIOR",
@@ -32784,9 +32968,12 @@
     "5819": {
      "levels": {
       "30": {
-       "at": 1795667605,
+       "at": 1795836720,
        "v": {
+        "armor": 1212,
         "class": "WARRIOR",
+        "dmax": 56.32,
+        "dmin": 42.45,
         "n": "Mirelle Tremayne",
         "run": 8,
         "spd": 2,
@@ -33019,6 +33206,17 @@
         "spd": 2,
         "ty": "Totem",
         "z": "Zephras Isle"
+       }
+      },
+      "17": {
+       "at": 1795841380,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Strength of Earth Totem",
+        "run": 7,
+        "spd": 2,
+        "ty": "Totem",
+        "z": "Silverpine Forest"
        }
       }
      },
@@ -36134,6 +36332,17 @@
         "z": "Tirisfal Glades"
        }
       },
+      "18": {
+       "at": 1795841929,
+       "v": {
+        "class": "WARRIOR",
+        "n": "White Kitten",
+        "run": 8,
+        "spd": 2,
+        "ty": "Non-combat Pet",
+        "z": "Tirisfal Glades"
+       }
+      },
       "7": {
        "at": 1795548438,
        "v": {
@@ -36730,14 +36939,16 @@
     "7683": {
      "levels": {
       "35": {
-       "at": 1795382208,
+       "at": 1795836948,
        "v": {
         "armor": 1387,
         "class": "WARRIOR",
         "dmax": 64.44,
         "dmin": 48.58,
         "run": 8,
-        "spd": 2
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Undercity"
        }
       }
      },
@@ -37712,14 +37923,16 @@
     "8385": {
      "levels": {
       "22": {
-       "at": 1795381899,
+       "at": 1795838289,
        "v": {
         "armor": 932,
         "class": "WARRIOR",
         "dmax": 42.41,
         "dmin": 31.99,
         "run": 8,
-        "spd": 2
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Silverpine Forest"
        }
       }
      },
@@ -38147,11 +38360,13 @@
     "883": {
      "levels": {
       "5": {
-       "at": 1795398278,
+       "at": 1795835821,
        "v": {
         "class": "WARRIOR",
         "run": 6,
-        "spd": 2
+        "spd": 2,
+        "ty": "Critter",
+        "z": "Silverpine Forest"
        }
       }
      },
@@ -39192,11 +39407,13 @@
     "9979": {
      "levels": {
       "30": {
-       "at": 1795381894,
+       "at": 1795838283,
        "v": {
         "class": "WARRIOR",
         "run": 8,
-        "spd": 2
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Silverpine Forest"
        }
       }
      },
