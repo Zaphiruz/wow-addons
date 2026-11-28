@@ -779,7 +779,7 @@
     "10685": {
      "levels": {
       "3": {
-       "at": 1795750330,
+       "at": 1795830707,
        "v": {
         "class": "WARRIOR",
         "n": "Swine",
@@ -1236,7 +1236,7 @@
     "10880": {
      "levels": {
       "3": {
-       "at": 1795748933,
+       "at": 1795833243,
        "v": {
         "armor": 46,
         "class": "WARRIOR",
@@ -13504,9 +13504,12 @@
     "264072": {
      "levels": {
       "30": {
-       "at": 1795818135,
+       "at": 1795826795,
        "v": {
+        "armor": 981,
         "class": "PALADIN",
+        "dmax": 2094.94,
+        "dmin": 1579.49,
         "n": "Yorn Grimtotem",
         "run": 8,
         "spd": 2,
@@ -13521,9 +13524,12 @@
     "264074": {
      "levels": {
       "35": {
-       "at": 1795818136,
+       "at": 1795826796,
        "v": {
+        "armor": 707,
         "class": "MAGE",
+        "dmax": 47.05,
+        "dmin": 35.46,
         "n": "Mazu'kon",
         "run": 8,
         "spd": 2,
@@ -14041,11 +14047,16 @@
     "267310": {
      "levels": {
       "40": {
-       "at": 1795408658,
+       "at": 1795831451,
        "v": {
+        "armor": 1980,
         "class": "WARRIOR",
+        "dmax": 74.32,
+        "dmin": 56.02,
         "run": 8,
-        "spd": 2
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "The Barrens"
        }
       }
      },
@@ -14470,6 +14481,17 @@
      "levels": {
       "1": {
        "at": 1795803041,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Prairie Wolf Pup",
+        "run": 8,
+        "spd": 2,
+        "ty": "Non-combat Pet",
+        "z": "Orgrimmar"
+       }
+      },
+      "15": {
+       "at": 1795830177,
        "v": {
         "class": "WARRIOR",
         "n": "Prairie Wolf Pup",
@@ -15619,7 +15641,7 @@
     "274845": {
      "levels": {
       "20": {
-       "at": 1795500369,
+       "at": 1795831308,
        "v": {
         "class": "PALADIN",
         "n": "Pallwick Boneset",
@@ -17119,7 +17141,7 @@
     "2956": {
      "levels": {
       "6": {
-       "at": 1795801450,
+       "at": 1795827072,
        "v": {
         "class": "WARRIOR",
         "fam": "Tallstrider",
@@ -17228,7 +17250,7 @@
        }
       },
       "8": {
-       "at": 1795801452,
+       "at": 1795827072,
        "v": {
         "class": "WARRIOR",
         "fam": "Wolf",
@@ -17330,7 +17352,7 @@
     "2964": {
      "levels": {
       "10": {
-       "at": 1795799019,
+       "at": 1795827052,
        "v": {
         "class": "MAGE",
         "n": "Windfury Sorceress",
@@ -17380,7 +17402,7 @@
        }
       },
       "11": {
-       "at": 1795799437,
+       "at": 1795827071,
        "v": {
         "class": "PALADIN",
         "n": "Windfury Matriarch",
@@ -19280,7 +19302,7 @@
        }
       },
       "8": {
-       "at": 1795715912,
+       "at": 1795830800,
        "v": {
         "class": "WARRIOR",
         "fam": "Raptor",
@@ -19292,7 +19314,7 @@
        }
       },
       "9": {
-       "at": 1795716023,
+       "at": 1795830925,
        "v": {
         "class": "WARRIOR",
         "fam": "Raptor",
@@ -19380,7 +19402,7 @@
        }
       },
       "8": {
-       "at": 1795716008,
+       "at": 1795830952,
        "v": {
         "class": "WARRIOR",
         "fam": "Scorpid",
@@ -19398,7 +19420,7 @@
     "3127": {
      "levels": {
       "10": {
-       "at": 1795715777,
+       "at": 1795830858,
        "v": {
         "class": "WARRIOR",
         "fam": "Scorpid",
@@ -20590,6 +20612,18 @@
     },
     "3227": {
      "levels": {
+      "10": {
+       "at": 1795830706,
+       "v": {
+        "class": "WARRIOR",
+        "fam": "Raptor",
+        "n": "Corrupted Bloodtalon Scythemaw",
+        "run": 8,
+        "spd": 2,
+        "ty": "Beast",
+        "z": "Durotar"
+       }
+      },
       "11": {
        "at": 1795584662,
        "v": {
@@ -20947,7 +20981,7 @@
     "3242": {
      "levels": {
       "13": {
-       "at": 1795756599,
+       "at": 1795832774,
        "v": {
         "class": "WARRIOR",
         "n": "Zhevra Runner",
@@ -21262,6 +21296,17 @@
         "run": 8,
         "spd": 2
        }
+      },
+      "13": {
+       "at": 1795832768,
+       "v": {
+        "class": "WARRIOR",
+        "fam": "Raptor",
+        "run": 8,
+        "spd": 2,
+        "ty": "Beast",
+        "z": "The Barrens"
+       }
       }
      },
      "name": "",
@@ -21529,7 +21574,7 @@
        }
       },
       "13": {
-       "at": 1795750392,
+       "at": 1795832398,
        "v": {
         "class": "WARRIOR",
         "n": "Kolkar Wrangler",
@@ -21575,6 +21620,17 @@
      "levels": {
       "15": {
        "at": 1795805806,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Kolkar Marauder",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "The Barrens"
+       }
+      },
+      "16": {
+       "at": 1795832149,
        "v": {
         "class": "WARRIOR",
         "n": "Kolkar Marauder",
@@ -22321,7 +22377,7 @@
     "3338": {
      "levels": {
       "60": {
-       "at": 1795751988,
+       "at": 1795831350,
        "v": {
         "armor": 3566,
         "class": "WARRIOR",
@@ -22973,7 +23029,7 @@
     "3390": {
      "levels": {
       "22": {
-       "at": 1795716496,
+       "at": 1795832969,
        "v": {
         "armor": 932,
         "class": "WARRIOR",
@@ -23236,6 +23292,18 @@
         "ty": "Beast",
         "z": "The Barrens"
        }
+      },
+      "12": {
+       "at": 1795831518,
+       "v": {
+        "class": "WARRIOR",
+        "fam": "Cat",
+        "n": "Savannah Huntress",
+        "run": 10,
+        "spd": 1.5,
+        "ty": "Beast",
+        "z": "The Barrens"
+       }
       }
      },
      "name": "Savannah Huntress",
@@ -23341,12 +23409,14 @@
        }
       },
       "15": {
-       "at": 1795405199,
+       "at": 1795831765,
        "v": {
         "class": "WARRIOR",
         "fam": "Cat",
         "run": 8,
-        "spd": 1.4
+        "spd": 1.4,
+        "ty": "Beast",
+        "z": "The Barrens"
        }
       }
      },
@@ -23382,7 +23452,7 @@
     "3428": {
      "levels": {
       "12": {
-       "at": 1795751900,
+       "at": 1795832503,
        "v": {
         "armor": 580,
         "class": "WARRIOR",
@@ -23402,7 +23472,7 @@
     "3429": {
      "levels": {
       "42": {
-       "at": 1795716457,
+       "at": 1795832487,
        "v": {
         "armor": 2262,
         "class": "WARRIOR",
@@ -23442,9 +23512,12 @@
     "3432": {
      "levels": {
       "15": {
-       "at": 1795749215,
+       "at": 1795831362,
        "v": {
+        "armor": 685,
         "class": "WARRIOR",
+        "dmax": 29.34,
+        "dmin": 22.08,
         "n": "Mankrik",
         "run": 8,
         "spd": 2,
@@ -23636,7 +23709,7 @@
     "3448": {
      "levels": {
       "22": {
-       "at": 1795716436,
+       "at": 1795832471,
        "v": {
         "armor": 932,
         "class": "WARRIOR",
@@ -23656,7 +23729,7 @@
     "3449": {
      "levels": {
       "14": {
-       "at": 1795716469,
+       "at": 1795831337,
        "v": {
         "armor": 650,
         "class": "WARRIOR",
@@ -23892,7 +23965,7 @@
     "3464": {
      "levels": {
       "25": {
-       "at": 1795751965,
+       "at": 1795832976,
        "v": {
         "armor": 1037,
         "class": "WARRIOR",
@@ -24089,7 +24162,7 @@
     "3479": {
      "levels": {
       "35": {
-       "at": 1795500357,
+       "at": 1795832656,
        "v": {
         "class": "WARRIOR",
         "n": "Nargal Deatheye",
@@ -24123,7 +24196,7 @@
     "3481": {
      "levels": {
       "14": {
-       "at": 1795563230,
+       "at": 1795832972,
        "v": {
         "class": "WARRIOR",
         "n": "Barg",
@@ -24157,7 +24230,7 @@
     "3483": {
      "levels": {
       "21": {
-       "at": 1795500369,
+       "at": 1795832655,
        "v": {
         "armor": 897,
         "class": "WARRIOR",
@@ -24177,7 +24250,7 @@
     "3486": {
      "levels": {
       "19": {
-       "at": 1795716434,
+       "at": 1795832472,
        "v": {
         "class": "WARRIOR",
         "n": "Halija Whitestrider",
@@ -24194,7 +24267,7 @@
     "3487": {
      "levels": {
       "23": {
-       "at": 1795716436,
+       "at": 1795832450,
        "v": {
         "class": "WARRIOR",
         "n": "Kalyimah Stormcloud",
@@ -24211,7 +24284,7 @@
     "3489": {
      "levels": {
       "16": {
-       "at": 1795754455,
+       "at": 1795831413,
        "v": {
         "armor": 721,
         "class": "WARRIOR",
@@ -24231,7 +24304,7 @@
     "3490": {
      "levels": {
       "30": {
-       "at": 1795754450,
+       "at": 1795832969,
        "v": {
         "class": "WARRIOR",
         "n": "Hula'mahi",
@@ -24705,7 +24778,7 @@
     "3615": {
      "levels": {
       "55": {
-       "at": 1795751986,
+       "at": 1795832972,
        "v": {
         "armor": 3292,
         "class": "WARRIOR",
