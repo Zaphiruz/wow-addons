@@ -19414,8 +19414,8 @@
       "6268": {
        "at": "2026-11-27",
        "build": "1.60.1",
-       "n": 4,
-       "spawns": 2
+       "n": 6,
+       "spawns": 3
       }
      },
      "zones": [
@@ -21410,7 +21410,17 @@
       }
      },
      "name": "Sunscale Lashtail",
-     "spells": {}
+     "spells": {
+      "6607": {
+       "at": "2026-11-27",
+       "build": "1.60.1",
+       "n": 4,
+       "spawns": 2
+      }
+     },
+     "zones": [
+      "The Barrens"
+     ]
     },
     "3255": {
      "levels": {
@@ -21693,7 +21703,17 @@
       }
      },
      "name": "Kolkar Wrangler",
-     "spells": {}
+     "spells": {
+      "6660": {
+       "at": "2026-11-27",
+       "build": "1.60.1",
+       "n": 5,
+       "spawns": 3
+      }
+     },
+     "zones": [
+      "The Barrens"
+     ]
     },
     "3273": {
      "levels": {
@@ -21721,7 +21741,29 @@
       }
      },
      "name": "Kolkar Stormer",
-     "spells": {}
+     "spells": {
+      "1301404": {
+       "at": "2026-11-27",
+       "build": "1.60.1",
+       "n": 2,
+       "spawns": 1
+      },
+      "6535": {
+       "at": "2026-11-27",
+       "build": "1.60.1",
+       "n": 2,
+       "spawns": 1
+      },
+      "9532": {
+       "at": "2026-11-27",
+       "build": "1.60.1",
+       "n": 3,
+       "spawns": 2
+      }
+     },
+     "zones": [
+      "The Barrens"
+     ]
     },
     "3274": {
      "levels": {
@@ -21738,7 +21780,17 @@
       }
      },
      "name": "Kolkar Pack Runner",
-     "spells": {}
+     "spells": {
+      "9128": {
+       "at": "2026-11-27",
+       "build": "1.60.1",
+       "n": 3,
+       "spawns": 1
+      }
+     },
+     "zones": [
+      "The Barrens"
+     ]
     },
     "3275": {
      "levels": {
@@ -21766,7 +21818,23 @@
       }
      },
      "name": "Kolkar Marauder",
-     "spells": {}
+     "spells": {
+      "11976": {
+       "at": "2026-11-27",
+       "build": "1.60.1",
+       "n": 4,
+       "spawns": 3
+      },
+      "6268": {
+       "at": "2026-11-27",
+       "build": "1.60.1",
+       "n": 4,
+       "spawns": 2
+      }
+     },
+     "zones": [
+      "The Barrens"
+     ]
     },
     "3276": {
      "levels": {
@@ -23267,7 +23335,17 @@
       }
      },
      "name": "Kolkar Bloodcharger",
-     "spells": {}
+     "spells": {
+      "172": {
+       "at": "2026-11-27",
+       "build": "1.60.1",
+       "n": 31,
+       "spawns": 7
+      }
+     },
+     "zones": [
+      "The Barrens"
+     ]
     },
     "3399": {
      "levels": {
@@ -24168,7 +24246,10 @@
       }
      },
      "name": "Oasis Snapjaw",
-     "spells": {}
+     "spells": {},
+     "zones": [
+      "The Barrens"
+     ]
     },
     "3463": {
      "levels": {
