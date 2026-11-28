@@ -1,5 +1,9 @@
 # GanderData changelog
 
+## 1.0.9 (2026-11-28)
+
+- Forever: what 11 more mobs cast and stats for 20 more mobs.
+
 ## 1.0.8 (2026-11-28)
 
 - Where mobs are found: the zone or dungeon of 104 mobs, read from combat logs, for the places list in Gander's bestiary (Gander 0.12.1 shows the zones).
