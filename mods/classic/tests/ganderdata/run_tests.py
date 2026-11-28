@@ -25,6 +25,11 @@ function load()
   assert(loadstring(ADDON_SRC, "GanderData.lua"))("GanderData", {})
 end
 function count(t) local n = 0 for _ in pairs(t) do n = n + 1 end return n end
+-- Is this mob on the bestiary's list? It is with casts or stats. A name isn't
+-- needed: Gander's own sightings from before it kept names have none, and a
+-- name a player sends for such a mob waits to be confirmed while the casts
+-- from their combat log go in. Gander lists it as "Mob #<id>" until then.
+function listed(g, mob) return (g.casts or {})[mob] ~= nil or (g.stats or {})[mob] ~= nil end
 GAMES = { "forever", "classic" }
 -- The stats Gander knows, as in Gander.lua's FIELDS.
 NUMBERS = { def = 1, armor = 1, r1 = 1, r2 = 1, r3 = 1, r4 = 1, r5 = 1, r6 = 1, hp = 1, pow = 1, spd = 1, oh = 1,
@@ -104,15 +109,13 @@ SCENARIOS = {
     end
   end
 ''',
-"mobs with casts or stats have a name for the bestiary": r'''
+"names are short, and only for mobs with casts or stats": r'''
   load()
   for _, game in ipairs(GAMES) do
-    local g = GanderData[game] or { casts = {}, names = {} }
-    for mob in pairs(g.casts) do
-      ok(type(g.names[mob]) == "string" and g.names[mob] ~= "", game .. ": mob " .. mob .. " has no name")
-    end
+    local g = GanderData[game] or { names = {} }
     for mob, name in pairs(g.names) do
-      ok(type(mob) == "number" and type(name) == "string" and #name <= 60, game .. ": name of " .. tostring(mob))
+      ok(type(mob) == "number" and type(name) == "string" and name ~= "" and #name <= 60, game .. ": name of " .. tostring(mob))
+      ok(listed(g, mob), game .. ": mob " .. mob .. " has a name but no casts or stats")
     end
   end
 ''',
@@ -133,7 +136,7 @@ SCENARIOS = {
       ok(g.instances[id] ~= nil, game .. ": dungeon " .. id .. " isn't among the instances")
     end
     for mob, list in pairs(g.inside) do
-      ok(type(mob) == "number" and g.names[mob] ~= nil, game .. ": mob " .. tostring(mob) .. " is in a dungeon but not on the list")
+      ok(type(mob) == "number" and listed(g, mob), game .. ": mob " .. tostring(mob) .. " is in a dungeon but not on the list")
       ok(type(list) == "table" and #list > 0 and #list == count(list), game .. ": mob " .. mob .. "'s dungeons")
       for _, id in ipairs(list) do
         ok(g.dungeons[id] ~= nil, game .. ": mob " .. mob .. " is in dungeon " .. tostring(id) .. ", which has no name")
@@ -147,7 +150,7 @@ SCENARIOS = {
     local g = GanderData[game] or { names = {} }
     -- A file made before zones were recorded has no such table: Gander reads it as empty.
     for mob, list in pairs(g.zones or {}) do
-      ok(type(mob) == "number" and g.names[mob] ~= nil, game .. ": mob " .. tostring(mob) .. " has a zone but isn't on the list")
+      ok(type(mob) == "number" and listed(g, mob), game .. ": mob " .. tostring(mob) .. " has a zone but isn't on the list")
       ok(type(list) == "table" and #list > 0 and #list == count(list), game .. ": mob " .. mob .. "'s zones")
       for _, zone in ipairs(list) do
         ok(type(zone) == "string" and zone ~= "" and #zone <= TEXTS.z, game .. ": mob " .. mob .. " zone " .. tostring(zone))

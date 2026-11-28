@@ -230,6 +230,13 @@ confirmations (`ConfirmBindOnUse`) and Logout in Downcast and Hawker 0.2.0.
   `data/gander_held.json` until a second sender agrees or the owner approves
   the "Held Gander data" pull request (or comments `approve ...` / `drop ...`
   on it). Never edit `gander_held.json` by hand.
+- A mob can be listed without a name: Gander's own sightings from before it
+  kept names have none. What a submission sends for such a mob goes in
+  (stats, casts, dungeons, zones) while the name it offers waits, so
+  GanderData.lua can hold casts for a mob that isn't in `names`, and Gander
+  shows it as "Mob #<id>". The checks on the file count a mob as listed by
+  its casts or stats, never by its name: a check that wanted a name failed
+  the intake run for issue 83.
 - Those merges don't bump the version. The "GanderData release" workflow does
   that every four hours when there is new data and releases it, so don't push a `GanderData/v...` tag for
   data: run that workflow by hand if a release can't wait.

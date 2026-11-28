@@ -1,6 +1,7 @@
 """Tests for tools/gander_submit.py. Run: python -m unittest discover -s mods/classic/tests/tools"""
 import json
 import pathlib
+import subprocess
 import sys
 import tempfile
 import unittest
@@ -336,6 +337,16 @@ class Intake(unittest.TestCase):
         self.go([issue(2, sub({"1421": {"name": "Private Merle", "levels": {"31": seen(spd=2)}}}), user=200)])
         self.assertEqual(self.forever()["mobs"]["1421"]["name"], "Private Merle")
         self.assertEqual(self.held["pending"], [])
+
+    def test_casts_and_a_zone_for_a_listed_mob_with_no_name_go_in_and_its_name_waits(self):
+        self.nameless()
+        r = self.go([issue(1, sub({"1421": {"name": "Private Merle", "zones": ["The Barrens"],
+                                            "spells": {"5401": {"n": 3, "spawns": 2, "at": "2026-11-25"}}}},
+                                  spells={"5401": "Lizard Bolt"}))])
+        mob = self.forever()["mobs"]["1421"]
+        self.assertEqual((mob["name"], mob["spells"]["5401"]["n"], mob["zones"]), ("", 3, ["The Barrens"]))
+        self.assertIn("2 facts went into", r["issues"][0]["comment"])
+        self.assertIn("`m1421` Private Merle", gs.render_held(self.data, self.held)[0])
 
     def test_a_new_mob_sent_without_a_name_can_be_seen_and_approved(self):
         self.go([issue(1, sub({"5555": {"levels": {"20": seen(spd=2)}}}))])
@@ -725,6 +736,26 @@ class CommandLine(unittest.TestCase):
                         "--now", str(NOW), *more, *self.paths()])
         self.assertEqual(code, 0)
         return json.loads((self.out / "result.json").read_text(encoding="utf-8"))
+
+    def test_the_addon_file_passes_its_checks_when_a_mob_with_no_name_gets_casts(self):
+        # Issue 83: the database had this mob from Gander's own sightings, with
+        # stats and no name. A combat log's casts and zone went in, the name
+        # waited, and the checks on the file failed the run.
+        data = base()
+        data["games"]["forever"]["mobs"]["1421"] = {"name": "", "spells": {},
+                                                    "levels": {"31": {"at": T0, "v": {"spd": 2}}}}
+        gander_import.save_json(self.data, data)
+        self.run_tool([issue(1, sub({"1421": {"name": "Private Merle", "zones": ["The Barrens"], "in": ["48"],
+                                              "spells": {"5401": {"n": 3, "spawns": 2, "at": "2026-11-25"}}}},
+                                    spells={"5401": "Lizard Bolt"}))])
+        text = self.lua.read_text(encoding="utf-8")
+        self.assertIn("[1421] = { 5401 }", text)
+        self.assertIn("[1421] = { 48 }", text)
+        self.assertIn('[1421] = { "The Barrens" }', text)
+        self.assertNotIn("Private Merle", text)
+        checks = pathlib.Path(__file__).resolve().parents[1] / "ganderdata" / "run_tests.py"
+        done = subprocess.run([sys.executable, str(checks), str(self.lua)], capture_output=True, text=True)
+        self.assertEqual(done.returncode, 0, done.stdout[-1500:] + done.stderr[-500:])
 
     def test_a_run_saves_the_record_of_logs(self):
         r = self.run_tool([issue(1, sub(cast(3), logs={LOG_A: [0, 5000]}))])

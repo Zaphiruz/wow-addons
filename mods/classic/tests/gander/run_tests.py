@@ -2437,6 +2437,21 @@ SCENARIOS = {
   w.search:Type("duskwood")
   ok(names() == "Caster", "found by the zone it was logged in: " .. names())
 ''',
+"a database mob with casts and a zone but no name yet is listed by its number": r'''
+  withData()
+  GanderData.forever.casts[3254] = { 8399 }
+  GanderData.forever.zones = { [3254] = { "The Barrens" } }
+  login(nil)
+  cmd("")
+  local w = GanderBestiary
+  placeRow("The Barrens"):Click()
+  ok(names() == "Mob #3254", names())
+  w.rows[1]:Click()
+  local d = plain(w.detail:GetText())
+  ok(d:find("Mob #3254  (id 3254)", 1, true) and d:find("The Barrens", 1, true) and d:find("Sleep", 1, true), d)
+  units.mouseover = mob(3254, { name = "Sunscale Lashtail", level = 13 })
+  ok(hover("mouseover"):find("Casts: Sleep", 1, true), "the tooltip knows the mob by its number: " .. hover("mouseover"))
+''',
 "a database from before dungeons were recorded still lists its mobs": r'''
   withData()
   GanderData.forever.dungeons, GanderData.forever.inside = nil, nil
