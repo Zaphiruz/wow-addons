@@ -4227,6 +4227,23 @@
      "name": "Jhordy Lapforge",
      "spells": {}
     },
+    "14859": {
+     "levels": {
+      "40": {
+       "at": 1795831555,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Guard Taruc",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "The Barrens"
+       }
+      }
+     },
+     "name": "Guard Taruc",
+     "spells": {}
+    },
     "14901": {
      "levels": {
       "4": {
@@ -4535,6 +4552,18 @@
      },
      "name": "Scarlet Zealot",
      "spells": {}
+    },
+    "1540": {
+     "levels": {},
+     "name": "Scarlet Vanguard",
+     "spells": {
+      "7164": {
+       "at": "2026-11-27",
+       "build": "1.60.1",
+       "n": 1,
+       "spawns": 1
+      }
+     }
     },
     "1547": {
      "levels": {
@@ -10359,6 +10388,23 @@
      "name": "Off-Duty Pack Kodo",
      "spells": {}
     },
+    "256400": {
+     "levels": {
+      "30": {
+       "at": 1795832709,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Okamache",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "The Barrens"
+       }
+      }
+     },
+     "name": "Okamache",
+     "spells": {}
+    },
     "256418": {
      "levels": {
       "42": {
@@ -13164,6 +13210,26 @@
      "name": "Earthen Ring Shaman",
      "spells": {}
     },
+    "262558": {
+     "levels": {
+      "55": {
+       "at": 1795826777,
+       "v": {
+        "armor": 3292,
+        "class": "WARRIOR",
+        "dmax": 124.7,
+        "dmin": 94.04,
+        "n": "Palah Thunderhoof",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Mulgore"
+       }
+      }
+     },
+     "name": "Palah Thunderhoof",
+     "spells": {}
+    },
     "262560": {
      "levels": {
       "55": {
@@ -14060,7 +14126,7 @@
        }
       }
      },
-     "name": "",
+     "name": "Gur'ak",
      "spells": {}
     },
     "267314": {
@@ -14352,6 +14418,23 @@
       }
      },
      "name": "Bloodtalon Matriarch",
+     "spells": {}
+    },
+    "268557": {
+     "levels": {
+      "55": {
+       "at": 1795826791,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Olana Brighthoof",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Mulgore"
+       }
+      }
+     },
+     "name": "Olana Brighthoof",
      "spells": {}
     },
     "268558": {
@@ -20123,6 +20206,23 @@
      "name": "Master Gadrin",
      "spells": {}
     },
+    "3190": {
+     "levels": {
+      "8": {
+       "at": 1795830719,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Rhinag",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Durotar"
+       }
+      }
+     },
+     "name": "Rhinag",
+     "spells": {}
+    },
     "3191": {
      "levels": {
       "6": {
@@ -21309,7 +21409,7 @@
        }
       }
      },
-     "name": "",
+     "name": "Sunscale Lashtail",
      "spells": {}
     },
     "3255": {
@@ -21493,7 +21593,14 @@
       }
      },
      "name": "Bristleback Thornweaver",
-     "spells": {},
+     "spells": {
+      "782": {
+       "at": "2026-11-27",
+       "build": "1.60.1",
+       "n": 2,
+       "spawns": 1
+      }
+     },
      "zones": [
       "The Barrens"
      ]
@@ -21614,6 +21721,23 @@
       }
      },
      "name": "Kolkar Stormer",
+     "spells": {}
+    },
+    "3274": {
+     "levels": {
+      "15": {
+       "at": 1795832065,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Kolkar Pack Runner",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "The Barrens"
+       }
+      }
+     },
+     "name": "Kolkar Pack Runner",
      "spells": {}
     },
     "3275": {
@@ -22755,6 +22879,26 @@
      "name": "Urtrun Clanbringer",
      "spells": {}
     },
+    "3373": {
+     "levels": {
+      "35": {
+       "at": 1795830194,
+       "v": {
+        "armor": 1387,
+        "class": "WARRIOR",
+        "dmax": 64.44,
+        "dmin": 48.58,
+        "n": "Arnok",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Orgrimmar"
+       }
+      }
+     },
+     "name": "Arnok",
+     "spells": {}
+    },
     "3374": {
      "levels": {
       "21": {
@@ -23095,6 +23239,34 @@
       }
      },
      "name": "",
+     "spells": {}
+    },
+    "3397": {
+     "levels": {
+      "14": {
+       "at": 1795832204,
+       "v": {
+        "class": "PALADIN",
+        "n": "Kolkar Bloodcharger",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "The Barrens"
+       }
+      },
+      "15": {
+       "at": 1795832068,
+       "v": {
+        "class": "PALADIN",
+        "n": "Kolkar Bloodcharger",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "The Barrens"
+       }
+      }
+     },
+     "name": "Kolkar Bloodcharger",
      "spells": {}
     },
     "3399": {
@@ -23509,6 +23681,23 @@
      "name": "Mangletooth",
      "spells": {}
     },
+    "3431": {
+     "levels": {
+      "10": {
+       "at": 1795831222,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Grenthar",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "The Barrens"
+       }
+      }
+     },
+     "name": "Grenthar",
+     "spells": {}
+    },
     "3432": {
      "levels": {
       "15": {
@@ -23655,6 +23844,23 @@
       }
      },
      "name": "Sputtervalve",
+     "spells": {}
+    },
+    "3443": {
+     "levels": {
+      "13": {
+       "at": 1795831553,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Grub",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "The Barrens"
+       }
+      }
+     },
+     "name": "Grub",
      "spells": {}
     },
     "3444": {
@@ -23934,6 +24140,36 @@
      "name": "Razormane Warfrenzy",
      "spells": {}
     },
+    "3461": {
+     "levels": {
+      "15": {
+       "at": 1795832161,
+       "v": {
+        "class": "WARRIOR",
+        "fam": "Turtle",
+        "n": "Oasis Snapjaw",
+        "run": 8,
+        "spd": 2,
+        "ty": "Beast",
+        "z": "The Barrens"
+       }
+      },
+      "16": {
+       "at": 1795832159,
+       "v": {
+        "class": "WARRIOR",
+        "fam": "Turtle",
+        "n": "Oasis Snapjaw",
+        "run": 8,
+        "spd": 2,
+        "ty": "Beast",
+        "z": "The Barrens"
+       }
+      }
+     },
+     "name": "Oasis Snapjaw",
+     "spells": {}
+    },
     "3463": {
      "levels": {
       "18": {
@@ -24159,6 +24395,26 @@
      "name": "Hraq",
      "spells": {}
     },
+    "3478": {
+     "levels": {
+      "31": {
+       "at": 1795832650,
+       "v": {
+        "armor": 1247,
+        "class": "WARRIOR",
+        "dmax": 57.73,
+        "dmin": 43.53,
+        "n": "Traugh",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "The Barrens"
+       }
+      }
+     },
+     "name": "Traugh",
+     "spells": {}
+    },
     "3479": {
      "levels": {
       "35": {
@@ -24279,6 +24535,23 @@
       }
      },
      "name": "Kalyimah Stormcloud",
+     "spells": {}
+    },
+    "3488": {
+     "levels": {
+      "16": {
+       "at": 1795832655,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Uthrok",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "The Barrens"
+       }
+      }
+     },
+     "name": "Uthrok",
      "spells": {}
     },
     "3489": {
@@ -28209,6 +28482,12 @@
        "build": "1.60.1",
        "n": 15,
        "spawns": 6
+      },
+      "6979": {
+       "at": "2026-11-27",
+       "build": "1.60.1",
+       "n": 14,
+       "spawns": 5
       }
      },
      "zones": [
@@ -28396,6 +28675,18 @@
       }
      }
     },
+    "4297": {
+     "levels": {},
+     "name": "Scarlet Conjuror",
+     "spells": {
+      "9053": {
+       "at": "2026-11-27",
+       "build": "1.60.1",
+       "n": 3,
+       "spawns": 1
+      }
+     }
+    },
     "4298": {
      "in": [
       "189"
@@ -28493,6 +28784,24 @@
       }
      },
      "name": "Tharm",
+     "spells": {}
+    },
+    "4316": {
+     "levels": {
+      "13": {
+       "at": 1795832067,
+       "v": {
+        "class": "WARRIOR",
+        "fam": "Hyena",
+        "n": "Kolkar Packhound",
+        "run": 8,
+        "spd": 2,
+        "ty": "Beast",
+        "z": "The Barrens"
+       }
+      }
+     },
+     "name": "Kolkar Packhound",
      "spells": {}
     },
     "4317": {
@@ -32861,6 +33170,34 @@
      "name": "Tremor Totem",
      "spells": {}
     },
+    "5919": {
+     "levels": {
+      "16": {
+       "at": 1795832315,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Stoneskin Totem II",
+        "run": 7,
+        "spd": 2,
+        "ty": "Totem",
+        "z": "Thunder Bluff"
+       }
+      },
+      "17": {
+       "at": 1795832860,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Stoneskin Totem II",
+        "run": 7,
+        "spd": 2,
+        "ty": "Totem",
+        "z": "The Barrens"
+       }
+      }
+     },
+     "name": "Stoneskin Totem II",
+     "spells": {}
+    },
     "5920": {
      "levels": {
       "26": {
@@ -33398,6 +33735,23 @@
       }
      }
     },
+    "5994": {
+     "levels": {
+      "60": {
+       "at": 1795830157,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Zayus",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Orgrimmar"
+       }
+      }
+     },
+     "name": "Zayus",
+     "spells": {}
+    },
     "6012": {
      "levels": {
       "48": {
@@ -33413,6 +33767,23 @@
       }
      },
      "name": "Flametongue Totem II",
+     "spells": {}
+    },
+    "6014": {
+     "levels": {
+      "50": {
+       "at": 1795830157,
+       "v": {
+        "class": "WARRIOR",
+        "n": "X'yera",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Orgrimmar"
+       }
+      }
+     },
+     "name": "X'yera",
      "spells": {}
     },
     "6020": {
@@ -37070,6 +37441,40 @@
      "name": "Rartar",
      "spells": {}
     },
+    "8306": {
+     "levels": {
+      "18": {
+       "at": 1795831553,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Duhng",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "The Barrens"
+       }
+      }
+     },
+     "name": "Duhng",
+     "spells": {}
+    },
+    "8307": {
+     "levels": {
+      "22": {
+       "at": 1795831550,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Tarban Hearthgrain",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "The Barrens"
+       }
+      }
+     },
+     "name": "Tarban Hearthgrain",
+     "spells": {}
+    },
     "8357": {
      "levels": {
       "45": {
@@ -37204,6 +37609,23 @@
       }
      },
      "name": "",
+     "spells": {}
+    },
+    "8404": {
+     "levels": {
+      "30": {
+       "at": 1795830144,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Xan'tish",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Orgrimmar"
+       }
+      }
+     },
+     "name": "Xan'tish",
      "spells": {}
     },
     "855": {
@@ -38927,6 +39349,7 @@
     "6909": "Curse of Thorns",
     "6920": "Hide",
     "6958": "Blood Leech",
+    "6979": "Fire Shot",
     "6982": "Gust of Wind",
     "7": "Suicide",
     "7054": "Forsaken Skills",
@@ -38962,6 +39385,7 @@
     "7741": "Summoned Demon",
     "7750": "Consuming Rage",
     "7803": "Thundershock",
+    "782": "Thorns",
     "8014": "Tetanus",
     "8046": "Earth Shock",
     "8052": "Flame Shock",
