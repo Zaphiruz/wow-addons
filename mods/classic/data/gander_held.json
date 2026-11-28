@@ -1,5 +1,71 @@
 {
- "pending": [],
+ "pending": [
+  {
+   "game": "forever",
+   "instances": {},
+   "mobs": {
+    "3226": {
+     "levels": {},
+     "name": "Corrupted Scorpid",
+     "spells": {
+      "11918": {
+       "at": "2026-11-27",
+       "build": "1.60.1",
+       "n": 1,
+       "spawns": 1
+      }
+     },
+     "zones": [
+      "Durotar"
+     ]
+    },
+    "3254": {
+     "levels": {},
+     "name": "Sunscale Lashtail",
+     "spells": {
+      "8016": {
+       "at": "2026-11-27",
+       "build": "1.60.1",
+       "n": 1,
+       "spawns": 1
+      }
+     }
+    },
+    "3397": {
+     "levels": {},
+     "name": "Kolkar Bloodcharger",
+     "spells": {
+      "6742": {
+       "at": "2026-11-27",
+       "build": "1.60.1",
+       "n": 8,
+       "spawns": 4
+      }
+     }
+    },
+    "3461": {
+     "levels": {},
+     "name": "Oasis Snapjaw",
+     "spells": {
+      "6530": {
+       "at": "2026-11-27",
+       "build": "1.60.1",
+       "n": 12,
+       "spawns": 3
+      }
+     }
+    }
+   },
+   "received": "2026-11-28",
+   "sender": "acd0d078eb62",
+   "spells": {
+    "11918": "Poison",
+    "6530": "Sling Dirt",
+    "6742": "Bloodlust",
+    "8016": "Spirit Decay"
+   }
+  }
+ ],
  "seen": [
   "6aeebeba80aca3df",
   "d546a197f4d54166",
@@ -35,7 +101,8 @@
   "14e937d64dc05417",
   "b28e7c74d8ae61ce",
   "f81560281cf015e9",
-  "21894c094fc4b968"
+  "21894c094fc4b968",
+  "bb799e698e85684e"
  ],
  "version": 1
 }
