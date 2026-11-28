@@ -10,6 +10,10 @@
      "minutes": 145.59,
      "name": "The Drowned City"
     },
+    "2999": {
+     "minutes": 52.95,
+     "name": "Ruins of Lordaeron"
+    },
     "33": {
      "minutes": 52.786,
      "name": "Shadowfang Keep"
@@ -187,6 +191,26 @@
       }
      },
      "name": "Brave Moonhorn",
+     "spells": {}
+    },
+    "10136": {
+     "levels": {
+      "30": {
+       "at": 1795836856,
+       "v": {
+        "armor": 618,
+        "class": "MAGE",
+        "dmax": 41.12,
+        "dmin": 30.99,
+        "n": "Chemist Fuely",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Undercity"
+       }
+      }
+     },
+     "name": "Chemist Fuely",
      "spells": {}
     },
     "10176": {
@@ -1476,6 +1500,26 @@
      "name": "Mukdrak",
      "spells": {}
     },
+    "11044": {
+     "levels": {
+      "25": {
+       "at": 1795836856,
+       "v": {
+        "armor": 1037,
+        "class": "WARRIOR",
+        "dmax": 47.5,
+        "dmin": 35.81,
+        "n": "Doctor Martin Felben",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Undercity"
+       }
+      }
+     },
+     "name": "Doctor Martin Felben",
+     "spells": {}
+    },
     "11051": {
      "levels": {
       "26": {
@@ -2565,6 +2609,26 @@
      "name": "Rahauro",
      "spells": {}
     },
+    "11835": {
+     "levels": {
+      "50": {
+       "at": 1795840698,
+       "v": {
+        "armor": 3018,
+        "class": "WARRIOR",
+        "dmax": 84.15,
+        "dmin": 63.46,
+        "n": "Theodore Griffs",
+        "run": 8,
+        "spd": 1.5,
+        "ty": "Humanoid",
+        "z": "Undercity"
+       }
+      }
+     },
+     "name": "Theodore Griffs",
+     "spells": {}
+    },
     "11860": {
      "levels": {
       "30": {
@@ -2682,6 +2746,27 @@
       }
      },
      "name": "Ansekhwa",
+     "spells": {}
+    },
+    "11870": {
+     "levels": {
+      "50": {
+       "at": 1795840830,
+       "v": {
+        "armor": 3018,
+        "class": "WARRIOR",
+        "dmax": 785.39,
+        "dmin": 592.26,
+        "n": "Archibald",
+        "rk": "ELITE",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Undercity"
+       }
+      }
+     },
+     "name": "Archibald",
      "spells": {}
     },
     "11871": {
@@ -3951,6 +4036,24 @@
      "name": "Overlord Runthak",
      "spells": {}
     },
+    "14402": {
+     "levels": {
+      "60": {
+       "at": 1795840972,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Seeker Cromwell",
+        "rk": "ELITE",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Undercity"
+       }
+      }
+     },
+     "name": "Seeker Cromwell",
+     "spells": {}
+    },
     "14403": {
      "levels": {
       "60": {
@@ -4398,6 +4501,23 @@
      "name": "Qeeju",
      "spells": {}
     },
+    "15138": {
+     "levels": {
+      "55": {
+       "at": 1795836346,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Silverpine Elite",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Silverpine Forest"
+       }
+      }
+     },
+     "name": "Silverpine Elite",
+     "spells": {}
+    },
     "15165": {
      "levels": {
       "51": {
@@ -4451,6 +4571,72 @@
      },
      "name": "Deathguard Simmer",
      "spells": {}
+    },
+    "1529": {
+     "levels": {
+      "10": {
+       "at": 1795841382,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Bleeding Horror",
+        "run": 6,
+        "spd": 2,
+        "ty": "Undead",
+        "z": "Tirisfal Glades"
+       }
+      },
+      "9": {
+       "at": 1795841375,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Bleeding Horror",
+        "run": 6,
+        "spd": 2,
+        "ty": "Undead",
+        "z": "Tirisfal Glades"
+       }
+      }
+     },
+     "name": "Bleeding Horror",
+     "spells": {}
+    },
+    "1532": {
+     "levels": {
+      "10": {
+       "at": 1795841383,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Wandering Spirit",
+        "run": 8,
+        "spd": 2,
+        "ty": "Undead",
+        "z": "Tirisfal Glades"
+       }
+      },
+      "11": {
+       "at": 1795841382,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Wandering Spirit",
+        "run": 8,
+        "spd": 2,
+        "ty": "Undead",
+        "z": "Tirisfal Glades"
+       }
+      }
+     },
+     "name": "Wandering Spirit",
+     "spells": {
+      "7713": {
+       "at": "2026-11-27",
+       "build": "1.60.1",
+       "n": 6,
+       "spawns": 3
+      }
+     },
+     "zones": [
+      "Tirisfal Glades"
+     ]
     },
     "1535": {
      "levels": {
@@ -4843,6 +5029,23 @@
      "name": "Auctioneer Cain",
      "spells": {}
     },
+    "15683": {
+     "levels": {
+      "50": {
+       "at": 1795840919,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Auctioneer Naxxremis",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Undercity"
+       }
+      }
+     },
+     "name": "Auctioneer Naxxremis",
+     "spells": {}
+    },
     "15684": {
      "levels": {
       "50": {
@@ -5190,6 +5393,78 @@
      "name": "Moonrage Darkrunner",
      "spells": {}
     },
+    "1772": {
+     "levels": {
+      "11": {
+       "at": 1795835919,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Rot Hide Gladerunner",
+        "run": 8.33,
+        "spd": 2,
+        "ty": "Undead",
+        "z": "Silverpine Forest"
+       }
+      },
+      "12": {
+       "at": 1795835927,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Rot Hide Gladerunner",
+        "run": 8.33,
+        "spd": 2,
+        "ty": "Undead",
+        "z": "Silverpine Forest"
+       }
+      }
+     },
+     "name": "Rot Hide Gladerunner",
+     "spells": {}
+    },
+    "1773": {
+     "levels": {
+      "12": {
+       "at": 1795837199,
+       "v": {
+        "class": "PALADIN",
+        "n": "Rot Hide Mystic",
+        "run": 8,
+        "spd": 2,
+        "ty": "Undead",
+        "z": "Silverpine Forest"
+       }
+      },
+      "13": {
+       "at": 1795837199,
+       "v": {
+        "class": "PALADIN",
+        "n": "Rot Hide Mystic",
+        "run": 8,
+        "spd": 2,
+        "ty": "Undead",
+        "z": "Silverpine Forest"
+       }
+      }
+     },
+     "name": "Rot Hide Mystic",
+     "spells": {
+      "3237": {
+       "at": "2026-11-27",
+       "build": "1.60.1",
+       "n": 6,
+       "spawns": 1
+      },
+      "332": {
+       "at": "2026-11-27",
+       "build": "1.60.1",
+       "n": 3,
+       "spawns": 2
+      }
+     },
+     "zones": [
+      "Silverpine Forest"
+     ]
+    },
     "1775": {
      "levels": {
       "60": {
@@ -5278,6 +5553,76 @@
       "Silverpine Forest"
      ]
     },
+    "1780": {
+     "levels": {
+      "12": {
+       "at": 1795834899,
+       "v": {
+        "class": "WARRIOR",
+        "fam": "Spider",
+        "n": "Moss Stalker",
+        "run": 8,
+        "spd": 2,
+        "ty": "Beast",
+        "z": "Silverpine Forest"
+       }
+      },
+      "13": {
+       "at": 1795834906,
+       "v": {
+        "class": "WARRIOR",
+        "fam": "Spider",
+        "n": "Moss Stalker",
+        "run": 8,
+        "spd": 2,
+        "ty": "Beast",
+        "z": "Silverpine Forest"
+       }
+      }
+     },
+     "name": "Moss Stalker",
+     "spells": {
+      "744": {
+       "at": "2026-11-27",
+       "build": "1.60.1",
+       "n": 14,
+       "spawns": 9
+      }
+     },
+     "zones": [
+      "Silverpine Forest"
+     ]
+    },
+    "1781": {
+     "levels": {},
+     "name": "Mist Creeper",
+     "spells": {
+      "744": {
+       "at": "2026-11-27",
+       "build": "1.60.1",
+       "n": 2,
+       "spawns": 1
+      }
+     },
+     "zones": [
+      "Silverpine Forest"
+     ]
+    },
+    "1782": {
+     "levels": {},
+     "name": "Moonrage Darksoul",
+     "spells": {
+      "8599": {
+       "at": "2026-11-27",
+       "build": "1.60.1",
+       "n": 1,
+       "spawns": 1
+      }
+     },
+     "zones": [
+      "Silverpine Forest"
+     ]
+    },
     "1795": {
      "levels": {},
      "name": "Searing Ghoul",
@@ -5324,6 +5669,24 @@
       }
      },
      "name": "Giant Grizzled Bear",
+     "spells": {}
+    },
+    "185317": {
+     "levels": {
+      "29": {
+       "at": 1795884470,
+       "v": {
+        "class": "WARLOCK",
+        "fam": "Incubus",
+        "n": "Foarseverus",
+        "run": 8,
+        "spd": 1.74,
+        "ty": "Demon",
+        "z": "Orgrimmar"
+       }
+      }
+     },
+     "name": "Foarseverus",
      "spells": {}
     },
     "1860": {
@@ -5526,10 +5889,34 @@
       }
      },
      "name": "Ravenclaw Servant",
-     "spells": {},
+     "spells": {
+      "980": {
+       "at": "2026-11-27",
+       "build": "1.60.1",
+       "n": 4,
+       "spawns": 2
+      }
+     },
      "zones": [
       "Silverpine Forest"
      ]
+    },
+    "1870": {
+     "levels": {
+      "16": {
+       "at": 1795838451,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Hand of Ravenclaw",
+        "run": 8,
+        "spd": 2,
+        "ty": "Undead",
+        "z": "Silverpine Forest"
+       }
+      }
+     },
+     "name": "Hand of Ravenclaw",
+     "spells": {}
     },
     "1888": {
      "levels": {
@@ -5648,6 +6035,52 @@
      "name": "Moonrage Watcher",
      "spells": {}
     },
+    "1893": {
+     "levels": {
+      "14": {
+       "at": 1795837856,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Moonrage Sentry",
+        "rk": "ELITE",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Silverpine Forest"
+       }
+      },
+      "15": {
+       "at": 1795837567,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Moonrage Sentry",
+        "rk": "ELITE",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Silverpine Forest"
+       }
+      }
+     },
+     "name": "Moonrage Sentry",
+     "spells": {
+      "13730": {
+       "at": "2026-11-27",
+       "build": "1.60.1",
+       "n": 9,
+       "spawns": 2
+      },
+      "6507": {
+       "at": "2026-11-27",
+       "build": "1.60.1",
+       "n": 9,
+       "spawns": 4
+      }
+     },
+     "zones": [
+      "Silverpine Forest"
+     ]
+    },
     "1894": {
      "levels": {
       "14": {
@@ -5683,11 +6116,57 @@
        "n": 4,
        "spawns": 4
       },
+      "12169": {
+       "at": "2026-11-27",
+       "build": "1.60.1",
+       "n": 12,
+       "spawns": 5
+      },
       "7164": {
        "at": "2026-11-27",
        "build": "1.60.1",
        "n": 11,
        "spawns": 6
+      }
+     },
+     "zones": [
+      "Silverpine Forest"
+     ]
+    },
+    "1895": {
+     "levels": {
+      "14": {
+       "at": 1795837637,
+       "v": {
+        "class": "PALADIN",
+        "n": "Pyrewood Elder",
+        "rk": "ELITE",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Silverpine Forest"
+       }
+      },
+      "15": {
+       "at": 1795837664,
+       "v": {
+        "class": "PALADIN",
+        "n": "Pyrewood Elder",
+        "rk": "ELITE",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Silverpine Forest"
+       }
+      }
+     },
+     "name": "Pyrewood Elder",
+     "spells": {
+      "2053": {
+       "at": "2026-11-27",
+       "build": "1.60.1",
+       "n": 3,
+       "spawns": 2
       }
      },
      "zones": [
@@ -5736,6 +6215,27 @@
      },
      "zones": [
       "Stranglethorn Vale"
+     ]
+    },
+    "1908": {
+     "levels": {},
+     "name": "Vile Fin Oracle",
+     "spells": {
+      "2606": {
+       "at": "2026-11-27",
+       "build": "1.60.1",
+       "n": 11,
+       "spawns": 2
+      },
+      "913": {
+       "at": "2026-11-27",
+       "build": "1.60.1",
+       "n": 4,
+       "spawns": 2
+      }
+     },
+     "zones": [
+      "Silverpine Forest"
      ]
     },
     "1909": {
@@ -5943,7 +6443,7 @@
        }
       }
      },
-     "name": "",
+     "name": "Apothecary Renferrel",
      "spells": {}
     },
     "1938": {
@@ -5961,6 +6461,108 @@
       }
      },
      "name": "",
+     "spells": {}
+    },
+    "1939": {
+     "levels": {
+      "16": {
+       "at": 1795838706,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Rot Hide Brute",
+        "run": 8,
+        "spd": 2,
+        "ty": "Undead",
+        "z": "Silverpine Forest"
+       }
+      },
+      "17": {
+       "at": 1795838531,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Rot Hide Brute",
+        "run": 8,
+        "spd": 2,
+        "ty": "Undead",
+        "z": "Silverpine Forest"
+       }
+      }
+     },
+     "name": "Rot Hide Brute",
+     "spells": {
+      "11971": {
+       "at": "2026-11-27",
+       "build": "1.60.1",
+       "n": 3,
+       "spawns": 1
+      },
+      "3237": {
+       "at": "2026-11-27",
+       "build": "1.60.1",
+       "n": 3,
+       "spawns": 1
+      }
+     },
+     "zones": [
+      "Silverpine Forest"
+     ]
+    },
+    "1940": {
+     "levels": {
+      "17": {
+       "at": 1795838702,
+       "v": {
+        "class": "PALADIN",
+        "n": "Rot Hide Plague Weaver",
+        "run": 8,
+        "spd": 2,
+        "ty": "Undead",
+        "z": "Silverpine Forest"
+       }
+      },
+      "18": {
+       "at": 1795838513,
+       "v": {
+        "class": "PALADIN",
+        "n": "Rot Hide Plague Weaver",
+        "run": 8,
+        "spd": 2,
+        "ty": "Undead",
+        "z": "Silverpine Forest"
+       }
+      }
+     },
+     "name": "Rot Hide Plague Weaver",
+     "spells": {
+      "3256": {
+       "at": "2026-11-27",
+       "build": "1.60.1",
+       "n": 1,
+       "spawns": 1
+      }
+     },
+     "zones": [
+      "Silverpine Forest"
+     ]
+    },
+    "1952": {
+     "levels": {
+      "30": {
+       "at": 1795836180,
+       "v": {
+        "armor": 1212,
+        "class": "WARRIOR",
+        "dmax": 56.32,
+        "dmin": 42.45,
+        "n": "High Executor Hadrec",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Silverpine Forest"
+       }
+      }
+     },
+     "name": "High Executor Hadrec",
      "spells": {}
     },
     "1953": {
@@ -5989,7 +6591,14 @@
       }
      },
      "name": "Lake Skulker",
-     "spells": {},
+     "spells": {
+      "6866": {
+       "at": "2026-11-27",
+       "build": "1.60.1",
+       "n": 23,
+       "spawns": 13
+      }
+     },
      "zones": [
       "Silverpine Forest"
      ]
@@ -6020,10 +6629,280 @@
       }
      },
      "name": "Elder Lake Skulker",
-     "spells": {},
+     "spells": {
+      "6866": {
+       "at": "2026-11-27",
+       "build": "1.60.1",
+       "n": 11,
+       "spawns": 5
+      },
+      "9616": {
+       "at": "2026-11-27",
+       "build": "1.60.1",
+       "n": 10,
+       "spawns": 6
+      }
+     },
      "zones": [
       "Silverpine Forest"
      ]
+    },
+    "1955": {
+     "levels": {
+      "17": {
+       "at": 1795840350,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Lake Creeper",
+        "run": 8,
+        "spd": 2,
+        "ty": "Elemental",
+        "z": "Silverpine Forest"
+       }
+      },
+      "18": {
+       "at": 1795840341,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Lake Creeper",
+        "run": 8,
+        "spd": 2,
+        "ty": "Elemental",
+        "z": "Silverpine Forest"
+       }
+      }
+     },
+     "name": "Lake Creeper",
+     "spells": {
+      "6870": {
+       "at": "2026-11-27",
+       "build": "1.60.1",
+       "n": 12,
+       "spawns": 7
+      }
+     },
+     "zones": [
+      "Silverpine Forest"
+     ]
+    },
+    "1956": {
+     "levels": {
+      "18": {
+       "at": 1795840221,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Elder Lake Creeper",
+        "run": 8,
+        "spd": 2,
+        "ty": "Elemental",
+        "z": "Silverpine Forest"
+       }
+      },
+      "19": {
+       "at": 1795840378,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Elder Lake Creeper",
+        "run": 8,
+        "spd": 2,
+        "ty": "Elemental",
+        "z": "Silverpine Forest"
+       }
+      }
+     },
+     "name": "Elder Lake Creeper",
+     "spells": {
+      "11922": {
+       "at": "2026-11-27",
+       "build": "1.60.1",
+       "n": 90,
+       "spawns": 37
+      },
+      "6870": {
+       "at": "2026-11-27",
+       "build": "1.60.1",
+       "n": 22,
+       "spawns": 12
+      }
+     },
+     "zones": [
+      "Alterac Mountains",
+      "Silverpine Forest"
+     ]
+    },
+    "1957": {
+     "levels": {
+      "16": {
+       "at": 1795838891,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Vile Fin Shorecreeper",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Silverpine Forest"
+       }
+      },
+      "17": {
+       "at": 1795838921,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Vile Fin Shorecreeper",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Silverpine Forest"
+       }
+      }
+     },
+     "name": "Vile Fin Shorecreeper",
+     "spells": {
+      "1776": {
+       "at": "2026-11-27",
+       "build": "1.60.1",
+       "n": 2,
+       "spawns": 1
+      }
+     },
+     "zones": [
+      "Silverpine Forest"
+     ]
+    },
+    "1958": {
+     "levels": {
+      "17": {
+       "at": 1795839436,
+       "v": {
+        "class": "PALADIN",
+        "n": "Vile Fin Tidecaller",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Silverpine Forest"
+       }
+      },
+      "18": {
+       "at": 1795838919,
+       "v": {
+        "class": "PALADIN",
+        "n": "Vile Fin Tidecaller",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Silverpine Forest"
+       }
+      }
+     },
+     "name": "Vile Fin Tidecaller",
+     "spells": {
+      "11831": {
+       "at": "2026-11-27",
+       "build": "1.60.1",
+       "n": 11,
+       "spawns": 3
+      }
+     },
+     "zones": [
+      "Silverpine Forest"
+     ]
+    },
+    "1983": {
+     "levels": {
+      "14": {
+       "at": 1795835620,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Nightlash",
+        "run": 8,
+        "spd": 2,
+        "ty": "Undead",
+        "z": "Silverpine Forest"
+       }
+      }
+     },
+     "name": "Nightlash",
+     "spells": {
+      "3477": {
+       "at": "2026-11-27",
+       "build": "1.60.1",
+       "n": 2,
+       "spawns": 2
+      },
+      "3485": {
+       "at": "2026-11-27",
+       "build": "1.60.1",
+       "n": 3,
+       "spawns": 1
+      }
+     },
+     "zones": [
+      "Silverpine Forest"
+     ]
+    },
+    "203139": {
+     "levels": {
+      "25": {
+       "at": 1795835350,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Son of Arugal",
+        "rk": "ELITE",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Silverpine Forest"
+       }
+      }
+     },
+     "name": "Son of Arugal",
+     "spells": {
+      "7124": {
+       "at": "2026-11-27",
+       "build": "1.60.1",
+       "n": 15,
+       "spawns": 2
+      }
+     },
+     "zones": [
+      "Silverpine Forest"
+     ]
+    },
+    "2055": {
+     "levels": {
+      "50": {
+       "at": 1795840686,
+       "v": {
+        "armor": 2444,
+        "class": "PALADIN",
+        "dmax": 104.33,
+        "dmin": 78.7,
+        "n": "Master Apothecary Faranell",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Undercity"
+       }
+      }
+     },
+     "name": "Master Apothecary Faranell",
+     "spells": {}
+    },
+    "2056": {
+     "levels": {
+      "24": {
+       "at": 1795835626,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Ravenclaw Apparition",
+        "run": 8,
+        "spd": 2,
+        "ty": "Undead",
+        "z": "Silverpine Forest"
+       }
+      }
+     },
+     "name": "Ravenclaw Apparition",
+     "spells": {}
     },
     "205729": {
      "levels": {
@@ -6124,6 +7003,26 @@
      "name": "",
      "spells": {}
     },
+    "2121": {
+     "levels": {
+      "20": {
+       "at": 1795838078,
+       "v": {
+        "armor": 861,
+        "class": "WARRIOR",
+        "dmax": 29.26,
+        "dmin": 22.04,
+        "n": "Shadow Priest Allister",
+        "run": 8,
+        "spd": 1.5,
+        "ty": "Humanoid",
+        "z": "Silverpine Forest"
+       }
+      }
+     },
+     "name": "Shadow Priest Allister",
+     "spells": {}
+    },
     "2140": {
      "levels": {
       "18": {
@@ -6145,7 +7044,7 @@
        }
       }
      },
-     "name": "",
+     "name": "Edwin Harly",
      "spells": {}
     },
     "214529": {
@@ -7684,7 +8583,67 @@
        }
       }
      },
-     "name": "",
+     "name": "Aza'bek",
+     "spells": {}
+    },
+    "248199": {
+     "levels": {
+      "60": {
+       "at": 1795885064,
+       "v": {
+        "armor": 3566,
+        "class": "WARRIOR",
+        "dmax": 137.86,
+        "dmin": 103.95,
+        "n": "Beneris",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "The Barrens"
+       }
+      }
+     },
+     "name": "Beneris",
+     "spells": {}
+    },
+    "248200": {
+     "levels": {
+      "60": {
+       "at": 1795885018,
+       "v": {
+        "armor": 3566,
+        "class": "WARRIOR",
+        "dmax": 137.86,
+        "dmin": 103.95,
+        "n": "Fizzlefuse",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "The Barrens"
+       }
+      }
+     },
+     "name": "Fizzlefuse",
+     "spells": {}
+    },
+    "248201": {
+     "levels": {
+      "60": {
+       "at": 1795885040,
+       "v": {
+        "armor": 3566,
+        "class": "WARRIOR",
+        "dmax": 137.86,
+        "dmin": 103.95,
+        "n": "Pawani",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "The Barrens"
+       }
+      }
+     },
+     "name": "Pawani",
      "spells": {}
     },
     "248202": {
@@ -7703,7 +8662,7 @@
        }
       }
      },
-     "name": "",
+     "name": "Jim'bek",
      "spells": {}
     },
     "2483": {
@@ -8043,6 +9002,242 @@
      "name": "\"Shaky\" Phillipe",
      "spells": {}
     },
+    "250483": {
+     "in": [
+      "2999"
+     ],
+     "levels": {},
+     "name": "Witherfang",
+     "spells": {
+      "3358": {
+       "at": "2026-11-28",
+       "build": "1.60.1",
+       "n": 2,
+       "spawns": 1
+      }
+     }
+    },
+    "250624": {
+     "in": [
+      "2999"
+     ],
+     "levels": {},
+     "name": "Skeletal Mage",
+     "spells": {
+      "12544": {
+       "at": "2026-11-28",
+       "build": "1.60.1",
+       "n": 81,
+       "spawns": 12
+      },
+      "18266": {
+       "at": "2026-11-28",
+       "build": "1.60.1",
+       "n": 25,
+       "spawns": 8
+      },
+      "6136": {
+       "at": "2026-11-28",
+       "build": "1.60.1",
+       "n": 56,
+       "spawns": 8
+      }
+     }
+    },
+    "250629": {
+     "in": [
+      "2999"
+     ],
+     "levels": {},
+     "name": "Stone Watcher",
+     "spells": {
+      "1251657": {
+       "at": "2026-11-28",
+       "build": "1.60.1",
+       "n": 111,
+       "spawns": 16
+      }
+     },
+     "zones": [
+      "Undercity"
+     ]
+    },
+    "250630": {
+     "in": [
+      "2999"
+     ],
+     "levels": {},
+     "name": "Plague Ghoul",
+     "spells": {
+      "15613": {
+       "at": "2026-11-28",
+       "build": "1.60.1",
+       "n": 7,
+       "spawns": 4
+      },
+      "16458": {
+       "at": "2026-11-28",
+       "build": "1.60.1",
+       "n": 7,
+       "spawns": 4
+      }
+     }
+    },
+    "250631": {
+     "in": [
+      "2999"
+     ],
+     "levels": {},
+     "name": "The Abandoned",
+     "spells": {
+      "1266011": {
+       "at": "2026-11-28",
+       "build": "1.60.1",
+       "n": 5,
+       "spawns": 1
+      },
+      "14907": {
+       "at": "2026-11-28",
+       "build": "1.60.1",
+       "n": 4,
+       "spawns": 1
+      },
+      "6136": {
+       "at": "2026-11-28",
+       "build": "1.60.1",
+       "n": 7,
+       "spawns": 1
+      }
+     }
+    },
+    "250650": {
+     "in": [
+      "2999"
+     ],
+     "levels": {},
+     "name": "Wailing Banshee",
+     "spells": {
+      "17105": {
+       "at": "2026-11-28",
+       "build": "1.60.1",
+       "n": 1,
+       "spawns": 1
+      }
+     }
+    },
+    "250656": {
+     "in": [
+      "2999"
+     ],
+     "levels": {},
+     "name": "Fallen Berserker",
+     "spells": {
+      "13730": {
+       "at": "2026-11-28",
+       "build": "1.60.1",
+       "n": 6,
+       "spawns": 1
+      },
+      "8599": {
+       "at": "2026-11-28",
+       "build": "1.60.1",
+       "n": 4,
+       "spawns": 2
+      },
+      "9080": {
+       "at": "2026-11-28",
+       "build": "1.60.1",
+       "n": 4,
+       "spawns": 1
+      }
+     }
+    },
+    "250657": {
+     "in": [
+      "2999"
+     ],
+     "levels": {},
+     "name": "Rath'mael",
+     "spells": {
+      "18399": {
+       "at": "2026-11-28",
+       "build": "1.60.1",
+       "n": 4,
+       "spawns": 1
+      }
+     }
+    },
+    "250660": {
+     "in": [
+      "2999"
+     ],
+     "levels": {},
+     "name": "The Baron",
+     "spells": {
+      "17307": {
+       "at": "2026-11-28",
+       "build": "1.60.1",
+       "n": 3,
+       "spawns": 1
+      },
+      "5568": {
+       "at": "2026-11-28",
+       "build": "1.60.1",
+       "n": 3,
+       "spawns": 1
+      }
+     }
+    },
+    "250686": {
+     "levels": {
+      "25": {
+       "at": 1795836377,
+       "v": {
+        "armor": 1037,
+        "class": "WARRIOR",
+        "dmax": 47.5,
+        "dmin": 35.81,
+        "n": "Tabitha Heartweaver",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Silverpine Forest"
+       }
+      }
+     },
+     "name": "Tabitha Heartweaver",
+     "spells": {}
+    },
+    "250689": {
+     "in": [
+      "2999"
+     ],
+     "levels": {},
+     "name": "Living Monstrosity",
+     "spells": {
+      "14099": {
+       "at": "2026-11-28",
+       "build": "1.60.1",
+       "n": 1,
+       "spawns": 1
+      }
+     }
+    },
+    "250735": {
+     "in": [
+      "2999"
+     ],
+     "levels": {},
+     "name": "Venom Lurker",
+     "spells": {
+      "3583": {
+       "at": "2026-11-28",
+       "build": "1.60.1",
+       "n": 2,
+       "spawns": 2
+      }
+     }
+    },
     "250873": {
      "levels": {
       "1": {
@@ -8179,6 +9374,26 @@
        "spawns": 1
       }
      }
+    },
+    "251001": {
+     "levels": {
+      "55": {
+       "at": 1795841784,
+       "v": {
+        "armor": 3950,
+        "class": "WARRIOR",
+        "dmax": 124.7,
+        "dmin": 94.04,
+        "n": "Deathguard Kristof",
+        "run": 10,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Tirisfal Glades"
+       }
+      }
+     },
+     "name": "Deathguard Kristof",
+     "spells": {}
     },
     "251143": {
      "levels": {
@@ -10072,6 +11287,21 @@
      "name": "Ryff",
      "spells": {}
     },
+    "255109": {
+     "in": [
+      "2999"
+     ],
+     "levels": {},
+     "name": "Flesh Golem",
+     "spells": {
+      "10101": {
+       "at": "2026-11-28",
+       "build": "1.60.1",
+       "n": 4,
+       "spawns": 3
+      }
+     }
+    },
     "2553": {
      "levels": {},
      "name": "Witherbark Shadowcaster",
@@ -10308,6 +11538,21 @@
      "name": "Donaal Downbreeze",
      "spells": {}
     },
+    "255964": {
+     "in": [
+      "2999"
+     ],
+     "levels": {},
+     "name": "Fallen Necromancer",
+     "spells": {
+      "1322054": {
+       "at": "2026-11-28",
+       "build": "1.60.1",
+       "n": 8,
+       "spawns": 8
+      }
+     }
+    },
     "255979": {
      "levels": {
       "10": {
@@ -10362,6 +11607,21 @@
      },
      "name": "Rog'mar Grunt",
      "spells": {}
+    },
+    "256035": {
+     "in": [
+      "2999"
+     ],
+     "levels": {},
+     "name": "Viktor the Vile",
+     "spells": {
+      "3358": {
+       "at": "2026-11-28",
+       "build": "1.60.1",
+       "n": 2,
+       "spawns": 1
+      }
+     }
     },
     "256076": {
      "levels": {
@@ -10422,6 +11682,27 @@
      "zones": [
       "Zephras Isle"
      ]
+    },
+    "256097": {
+     "in": [
+      "2999"
+     ],
+     "levels": {},
+     "name": "Bjork",
+     "spells": {
+      "1301635": {
+       "at": "2026-11-28",
+       "build": "1.60.1",
+       "n": 3,
+       "spawns": 1
+      },
+      "14099": {
+       "at": "2026-11-28",
+       "build": "1.60.1",
+       "n": 3,
+       "spawns": 1
+      }
+     }
     },
     "2562": {
      "levels": {
@@ -10512,6 +11793,26 @@
       }
      },
      "name": "Dokimi",
+     "spells": {}
+    },
+    "256388": {
+     "levels": {
+      "30": {
+       "at": 1795885075,
+       "v": {
+        "armor": 1212,
+        "class": "WARRIOR",
+        "dmax": 56.32,
+        "dmin": 42.45,
+        "n": "Jornah",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "The Barrens"
+       }
+      }
+     },
+     "name": "Jornah",
      "spells": {}
     },
     "256389": {
@@ -10643,6 +11944,40 @@
       }
      },
      "name": "Belann Windwood",
+     "spells": {}
+    },
+    "256573": {
+     "levels": {
+      "60": {
+       "at": 1795885063,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Crate of Enchanting Supplies",
+        "run": 7,
+        "spd": 2,
+        "ty": "Not specified",
+        "z": "The Barrens"
+       }
+      }
+     },
+     "name": "Crate of Enchanting Supplies",
+     "spells": {}
+    },
+    "256575": {
+     "levels": {
+      "60": {
+       "at": 1795885058,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Basket of Textile Supplies",
+        "run": 7,
+        "spd": 2,
+        "ty": "Not specified",
+        "z": "The Barrens"
+       }
+      }
+     },
+     "name": "Basket of Textile Supplies",
      "spells": {}
     },
     "256617": {
@@ -12086,6 +13421,23 @@
       }
      }
     },
+    "258880": {
+     "levels": {
+      "60": {
+       "at": 1795885075,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Uninspected Shipment",
+        "run": 7,
+        "spd": 2,
+        "ty": "Not specified",
+        "z": "The Barrens"
+       }
+      }
+     },
+     "name": "Uninspected Shipment",
+     "spells": {}
+    },
     "258897": {
      "in": [
       "2970"
@@ -12660,6 +14012,12 @@
      "levels": {},
      "name": "Deathless Watcher",
      "spells": {
+      "1283073": {
+       "at": "2026-11-28",
+       "build": "1.60.1",
+       "n": 16,
+       "spawns": 6
+      },
       "1283076": {
        "at": "2026-11-28",
        "build": "1.60.1",
@@ -14585,6 +15943,12 @@
      "levels": {},
      "name": "Deathless Watcher",
      "spells": {
+      "1283073": {
+       "at": "2026-11-28",
+       "build": "1.60.1",
+       "n": 2,
+       "spawns": 1
+      },
       "1283076": {
        "at": "2026-11-28",
        "build": "1.60.1",
@@ -15123,6 +16487,26 @@
      "name": "",
      "spells": {}
     },
+    "270038": {
+     "levels": {
+      "50": {
+       "at": 1795840687,
+       "v": {
+        "armor": 2444,
+        "class": "PALADIN",
+        "dmax": 104.33,
+        "dmin": 78.7,
+        "n": "Calder Gray",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Undercity"
+       }
+      }
+     },
+     "name": "Calder Gray",
+     "spells": {}
+    },
     "270094": {
      "levels": {
       "30": {
@@ -15375,6 +16759,23 @@
       }
      },
      "name": "Plagued Cockroach",
+     "spells": {}
+    },
+    "271915": {
+     "levels": {
+      "52": {
+       "at": 1795877979,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Jungle Boa",
+        "run": 8,
+        "spd": 2,
+        "ty": "Non-combat Pet",
+        "z": "Durotar"
+       }
+      }
+     },
+     "name": "Jungle Boa",
      "spells": {}
     },
     "271929": {
@@ -16113,6 +17514,21 @@
      },
      "name": "Windshapers Dockmaster",
      "spells": {}
+    },
+    "275437": {
+     "levels": {},
+     "name": "Dark Enforcer",
+     "spells": {
+      "1320509": {
+       "at": "2026-11-27",
+       "build": "1.60.1",
+       "n": 1,
+       "spawns": 1
+      }
+     },
+     "zones": [
+      "Tirisfal Glades"
+     ]
     },
     "275487": {
      "levels": {
@@ -22619,6 +24035,23 @@
      "name": "Soran",
      "spells": {}
     },
+    "3321": {
+     "levels": {
+      "30": {
+       "at": 1795877799,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Morgum",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Orgrimmar"
+       }
+      }
+     },
+     "name": "Morgum",
+     "spells": {}
+    },
     "3322": {
      "levels": {
       "30": {
@@ -25152,6 +26585,32 @@
      "name": "Healing Stream Totem",
      "spells": {}
     },
+    "3530": {
+     "levels": {
+      "14": {
+       "at": 1795837628,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Pyrewood Tailor",
+        "rk": "ELITE",
+        "ty": "Humanoid",
+        "z": "Silverpine Forest"
+       }
+      }
+     },
+     "name": "Pyrewood Tailor",
+     "spells": {
+      "6713": {
+       "at": "2026-11-27",
+       "build": "1.60.1",
+       "n": 2,
+       "spawns": 1
+      }
+     },
+     "zones": [
+      "Silverpine Forest"
+     ]
+    },
     "3536": {
      "levels": {
       "32": {
@@ -25276,7 +26735,89 @@
        }
       }
      },
-     "name": "",
+     "name": "Patrice Dwyer",
+     "spells": {}
+    },
+    "3553": {
+     "levels": {
+      "18": {
+       "at": 1795836285,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Sebastian Meloche",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Silverpine Forest"
+       }
+      }
+     },
+     "name": "Sebastian Meloche",
+     "spells": {}
+    },
+    "3555": {
+     "levels": {
+      "19": {
+       "at": 1795836181,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Johan Focht",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Silverpine Forest"
+       }
+      }
+     },
+     "name": "Johan Focht",
+     "spells": {}
+    },
+    "3556": {
+     "levels": {
+      "18": {
+       "at": 1795836282,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Andrew Hilbert",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Silverpine Forest"
+       }
+      },
+      "20": {
+       "at": 1795838304,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Andrew Hilbert",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Silverpine Forest"
+       }
+      }
+     },
+     "name": "Andrew Hilbert",
+     "spells": {}
+    },
+    "3557": {
+     "levels": {
+      "28": {
+       "at": 1795836285,
+       "v": {
+        "armor": 1142,
+        "class": "WARRIOR",
+        "dmax": 52.45,
+        "dmin": 39.54,
+        "n": "Guillaume Sorouy",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Silverpine Forest"
+       }
+      }
+     },
+     "name": "Guillaume Sorouy",
      "spells": {}
     },
     "3566": {
@@ -30226,6 +31767,23 @@
      "name": "Thomas Mordan",
      "spells": {}
     },
+    "4571": {
+     "levels": {
+      "30": {
+       "at": 1795837012,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Morley Bates",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Undercity"
+       }
+      }
+     },
+     "name": "Morley Bates",
+     "spells": {}
+    },
     "4573": {
      "levels": {
       "35": {
@@ -30320,6 +31878,131 @@
      "name": "Angela Curthas",
      "spells": {}
     },
+    "4596": {
+     "levels": {
+      "35": {
+       "at": 1795840830,
+       "v": {
+        "armor": 1387,
+        "class": "WARRIOR",
+        "dmax": 64.44,
+        "dmin": 48.58,
+        "n": "James Van Brunt",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Undercity"
+       }
+      }
+     },
+     "name": "James Van Brunt",
+     "spells": {}
+    },
+    "4597": {
+     "levels": {
+      "30": {
+       "at": 1795836714,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Samuel Van Brunt",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Undercity"
+       }
+      }
+     },
+     "name": "Samuel Van Brunt",
+     "spells": {}
+    },
+    "4599": {
+     "levels": {
+      "30": {
+       "at": 1795836565,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Sarah Killian",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Undercity"
+       }
+      }
+     },
+     "name": "Sarah Killian",
+     "spells": {}
+    },
+    "4600": {
+     "levels": {
+      "30": {
+       "at": 1795840830,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Geoffrey Hartwell",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Undercity"
+       }
+      }
+     },
+     "name": "Geoffrey Hartwell",
+     "spells": {}
+    },
+    "4602": {
+     "levels": {
+      "30": {
+       "at": 1795840830,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Benijah Fenner",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Undercity"
+       }
+      }
+     },
+     "name": "Benijah Fenner",
+     "spells": {}
+    },
+    "4604": {
+     "levels": {
+      "30": {
+       "at": 1795840839,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Abigail Sawyer",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Undercity"
+       }
+      }
+     },
+     "name": "Abigail Sawyer",
+     "spells": {}
+    },
+    "4605": {
+     "levels": {
+      "26": {
+       "at": 1795836710,
+       "v": {
+        "armor": 1072,
+        "class": "WARRIOR",
+        "dmax": 48.99,
+        "dmin": 36.95,
+        "n": "Basil Frye",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Undercity"
+       }
+      }
+     },
+     "name": "Basil Frye",
+     "spells": {}
+    },
     "4606": {
      "levels": {
       "60": {
@@ -30357,6 +32040,26 @@
      "name": "Father Lankester",
      "spells": {}
     },
+    "4611": {
+     "levels": {
+      "50": {
+       "at": 1795840697,
+       "v": {
+        "armor": 3018,
+        "class": "WARRIOR",
+        "dmax": 112.2,
+        "dmin": 84.61,
+        "n": "Doctor Herbert Halsey",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Undercity"
+       }
+      }
+     },
+     "name": "Doctor Herbert Halsey",
+     "spells": {}
+    },
     "4612": {
      "levels": {
       "30": {
@@ -30372,6 +32075,26 @@
       }
      },
      "name": "Boyle",
+     "spells": {}
+    },
+    "4613": {
+     "levels": {
+      "50": {
+       "at": 1795837116,
+       "v": {
+        "armor": 3018,
+        "class": "WARRIOR",
+        "dmax": 112.2,
+        "dmin": 84.61,
+        "n": "Christopher Drakul",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Undercity"
+       }
+      }
+     },
+     "name": "Christopher Drakul",
      "spells": {}
     },
     "4624": {
@@ -31770,6 +33493,23 @@
       }
      },
      "name": "Thrumn",
+     "spells": {}
+    },
+    "5190": {
+     "levels": {
+      "25": {
+       "at": 1795840971,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Merill Pleasance",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Undercity"
+       }
+      }
+     },
+     "name": "Merill Pleasance",
      "spells": {}
     },
     "5268": {
@@ -33404,6 +35144,23 @@
      "name": "Mai'ah",
      "spells": {}
     },
+    "5886": {
+     "levels": {
+      "16": {
+       "at": 1795838340,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Gwyn Farrow",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Silverpine Forest"
+       }
+      }
+     },
+     "name": "Gwyn Farrow",
+     "spells": {}
+    },
     "5887": {
      "levels": {
       "8": {
@@ -34237,6 +35994,21 @@
      "name": "Kitha",
      "spells": {}
     },
+    "6033": {
+     "levels": {
+      "16": {
+       "at": 1795839198,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Lake Frenzy",
+        "ty": "Not specified",
+        "z": "Silverpine Forest"
+       }
+      }
+     },
+     "name": "Lake Frenzy",
+     "spells": {}
+    },
     "6066": {
      "levels": {},
      "name": "Earthgrab Totem",
@@ -34695,6 +36467,26 @@
      "name": "Dranh",
      "spells": {}
     },
+    "6389": {
+     "levels": {
+      "25": {
+       "at": 1795838285,
+       "v": {
+        "armor": 1244,
+        "class": "WARRIOR",
+        "dmax": 47.5,
+        "dmin": 35.81,
+        "n": "Deathguard Podrig",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Silverpine Forest"
+       }
+      }
+     },
+     "name": "Deathguard Podrig",
+     "spells": {}
+    },
     "6393": {
      "levels": {
       "62": {
@@ -35103,6 +36895,26 @@
       }
      },
      "name": "Jinky Twizzlefixxit",
+     "spells": {}
+    },
+    "6739": {
+     "levels": {
+      "30": {
+       "at": 1795838289,
+       "v": {
+        "armor": 1212,
+        "class": "WARRIOR",
+        "dmax": 56.32,
+        "dmin": 42.45,
+        "n": "Innkeeper Bates",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Silverpine Forest"
+       }
+      }
+     },
+     "name": "Innkeeper Bates",
      "spells": {}
     },
     "6741": {
@@ -36529,6 +38341,23 @@
      "name": "Cockatiel",
      "spells": {}
     },
+    "7392": {
+     "levels": {
+      "33": {
+       "at": 1795885940,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Prairie Chicken",
+        "run": 8,
+        "spd": 2,
+        "ty": "Non-combat Pet",
+        "z": "Stranglethorn Vale"
+       }
+      }
+     },
+     "name": "Prairie Chicken",
+     "spells": {}
+    },
     "7394": {
      "levels": {
       "39": {
@@ -36541,6 +38370,23 @@
       }
      },
      "name": "",
+     "spells": {}
+    },
+    "7395": {
+     "levels": {
+      "1": {
+       "at": 1795841022,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Cockroach",
+        "run": 8,
+        "spd": 2,
+        "ty": "Non-combat Pet",
+        "z": "Undercity"
+       }
+      }
+     },
+     "name": "Cockroach",
      "spells": {}
     },
     "7408": {
@@ -36760,6 +38606,23 @@
        "spawns": 1
       }
      }
+    },
+    "7543": {
+     "levels": {
+      "15": {
+       "at": 1795884685,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Dark Whelpling",
+        "run": 8,
+        "spd": 2,
+        "ty": "Non-combat Pet",
+        "z": "Orgrimmar"
+       }
+      }
+     },
+     "name": "Dark Whelpling",
+     "spells": {}
     },
     "7545": {
      "levels": {
@@ -37021,7 +38884,7 @@
        }
       }
      },
-     "name": "",
+     "name": "Alessandro Luca",
      "spells": {}
     },
     "772": {
@@ -38005,7 +39868,27 @@
        }
       }
      },
-     "name": "",
+     "name": "Mura Runetotem",
+     "spells": {}
+    },
+    "8403": {
+     "levels": {
+      "30": {
+       "at": 1795841051,
+       "v": {
+        "armor": 1212,
+        "class": "WARRIOR",
+        "dmax": 56.32,
+        "dmin": 42.45,
+        "n": "Jeremiah Payson",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Undercity"
+       }
+      }
+     },
+     "name": "Jeremiah Payson",
      "spells": {}
     },
     "8404": {
@@ -38439,7 +40322,7 @@
        }
       }
      },
-     "name": "",
+     "name": "Deer",
      "spells": {}
     },
     "8878": {
@@ -39486,7 +41369,7 @@
        }
       }
      },
-     "name": "",
+     "name": "Sarah Goode",
      "spells": {}
     },
     "9983": {
@@ -39559,16 +41442,20 @@
     }
    },
    "spells": {
+    "10101": "Knock Away",
     "1026": "Holy Light",
     "10277": "Throw",
     "10722": "Silithid Swarm",
     "10966": "Uppercut",
     "11430": "Slam",
     "11824": "Shock",
+    "11831": "Frost Nova",
     "11918": "Poison",
+    "11922": "Entangling Roots",
     "11939": "Summon Imp",
     "11969": "Fire Nova",
     "11970": "Fire Nova",
+    "11971": "Sunder Armor",
     "11972": "Shield Bash",
     "11976": "Strike",
     "11977": "Rend",
@@ -39577,14 +41464,17 @@
     "12024": "Net",
     "12166": "Muscle Tear",
     "12167": "Lightning Bolt",
+    "12169": "Shield Block",
     "122": "Frost Nova",
     "1229741": "Camp Benefits",
+    "1251657": "Stoneskin",
     "12544": "Frost Armor",
     "12548": "Frost Shock",
     "12555": "Pummel",
     "1259652": "Shock",
     "1263629": "Battle Snort",
     "1263979": "Wind Cleave",
+    "1266011": "Life Drain",
     "1266395": "Zephras Finale Convo Trigger",
     "1266401": "Elemental Smite",
     "1269135": "Apparition",
@@ -39602,6 +41492,7 @@
     "1282860": "Waterbolt Volley",
     "1283027": "Poisoned Blood",
     "1283034": "Bloodbolt",
+    "1283073": "Charge",
     "1283076": "Strike",
     "1283081": "Shield Slam",
     "1283086": "Fireball",
@@ -39644,6 +41535,7 @@
     "1300716": "Frost Nova",
     "1301265": "Restorative Essence",
     "1301404": "Lightning Cloud",
+    "1301635": "Anti-Magic Shield",
     "1302039": "Curse of Tongues",
     "1303136": "Net",
     "1303308": "Entangling Roots",
@@ -39652,6 +41544,8 @@
     "1314281": "Flamestrike",
     "1316579": "Shoot",
     "1319792": "Aura of Rot",
+    "1320509": "Shadow Shock",
+    "1322054": "Summon Skeletal Servant",
     "1324515": "Hammer of Justice",
     "1324558": "Disarm",
     "13322": "Frostbolt",
@@ -39659,26 +41553,36 @@
     "13443": "Rend",
     "13444": "Sunder Armor",
     "13728": "Earth Shock",
+    "13730": "Demoralizing Shout",
     "13737": "Mortal Strike",
+    "14099": "Mighty Blow",
     "14102": "Head Smash",
     "14868": "Curse of Agony",
     "14873": "Sinister Strike",
+    "14907": "Frost Nova",
     "15039": "Flame Shock",
     "15043": "Frostbolt",
     "15062": "Shield Wall",
     "15284": "Cleave",
     "15531": "Frost Nova",
+    "15613": "Cleave",
     "15793": "Maul",
+    "16458": "Ghoul Plague",
     "16583": "Shadow Shock",
+    "17105": "Banshee Curse",
     "172": "Corruption",
     "17207": "Whirlwind",
+    "17307": "Knockout",
+    "1776": "Gouge",
     "18070": "Earthborer Acid",
     "18072": "Uppercut",
     "18266": "Curse of Agony",
     "18267": "Curse of Weakness",
+    "18399": "Flamestrike",
     "184": "Fire Shield II",
     "18670": "Knock Away",
     "19030": "Bear Form",
+    "2053": "Lesser Heal",
     "20791": "Shadow Bolt",
     "20798": "Demon Skin",
     "20800": "Immolate",
@@ -39700,18 +41604,25 @@
     "2591": "Backstab",
     "2601": "Fire Shield III",
     "2602": "Fire Shield IV",
+    "2606": "Shock",
     "2609": "Shock",
     "3131": "Frost Breath",
     "3147": "Rend Flesh",
+    "3237": "Curse of Thule",
     "3242": "Ravage",
+    "3256": "Plague Cloud",
     "3264": "Blood Howl",
     "332": "Healing Wave",
     "3335": "Dark Sludge",
+    "3358": "Leech Poison",
     "3391": "Thrash",
     "3396": "Corrosive Poison",
     "3429": "Plague Mind",
     "3472": "Holy Light",
+    "3477": "Spirit Steal",
+    "3485": "Wail of Nightlash",
     "3490": "Frenzied Rage",
+    "3583": "Deadly Poison",
     "3602": "Torch Burst",
     "3604": "Tendon Rip",
     "3612": "Bloodscalp Pet",
@@ -39728,6 +41639,7 @@
     "5401": "Lizard Bolt",
     "5422": "Lacerate",
     "5532": "Cleave",
+    "5568": "Trample",
     "5588": "Hammer of Justice",
     "5605": "Healing Ward",
     "5708": "Swoop",
@@ -39739,6 +41651,7 @@
     "6268": "Rushing Charge",
     "6278": "Creeping Mold",
     "642": "Divine Shield",
+    "6507": "Battle Roar",
     "6530": "Sling Dirt",
     "6533": "Net",
     "6535": "Lightning Cloud",
@@ -39750,6 +41663,8 @@
     "6713": "Disarm",
     "6742": "Bloodlust",
     "676": "Disarm",
+    "6866": "Moss Covered Hands",
+    "6870": "Moss Covered Feet",
     "6909": "Curse of Thorns",
     "6920": "Hide",
     "6958": "Blood Leech",
@@ -39786,6 +41701,7 @@
     "7588": "Void Bolt",
     "7621": "Arugal's Curse",
     "7645": "Dominate Mind",
+    "7713": "Wailing Dead",
     "7741": "Summoned Demon",
     "7750": "Consuming Rage",
     "7803": "Thundershock",
@@ -39818,11 +41734,14 @@
     "9053": "Fireball",
     "9080": "Hamstring",
     "9128": "Battle Shout",
+    "913": "Healing Wave",
     "9532": "Lightning Bolt",
     "9613": "Shadow Bolt",
+    "9616": "Wild Regeneration",
     "9672": "Frostbolt",
     "970": "Shadow Word: Pain",
-    "9734": "Holy Smite"
+    "9734": "Holy Smite",
+    "980": "Bane of Agony"
    }
   }
  },
