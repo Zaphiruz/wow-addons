@@ -2415,6 +2415,28 @@ SCENARIOS = {
   local d = plain(w.detail:GetText())
   ok(d:find("Twilight Lord Kelris  (id 4832)", 1, true) and d:find("Blackfathom Deeps (dungeon)", 1, true), d)
 ''',
+"a mob the database logged in the open world is listed in that zone": r'''
+  withData()
+  GanderData.forever.zones = { [777] = { "Duskwood", "Westfall" }, [4832] = { "Ashenvale" }, [9100] = "broken" }
+  login(nil)
+  sampleMobs()
+  cmd("")
+  local w = GanderBestiary
+  ok(places() == "Everywhere 7 | [Dungeons] | Blackfathom Deeps 2 | [Zones] | Ashenvale 1 | Durotar 1 | Duskwood 1"
+               .. " | Stranglethorn Vale 2 | Westfall 2", places())
+  placeRow("Westfall"):Click()
+  ok(names() == "Caster | Defias Wizard", names())
+  ok(rowText(w.rows[1]) == "Caster / ?? /  / Duskwood", rowText(w.rows[1]))
+  w.rows[1]:Click()
+  local d = plain(w.detail:GetText())
+  ok(d:find("Duskwood", 1, true) and d:find("Westfall", 1, true) and not d:find("(dungeon)", 1, true), d)
+  placeRow("Ashenvale"):Click()
+  ok(rowText(w.rows[1]) == "Twilight Lord Kelris / ?? /  / Blackfathom Deeps",
+     "the dungeon it was logged in comes before a zone: " .. rowText(w.rows[1]))
+  placeRow("Everywhere"):Click()
+  w.search:Type("duskwood")
+  ok(names() == "Caster", "found by the zone it was logged in: " .. names())
+''',
 "a database from before dungeons were recorded still lists its mobs": r'''
   withData()
   GanderData.forever.dungeons, GanderData.forever.inside = nil, nil

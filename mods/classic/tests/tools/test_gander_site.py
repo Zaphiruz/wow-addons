@@ -172,6 +172,26 @@ class SiteReader(unittest.TestCase):
         page = self.same([[classic()]])
         self.assertEqual(page["data"]["games"]["classic"]["mobs"]["3273"]["spells"]["9532"]["at"], "2026-11-24")
 
+    def test_the_placeholder_the_game_writes_before_it_knows_the_zone_is_no_zone(self):
+        wolf = 'Creature-0-6834-1-3652-3823-0000063119,"Ghostpaw Runner",0xa48,0x80000000'
+        page = self.same([[[HEADER, '11/24/2026 20:20:06.000-5  ZONE_CHANGE,1,"UNKNOWN AREA",0',
+                            line("20:20:10", "SPELL_CAST_SUCCESS", wolf, PLAYER, 3149, "Furious Howl"),
+                            '11/24/2026 20:20:11.000-5  ZONE_CHANGE,1,"Ashenvale",0',
+                            line("20:20:12", "SPELL_CAST_SUCCESS", MOB, PLAYER, 6205, "Curse of Weakness")]]])
+        mobs = page["data"]["games"]["forever"]["mobs"]
+        self.assertNotIn("zones", mobs["3823"])
+        self.assertEqual(mobs["4798"]["zones"], ["Ashenvale"])
+
+    def test_a_continent_is_never_an_instance_whatever_its_difficulty_says(self):
+        for continent in ("0", "1"):
+            page = self.same([[[HEADER, f'11/24/2026 20:20:06.000-5  ZONE_CHANGE,{continent},"Stranglethorn Vale",1',
+                                line("20:20:10", "SPELL_CAST_SUCCESS", MOB, PLAYER, 6205, "Curse of Weakness"),
+                                line("20:20:20", "SPELL_CAST_SUCCESS", MOB, PLAYER, 6205, "Curse of Weakness")]]])
+            forever = page["data"]["games"]["forever"]
+            self.assertEqual(forever["instances"], {})
+            self.assertEqual(forever["mobs"]["4798"].get("zones"), ["Stranglethorn Vale"])
+            self.assertNotIn("in", forever["mobs"]["4798"])
+
     def test_reads_several_logs_together(self):
         self.same([[fight()], [awkward()], [classic()]])
 
@@ -220,6 +240,11 @@ class SiteReader(unittest.TestCase):
         self.assertEqual(games["forever"]["instances"]["48"]["name"], "Blackfathom Deeps")
         self.assertEqual(games["forever"]["mobs"]["4832"]["in"], ["48"])
         self.assertNotIn("in", games["forever"]["mobs"]["3273"], "the open world is no dungeon")
+        for game, clean in games.items():
+            self.assertEqual({mob: entry.get("zones") for mob, entry in clean["mobs"].items()},
+                             {mob: entry.get("zones") for mob, entry in data[game]["mobs"].items()})
+        self.assertEqual(games["forever"]["mobs"]["3273"]["zones"], ["Ashenvale", "The Barrens"])
+        self.assertNotIn("zones", games["forever"]["mobs"]["4832"], "a dungeon is no zone")
 
     def test_a_block_names_no_player(self):
         page = self.by_page([[fight()], [awkward()]])
@@ -301,6 +326,12 @@ class SiteReader(unittest.TestCase):
     def test_without_a_record_a_block_has_none(self):
         page = self.by_page([[fight()]], record={"classic": {"c" * 16: [0, 77]}})
         self.assertNotIn("logs", json.loads(page["blocks"][0]))
+
+    def test_a_game_that_isnt_in_english_sends_no_zones(self):
+        page = self.by_page([[awkward()]], english=False)
+        for text in page["blocks"]:
+            self.assertNotIn("zones", text)
+            self.assertNotIn("Barrens", text)
 
     def test_a_game_that_isnt_in_english_sends_no_names(self):
         page = self.by_page([[fight()]], english=False)

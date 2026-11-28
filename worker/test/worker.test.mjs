@@ -146,6 +146,20 @@ test("tidy keeps the dungeons a mob was logged in, as ids only", () => {
   assert.equal(sent.mobs["3241"].in.length, 20);
 });
 
+test("tidy keeps the zones a mob was logged in, as plain names only", () => {
+  const cast = { "5401": { n: 1, spawns: 1, at: "2026-11-24" } };
+  const sent = tidy({ format: 1, game: "forever", mobs: {
+    "3238": { spells: cast, zones: ["The Barrens", "Ashenvale", "The Barrens"] },
+    "3239": { spells: cast, zones: ["@someone", "<b>Durotar</b>", "[x](http://y)", 7, null, "B".repeat(41), "", "Mulgore"] },
+    "3240": { spells: cast, zones: "The Barrens" },
+    "3241": { spells: cast, zones: Array.from({ length: 60 }, (_, i) => "Zone " + "abcdefghij"[i % 10] + "abcdef"[Math.floor(i / 10)]) },
+  } });
+  assert.deepEqual(sent.mobs["3238"].zones, ["The Barrens", "Ashenvale"]);
+  assert.deepEqual(sent.mobs["3239"].zones, ["Mulgore"]);
+  assert.equal("zones" in sent.mobs["3240"], false);
+  assert.equal(sent.mobs["3241"].zones.length, 20);
+});
+
 test("tidy keeps the record of which combat logs a block came from", () => {
   const logs = { "0123456789abcdef": [0, 5000], "fedcba9876543210": [120, 121] };
   assert.deepEqual(tidy({ ...BLOCK, logs }), { ...BLOCK, logs });

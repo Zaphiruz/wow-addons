@@ -199,6 +199,24 @@ confirmations (`ConfirmBindOnUse`) and Logout in Downcast and Hawker 0.2.0.
   GanderData 1.0.7 didn't keep it, so those mobs have no dungeon until the
   dungeon is logged again. Gander's own sightings carry the zone (`z`), which
   is the dungeon's name when the mob was seen inside one.
+- A mob's `zones` is the open-world zones a combat log caught it casting in,
+  by name: the name on the log's last `ZONE_CHANGE` line with difficulty 0.
+  From a submission a zone is a word like any other: it goes in when the
+  database already uses the name, and waits as `t:z:<name>` otherwise
+  (`approve zones`). The generated Lua gives Gander the list as `zones`; a
+  GanderData.lua made before that has no such table, which Gander reads as
+  empty.
+- What `ZONE_CHANGE` lines look like in real Forever logs (27 Nov 2026): one
+  at every zone border, so also every few seconds on a flight path. A log
+  starts with the placeholder zone "UNKNOWN AREA" and the real one a second
+  later. Leaving a dungeon once gave `ZONE_CHANGE,0,"Stranglethorn Vale",1`,
+  a continent with a dungeon's difficulty, so instance IDs 0 and 1 are never
+  instances. A dungeon's map also came with difficulty 0
+  (`2970,"The Drowned City",0`): its mobs are then filed under a zone of the
+  dungeon's name, which Gander lists as the dungeon all the same.
+- When the record says part of a log on disk is already in the database, the
+  importer still reads that part for where its mobs were (`take_places`):
+  it adds dungeons and zones to mobs the database has, and counts nothing.
 - The bestiary files a place under Dungeons when its name is one of
   GanderData's `dungeons`, or when the player met a mob there while
   `IsInInstance()` said `party` or `raid` (`GanderDB.dungeons`). `/gander

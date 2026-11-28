@@ -104,9 +104,11 @@ A submission is one JSON block, shaped like one game's part of
  "instances": {"48": {"minutes": 24.7, "name": "Blackfathom Deeps"}}}
 ```
 
-`in` lists the dungeons (instance IDs) a combat log caught the mob casting in. It is
-optional, and only the page and the importer write it: Gander's own sightings carry
-the zone (`z`) instead.
+`in` lists the dungeons (instance IDs) a combat log caught the mob casting in, and
+`zones` (not shown) the open-world zones, by name: `"zones": ["The Barrens"]`. Both
+are optional, and only the page and the importer write them: Gander's own sightings
+carry the zone (`z`) instead. A zone name the database doesn't use yet waits like any
+other new word.
 
 ### Combat logs from other players
 

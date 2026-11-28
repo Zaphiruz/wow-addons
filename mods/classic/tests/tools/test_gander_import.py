@@ -188,7 +188,9 @@ class ImportTest(unittest.TestCase):
         wolf = 'Creature-0-6834-1-3652-3823-0000063119,"Ghostpaw Runner",0xa48,0x80000000'
         self.write([HEADER, '11/24/2026 20:20:06.000-5  ZONE_CHANGE,1,"Ashenvale",0',
                     line("20:20:10", "SPELL_CAST_SUCCESS", wolf, PLAYER, 3149, "Furious Howl")])
-        self.assertNotIn("in", self.run_import()["games"]["forever"]["mobs"]["3823"])
+        mob = self.run_import()["games"]["forever"]["mobs"]["3823"]
+        self.assertNotIn("in", mob)
+        self.assertEqual(mob["zones"], ["Ashenvale"])
 
     def test_a_mob_logged_in_two_dungeons_lists_both_once(self):
         self.write(fight() + ['11/24/2026 20:40:00.000-5  ZONE_CHANGE,33,"Shadowfang Keep",1',
@@ -197,6 +199,89 @@ class ImportTest(unittest.TestCase):
         mobs = self.run_import()["games"]["forever"]["mobs"]
         self.assertEqual(mobs["4832"]["in"], ["33", "48"])
         self.assertEqual(mobs["4798"]["in"], ["48"])
+
+    # ---- which zone a mob was logged in ----
+    def test_a_mob_logged_in_a_dungeon_has_no_zone(self):
+        self.write(fight())
+        mobs = self.run_import()["games"]["forever"]["mobs"]
+        self.assertNotIn("zones", mobs["4798"])
+        self.assertNotIn("zones", mobs["4832"])
+
+    def test_a_mob_logged_after_leaving_a_dungeon_is_in_the_zone_outside(self):
+        self.write(fight() + ['11/24/2026 20:20:06.000-5  ZONE_CHANGE,1,"Ashenvale",0',
+                              line("20:20:10", "SPELL_CAST_SUCCESS", KELRIS, PLAYER, 8399, "Sleep"),
+                              '11/24/2026 20:30:00.000-5  ZONE_CHANGE,48,"Blackfathom Deeps",1',
+                              line("20:30:10", "SPELL_CAST_SUCCESS", MOB, PLAYER, 6205, "Curse of Weakness")])
+        mobs = self.run_import()["games"]["forever"]["mobs"]
+        self.assertEqual((mobs["4832"]["in"], mobs["4832"]["zones"]), (["48"], ["Ashenvale"]))
+        self.assertNotIn("zones", mobs["4798"], "back inside, the zone outside no longer counts")
+
+    def test_a_mob_logged_in_two_zones_lists_both_once(self):
+        wolf = 'Creature-0-6834-1-3652-3823-0000063119,"Ghostpaw Runner",0xa48,0x80000000'
+        cast = line("20:20:10", "SPELL_CAST_SUCCESS", wolf, PLAYER, 3149, "Furious Howl")
+        self.write([HEADER, '11/24/2026 20:20:06.000-5  ZONE_CHANGE,1,"The Barrens",0', cast, cast,
+                    '11/24/2026 20:21:06.000-5  ZONE_CHANGE,1,"Ashenvale",0', cast,
+                    '11/24/2026 20:22:06.000-5  ZONE_CHANGE,1,"' + "Z" * 41 + '",0', cast,
+                    '11/24/2026 20:23:06.000-5  ZONE_CHANGE,1,"",0', cast])
+        mob = self.run_import()["games"]["forever"]["mobs"]["3823"]
+        self.assertEqual(mob["zones"], ["Ashenvale", "The Barrens"], "and a name too long or empty is no zone")
+
+    def test_a_log_read_in_two_goes_remembers_the_zone(self):
+        wolf = 'Creature-0-6834-1-3652-3823-0000063119,"Ghostpaw Runner",0xa48,0x80000000'
+        self.write([HEADER, '11/24/2026 20:20:06.000-5  ZONE_CHANGE,1,"Ashenvale",0'], age=10)
+        self.run_import()
+        self.write([line("20:20:10", "SPELL_CAST_SUCCESS", wolf, PLAYER, 3149, "Furious Howl")])
+        self.assertEqual(self.run_import()["games"]["forever"]["mobs"]["3823"]["zones"], ["Ashenvale"])
+
+    def test_the_placeholder_the_game_writes_before_it_knows_the_zone_is_no_zone(self):
+        wolf = 'Creature-0-6834-1-3652-3823-0000063119,"Ghostpaw Runner",0xa48,0x80000000'
+        cast = line("20:20:10", "SPELL_CAST_SUCCESS", wolf, PLAYER, 3149, "Furious Howl")
+        self.write([HEADER, '11/24/2026 20:20:06.000-5  ZONE_CHANGE,1,"UNKNOWN AREA",0', cast])
+        self.assertNotIn("zones", self.run_import()["games"]["forever"]["mobs"]["3823"])
+
+    def test_a_part_of_a_log_already_counted_still_says_where_its_mobs_were(self):
+        # The page sent this log's casts before places were kept. The log is still here.
+        wolf = 'Creature-0-6834-1-3652-3823-0000063119,"Ghostpaw Runner",0xa48,0x80000000'
+        path = self.write(fight() + ['11/24/2026 20:20:06.000-5  ZONE_CHANGE,1,"Ashenvale",0',
+                                     line("20:20:10", "SPELL_CAST_SUCCESS", wolf, PLAYER, 3149, "Furious Howl")])
+        cast = {"n": 5, "spawns": 2, "at": "2026-11-24", "build": "1.60.1"}
+        gander_import.save_json(self.data, {"version": 2, "games": {"forever": {
+            "instances": {"48": {"name": "Blackfathom Deeps", "minutes": 9}},
+            "spells": {"6205": "Curse of Weakness", "3149": "Furious Howl"},
+            "mobs": {"4798": {"name": "Fallenroot Shadowstalker", "spells": {"6205": dict(cast)}, "levels": {}},
+                     "3823": {"name": "Ghostpaw Runner", "spells": {"3149": dict(cast)}, "levels": {}}}}}})
+        self.note(path.stat().st_size)
+        forever = self.run_import(keep=True)["games"]["forever"]
+        self.assertEqual(forever["mobs"]["4798"]["in"], ["48"])
+        self.assertEqual(forever["mobs"]["3823"]["zones"], ["Ashenvale"])
+        self.assertEqual(forever["mobs"]["4798"]["spells"]["6205"], cast, "no cast is counted again")
+        self.assertEqual(forever["mobs"]["3823"]["spells"]["3149"], cast)
+        self.assertNotIn("4832", forever["mobs"], "a mob the database doesn't have isn't added by this")
+        self.assertEqual(forever["instances"]["48"]["minutes"], 9, "nor are the minutes")
+        self.assertIn("where 2 mobs were found", " ".join(self.out))
+
+    def test_a_continent_is_never_an_instance_whatever_its_difficulty_says(self):
+        # Seen in a real log on leaving a dungeon: ZONE_CHANGE,0,"Stranglethorn Vale",1
+        wolf = 'Creature-0-6834-1-3652-3823-0000063119,"Ghostpaw Runner",0xa48,0x80000000'
+        for continent in ("0", "1"):
+            with self.subTest(continent=continent):
+                self.write([HEADER, f'11/24/2026 20:20:06.000-5  ZONE_CHANGE,{continent},"Stranglethorn Vale",1',
+                            line("20:20:10", "SPELL_CAST_SUCCESS", wolf, PLAYER, 3149, "Furious Howl"),
+                            line("20:20:20", "SPELL_CAST_SUCCESS", wolf, PLAYER, 3149, "Furious Howl")],
+                           name=f"WoWCombatLog-{continent}.txt")
+                forever = self.run_import(keep=True)["games"]["forever"]
+                self.assertEqual(forever["instances"], {})
+                self.assertNotIn("in", forever["mobs"]["3823"])
+                self.assertEqual(forever["mobs"]["3823"]["zones"], ["Stranglethorn Vale"])
+
+    def test_the_addon_file_lists_the_zones_mobs_were_logged_in(self):
+        wolf = 'Creature-0-6834-1-3652-3823-0000063119,"Ghostpaw Runner",0xa48,0x80000000'
+        self.write(fight() + ['11/24/2026 20:20:06.000-5  ZONE_CHANGE,1,"Ashenvale",0',
+                              line("20:20:10", "SPELL_CAST_SUCCESS", wolf, PLAYER, 3149, "Furious Howl")])
+        self.run_import([("forever", self.saved)])
+        forever = self.load_lua().forever
+        self.assertEqual(list(forever.zones[3823].values()), ["Ashenvale"])
+        self.assertIsNone(forever.zones[4798], "a mob logged only in a dungeon has no zone")
 
     def test_the_addon_file_names_the_dungeons_and_who_was_logged_in_them(self):
         self.write(fight())
@@ -481,6 +566,16 @@ class ImportTest(unittest.TestCase):
         self.assertEqual(line_for({"classic": (0, 0, 4)}, {"classic": (0, 0, 9), "forever": (2, 3, 0)}),
                          "Classic Era: stats for 5 more mobs. Forever: what 2 more mobs cast.")
         self.assertIsNone(line_for({"forever": (3, 5, 2)}, {"forever": (3, 5, 2)}))
+        self.assertEqual(line_for({"forever": (3, 5, 2, 1)}, {"forever": (3, 5, 2, 13)}),
+                         "Forever: where 12 more mobs are found.")
+        self.assertEqual(line_for({"forever": (3, 5, 2)}, {"forever": (4, 6, 2, 1)}),
+                         "Forever: what 1 more mob casts.", "where a new mob is found goes without saying")
+
+    def test_a_mob_with_a_logged_zone_or_dungeon_counts_as_found(self):
+        wolf = 'Creature-0-6834-1-3652-3823-0000063119,"Ghostpaw Runner",0xa48,0x80000000'
+        self.write(fight() + ['11/24/2026 20:20:06.000-5  ZONE_CHANGE,1,"Ashenvale",0',
+                              line("20:20:10", "SPELL_CAST_SUCCESS", wolf, PLAYER, 3149, "Furious Howl")])
+        self.assertEqual(gander_import.counts(self.run_import())["forever"], (3, 3, 0, 3))
 
 
 if __name__ == "__main__":

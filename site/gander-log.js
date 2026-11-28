@@ -22,7 +22,12 @@
   var GAP = 30;            // seconds: a longer pause between log lines isn't counted as fighting
   var FORMAT = 1;          // the submission format, as in gander_submit.py
   var BLOCK_SIZE = 30000;  // characters in one submission, as in Gander's /gander send
-  var MAX_PLACES = 20;     // dungeons one mob may be listed in
+  var MAX_PLACES = 20;     // dungeons, and zones, one mob may be listed in
+  var ZONE_NAME = 40;      // characters in a zone's name, as in Gander
+  var NO_ZONE = "UNKNOWN AREA";  // what the game writes for a moment before it knows the zone
+  // Instance IDs that are whole continents (Eastern Kingdoms, Kalimdor): never a
+  // dungeon, though a real log named one with a dungeon's difficulty on the way out.
+  var CONTINENTS = { "0": true, "1": true };
 
   var LINE = /^(\d+)\/(\d+)(?:\/(\d+))? (\d+):(\d+):(\d+)\.(\d+)\S*  (.*)$/;
   var DIGITS = /^\d+$/;
@@ -81,6 +86,20 @@
     if (have.length) entry["in"] = have.sort(function (a, b) { return Number(a) - Number(b); });
   }
 
+  // Note the zones a mob was logged in, in the open world: each once, in
+  // order of name, and never more than a mob could really be found in.
+  function addZones(entry, zones) {
+    var have = (entry.zones || []).slice();
+    for (var i = 0; i < zones.length; i++) {
+      var zone = zones[i];
+      if (typeof zone === "string" && zone.length > 0 && zone.length <= ZONE_NAME && have.indexOf(zone) === -1 &&
+          have.length < MAX_PLACES) {
+        have.push(zone);
+      }
+    }
+    if (have.length) entry.zones = have.sort();
+  }
+
   // One line's fields. A field in quotes can hold commas, and a doubled
   // quote inside it stands for one quote.
   function fields(text) {
@@ -137,7 +156,7 @@
   }
 
   // Reads log lines into data. ctx carries what the earlier part of a log
-  // said (which game, build and instance), so a log can be read in pieces.
+  // said (which game, build, instance and zone), so a log can be read in pieces.
   // year is for Classic Era, whose lines don't say which year it is.
   function Reader(data, ctx, year) {
     this.data = data;
@@ -198,9 +217,10 @@
       if (f.length >= 3) {
         // The last field is the difficulty: 0 is the open world, where the
         // "instance" is a whole continent and the name just a zone.
-        var inside = f.length < 4 || f[3] !== "0";
+        var inside = (f.length < 4 || f[3] !== "0") && !CONTINENTS.hasOwnProperty(f[1]);
         this.ctx.instance = inside ? f[1] : null;
         this.ctx.instance_name = inside ? f[2] : null;
+        this.ctx.zone = inside || f[2] === NO_ZONE ? null : f[2];
         this.last = null;  // the gap before this was travel, not fighting
       }
     }
@@ -244,6 +264,7 @@
     g.spells[spell] = f[10];
     var entry = mobEntry(g, mob, name);
     if (this.ctx.instance) addPlaces(entry, [this.ctx.instance]);
+    else if (this.ctx.zone) addZones(entry, [this.ctx.zone]);
     if (!Object.prototype.hasOwnProperty.call(entry.spells, spell)) entry.spells[spell] = { n: 0, spawns: 0 };
     var seen = entry.spells[spell];
     seen.n += 1;
@@ -268,6 +289,7 @@
       for (key in other.mobs) {
         var entry = mobEntry(g, key, other.mobs[key].name);
         addPlaces(entry, other.mobs[key]["in"] || []);
+        addZones(entry, other.mobs[key].zones || []);
         for (var spell in other.mobs[key].spells) {
           var seen = other.mobs[key].spells[spell];
           if (!Object.prototype.hasOwnProperty.call(entry.spells, spell)) entry.spells[spell] = { n: 0, spawns: 0 };
@@ -356,6 +378,7 @@
         var entry = { spells: {} }, names = {}, extra = 0;
         if (english && g.mobs[mob].name) entry.name = g.mobs[mob].name;
         if (g.mobs[mob]["in"]) entry["in"] = g.mobs[mob]["in"].slice();
+        if (english && g.mobs[mob].zones) entry.zones = g.mobs[mob].zones.slice();
         numbered(Object.keys(g.mobs[mob].spells)).forEach(function (spell) {
           var seen = g.mobs[mob].spells[spell];
           entry.spells[spell] = { n: seen.n, spawns: seen.spawns, at: seen.at };

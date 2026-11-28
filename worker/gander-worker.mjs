@@ -41,7 +41,7 @@ const LOG_ID = /^[0-9a-f]{16}$/;
 const MAX_LOGS = 300;        // combat logs one block may be from
 const MAX_PARTS = 50;        // blocks one send may be split into
 const MAX_BYTES = 2 ** 40;   // no combat log is a terabyte
-const MAX_PLACES = 20;       // dungeons one mob may be listed in
+const MAX_PLACES = 20;       // dungeons, and zones, one mob may be listed in
 // Plain words, as gander_submit.py's good_name: letters, digits, spaces and a
 // little punctuation. Nothing that could be a link, a mention or formatting.
 const WORDS = /^[\p{L}\p{N} '\-.,":()!]+$/u;
@@ -101,6 +101,9 @@ export function tidy(sub) {
     // The dungeons it was logged in: instance IDs, never names.
     const places = [...new Set((Array.isArray(mob.in) ? mob.in : []).filter((place) => typeof place === "string" && ID.test(place)))];
     if (places.length) kept.in = places.slice(0, MAX_PLACES);
+    // The zones it was logged in, in the open world: plain names, like any other.
+    const zones = [...new Set((Array.isArray(mob.zones) ? mob.zones : []).filter((zone) => goodName(zone, 40)))];
+    if (zones.length) kept.zones = zones.slice(0, MAX_PLACES);
     if (kept.levels || kept.spells) out.mobs[id] = kept;
   }
   for (const [spell, name] of Object.entries(isObject(sub.spells) ? sub.spells : {})) {

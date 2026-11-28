@@ -218,10 +218,11 @@ local queueSend, askAbout  -- set below, in Sharing
 -- updated without a new Gander; Gander works without it. Each game has its
 -- own part. Its stats have the shape of our own sightings, { at, v }, by
 -- mob and level, and count as a third source after "seen" and "heard". It
--- also names the dungeons (by instance ID) and says which of them each mob
--- was logged in, for the bestiary's places.
+-- also names the dungeons (by instance ID) and says which of them, and which
+-- zones, each mob was logged in, for the bestiary's places.
 local GAME = (select(4, GetBuildInfo()) or 0) >= 16000 and "forever" or "classic"
-local shipped = { instances = {}, dungeons = {}, spells = {}, names = {}, casts = {}, inside = {}, stats = {} }
+local shipped = { instances = {}, dungeons = {}, spells = {}, names = {}, casts = {}, inside = {}, zones = {},
+                  stats = {} }
 local shippedVersion      -- nil when GanderData isn't installed
 if type(GanderData) == "table" then
   shippedVersion = type(GanderData.version) == "string" and GanderData.version or "?"
@@ -1714,10 +1715,13 @@ do
           at(rec.v.z)
         end
       end
+      -- Where the database's combat logs caught it: dungeons, then zones.
       local logged = shipped.inside[id]
       for _, instance in ipairs(type(logged) == "table" and logged or NOTHING) do
         at(shipped.dungeons[instance])
       end
+      logged = shipped.zones[id]
+      for _, zone in ipairs(type(logged) == "table" and logged or NOTHING) do at(zone) end
       local kind = info(mob, "ty", base) or ""
       if kind ~= "" then kinds[kind] = true end
       rank = rank and RANK[rank] and rank or nil

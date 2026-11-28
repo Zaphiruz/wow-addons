@@ -141,6 +141,20 @@ SCENARIOS = {
     end
   end
 ''',
+"the zones mobs were logged in are short names, for mobs on the list": r'''
+  load()
+  for _, game in ipairs(GAMES) do
+    local g = GanderData[game] or { names = {} }
+    -- A file made before zones were recorded has no such table: Gander reads it as empty.
+    for mob, list in pairs(g.zones or {}) do
+      ok(type(mob) == "number" and g.names[mob] ~= nil, game .. ": mob " .. tostring(mob) .. " has a zone but isn't on the list")
+      ok(type(list) == "table" and #list > 0 and #list == count(list), game .. ": mob " .. mob .. "'s zones")
+      for _, zone in ipairs(list) do
+        ok(type(zone) == "string" and zone ~= "" and #zone <= TEXTS.z, game .. ": mob " .. mob .. " zone " .. tostring(zone))
+      end
+    end
+  end
+''',
 }
 
 failed = 0

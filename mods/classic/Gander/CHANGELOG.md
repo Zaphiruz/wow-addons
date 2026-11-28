@@ -1,5 +1,10 @@
 # Gander changelog
 
+## 0.12.1 (2026-11-27)
+
+- The bestiary's places now also use the zone a combat log caught a mob in, not only its dungeon. With GanderData 1.0.8, about 60 fewer mobs are under "Place not known", and more will be placed as logs come in.
+- Searching for a zone finds those mobs too.
+
 ## 0.12.0 (2026-11-27)
 
 - The bestiary is rebuilt. Down the left is a list of places: dungeons first, then zones, each with how many mobs are known there. Click a place to see only its mobs.

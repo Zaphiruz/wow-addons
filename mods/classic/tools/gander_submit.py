@@ -248,6 +248,12 @@ def validate(sub, now):
         places = sorted(places - {None}, key=int)[:MAX_PLACES]
         if places:
             out["in"] = places
+        # The zones it was logged in, in the open world: names, so they are
+        # checked like any other word and only taken from a game in English.
+        zones = mob_in.get("zones")
+        zones = sorted({zone for zone in zones if good_name(zone, TEXTS["z"])}) if isinstance(zones, list) else []
+        if english and zones:
+            out["zones"] = zones[:MAX_PLACES]
         if out["levels"] or out["spells"]:
             mobs[mob] = out
     cast_spells = {spell for mob in mobs.values() for spell in mob["spells"]}
@@ -333,9 +339,11 @@ def forget_batches(record, today):
 
 
 def facts(payload):
-    """How many separate facts a submission holds: each stat, each mob's use of a spell, each instance."""
+    """How many separate facts a submission holds: each stat, each mob's use
+    of a spell, each zone a mob was logged in, each instance."""
     return (sum(len(seen["v"]) for mob in payload["mobs"].values() for seen in mob["levels"].values())
             + sum(len(mob["spells"]) for mob in payload["mobs"].values())
+            + sum(len(mob.get("zones", ())) for mob in payload["mobs"].values())
             + len(payload["instances"]))
 
 
@@ -360,6 +368,7 @@ def known_words(data):
         for entry in g["instances"].values():
             words["z"].add(entry.get("name"))
         for mob in g["mobs"].values():
+            words["z"].update(mob.get("zones", ()))
             for seen in mob.get("levels", {}).values():
                 for key in WORDS:
                     if key in seen["v"]:
@@ -412,6 +421,9 @@ def open_claims(data, payload, words):
             name = payload["spells"].get(spell)
             if not listed_name(data, game, "spells", spell, name) and name:
                 yield "s" + spell, name
+        for zone in sub.get("zones", ()):
+            if zone not in words["z"]:
+                yield f"t:z:{zone}", zone
     for instance, entry in payload["instances"].items():
         if not listed_name(data, game, "instances", instance, entry.get("name")) and entry.get("name"):
             yield "i" + instance, entry["name"]
@@ -513,8 +525,17 @@ def apply_payload(data, payload, table, approve, words):
                 have["at"] = cast["at"]
                 if "build" in cast:
                     have["build"] = cast["build"]
-        # A name still waiting to be confirmed keeps the mob here after its stats have gone in.
-        if not sub["levels"] and not sub["spells"] and not waiting_name(data, game, mob, sub):
+        for zone in list(sub.get("zones", ())):
+            if zone not in words["z"] and confirmed(table, game, f"t:z:{zone}", approve) != zone:
+                continue
+            sub["zones"].remove(zone)
+            moved += 1
+            gi.add_zones(entry, [zone])
+            words["z"].add(zone)
+        if not sub.get("zones"):
+            sub.pop("zones", None)
+        # A name or a zone still waiting to be confirmed keeps the mob here after its stats have gone in.
+        if not sub["levels"] and not sub["spells"] and not sub.get("zones") and not waiting_name(data, game, mob, sub):
             del payload["mobs"][mob]
     for instance in list(payload["instances"]):
         entry = payload["instances"][instance]
@@ -563,7 +584,10 @@ def drop(data, held, tokens):
                     del sub["levels"][level]
             for spell in [s for s in sub["spells"] if "s" + s in tokens]:
                 del sub["spells"][spell]
-            if not sub["levels"] and not sub["spells"] and not waiting_name(data, payload["game"], mob, sub):
+            if "zones" in tokens:
+                sub.pop("zones", None)   # only zones the database doesn't know are still here
+            if (not sub["levels"] and not sub["spells"] and not sub.get("zones")
+                    and not waiting_name(data, payload["game"], mob, sub)):
                 del payload["mobs"][mob]
         payload["spells"] = {s: name for s, name in payload["spells"].items() if "s" + s not in tokens}
         payload["instances"] = {i: e for i, e in payload["instances"].items() if "i" + i not in tokens}

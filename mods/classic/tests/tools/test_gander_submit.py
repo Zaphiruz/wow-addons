@@ -146,6 +146,23 @@ class Checks(unittest.TestCase):
         self.assertEqual(len(clean["mobs"]["3241"]["in"]), gs.MAX_PLACES)
         self.assertEqual(dropped, 0, "a dungeon left out isn't a fact left out")
 
+    def test_the_zones_a_mob_was_logged_in_are_plain_names(self):
+        cast = {"5401": {"n": 1, "spawns": 1, "at": "2026-11-24"}}
+        mobs = {"3238": {"spells": cast, "zones": ["The Barrens", "Ashenvale", "The Barrens", "@everyone", "<b>Durotar</b>",
+                                                  "[x](http://y)", 7, None, ["Mulgore"], "B" * 41, ""]},
+                "3239": {"spells": cast, "zones": "The Barrens"},
+                "3240": {"spells": cast, "zones": [f"Zone {chr(65 + n // 26)}{chr(65 + n % 26)}" for n in range(60)]},
+                "3241": {"spells": cast}}
+        clean, dropped, _ = self.clean(sub(mobs))
+        self.assertEqual(clean["mobs"]["3238"]["zones"], ["Ashenvale", "The Barrens"])
+        for mob in ("3239", "3241"):
+            self.assertNotIn("zones", clean["mobs"][mob], mob)
+        self.assertEqual(len(clean["mobs"]["3240"]["zones"]), gs.MAX_PLACES)
+        self.assertEqual(dropped, 0, "a zone left out isn't a fact left out")
+        clean, _, english = self.clean(sub(mobs, locale="deDE"))
+        self.assertFalse(english)
+        self.assertNotIn("zones", clean["mobs"]["3238"], "zone names in another language aren't kept")
+
     def test_junk_in_any_shape_never_breaks_the_check(self):
         junk = [None, 7, "x", [], [1], {"a": 1}, True, 1e400]
         for thing in junk:
@@ -156,6 +173,8 @@ class Checks(unittest.TestCase):
                             sub({"3273": {"spells": {"5401": {"n": thing, "spawns": thing, "at": thing, "build": thing}}}}),
                             sub({"3238": {"spells": {"5401": {"n": 1, "at": "2026-11-24"}}, "in": thing}}),
                             sub({"3238": {"spells": {"5401": {"n": 1, "at": "2026-11-24"}}, "in": [thing]}}),
+                            sub({"3238": {"spells": {"5401": {"n": 1, "at": "2026-11-24"}}, "zones": thing}}),
+                            sub({"3238": {"spells": {"5401": {"n": 1, "at": "2026-11-24"}}, "zones": [thing]}}),
                             sub(STORMER, spells=thing), sub(STORMER, instances=thing),
                             sub(STORMER, instances={"48": thing}), sub(STORMER, instances={"48": {"minutes": thing, "name": thing}}),
                             sub(STORMER, locale=thing, sender=thing), sub(thing), {"format": thing, "game": thing}):
@@ -223,6 +242,44 @@ class Intake(unittest.TestCase):
         self.assertNotIn("4832", self.forever()["mobs"])
         self.go([issue(2, sub(mob), user=200)])
         self.assertEqual(self.forever()["mobs"]["4832"]["in"], ["48"])
+
+    def test_a_zone_the_database_knows_goes_in_with_the_casts(self):
+        cast = {"5401": {"n": 1, "spawns": 1, "at": "2026-11-25"}}
+        r = self.go([issue(1, sub({"3238": {"spells": cast, "zones": ["The Barrens", "Blackfathom Deeps"]}}))])
+        self.assertEqual(self.forever()["mobs"]["3238"]["zones"], ["Blackfathom Deeps", "The Barrens"],
+                         "a zone a sighting names, and an instance's name, are both known")
+        self.assertEqual(self.held["pending"], [])
+        self.assertIn("3 facts", r["issues"][0]["comment"])
+
+    def test_a_new_zone_for_a_logged_mob_waits_but_its_casts_do_not(self):
+        cast = {"5401": {"n": 1, "spawns": 1, "at": "2026-11-25"}}
+        r = self.go([issue(1, sub({"3238": {"spells": cast, "zones": ["Winterspring", "The Barrens"]}}))])
+        mob = self.forever()["mobs"]["3238"]
+        self.assertEqual((mob["spells"]["5401"]["n"], mob["zones"]), (5, ["The Barrens"]))
+        self.assertEqual(self.held["pending"][0]["mobs"], {"3238": {"levels": {}, "spells": {}, "zones": ["Winterspring"]}})
+        self.assertIn("2 facts went into the database", r["issues"][0]["comment"])
+        self.assertIn("1 is waiting", r["issues"][0]["comment"])
+        text, total = gs.render_held(self.data, self.held)
+        self.assertEqual(total, 1)
+        self.assertIn("New zones", text)
+        self.assertIn("- Winterspring (1 sender", text)
+        self.go([issue(2, sub({"3273": {"name": "Kolkar Stormer", "spells": cast, "zones": ["Winterspring"]}}), user=200)])
+        self.assertEqual(self.forever()["mobs"]["3238"]["zones"], ["The Barrens", "Winterspring"],
+                         "a second sender naming the zone confirms it")
+
+    def test_the_owner_can_approve_or_drop_a_logged_mobs_new_zone(self):
+        cast = {"5401": {"n": 1, "spawns": 1, "at": "2026-11-25"}}
+        self.go([issue(1, sub({"3238": {"spells": cast, "zones": ["Winterspring"]}}))])
+        r = self.go(comments=[comment(11, "approve zones")])
+        self.assertEqual(self.forever()["mobs"]["3238"]["zones"], ["Winterspring"])
+        self.assertEqual(self.held["pending"], [])
+        self.assertIn("1 fact went into the database", r["commands"][0]["reply"])
+        self.assertTrue(r.get("approved"), "the whole list went in")
+        self.go([issue(2, sub({"3238": {"spells": cast, "zones": ["Felwood"]}}), user=200)])
+        r = self.go(comments=[comment(12, "drop zones")])
+        self.assertEqual(self.held["pending"], [])
+        self.assertEqual(self.forever()["mobs"]["3238"]["zones"], ["Winterspring"])
+        self.assertIn("Dropped 1 fact", r["commands"][0]["reply"])
 
     def test_a_listed_name_is_never_replaced(self):
         self.go([issue(1, sub({"3238": {"name": "Something Rude", "levels": {"22": seen(armor=950)}}}))])
