@@ -266,6 +266,68 @@
    "received": "2026-11-28",
    "sender": "acd0d078eb62",
    "spells": {}
+  },
+  {
+   "game": "forever",
+   "instances": {},
+   "mobs": {
+    "1540": {
+     "levels": {},
+     "name": "Scarlet Vanguard",
+     "spells": {
+      "7164": {
+       "at": "2026-11-27",
+       "build": "1.60.1",
+       "n": 1,
+       "spawns": 1
+      }
+     }
+    },
+    "3261": {
+     "levels": {},
+     "name": "Bristleback Thornweaver",
+     "spells": {
+      "782": {
+       "at": "2026-11-27",
+       "build": "1.60.1",
+       "n": 2,
+       "spawns": 1
+      }
+     }
+    },
+    "4281": {
+     "levels": {},
+     "name": "Scarlet Scout",
+     "spells": {
+      "6979": {
+       "at": "2026-11-27",
+       "build": "1.60.1",
+       "n": 14,
+       "spawns": 5
+      }
+     }
+    },
+    "4297": {
+     "levels": {},
+     "name": "Scarlet Conjuror",
+     "spells": {
+      "9053": {
+       "at": "2026-11-27",
+       "build": "1.60.1",
+       "n": 3,
+       "spawns": 1
+      }
+     }
+    }
+   },
+   "received": "2026-11-28",
+   "sender": "acd0d078eb62",
+   "spells": {
+    "6979": "Fire Shot",
+    "7164": "Defensive Stance",
+    "782": "Thorns",
+    "9053": "Fireball"
+   }
   }
  ],
  "seen": [
@@ -300,7 +362,8 @@
   "078653ec72742ad5",
   "04ea5dba634f7ca0",
   "1e713c2ce8b6249b",
-  "14e937d64dc05417"
+  "14e937d64dc05417",
+  "b28e7c74d8ae61ce"
  ],
  "version": 1
 }
