@@ -20710,6 +20710,21 @@
      "name": "",
      "spells": {}
     },
+    "3226": {
+     "levels": {},
+     "name": "Corrupted Scorpid",
+     "spells": {
+      "11918": {
+       "at": "2026-11-27",
+       "build": "1.60.1",
+       "n": 1,
+       "spawns": 1
+      }
+     },
+     "zones": [
+      "Durotar"
+     ]
+    },
     "3227": {
      "levels": {
       "10": {
@@ -21416,6 +21431,12 @@
        "build": "1.60.1",
        "n": 4,
        "spawns": 2
+      },
+      "8016": {
+       "at": "2026-11-27",
+       "build": "1.60.1",
+       "n": 1,
+       "spawns": 1
       }
      },
      "zones": [
@@ -23341,6 +23362,12 @@
        "build": "1.60.1",
        "n": 31,
        "spawns": 7
+      },
+      "6742": {
+       "at": "2026-11-27",
+       "build": "1.60.1",
+       "n": 8,
+       "spawns": 4
       }
      },
      "zones": [
@@ -24246,7 +24273,14 @@
       }
      },
      "name": "Oasis Snapjaw",
-     "spells": {},
+     "spells": {
+      "6530": {
+       "at": "2026-11-27",
+       "build": "1.60.1",
+       "n": 12,
+       "spawns": 3
+      }
+     },
      "zones": [
       "The Barrens"
      ]
@@ -39245,6 +39279,7 @@
     "10966": "Uppercut",
     "11430": "Slam",
     "11824": "Shock",
+    "11918": "Poison",
     "11939": "Summon Imp",
     "11969": "Fire Nova",
     "11970": "Fire Nova",
@@ -39418,6 +39453,7 @@
     "6268": "Rushing Charge",
     "6278": "Creeping Mold",
     "642": "Divine Shield",
+    "6530": "Sling Dirt",
     "6533": "Net",
     "6535": "Lightning Cloud",
     "6548": "Rend",
@@ -39426,6 +39462,7 @@
     "6607": "Lash",
     "6660": "Shoot",
     "6713": "Disarm",
+    "6742": "Bloodlust",
     "676": "Disarm",
     "6909": "Curse of Thorns",
     "6920": "Hide",
@@ -39468,6 +39505,7 @@
     "7803": "Thundershock",
     "782": "Thorns",
     "8014": "Tetanus",
+    "8016": "Spirit Decay",
     "8046": "Earth Shock",
     "8052": "Flame Shock",
     "8056": "Frost Shock",
