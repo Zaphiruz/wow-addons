@@ -256,8 +256,16 @@ confirmations (`ConfirmBindOnUse`) and Logout in Downcast and Hawker 0.2.0.
   both and compares. A new field in the format goes in all three places
   (Gander's `buildBlock` or the page, `tidy()`, `validate`).
 - The Worker's token and salt are Cloudflare secrets the owner sets with
-  `npx wrangler secret put`. Never ask for them or write them anywhere. The
-  owner deploys it (`worker/README.md`); its address goes in `site/config.js`.
+  `npx wrangler secret put`. Never ask for them, read them or write them
+  anywhere, and never run `wrangler secret` yourself. Its address goes in
+  `site/config.js`.
+- Deploying the Worker is part of releasing a change to it, like pushing a
+  tag: don't leave it for the owner. Run its tests, then from the repository's
+  top folder `npx wrangler deploy --config worker/wrangler.toml` (without
+  `--config` wrangler publishes `site/` as a different Worker). A redeploy
+  keeps the secrets. Wrangler is signed in on the owner's machine; if
+  `npx wrangler whoami` says it isn't, say so and leave the login to the
+  owner. The first setup is still the owner's (`worker/README.md`).
 - Check the live Worker with a GET only (it answers with its state, and
   `"logs": true` once it passes the record of logs on). A POST that gets
   through files a real issue under the owner's name, and the intake merges it
