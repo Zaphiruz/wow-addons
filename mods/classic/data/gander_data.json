@@ -4147,9 +4147,12 @@
     "14729": {
      "levels": {
       "35": {
-       "at": 1795785885,
+       "at": 1795820115,
        "v": {
+        "armor": 1387,
         "class": "WARRIOR",
+        "dmax": 64.44,
+        "dmin": 48.58,
         "run": 8,
         "spd": 2,
         "ty": "Humanoid",
@@ -5225,7 +5228,7 @@
        }
       },
       "11": {
-       "at": 1795585981,
+       "at": 1795820094,
        "v": {
         "ap": 33,
         "armor": 819,
@@ -5819,7 +5822,7 @@
     "209797": {
      "levels": {
       "20": {
-       "at": 1795561844,
+       "at": 1795816798,
        "v": {
         "class": "WARRIOR",
         "n": "Bruuz",
@@ -5867,14 +5870,16 @@
     "211022": {
      "levels": {
       "40": {
-       "at": 1795382285,
+       "at": 1795820107,
        "v": {
         "armor": 1980,
         "class": "WARRIOR",
         "dmax": 74.32,
         "dmin": 56.02,
         "run": 8,
-        "spd": 2
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Undercity"
        }
       }
      },
@@ -6608,14 +6613,16 @@
     "2308": {
      "levels": {
       "40": {
-       "at": 1795382285,
+       "at": 1795820108,
        "v": {
         "armor": 1980,
         "class": "WARRIOR",
         "dmax": 74.32,
         "dmin": 56.02,
         "run": 8,
-        "spd": 2
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Undercity"
        }
       }
      },
@@ -10779,9 +10786,12 @@
     "257036": {
      "levels": {
       "10": {
-       "at": 1795707060,
+       "at": 1795825946,
        "v": {
+        "armor": 419,
         "class": "PALADIN",
+        "dmax": 16.18,
+        "dmin": 12.17,
         "n": "Baelann Favorbreeze",
         "run": 6,
         "spd": 2,
@@ -11894,9 +11904,12 @@
     "259118": {
      "levels": {
       "-1": {
-       "at": 1795708047,
+       "at": 1795818168,
        "v": {
+        "armor": 3566,
         "class": "WARRIOR",
+        "dmax": 137.86,
+        "dmin": 103.95,
         "n": "Muln Earthfury",
         "run": 8,
         "spd": 2,
@@ -11911,9 +11924,12 @@
     "259119": {
      "levels": {
       "20": {
-       "at": 1795708047,
+       "at": 1795818163,
        "v": {
+        "armor": 697,
         "class": "PALADIN",
+        "dmax": 36.29,
+        "dmin": 27.33,
         "n": "Alaana Stormwalker",
         "run": 6,
         "spd": 2,
@@ -12794,7 +12810,7 @@
     "262397": {
      "levels": {
       "36": {
-       "at": 1795806954,
+       "at": 1795814392,
        "v": {
         "class": "WARRIOR",
         "n": "Brinescale Skirmisher",
@@ -14721,12 +14737,14 @@
     "272328": {
      "levels": {
       "10": {
-       "at": 1795389481,
+       "at": 1795820094,
        "v": {
         "class": "WARRIOR",
         "n": "Mini Diablo",
         "run": 8,
-        "spd": 2
+        "spd": 2,
+        "ty": "Non-combat Pet",
+        "z": "Undercity"
        }
       },
       "12": {
@@ -14753,6 +14771,17 @@
       },
       "19": {
        "at": 1795754279,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Mini Diablo",
+        "run": 8,
+        "spd": 2,
+        "ty": "Non-combat Pet",
+        "z": "Orgrimmar"
+       }
+      },
+      "30": {
+       "at": 1795818880,
        "v": {
         "class": "WARRIOR",
         "n": "Mini Diablo",
@@ -14900,6 +14929,17 @@
         "z": "Tirisfal Glades"
        }
       },
+      "22": {
+       "at": 1795818861,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Zergling",
+        "run": 8,
+        "spd": 2,
+        "ty": "Non-combat Pet",
+        "z": "Orgrimmar"
+       }
+      },
       "30": {
        "at": 1795439387,
        "v": {
@@ -14920,6 +14960,17 @@
         "spd": 2,
         "ty": "Non-combat Pet",
         "z": "The Barrens"
+       }
+      },
+      "35": {
+       "at": 1795814694,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Zergling",
+        "run": 8,
+        "spd": 2,
+        "ty": "Non-combat Pet",
+        "z": "Stranglethorn Vale"
        }
       },
       "45": {
@@ -15347,9 +15398,12 @@
     "275270": {
      "levels": {
       "10": {
-       "at": 1795707576,
+       "at": 1795826055,
        "v": {
+        "armor": 419,
         "class": "PALADIN",
+        "dmax": 16.18,
+        "dmin": 12.17,
         "n": "Windshapers Dockmaster",
         "run": 6,
         "spd": 2,
@@ -15679,7 +15733,20 @@
      "spells": {}
     },
     "276020": {
-     "levels": {},
+     "levels": {
+      "13": {
+       "at": 1795820581,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Riptear",
+        "rk": "ELITE",
+        "run": 8,
+        "spd": 2,
+        "ty": "Undead",
+        "z": "Tirisfal Glades"
+       }
+      }
+     },
      "name": "Riptear",
      "spells": {
       "1319792": {
@@ -18466,7 +18533,7 @@
     "3107": {
      "levels": {
       "7": {
-       "at": 1795586079,
+       "at": 1795816983,
        "v": {
         "class": "WARRIOR",
         "fam": "Crab",
@@ -19622,7 +19689,7 @@
     "3188": {
      "levels": {
       "12": {
-       "at": 1795560146,
+       "at": 1795817294,
        "v": {
         "armor": 580,
         "class": "WARRIOR",
@@ -20263,7 +20330,7 @@
        }
       },
       "15": {
-       "at": 1795750402,
+       "at": 1795817748,
        "v": {
         "class": "WARRIOR",
         "n": "Lost Barrens Kodo",
@@ -21497,7 +21564,7 @@
     "3304": {
      "levels": {
       "11": {
-       "at": 1795544414,
+       "at": 1795817251,
        "v": {
         "armor": 545,
         "class": "WARRIOR",
@@ -23811,11 +23878,13 @@
     "3496": {
      "levels": {
       "45": {
-       "at": 1795408199,
+       "at": 1795816746,
        "v": {
         "class": "WARRIOR",
         "run": 8,
-        "spd": 2
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "The Barrens"
        }
       }
      },
@@ -25260,9 +25329,12 @@
     "3945": {
      "levels": {
       "34": {
-       "at": 1795733455,
+       "at": 1795814960,
        "v": {
+        "armor": 1353,
         "class": "WARRIOR",
+        "dmax": 62.74,
+        "dmin": 47.3,
         "n": "Caravaneer Ruzzgot",
         "run": 8,
         "spd": 2,
@@ -27298,7 +27370,7 @@
     "4166": {
      "levels": {
       "3": {
-       "at": 1795575350,
+       "at": 1795817765,
        "v": {
         "class": "WARRIOR",
         "n": "Gazelle",
@@ -27620,7 +27692,20 @@
      "spells": {}
     },
     "4281": {
-     "levels": {},
+     "levels": {
+      "29": {
+       "at": 1795820726,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Scarlet Scout",
+        "rk": "ELITE",
+        "run": 8,
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Tirisfal Glades"
+       }
+      }
+     },
      "name": "Scarlet Scout",
      "spells": {
       "6660": {
@@ -31969,14 +32054,16 @@
     "5880": {
      "levels": {
       "14": {
-       "at": 1795376940,
+       "at": 1795817323,
        "v": {
         "armor": 650,
         "class": "WARRIOR",
         "dmax": 26.94,
         "dmin": 20.29,
         "run": 8,
-        "spd": 2
+        "spd": 2,
+        "ty": "Humanoid",
+        "z": "Durotar"
        }
       }
      },
@@ -32799,6 +32886,17 @@
         "spd": 2,
         "ty": "Totem",
         "z": "Thousand Needles"
+       }
+      },
+      "38": {
+       "at": 1795825754,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Windfury Totem",
+        "run": 7,
+        "spd": 2,
+        "ty": "Totem",
+        "z": "Tirisfal Glades"
        }
       },
       "41": {
@@ -35002,6 +35100,17 @@
         "ty": "Non-combat Pet",
         "z": "Stranglethorn Vale"
        }
+      },
+      "60": {
+       "at": 1795819103,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Cockatiel",
+        "run": 8,
+        "spd": 2,
+        "ty": "Non-combat Pet",
+        "z": "Orgrimmar"
+       }
       }
      },
      "name": "Cockatiel",
@@ -35058,6 +35167,16 @@
         "class": "WARRIOR",
         "run": 7,
         "spd": 2
+       }
+      },
+      "38": {
+       "at": 1795825816,
+       "v": {
+        "class": "WARRIOR",
+        "run": 7,
+        "spd": 2,
+        "ty": "Totem",
+        "z": "Tirisfal Glades"
        }
       }
      },
@@ -35522,9 +35641,12 @@
     "773": {
      "levels": {
       "35": {
-       "at": 1795394165,
+       "at": 1795814840,
        "v": {
+        "armor": 1387,
         "class": "WARRIOR",
+        "dmax": 64.44,
+        "dmin": 48.58,
         "n": "Krazek",
         "run": 8,
         "spd": 2,
@@ -36745,7 +36867,7 @@
     "877": {
      "levels": {
       "35": {
-       "at": 1795806935,
+       "at": 1795814383,
        "v": {
         "class": "WARRIOR",
         "n": "Saltscale Forager",
@@ -37804,6 +37926,17 @@
         "n": "Corrupted Kitten",
         "ty": "Non-combat Pet",
         "z": "Riverglades"
+       }
+      },
+      "60": {
+       "at": 1795819407,
+       "v": {
+        "class": "WARRIOR",
+        "n": "Corrupted Kitten",
+        "run": 8,
+        "spd": 2,
+        "ty": "Non-combat Pet",
+        "z": "Orgrimmar"
        }
       }
      },
